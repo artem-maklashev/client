@@ -15,7 +15,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
     };
 
     return (
-        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" >
+        <Navbar expand="lg" className="bg-body-tertiary fixed-top " bg="dark" data-bs-theme="dark" >        
             <div className="container-fluid">
                 <NavbarBrand as={Link} to="/">Декоратор</NavbarBrand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
