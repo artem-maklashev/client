@@ -14,7 +14,7 @@ const BoardProductionPage: React.FC = () => {
     // Данные загружены успешно
     return (
         <Container className="mt-5 fluide">
-            <ProductionListTable productionList={productionList} />
+            <ProductionListTable boardProductions={productionList} />
         </Container>
     );
 }
