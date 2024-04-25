@@ -1,10 +1,10 @@
 import React from "react"
 import { Col, Container, Row, Table } from "react-bootstrap"
-
-import BoardProduction from "../../../model/production/BoardProduction"
+import ReportData from "../../../model/ReportData";
+import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 
 interface ProductionListTableProps {
-  boardProductions: BoardProduction[];
+  boardProductions: ReportData[];
 }
 
 const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProductions }) => {
@@ -26,9 +26,9 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
               </thead>
               <tbody>
                 {boardProductions.map((item) => (
-                  <tr key={item.id}>
+                  <tr key={item.productionList.id}>
                     <td>
-                      <span>{item.id}</span>
+                      <span>{item.productionList.id}</span>
                     </td>
                     <td>
                       <span>
@@ -54,12 +54,12 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
                         <td>{item.productionList.shift.name}</td>
                         <td>{item.productionList.type.name }</td>
                     <td>
-                      {item.gypsumBoard.tradeMark.name} тип{" "}
-                      {item.gypsumBoard.boardType.name}-
-                      {item.gypsumBoard.edge.name}{" "}
-                      {item.gypsumBoard.thickness.value}-
-                      {item.gypsumBoard.width.value}-
-                      {item.gypsumBoard.length.value}
+                      {item.product.tradeMark.name} тип{" "}
+                      {((item.product) as GypsumBoard).boardType.name}-
+                      {((item.product) as GypsumBoard).edge.name}{" "}
+                      {((item.product) as GypsumBoard).thickness.value}-
+                      {((item.product) as GypsumBoard).width.value}-
+                      {((item.product) as GypsumBoard).length.value}
                     </td>
                   </tr>
                 ))}
