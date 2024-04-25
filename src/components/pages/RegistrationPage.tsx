@@ -19,17 +19,20 @@ const RegistrationPage: React.FC = () => {
     // Объявляем функцию registerUser
     const registerUser = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_AUTH_URL}/register`, {
-                method: 'POST',
+            const response = await fetch(
+              `${process.env.REACT_APP_AUTH_URL}/register`,
+              {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username: registrationData.username,
-                    email: registrationData.email,
-                    password: registrationData.password,
+                  username: registrationData.username,
+                  email: registrationData.email,
+                  password: registrationData.password,
                 }),
-            });
+              }
+            );
 
             if (response.ok) {
                 const jsonData = await response.json();

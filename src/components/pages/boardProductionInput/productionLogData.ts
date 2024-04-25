@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import ProductionList from "../../../model/production/ProductionList";
+
 import { api } from "../../../service/Api";
+import BoardProduction from "../../../model/production/BoardProduction";
 
 // interface ProductionLogDataProps {
 //     prodictionList: ProductionList[],
@@ -33,13 +34,13 @@ import { api } from "../../../service/Api";
 // export default ProductionLogData;
 
 export const ProductionLogData = () => {
-    const [productionList, setProductionList] = useState<ProductionList[]>([]);
+    const [productionList, setProductionList] = useState<BoardProduction[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
 
     const fetchProductionData = useCallback(async () => {
         try {
-            const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProduction_10`);
-            const data: ProductionList[] = response.data;
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductions_10`);
+            const data: BoardProduction[] = response.data;
             setProductionList(data);
         } catch (error) {
             console.error('fetch productionList failed', error);
