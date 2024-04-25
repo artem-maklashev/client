@@ -38,7 +38,7 @@ export const ProductionLogData = () => {
 
     const fetchProductionData = useCallback(async () => {
         try {
-            const response = await api.get(`${process.env.REACT_APP_API_URL}/productionList_100`);
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProduction_10`);
             const data: ProductionList[] = response.data;
             setProductionList(data);
         } catch (error) {
