@@ -1,13 +1,17 @@
-import React from "react"
+import React, { useState } from "react"
 import { Button, Col, Container, Row, Table } from "react-bootstrap"
 import ReportData from "../../../model/ReportData";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
+import ReportModalPage from "./ReportModalPage";
+
 
 interface ProductionListTableProps {
   boardProductions: ReportData[];
 }
 
 const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProductions }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ReportData | null >(null);
   const handleClick = (event: React.MouseEvent<HTMLElement>, item: ReportData) => {
     // Implement your editing logic here
     //  (e.g., open a modal, navigate to an edit page)
@@ -16,6 +20,10 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
 
     // Call the provided callback function if available
     // onEditProductionList?.(item);
+    
+    setShowModal(true);
+    setSelectedItem(item);
+    
   }
     return (
       <Container>
@@ -74,13 +82,20 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
                       </td>
                       <td><Button variant='secondary' onClick={(evt) => handleClick(evt, item)}>Редактировать</Button></td>
                     </tr>
+                    
                   );
                 })}
               </tbody>
             </Table>
           </Col>
         </Row>
+        <ReportModalPage show={showModal} reportData={selectedItem}
+          // onHide={function (): void {
+          // throw new Error("Function not implemented.");
+          // }}
+        />
       </Container>
+      
     );
 }
 export default ProductionListTable;
