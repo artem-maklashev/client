@@ -89,7 +89,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
             </Table>
           </Col>
         </Row>
-        <ReportModalPage show={showModal} reportData={selectedItem}
+        <ReportModalPage show={showModal} reportData={selectedItem} onHide={() => setShowModal(false)}
           // onHide={function (): void {
           // throw new Error("Function not implemented.");
           // }}
