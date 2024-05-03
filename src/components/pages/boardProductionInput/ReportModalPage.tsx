@@ -8,7 +8,7 @@ import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import { GypsumBoardList } from "./FetchGypsumBoard";
 import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
 import EditCategoryModal from "./EditCategoryModal";
-
+import { TiEdit } from "react-icons/ti";
 
 
 
@@ -171,7 +171,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                     <tr>
                       <th>Категория</th>
                       <th>Значение</th>
-                      <th>Действия</th>
+                      {/* <th>Действия</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -179,10 +179,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                       Object.values(tableData).map((entry) => (
                         <tr key={entry.category.id}>
                           <td>{entry.category.title}</td>
-                          <td>{entry.value}</td>
-                          <td>
-                            <Button variant="primary" onClick={() => handleEditCategory(entry)}>Редактировать</Button>
-                          </td>
+                          <td><Button variant="secondary" style={{ right: 0 }} onClick={() => handleEditCategory(entry)}><TiEdit /></Button> {entry.value} </td>
+                          {/* <td>
+                            <Button variant="primary" onClick={() => handleEditCategory(entry)}><TiEdit /></Button>
+                          </td> */}
                         </tr>
                       ))
                     ) : (

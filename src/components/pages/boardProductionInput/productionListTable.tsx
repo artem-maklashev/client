@@ -3,6 +3,7 @@ import { Button, Col, Container, Row, Table } from "react-bootstrap"
 import ReportData from "../../../model/ReportData";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import ReportModalPage from "./ReportModalPage";
+import { TiEdit } from "react-icons/ti";
 
 
 interface ProductionListTableProps {
@@ -80,7 +81,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
                         {((item.product) as GypsumBoard).width.value}-
                         {((item.product) as GypsumBoard).length.value}
                       </td>
-                      <td><Button variant='secondary' onClick={(evt) => handleClick(evt, item)}>Редактировать</Button></td>
+                      <td><Button variant='secondary' onClick={(evt) => handleClick(evt, item)}><TiEdit /></Button></td>
                     </tr>
                     
                   );
