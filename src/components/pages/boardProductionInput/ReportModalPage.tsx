@@ -17,6 +17,9 @@ import { GypsumBoardList } from "./FetchGypsumBoard";
 import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
 import EditCategoryModal from "./EditCategoryModal";
 import { TiEdit } from "react-icons/ti";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 interface ReportModalPageProps {
   show: boolean;
@@ -96,7 +99,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
       <Modal.Body>
         <Container>
           <Row>
-            <Col className="col-6">
+            <Col className="col-3 bordered">
               <Form.Group controlId="id">
                 <Form.Label>ID:</Form.Label>
                 <Form.Control
@@ -108,7 +111,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
               <Form.Group>
                 <Form.Label>Дата начала работы:</Form.Label>
                 <Form.Control
-                  type="datetime"
+                  type="datetime-locale"
                   value={new Date(
                     reportData.productionList.productionStart
                   ).toLocaleString()}
@@ -127,6 +130,24 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
                   onChange={(e) => {
                     // Обработчик изменения значения, если нужно
                   }}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Дата окончания работы:</Form.Label>
+                <DatePicker
+                  timeInputLabel="Время:"
+                  showIcon
+                  showTimeInput
+                  selected={
+                    new Date(reportData.productionList.productionFinish)
+                  }
+                  onChange={(date: Date | null) => {
+                    if (date) {
+                      // Обработчик изменения значения даты
+                    }
+                  }}
+                  
+                  dateFormat="yyyy-MM-dd HH:mm:ss" // Формат даты и времени
                 />
               </Form.Group>
               <Form.Group>
@@ -185,7 +206,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
               </Form.Group>
             </Col>
             <Col className="col-6">
-              <Table striped bordered hover>
+              <Table striped bordered hover size="sm" responsive>
                 <thead>
                   <tr>
                     <th>Категория</th>
