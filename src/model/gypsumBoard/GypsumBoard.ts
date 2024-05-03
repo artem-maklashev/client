@@ -15,6 +15,7 @@ class GypsumBoard extends Product {
     thickness: Thickness;
     width: Width;
     length: Length;
+    name: string;
     
 
     constructor(id: number, ptype: ProductTypes, tradeMark: TradeMark, boardType: BoardType, edge: Edge, thickness: Thickness, width: Width, length: Length) {
@@ -23,15 +24,12 @@ class GypsumBoard extends Product {
         this.edge = edge;
         this.thickness = thickness;
         this.width = width;
-        this.length = length;        
+        this.length = length;   
+        this.name = this.toString();
     }
 
-    public getName (): string{
-        return this.tradeMark.name + " тип " + this.boardType.name + " " + this.edge.name + "-" + this.thickness.value + "-" + this.width.value + this.length.value ;
-        // return toString() ;
+   override toString(): string {
+        return `${this.tradeMark.name} тип ${this.boardType.name} ${this.edge.name}-${this.thickness.value}-${this.width.value}-${this.length.value}`;
     }
-    // getFullName(): string {
-    //     return this.tradeMark.name + " тип " + this.boardType.name + " " + this.edge.name + "-" + this.thickness.value + "-" + this.width.value + this.length.value;
-    // }
 }
 export default GypsumBoard;
