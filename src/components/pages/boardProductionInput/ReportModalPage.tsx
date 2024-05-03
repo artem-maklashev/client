@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Form, Col, Container, Row } from "react-bootstrap";
+import { Modal, Button, Form, Col, Container, Row, Table } from "react-bootstrap";
 import "../../pages/MyStyle.css";
 import ReportData from "../../../model/ReportData";
 import { ShiftList } from "./FetchShiftList";
 import Shift from "../../../model/Shift";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import { GypsumBoardList } from "./FetchGypsumBoard";
+import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
+import EditCategoryModal from "./EditCategoryModal";
+
+
+
 
 interface ReportModalPageProps {
     show: boolean;
@@ -14,10 +19,15 @@ interface ReportModalPageProps {
 }
 
 const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onHide }) => {
+  
     const [selectedShift, setSelectedShift] = useState<Shift | null>(reportData ? reportData.productionList.shift : null);
     const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(reportData ? (reportData.product as GypsumBoard) : null);
     const { shiftList } = ShiftList();
-    const { gypsumBoardList } = GypsumBoardList();
+  const { gypsumBoardList } = GypsumBoardList();
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategoryMapEntry | null>(null);
+  const [editCategoryShow, setEditCategoryShow] = useState(false);
+  const [tableData, setTableData] = useState<ProductCategoryMapEntry[]>([]);
+
     const getName = (gboard: GypsumBoard) =>{
         return (
           gboard.tradeMark.name +
@@ -38,14 +48,37 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
             setSelectedShift(reportData.productionList.shift);
         }
     }, [show, reportData]);
+  
+    useEffect(() => {
+      // Устанавливаем начальные данные таблицы при загрузке компонента
+      if (reportData) {
+        setTableData(Object.values(reportData.productCategories));
+      }
+    }, [reportData]);
 
 
     if (!reportData) {
         return null;
     }
+    
+  const handleEditCategory = (category: ProductCategoryMapEntry) => {
+    setSelectedCategory(category);
+    setEditCategoryShow(true);    
+  }
+
+  const handleCategoryUpdate = (updatedCategory: ProductCategoryMapEntry): void => {
+    // Обновляем данные категории в таблице
+    const updatedTableData = tableData.map((entry) =>
+      entry.category.id === updatedCategory.category.id ? updatedCategory : entry
+    );
+    // Обновляем локальное состояние данных таблицы
+    setTableData(updatedTableData);
+    console.log("Данные в таблице обновлены");
+  };
+  
 
     return (
-      <Modal show={show} onHide={onHide} centered={true}>
+      <Modal show={show} onHide={onHide} centered={true} fullscreen={true} >
         <Modal.Header closeButton className="custom-modal-header">
           <Modal.Title>Редактирование данных</Modal.Title>
         </Modal.Header>
@@ -132,6 +165,34 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   </Form.Select>
                 </Form.Group>
               </Col>
+              <Col className="col-6">
+                <Table striped bordered hover >
+                  <thead>
+                    <tr>
+                      <th>Категория</th>
+                      <th>Значение</th>
+                      <th>Действия</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableData && Object.values(tableData).length > 0 ? (
+                      Object.values(tableData).map((entry) => (
+                        <tr key={entry.category.id}>
+                          <td>{entry.category.title}</td>
+                          <td>{entry.value}</td>
+                          <td>
+                            <Button variant="primary" onClick={() => handleEditCategory(entry)}>Редактировать</Button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={3}>Нет данных для отображения</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              </Col>
             </Row>
           </Container>
         </Modal.Body>
@@ -143,6 +204,20 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
             Сохранить изменения
           </Button>
         </Modal.Footer>
+        {/* Модальное окно для редактирования категории */}
+        <EditCategoryModal
+          show={editCategoryShow}
+          category={selectedCategory}
+          onHide={() => setEditCategoryShow(false)}
+          onSave={(selectedCategory) => {
+            // Реализация сохранения изменений категории
+            console.log("Сохранено новое значение категории:", selectedCategory);
+            handleCategoryUpdate(selectedCategory);
+            // Закрываем модальное окно редактирования категории
+            setEditCategoryShow(false);
+          }
+        }
+        />
       </Modal>
     );
 };

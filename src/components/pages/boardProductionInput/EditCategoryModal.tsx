@@ -1,0 +1,63 @@
+import React, { useEffect, useState } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
+import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
+
+
+interface EditCategoryModalProps {
+    show: boolean;
+    category: ProductCategoryMapEntry | null;
+    onHide: () => void;
+    onSave: (updatedCategory: ProductCategoryMapEntry) => void;
+}
+
+const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
+    show,
+    category,
+    onHide,
+    onSave
+    
+}) => {
+    const [newValue, setNewValue] = useState<number>(category ? category.value : 0);
+
+    const handleSave = () => {
+        if (category) {
+            const updatedCategory = { ...category, value: newValue }; // Создаем обновленную категорию
+            onSave(updatedCategory); // Вызываем функцию onSave с обновленной категорией
+            onHide();
+        }
+    };
+
+    useEffect(() => {
+        if (show && category) {
+            setNewValue(category.value);
+        }
+    }, [show,category]);
+
+    return (
+        <Modal show={show} onHide={onHide}>
+            <Modal.Header closeButton>
+                <Modal.Title>Редактирование категории</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form.Group controlId="categoryValue">
+                    <Form.Label>Новое значение:</Form.Label>
+                    <Form.Control
+                        type="number"
+                        value={newValue}
+                        onChange={(e) => setNewValue(parseFloat(e.target.value))}
+                    />
+                </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={onHide}>
+                    Отмена
+                </Button>
+                <Button variant="primary" onClick={handleSave}>
+                    Сохранить
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+};
+
+export default EditCategoryModal;
