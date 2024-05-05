@@ -25,9 +25,10 @@ interface ReportModalPageProps {
   show: boolean;
   reportData: ReportData | null;
   onHide: () => void;
+  onSave: (reportData: ReportData) => void;
 }
 
-const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHide,}) => {
+const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onHide, onSave }) => {
   const [selectedShift, setSelectedShift] = useState<Shift | null>(reportData ? reportData.productionList.shift : null);
   const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(reportData ? (reportData.product as GypsumBoard) : null );
   const { shiftList } = ShiftList();
@@ -35,7 +36,9 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
   const [selectedCategory, setSelectedCategory] = useState<ProductCategoryMapEntry | null>(null);
   const [editCategoryShow, setEditCategoryShow] = useState(false);
   const [tableData, setTableData] = useState<ProductCategoryMapEntry[]>([]);
-  
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [report, setReport] = useState<ReportData | null>(null);
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -58,6 +61,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
       setSelectedShift(reportData.productionList.shift);
       setSelectedProduct(reportData.product as GypsumBoard);
       setTableData(Object.values(reportData.productCategories));
+      setStartDate(reportData.productionList.productionStart);
+      setEndDate(reportData.productionList.productionFinish);
+      setReport(reportData);
+      
     }
   }, [show, reportData]);
 
@@ -89,7 +96,15 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
     // Обновляем локальное состояние данных таблицы
     setTableData(updatedTableData);
     console.log("Данные в таблице обновлены");
+    //ToDo: Обновить данные в ReportData.productCategories
   };
+
+  const updateReportData = () => {
+    if (report) {
+      onSave(report);
+
+    }  
+  }
 
   return (
     <Modal show={show} onHide={onHide} centered={true} fullscreen={true}>
@@ -110,40 +125,28 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
               </Form.Group>
               <Form.Group>
                 <Form.Label>Дата начала работы:</Form.Label>
-                <Form.Control
-                  type="datetime-locale"
-                  value={new Date(
-                    reportData.productionList.productionStart
-                  ).toLocaleString()}
+                <DatePicker
+                  timeInputLabel="Время:"
+                  showIcon
+                  showTimeInput
+                  selected={startDate}
                   onChange={(e) => {
-                    // Обработчик изменения значения, если нужно
+                    setStartDate(e);
                   }}
+                  dateFormat="yyyy-MM-dd HH:mm:ss" 
                 />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Дата окончания работы:</Form.Label>
-                <Form.Control
-                  type="datetime"
-                  value={new Date(
-                    reportData.productionList.productionFinish
-                  ).toLocaleString()}
-                  onChange={(e) => {
-                    // Обработчик изменения значения, если нужно
-                  }}
-                />
-              </Form.Group>
+              </Form.Group>  
               <Form.Group>
                 <Form.Label>Дата окончания работы:</Form.Label>
                 <DatePicker
                   timeInputLabel="Время:"
                   showIcon
                   showTimeInput
-                  selected={
-                    new Date(reportData.productionList.productionFinish)
-                  }
+                  selected={endDate}
                   onChange={(date: Date | null) => {
                     if (date) {
-                      // Обработчик изменения значения даты
+                      setEndDate(date);                    
+
                     }
                   }}
                   
@@ -152,14 +155,14 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
               </Form.Group>
               <Form.Group>
                 <Form.Label>Дата производства</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={
+                <DatePicker                
+                showIcon                
+                selected={
                     new Date(reportData.productionList.productionDate)
-                      .toISOString()
-                      .split("T")[0]
-                  }
-                  readOnly
+                   }
+                  onChange={(date: Date | null) => { }}
+                  dateFormat="yyyy-MM-dd"
+                  readOnly={true}
                 />
               </Form.Group>
               <Form.Group>
@@ -249,7 +252,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show,reportData, onHi
         <Button variant="secondary" onClick={onHide}>
           Закрыть
         </Button>
-        <Button variant="primary" onClick={onHide}>
+        <Button variant="primary" onClick={() => {
+          updateReportData();
+          onHide();
+        }}>
           Сохранить изменения
         </Button>
       </Modal.Footer>

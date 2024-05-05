@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import ReportData from "../../../model/ReportData";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
@@ -15,21 +15,43 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ReportData | null>(null);
+  const [reportData, setReportData] = useState<ReportData[] | null>(null);
 
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
     item: ReportData
-  ) => {    
+  ) => {
     setSelectedItem(item);
     setShowModal(true);
-    
+
   };
 
- 
+  useEffect(() => {
+    if (boardProductions) {
+      setReportData(boardProductions);
+
+    }
+
+  }, [boardProductions]);
+
+  const onSave = (updatedReport: ReportData) => {
+    if (reportData) {
+      const updatedList = reportData?.map((item) => {
+        if (item.productionList.id === updatedReport.productionList.id) {
+          return updatedReport;
+        }
+        return item;
+      });
+      setReportData(updatedList);      
+      console.log("обновлен список отчетов размером ", updatedList.length);
+      setShowModal(false);
+    }
+
+  }
 
   return (
-    <Container>
+    <Container className="mt-5">
       <Row>
         <Col className="col-8">
           <Table striped bordered hover size="sm" variant="light" table-auto>
@@ -46,61 +68,64 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
               </tr>
             </thead>
             <tbody>
-              {boardProductions.map((item) => (
-                <tr key={item.productionList.id}>
-                  <td>
-                    <span>{item.productionList.id}</span>
-                  </td>
-                  <td>
-                    <span>
-                      {new Date(
-                        item.productionList.productionStart
-                      ).toLocaleString()}
-                    </span>
-                  </td>
-                  <td>
-                    <span>
-                      {new Date(
-                        item.productionList.productionFinish
-                      ).toLocaleString()}
-                    </span>
-                  </td>
-                  <td>
-                    <span>
-                      {new Date(
-                        item.productionList.productionDate
-                      ).toLocaleDateString()}
-                    </span>
-                  </td>
-                  <td>{item.productionList.shift.name}</td>
-                  <td>{item.productionList.type.name}</td>
-                  <td>
-                    <span>                
-                     
-                      {item.product.tradeMark.name} тип{" "}
-                      {(item.product as GypsumBoard).boardType.name}-
-                      {(item.product as GypsumBoard).edge.name}{" "}
-                      {(item.product as GypsumBoard).thickness.value}-
-                      {(item.product as GypsumBoard).width.value}-
-                      {(item.product as GypsumBoard).length.value}
-                    </span>
-                  </td>
-                  <td>
-                    <Button
-                      variant="secondary"
-                      onClick={(evt) => handleClick(evt, item)}
-                    >
-                      <TiEdit />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {reportData ?
+                reportData.map((item) => (
+                  <tr key={item.productionList.id}>
+                    <td>
+                      <span>{item.productionList.id}</span>
+                    </td>
+                    <td>
+                      <span>
+                        {new Date(
+                          item.productionList.productionStart
+                        ).toLocaleString()}
+                      </span>
+                    </td>
+                    <td>
+                      <span>
+                        {new Date(
+                          item.productionList.productionFinish
+                        ).toLocaleString()}
+                      </span>
+                    </td>
+                    <td>
+                      <span>
+                        {new Date(
+                          item.productionList.productionDate
+                        ).toLocaleDateString()}
+                      </span>
+                    </td>
+                    <td>{item.productionList.shift.name}</td>
+                    <td>{item.productionList.type.name}</td>
+                    <td>
+                      <span>
+
+                        {item.product.tradeMark.name} тип{" "}
+                        {(item.product as GypsumBoard).boardType.name}-
+                        {(item.product as GypsumBoard).edge.name}{" "}
+                        {(item.product as GypsumBoard).thickness.value}-
+                        {(item.product as GypsumBoard).width.value}-
+                        {(item.product as GypsumBoard).length.value}
+                      </span>
+                    </td>
+                    <td>
+                      <Button
+                        variant="secondary"
+                        onClick={(evt) => handleClick(evt, item)}
+                      >
+                        <TiEdit />
+                      </Button>
+                    </td>
+                  </tr>
+                )) :
+                <td rowSpan={4}>Нет данных</td>
+              }
             </tbody>
           </Table>
         </Col>
       </Row>
-      <ReportModalPage show={showModal} reportData={selectedItem} onHide={() => setShowModal(false)}
-      />
+      <ReportModalPage show={showModal} reportData={selectedItem} onHide={() => setShowModal(false)} onSave={onSave} />
+
     </Container>
   );
 };
