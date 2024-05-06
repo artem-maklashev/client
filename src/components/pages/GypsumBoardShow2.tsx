@@ -19,10 +19,10 @@ interface GypsumBoardShowProps {
 const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
     const [gypsumBoardData, setGypsumBoardData] = useState<GypsumBoardInputData[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
-    const [selectedStartDate, setSelectedStartDate] = useState<string>(getFirstDate());
-    const [selectedEndDate, setSelectedEndDate] = useState<string>(getCurrentDate());
+    const [selectedStartDate, setSelectedStartDate] = useState<string | null>(getFirstDate());
+    const [selectedEndDate, setSelectedEndDate] = useState<string | null>(getCurrentDate());
     const [loading, setLoading] = useState<boolean>(false);
-    const {productionData} = useFetchProductionData(selectedStartDate, selectedEndDate);
+    const { productionData } = useFetchProductionData(selectedStartDate, selectedEndDate);
 
     const fetchGypsumBoardData = useCallback(async () => {
         try {
@@ -63,6 +63,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
         if (event.target.id === "startDateInput") {
             setSelectedStartDate(enteredDate);
+            
             setErrorText(null);
         } else if (event.target.id === "endDateInput") {
             setSelectedEndDate(enteredDate);
@@ -70,7 +71,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
         } else {
             setErrorText(`Invalid date format. Please use ${getLocalizedDateFormat()}.`);
         }
-        fetchGypsumBoardData();
+        fetchGypsumBoardData();        
     };
 
     function getCurrentDate(): string {
@@ -84,9 +85,9 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
     function getFirstDate(): string {
         const now = new Date();
-        const firstDay = new Date(now.getFullYear(), now.getUTCMonth() + 1, 1);
-        const year = firstDay.getUTCFullYear();
-        const month = (firstDay.getUTCMonth() + 1).toString().padStart(2, '0');
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const year = firstDay.getFullYear();
+        const month = (firstDay.getMonth() + 1).toString().padStart(2, '0');
 
         return `${year}-${month}-01`;
     }
@@ -116,14 +117,14 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                             <input
                                 type="date"
                                 id="startDateInput"
-                                value={selectedStartDate}
+                                value={selectedStartDate ? selectedStartDate : getFirstDate()}
                                 onChange={handleDateChange}
                                 className="form-control "
                             />
                             <input
                                 type="date"
                                 id="endDateInput"
-                                value={selectedEndDate}
+                                value={selectedEndDate ? selectedEndDate : getCurrentDate()}
                                 onChange={handleDateChange}
                                 className="form-control "
                             />
