@@ -56,8 +56,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   return (
     <Container className="mt-5">
       <Row>
-        <Col className="col-8">
-          <Table striped bordered hover size="sm" variant="light" table-auto>
+        <Col>
+          <Table striped bordered hover size="sm" variant="light" >
             <thead className="table-dark">
               <tr>
                 <th className="text-center">ID</th>
@@ -70,6 +70,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                 <th> </th>
               </tr>
             </thead>
+            
             <tbody>
               {reportData ?
                 reportData.map((item) => (
