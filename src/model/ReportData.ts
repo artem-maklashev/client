@@ -1,40 +1,38 @@
 import Product from "./Product";
-import BoardProduction from "./production/BoardProduction";
+import Gypsum from "./gypsum/Gypsum";
+import GypsumBoard from "./gypsumBoard/GypsumBoard";
+import ProductCategories from "./production/ProductCategories";
 import ProductCategoryMapEntry from "./production/ProductCategoryMapEntry";
+import Production from "./production/Production";
 import ProductionList from "./production/ProductionList";
 
-export class ReportData {
+class ReportData<T extends Product, U extends ProductCategories> {
     productionList: ProductionList;
-    product!: Product;
-    productCategories: ProductCategoryMapEntry[];
+    product!: T;
+    productCategories: ProductCategoryMapEntry<U>[];
 
-    constructor(productionList: ProductionList, boardProductionsOrGypsumProductions: BoardProduction[]) {// | GypsumProduction[]) {
+    constructor(productionList: ProductionList, productions: Production<U, T>[]) {
         this.productionList = productionList;
         this.productCategories = [];
-        
-        if (boardProductionsOrGypsumProductions.length > 0) {
-            const firstProduction = boardProductionsOrGypsumProductions[0];
-            if (firstProduction instanceof BoardProduction) {
-                this.product = firstProduction.gypsumBoard;
-                for (const boardProduction of boardProductionsOrGypsumProductions as BoardProduction[]) {
-                    this.productCategories.push(new ProductCategoryMapEntry(boardProduction.gypsumBoardCategory, boardProduction.value));
-                }
-                // } else if (firstProduction instanceof GypsumProduction) {
-                //     this.product = firstProduction.gypsum;
-                //     for (const gypsumProduction of boardProductionsOrGypsumProductions as GypsumProduction[]) {
-                //         this.productCategories.push(new ProductCategoryMapEntry(gypsumProduction.gypsumCategory, gypsumProduction.value));
-                //     }
-                // }
+
+        for (const production of productions) {
+            const prod = production.$product;
+            if (prod instanceof GypsumBoard) {
+                this.product = prod;
+                const mapEntry: ProductCategoryMapEntry<U> = {
+                    category: production.$category,
+                    value: production.$value
+                };
+                this.productCategories.push(mapEntry);
+            } else if (prod instanceof Gypsum) {
+                this.product = prod;
+                const mapEntry: ProductCategoryMapEntry<U> = {
+                    category: production.$category,
+                    value: production.$value
+                };
+                this.productCategories.push(mapEntry);
             }
         }
-    
-        // static createFromBoardProductions(productionList: ProductionList, boardProductions: BoardProduction[]): ReportData {
-        //     return new ReportData(productionList, boardProductions);
-        // }
-
-        // static createFromGypsumProductions(productionList: ProductionList, gypsumProductions: GypsumProduction[]): ReportData {
-        //     return new ReportData(productionList, gypsumProductions);
-        // }
     }
 }
 export default ReportData;

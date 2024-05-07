@@ -3,7 +3,6 @@ import Plan from "../../model/gypsumBoard/Plan";
 import {Card, Col, Container, Row} from "react-bootstrap";
 import ApiService from "../../service/ApiService";
 import BoardProduction from "../../model/production/BoardProduction";
-import { Link } from "react-router-dom";
 import WeatherWidget from "./WeatherWidget";
 
 interface MainPageProps {}
@@ -49,7 +48,7 @@ const MainPage: React.FC<MainPageProps> = () => {
     const plan = boardPlanData.reduce((acc, plan) => acc + plan.planValue, 0);
 
     const sortedBoardProduction = boardProductionData.filter(
-        (board) => board.gypsumBoardCategory.id < 5
+        (board) => board.category.id < 5
     );
     const todayPlan = boardPlanData.filter(
         (plan) => plan.planDate === getCurrentDate()
@@ -60,7 +59,7 @@ const MainPage: React.FC<MainPageProps> = () => {
 
     const { total, value } = sortedBoardProduction.reduce(
         (acc, board) => {
-            const isCategory1 = board.gypsumBoardCategory.id === 1;
+            const isCategory1 = board.category.id === 1;
             if (isCategory1) {
                 acc.total += board.value;
             } else {

@@ -19,13 +19,14 @@ import EditCategoryModal from "./EditCategoryModal";
 import { TiEdit } from "react-icons/ti";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 
 
 interface ReportModalPageProps {
   show: boolean;
-  reportData: ReportData | null;
+  reportData: ReportData<GypsumBoard, GypsumBoardCategory> | null;
   onHide: () => void;
-  onSave: (reportData: ReportData) => void;
+  onSave: (reportData: ReportData<GypsumBoard, GypsumBoardCategory>) => void;
 }
 
 const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onHide, onSave }) => {
@@ -33,12 +34,12 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(reportData ? (reportData.product as GypsumBoard) : null );
   const { shiftList } = ShiftList();
   const { gypsumBoardList } = GypsumBoardList();
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategoryMapEntry | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategoryMapEntry<GypsumBoardCategory> | null>(null);
   const [editCategoryShow, setEditCategoryShow] = useState(false);
-  const [tableData, setTableData] = useState<ProductCategoryMapEntry[]>([]);
+  const [tableData, setTableData] = useState<ProductCategoryMapEntry<GypsumBoardCategory>[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [report, setReport] = useState<ReportData | null>(null);
+  const [report, setReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory> | null>(null);
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -79,13 +80,13 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     return null;
   }
 
-  const handleEditCategory = (category: ProductCategoryMapEntry) => {
+  const handleEditCategory = (category: ProductCategoryMapEntry<GypsumBoardCategory>) => {
     setSelectedCategory(category);
     setEditCategoryShow(true);
   };
 
   const handleCategoryUpdate = (
-    updatedCategory: ProductCategoryMapEntry
+    updatedCategory: ProductCategoryMapEntry<GypsumBoardCategory>
   ): void => {
     // Обновляем данные категории в таблице
     const updatedTableData = tableData.map((entry) =>

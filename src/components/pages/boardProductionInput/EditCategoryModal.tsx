@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
+import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 
 
 interface EditCategoryModalProps {
     show: boolean;
-    category: ProductCategoryMapEntry | null;
+    category: ProductCategoryMapEntry<GypsumBoardCategory> | null;
     onHide: () => void;
-    onSave: (updatedCategory: ProductCategoryMapEntry) => void;
+    onSave: (updatedCategory: ProductCategoryMapEntry<GypsumBoardCategory>) => void;
 }
 
 const EditCategoryModal: React.FC<EditCategoryModalProps> = ({

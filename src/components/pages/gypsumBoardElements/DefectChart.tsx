@@ -33,7 +33,7 @@ const DefectChart: React.FC<BoardProductionProps> = ({data}) => {
         data = data.sort((a, b) => (a.productionList.productionDate < b.productionList.productionDate ? -1 : 1));
         console.log("Получены данные в размере " + data.length);
         const defectData = data.filter(
-            (item) => item.gypsumBoardCategory.id <= 4);
+            (item) => item.category.id <= 4);
         console.log("Преобразованные данные " + defectData.length);
 
 
@@ -46,7 +46,7 @@ const DefectChart: React.FC<BoardProductionProps> = ({data}) => {
                 });
                 if (existingData) {
                     // Если данные существуют, добавьте значение к существующему значению
-                    if (production.gypsumBoardCategory.id === 2 || production.gypsumBoardCategory.id === 3 || production.gypsumBoardCategory.id === 4) {
+                    if (production.category.id === 2 || production.category.id === 3 || production.category.id === 4) {
                         existingData.value += production.value;
                     } else {
                         existingData.totalValue += production.value;
@@ -54,7 +54,7 @@ const DefectChart: React.FC<BoardProductionProps> = ({data}) => {
                 } else {
                     // Если данных нет, создайте новый объект ChartData и добавьте его в массив
                     let newData: DefectChartData;
-                    if (production.gypsumBoardCategory.id === 2 || production.gypsumBoardCategory.id === 3) {
+                    if (production.category.id === 2 || production.category.id === 3) {
                         newData = new DefectChartData(production.productionList.productionDate, production.value, 0, 0);
                     } else {
                         newData = new DefectChartData(production.productionList.productionDate, 0, production.value, 0);

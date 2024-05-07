@@ -1,10 +1,10 @@
 import ProductCategories from "./ProductCategories";
 
-class ProductCategoryMapEntry {
-    category: ProductCategories;
+class ProductCategoryMapEntry <T extends ProductCategories>{
+    category: T;
     value: number;
 
-    constructor(category: ProductCategories, value: number) {
+    constructor(category: T, value: number) {
         this.category = category;
         this.value = value;
     }

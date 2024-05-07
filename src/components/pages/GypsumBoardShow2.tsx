@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import GypsumBoardInputData from "../../model/inputData/GypsumBoardInputData";
 import GypsumBoardTable from "./gypsumBoardElements/GypsumBoardTable";
-import {Col, Container, Row, Spinner, Tab, Tabs} from "react-bootstrap";
+import {Col, Container, Row, Tab, Tabs} from "react-bootstrap";
 import './MyStyle.css'
 import EdgeChart from "./gypsumBoardElements/EdgeChart";
 import DefectChart from "./gypsumBoardElements/DefectChart";
@@ -9,9 +9,7 @@ import ThicknessChart from "./gypsumBoardElements/ThicknessChart";
 import {useFetchProductionData} from "./commonElements/GetProductionData";
 import TypesChart from './gypsumBoardElements/TypesChart';
 import GypsumBoardChart from "./gypsumBoardElements/GypsumBoardChart";
-import axios from 'axios';
 import {api} from "../../service/Api";
-import width from "../../model/gypsumBoard/Width";
 
 interface GypsumBoardShowProps {
 }

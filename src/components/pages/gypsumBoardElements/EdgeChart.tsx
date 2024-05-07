@@ -20,9 +20,9 @@ interface BoardProductionProps {
 const EdgeChart: React.FC<BoardProductionProps> = ({ edgeData }) => {
     const data = edgeData.filter(
         (value) =>
-            value.gypsumBoardCategory.id === 2 ||
-            value.gypsumBoardCategory.id === 3 ||
-            value.gypsumBoardCategory.id === 4
+            value.category.id === 2 ||
+            value.category.id === 3 ||
+            value.category.id === 4
     );
     if (data.length === 0) {
         return (<div>Данных нет</div>);
@@ -33,14 +33,14 @@ const EdgeChart: React.FC<BoardProductionProps> = ({ edgeData }) => {
     let data1: ChartData[] = [];
 
     data.forEach((value) => {
-        const existingData = data1.find((item) => item.name === value.gypsumBoard.edge.name);
+        const existingData = data1.find((item) => item.name === value.product.edge.name);
 
         if (existingData) {
             // Если данные существуют, добавьте значение к существующему значению
             existingData.value += value.value;
         } else {
             // Если данных нет, создайте новый объект ChartData и добавьте его в массив
-            const newData = new ChartData(value.gypsumBoard.edge.name, value.value);
+            const newData = new ChartData(value.product.edge.name, value.value);
             data1.push(newData);
         }
     });

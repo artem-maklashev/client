@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { api } from "../../../service/Api";
 import BoardProduction from "../../../model/production/BoardProduction";
 import ReportData from "../../../model/ReportData";
+import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
+import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 
 // interface ProductionLogDataProps {
 //     prodictionList: ProductionList[],
@@ -35,13 +37,13 @@ import ReportData from "../../../model/ReportData";
 // export default ProductionLogData;
 
 export const ProductionLogData = () => {
-    const [productionList, setProductionList] = useState<ReportData[]>([]);
+    const [productionList, setProductionList] = useState<ReportData<GypsumBoard, GypsumBoardCategory>[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
 
     const fetchProductionData = useCallback(async () => {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductions_10`);
-            const data: ReportData[] = response.data;
+            const data: ReportData<GypsumBoard, GypsumBoardCategory>[] = response.data;
             setProductionList(data);
         } catch (error) {
             console.error('fetch productionList failed', error);

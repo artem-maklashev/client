@@ -53,9 +53,9 @@ class DefectsDataPrepare {
                 productionDict[shiftName] = new ProductionByShift(0, 0);
             }
 
-            if (production.gypsumBoardCategory.id === 1) {
+            if (production.category.id === 1) {
                 productionDict[shiftName].total += production.value;
-            } else if (production.gypsumBoardCategory.id > 1 && production.gypsumBoardCategory.id < 5) {
+            } else if (production.category.id > 1 && production.category.id < 5) {
                 productionDict[shiftName].goodProduct += production.value;
             }
         });
@@ -66,8 +66,8 @@ class DefectsDataPrepare {
         const categorySummary: { [categoryName: string]: number } = {};
         this.productionData.forEach(production => {
             const shiftName: string = (production.productionList.shift && production.productionList.shift.name) || 'Unknown Shift';
-            const categoryName = production.gypsumBoardCategory.title;
-            if (production.gypsumBoardCategory.id > 4 ) {
+            const categoryName = production.category.title;
+            if (production.category.id > 4 ) {
                 if (!categorySummary[categoryName]) {
                     categorySummary[categoryName] = 0;
                 }
@@ -80,21 +80,21 @@ class DefectsDataPrepare {
     getDefectsByDate() {
         const defectsByDate: DefectChartData[] = [];
         this.productionData.forEach(production => {
-            if (production.gypsumBoardCategory.id < 5) {
+            if (production.category.id < 5) {
                 const existingData = defectsByDate.find((item) => {
                     return item.pDate === production.productionList.productionDate;
                 });
             
                 if (existingData) {
                     // Если данные существуют, добавьте значение к существующему значению
-                    if (production.gypsumBoardCategory.id > 1 && production.gypsumBoardCategory.id < 5) {
+                    if (production.category.id > 1 && production.category.id < 5) {
                         existingData.value += production.value;
                     } else
                         existingData.totalValue += production.value;
                 } else {
                 // Если данных нет, создайте новый объект ChartData и добавьте его в массив
                 let newData: DefectChartData;
-                if (production.gypsumBoardCategory.id === 2 || production.gypsumBoardCategory.id === 3 || production.gypsumBoardCategory.id === 4) {
+                    if (production.category.id === 2 || production.category.id === 3 || production.category.id === 4) {
                     newData = new DefectChartData(production.productionList.productionDate, production.value, 0, 0);
                 } else {
                     newData = new DefectChartData(production.productionList.productionDate, 0, production.value, 0);
