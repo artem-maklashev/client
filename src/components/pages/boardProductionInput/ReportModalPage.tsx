@@ -69,6 +69,22 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     }
   }, [show, reportData]);
 
+  useEffect(() => {
+    if (report && selectedShift && selectedProduct) {
+      const updatedReport = {
+        ...report,
+        productionList: {
+          ...report.productionList,
+          shift: selectedShift,
+          productionStart: startDate || new Date(),
+          productionFinish: endDate || new Date(),
+        },
+        product: selectedProduct,
+        productCategories: tableData
+      };
+      setReport(updatedReport);
+    }
+  }, [report,selectedShift, selectedProduct, startDate, endDate, tableData]);
   // useEffect(() => {
   //   // Устанавливаем начальные данные таблицы при загрузке компонента
   //   if (reportData) {
@@ -98,6 +114,13 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     setTableData(updatedTableData);
     console.log("Данные в таблице обновлены");
     //ToDo: Обновить данные в ReportData.productCategories
+    if (report) {
+      const updatedReport = {
+        ...report,
+        productCategories: updatedTableData,
+      };
+      setReport(updatedReport);
+    }
   };
 
   const updateReportData = () => {

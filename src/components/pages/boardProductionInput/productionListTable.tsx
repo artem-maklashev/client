@@ -5,6 +5,7 @@ import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import ReportModalPage from "./ReportModalPage";
 import { TiEdit } from "react-icons/ti";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
+import { saveUpdatedReport } from "./SaveUpdatedReport";
 
 
 interface ProductionListTableProps {
@@ -46,6 +47,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
       });
       setReportData(updatedList);      
       console.log("обновлен список отчетов размером ", updatedList.length);
+      saveUpdatedReport(updatedReport);
       setShowModal(false);
     }
 
