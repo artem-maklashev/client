@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import React from "react";
 import {
   Modal,
   Button,
@@ -14,32 +15,43 @@ import { ShiftList } from "./FetchShiftList";
 import Shift from "../../../model/Shift";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import { GypsumBoardList } from "./FetchGypsumBoard";
-import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
 import EditCategoryModal from "./EditCategoryModal";
 import { TiEdit } from "react-icons/ti";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs, { Dayjs, locale } from "dayjs";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
+import { Stack, TextField } from "@mui/material";
+import 'dayjs/locale/ru';
+import BoardProduction from "../../../model/production/BoardProduction";
+import { DateField } from "@mui/x-date-pickers";
+
+
+
 
 
 interface ReportModalPageProps {
   show: boolean;
-  reportData: ReportData<GypsumBoard, GypsumBoardCategory> | null;
+  reportData: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction> | null;
   onHide: () => void;
-  onSave: (reportData: ReportData<GypsumBoard, GypsumBoardCategory>) => void;
+  onSave: (reportData: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>) => void;
 }
 
 const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onHide, onSave }) => {
   const [selectedShift, setSelectedShift] = useState<Shift | null>(reportData ? reportData.productionList.shift : null);
-  const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(reportData ? (reportData.product as GypsumBoard) : null );
+  const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(reportData ? (reportData.product as GypsumBoard) : null);
   const { shiftList } = ShiftList();
   const { gypsumBoardList } = GypsumBoardList();
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategoryMapEntry<GypsumBoardCategory> | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<BoardProduction | null>(null);
   const [editCategoryShow, setEditCategoryShow] = useState(false);
-  const [tableData, setTableData] = useState<ProductCategoryMapEntry<GypsumBoardCategory>[]>([]);
+  const [tableData, setTableData] = useState<BoardProduction[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [report, setReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory> | null>(null);
+  const [report, setReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction> | null>(null);
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -61,30 +73,14 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     if (show && reportData) {
       setSelectedShift(reportData.productionList.shift);
       setSelectedProduct(reportData.product as GypsumBoard);
-      setTableData(Object.values(reportData.productCategories));
-      setStartDate(reportData.productionList.productionStart);
-      setEndDate(reportData.productionList.productionFinish);
+      setTableData(reportData.productions);
+      setStartDate((reportData.productionList.productionStart));
+      setEndDate((reportData.productionList.productionFinish));
       setReport(reportData);
-      
+
     }
   }, [show, reportData]);
 
-  useEffect(() => {
-    if (report && selectedShift && selectedProduct) {
-      const updatedReport = {
-        ...report,
-        productionList: {
-          ...report.productionList,
-          shift: selectedShift,
-          productionStart: startDate || new Date(),
-          productionFinish: endDate || new Date(),
-        },
-        product: selectedProduct,
-        productCategories: tableData
-      };
-      setReport(updatedReport);
-    }
-  }, [report,selectedShift, selectedProduct, startDate, endDate, tableData]);
   // useEffect(() => {
   //   // Устанавливаем начальные данные таблицы при загрузке компонента
   //   if (reportData) {
@@ -96,13 +92,13 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     return null;
   }
 
-  const handleEditCategory = (category: ProductCategoryMapEntry<GypsumBoardCategory>) => {
+  const handleEditCategory = (category: BoardProduction) => {
     setSelectedCategory(category);
     setEditCategoryShow(true);
   };
 
   const handleCategoryUpdate = (
-    updatedCategory: ProductCategoryMapEntry<GypsumBoardCategory>
+    updatedCategory: BoardProduction
   ): void => {
     // Обновляем данные категории в таблице
     const updatedTableData = tableData.map((entry) =>
@@ -114,20 +110,32 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     setTableData(updatedTableData);
     console.log("Данные в таблице обновлены");
     //ToDo: Обновить данные в ReportData.productCategories
-    if (report) {
-      const updatedReport = {
-        ...report,
-        productCategories: updatedTableData,
-      };
-      setReport(updatedReport);
-    }
   };
+
+  
 
   const updateReportData = () => {
     if (report) {
-      onSave(report);
+      // Создаем новый экземпляр ProductionList с обновленными значениями
+      const updatedProductionList = report.productionList;
+      updatedProductionList.shift = selectedShift || shiftList[0];
+      updatedProductionList.productionStart = startDate || new Date();
+      updatedProductionList.productionFinish = endDate || new Date();
 
-    }  
+      // Создаем новый экземпляр продукта (например, GypsumBoard или Gypsum)
+      const updatedProduct = selectedProduct ?? report.product;
+
+      // Создаем новый массив категорий продуктов с обновленными значениями
+      const updatedCategories = tableData.map(entry => {
+        return new BoardProduction(entry.id, updatedProductionList, updatedProduct, entry.category, entry.value);
+      });
+
+      // Создаем новый экземпляр ReportData с обновленными значениями
+      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>(updatedProduct, updatedProductionList,  updatedCategories);
+
+      setReport(updatedReport); // Обновляем значение report
+      onSave(updatedReport); // Сохраняем обновленный отчет
+    }
   }
 
   return (
@@ -138,7 +146,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       <Modal.Body>
         <Container>
           <Row>
-            <Col className="col-3 bordered">
+            <Col className="col-4 bordered">
               <Form.Group controlId="id">
                 <Form.Label>ID:</Form.Label>
                 <Form.Control
@@ -147,7 +155,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   readOnly
                 />
               </Form.Group>
-              <Form.Group>
+              {/* <Form.Group>
                 <Form.Label>Дата начала работы:</Form.Label>
                 <DatePicker
                   timeInputLabel="Время:"
@@ -159,8 +167,54 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   }}
                   dateFormat="yyyy-MM-dd HH:mm:ss" 
                 />
-              </Form.Group>  
+              </Form.Group>   */}
               <Form.Group>
+              <Form.Label>Дата начала работы:</Form.Label>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale('ru')}>
+                  <Stack spacing={3}>
+                  <TimePicker
+                    label="Время:"
+                  value={dayjs(startDate)}
+                  onChange={(newValue) => newValue ? setStartDate(newValue?.toDate()) : setStartDate(new Date())}
+                  // renderInput={(params) => <TextField {...params} />}
+                  minutesStep={1}
+                  ampm={false}
+                />
+                  <DateTimePicker
+                    label="Дата"
+                      value={dayjs(startDate)}
+                      onChange={(newValue) => newValue ? setStartDate(newValue?.toDate()) : setStartDate(new Date())}
+                  // renderInput={(params) => <TextField {...params} />}
+                  ampm={false}
+                    />
+                    </Stack>
+                </LocalizationProvider>
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label>Дата и время окончания работы:</Form.Label>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale('ru')}>
+                  <Stack spacing={3}>
+                    <TimePicker
+                      label="Время:"
+                      value={dayjs(endDate)}
+                      onChange={(newValue) => newValue ? setEndDate(newValue?.toDate()) : setStartDate(new Date())}
+                      // renderInput={(params) => <TextField {...params} />}
+                      minutesStep={1}
+                      ampm={false}
+                    />
+                    <DateTimePicker
+                      label="Дата"
+                      value={dayjs(endDate)}
+                      onChange={(newValue) => newValue ? setEndDate(newValue?.toDate()) : setStartDate(new Date())}
+                      // renderInput={(params) => <TextField {...params} />}
+                      ampm={false}
+                    />
+                  </Stack>
+                </LocalizationProvider>
+              </Form.Group>
+
+              {/* <Form.Group>
                 <Form.Label>Дата окончания работы:</Form.Label>
                 <DatePicker
                   timeInputLabel="Время:"
@@ -176,18 +230,28 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   
                   dateFormat="yyyy-MM-dd HH:mm:ss" // Формат даты и времени
                 />
-              </Form.Group>
+              </Form.Group> */}
               <Form.Group>
-                <Form.Label>Дата производства</Form.Label>
-                <DatePicker                
-                showIcon                
-                selected={
+                <Stack spacing={3}>
+                  <Form.Label>Дата производства</Form.Label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale('ru')}>
+
+                  <DateField
+                    label="Дата"
+                      value={dayjs(reportData.productionList.productionDate)}
+                    disabled={true}
+                    />
+                    </LocalizationProvider>
+                <DatePicker
+                  showIcon
+                  selected={
                     new Date(reportData.productionList.productionDate)
-                   }
+                  }
                   onChange={(date: Date | null) => { }}
                   dateFormat="yyyy-MM-dd"
                   readOnly={true}
-                />
+                  />
+                </Stack>
               </Form.Group>
               <Form.Group>
                 <Form.Label>Смена</Form.Label>
@@ -242,8 +306,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   </tr>
                 </thead>
                 <tbody>
-                  {tableData && Object.values(tableData).length > 0 ? (
-                    Object.values(tableData).map((entry) => (
+                  {(tableData).length > 0 ? (
+                    (tableData).map((entry) => (
                       <tr key={entry.category.id}>
                         <td>{entry.category.title}</td>
                         <td>

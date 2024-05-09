@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
+import BoardProduction from "../../../model/production/BoardProduction";
 
 
 interface EditCategoryModalProps {
     show: boolean;
-    category: ProductCategoryMapEntry<GypsumBoardCategory> | null;
+    category: BoardProduction | null;
     onHide: () => void;
-    onSave: (updatedCategory: ProductCategoryMapEntry<GypsumBoardCategory>) => void;
+    onSave: (updatedCategory: BoardProduction) => void;
 }
 
 const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
@@ -22,8 +23,8 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
 
     const handleSave = () => {
         if (category) {
-            const updatedCategory = { ...category, value: newValue }; // Создаем обновленную категорию
-            onSave(updatedCategory); // Вызываем функцию onSave с обновленной категорией
+            category.value = newValue;
+            onSave(category); // Вызываем функцию onSave с обновленной категорией
             onHide();
         }
     };

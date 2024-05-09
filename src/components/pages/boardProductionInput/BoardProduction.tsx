@@ -5,12 +5,13 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import ReportData from "../../../model/ReportData";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
+import BoardProduction from "../../../model/production/BoardProduction";
 
 
 const BoardProductionPage: React.FC = () => {
     // При использовании хука ProductionLogData, деструктурируем объект, который он возвращает
     const { productionList, } = ProductionLogData();
-    const [reposts, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory>[]>(productionList);
+    const [reposts, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>[]>(productionList);
     
     useEffect(() => {
         setReports(productionList);

@@ -6,23 +6,24 @@ import ReportModalPage from "./ReportModalPage";
 import { TiEdit } from "react-icons/ti";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import { saveUpdatedReport } from "./SaveUpdatedReport";
+import BoardProduction from "../../../model/production/BoardProduction";
 
 
 interface ProductionListTableProps {
-  boardProductions: ReportData<GypsumBoard, GypsumBoardCategory>[];
+  boardProductions: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>[];
 }
 
 const ProductionListTable: React.FC<ProductionListTableProps> = ({
   boardProductions,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory> | null>(null);
-  const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory>[] | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction> | null>(null);
+  const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>[] | null>(null);
 
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
-    item: ReportData<GypsumBoard, GypsumBoardCategory>
+    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>
   ) => {
     setSelectedItem(item);
     setShowModal(true);
@@ -37,7 +38,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   }, [boardProductions]);
 
-  const onSave = (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory>) => {
+  const onSave = (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>) => {
     if (reportData) {
       const updatedList = reportData?.map((item) => {
         if (item.productionList.id === updatedReport.productionList.id) {

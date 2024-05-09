@@ -37,13 +37,13 @@ import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory"
 // export default ProductionLogData;
 
 export const ProductionLogData = () => {
-    const [productionList, setProductionList] = useState<ReportData<GypsumBoard, GypsumBoardCategory>[]>([]);
+    const [productionList, setProductionList] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
 
     const fetchProductionData = useCallback(async () => {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductions_10`);
-            const data: ReportData<GypsumBoard, GypsumBoardCategory>[] = response.data;
+            const data: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>[] = response.data;
             setProductionList(data);
         } catch (error) {
             console.error('fetch productionList failed', error);

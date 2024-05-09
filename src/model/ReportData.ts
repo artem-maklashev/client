@@ -6,33 +6,17 @@ import ProductCategoryMapEntry from "./production/ProductCategoryMapEntry";
 import Production from "./production/Production";
 import ProductionList from "./production/ProductionList";
 
-class ReportData<T extends Product, U extends ProductCategories> {
+class ReportData<T extends Product, U extends ProductCategories, V extends Production<U, T>> {
     productionList: ProductionList;
     product!: T;
-    productCategories: ProductCategoryMapEntry<U>[];
+    productions: V[];
 
-    constructor(productionList: ProductionList, productions: Production<U, T>[]) {
+    constructor(product: T,productionList: ProductionList, productions: V[]) {
         this.productionList = productionList;
-        this.productCategories = [];
-
-        for (const production of productions) {
-            const prod = production.$product;
-            if (prod instanceof GypsumBoard) {
-                this.product = prod;
-                const mapEntry: ProductCategoryMapEntry<U> = {
-                    category: production.$category,
-                    value: production.$value
-                };
-                this.productCategories.push(mapEntry);
-            } else if (prod instanceof Gypsum) {
-                this.product = prod;
-                const mapEntry: ProductCategoryMapEntry<U> = {
-                    category: production.$category,
-                    value: production.$value
-                };
-                this.productCategories.push(mapEntry);
-            }
+        this.productions = productions;
+        this.product = product;
+        
         }
     }
-}
+
 export default ReportData;

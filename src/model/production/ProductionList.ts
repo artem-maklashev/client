@@ -19,6 +19,6 @@ class ProductionList {
         this.type = pTypeId;
     }
 
-
+    
 }
 export default ProductionList;
