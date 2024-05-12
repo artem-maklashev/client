@@ -7,23 +7,24 @@ import { TiEdit } from "react-icons/ti";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import { saveUpdatedReport } from "./SaveUpdatedReport";
 import BoardProduction from "../../../model/production/BoardProduction";
+import Delays from "../../../model/delays/Delays";
 
 
 interface ProductionListTableProps {
-  boardProductions: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>[];
+  boardProductions: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[];
 }
 
 const ProductionListTable: React.FC<ProductionListTableProps> = ({
   boardProductions,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction> | null>(null);
-  const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>[] | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
+  const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] | null>(null);
 
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
-    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>
+    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
   ) => {
     setSelectedItem(item);
     setShowModal(true);
@@ -38,7 +39,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   }, [boardProductions]);
 
-  const onSave = (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>) => {
+  const onSave = (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
     if (reportData) {
       const updatedList = reportData?.map((item) => {
         if (item.productionList.id === updatedReport.productionList.id) {

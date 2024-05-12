@@ -1,22 +1,52 @@
 import Product from "./Product";
-import Gypsum from "./gypsum/Gypsum";
-import GypsumBoard from "./gypsumBoard/GypsumBoard";
+import AllDelays from "./delays/AllDalays";
 import ProductCategories from "./production/ProductCategories";
-import ProductCategoryMapEntry from "./production/ProductCategoryMapEntry";
 import Production from "./production/Production";
 import ProductionList from "./production/ProductionList";
 
-class ReportData<T extends Product, U extends ProductCategories, V extends Production<U, T>> {
+class ReportData<T extends Product, U extends ProductCategories, V extends Production<U, T>, X extends AllDelays<T>> {
     productionList: ProductionList;
     product!: T;
     productions: V[];
+    delays: X[];
 
-    constructor(product: T,productionList: ProductionList, productions: V[]) {
+
+    constructor(product: T, productionList: ProductionList, productions: V[], delays: X[]) {
         this.productionList = productionList;
         this.productions = productions;
         this.product = product;
-        
-        }
+        this.delays = delays;
+
     }
+
+    /**
+     * name
+     */
+    getProductName() {
+        return this.product.toString();
+    }
+
+    updateProductions(production: V) : this{
+        this.productions = this.productions.map((entry) => {
+            if (entry.id === production.id) {
+                return production; // обновляем производство
+            } else {
+                return entry; // возвращаем текущее производство, если оно не совпадает
+            }
+        });
+        return this;
+    }
+
+    updateDelays(delay: X) {
+        this.delays.map((entry) => {
+            if (entry.id === delay.id) {
+                return delay;
+            } else {
+                return entry;
+            }
+        })
+    }
+
+}
 
 export default ReportData;

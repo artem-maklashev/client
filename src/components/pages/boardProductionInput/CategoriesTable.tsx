@@ -1,0 +1,53 @@
+import { Button, Table } from "react-bootstrap";
+import React from "react";
+import BoardProduction from "../../../model/production/BoardProduction";
+import { TiEdit } from "react-icons/ti";
+
+interface CategoriesTableProps {
+    categories: BoardProduction[];
+    handleEditCategory: (category : BoardProduction) => void;
+}
+
+const CategoriesTable: React.FC<CategoriesTableProps> = ({
+  categories,
+  handleEditCategory,
+}) => {
+  return (
+    <Table striped bordered hover size="sm" responsive>
+      <thead>
+        <tr>
+          <th>Категория</th>
+          <th>Значение</th>
+          {/* <th>Действия</th> */}
+        </tr>
+      </thead>
+      <tbody>
+        {categories.length > 0 ? (
+          categories.map((entry) => (
+            <tr key={entry.category.id}>
+              <td>{entry.category.title}</td>
+              <td>
+                <Button
+                  variant="secondary"
+                  style={{ right: 0 }}
+                  onClick={() => handleEditCategory(entry)}
+                >
+                  <TiEdit />
+                </Button>{" "}
+                {entry.value}{" "}
+              </td>
+              {/* <td>
+                            <Button variant="primary" onClick={() => handleEditCategory(entry)}><TiEdit /></Button>
+                          </td> */}
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={3}>Нет данных для отображения</td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
+  );
+};
+export default CategoriesTable;

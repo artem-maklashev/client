@@ -1,10 +1,11 @@
 import ReportData from "../../../model/ReportData";
+import Delays from "../../../model/delays/Delays";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import BoardProduction from "../../../model/production/BoardProduction";
 import { api } from "../../../service/Api";
 
-export const saveUpdatedReport = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction>): Promise<void> => {
+export const saveUpdatedReport = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>): Promise<void> => {
     try {
         console.log('Sending startdate: ' + updatedReport.productionList.productionStart);
         // Отправляем обновленный отчет на сервер
