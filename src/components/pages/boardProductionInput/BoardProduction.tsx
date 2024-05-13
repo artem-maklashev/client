@@ -22,15 +22,17 @@ const BoardProductionPage: React.FC = () => {
 
     // Данные загружены успешно
     return (
-        <Container className="mt-5 fluide">
+        <Container  fluid className="mt-5 " style={{backgroundColor: 'grey'}}>
             <Row>
                 <Col className="col-12">
                     <ProductionListTable boardProductions={reposts} />
 
                 </Col>
             </Row>
-            <Row>
-                <Button onClick={() =>{alert("Нажата кнопка создания отчета")}}>Добавить отчет</Button>
+            <Row className="justify-content-center ">
+                <Col className="col-2">
+                    <Button onClick={() => { alert("Нажата кнопка создания отчета") }}>Добавить отчет</Button>
+                </Col>
             </Row>
             
         </Container>

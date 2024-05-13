@@ -37,14 +37,15 @@ class ReportData<T extends Product, U extends ProductCategories, V extends Produ
         return this;
     }
 
-    updateDelays(delay: X) {
+    updateDelays(delay: X) : this {
         this.delays.map((entry) => {
             if (entry.id === delay.id) {
                 return delay;
             } else {
                 return entry;
             }
-        })
+        });
+        return this;
     }
 
 }

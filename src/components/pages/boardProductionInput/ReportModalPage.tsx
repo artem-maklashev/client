@@ -23,14 +23,16 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, {  } from "dayjs";
+import dayjs, { } from "dayjs";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import { Stack } from "@mui/material";
 import 'dayjs/locale/ru';
 import BoardProduction from "../../../model/production/BoardProduction";
-import { DateField, MobileTimePicker } from "@mui/x-date-pickers";
+import { DateField, MobileDateTimePicker, MobileTimePicker, StaticDateTimePicker } from "@mui/x-date-pickers";
 import Delays from "../../../model/delays/Delays";
 import CategoriesTable from "./CategoriesTable";
+import DelaysTable from "./DelaysTable";
+import EditDelayModal from "./EditDelayModal";
 
 
 
@@ -50,11 +52,13 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   const { gypsumBoardList } = GypsumBoardList();
   const [selectedCategory, setSelectedCategory] = useState<BoardProduction | null>(null);
   const [editCategoryShow, setEditCategoryShow] = useState(false);
+  const [editDelayShow, setEditDelayShow] = useState(false);
   const [tableData, setTableData] = useState<BoardProduction[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [report, setReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [delays, setDelays] = useState<Delays[]>([]);
+  const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -85,12 +89,6 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     }
   }, [show, reportData]);
 
-  // useEffect(() => {
-  //   // Устанавливаем начальные данные таблицы при загрузке компонента
-  //   if (reportData) {
-  //     setTableData(Object.values(reportData.productCategories));
-  //   }
-  // }, [reportData]);
 
   if (!reportData) {
     return null;
@@ -100,6 +98,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     setSelectedCategory(category);
     setEditCategoryShow(true);
   };
+
+  const handleEditDelay = (delay: Delays) => {
+    setSelectedDelay(delay);
+    setEditDelayShow(true);
+  }
 
   const handleCategoryUpdate = (
     updatedCategory: BoardProduction
@@ -112,14 +115,28 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
         Delays
       >(report.product, report.productionList, tableData, delays);
 
-      updatedReport.updateProductions(updatedCategory); // Здесь вызываем метод на экземпляре класса ReportData
+      updatedReport.updateProductions(updatedCategory);
       setReport(updatedReport);
     }
-
-    //ToDo: Обновить данные в ReportData.productCategories
   };
 
-  
+  const handleDelayUpdate = (
+    updatedDelay: Delays
+  ): void => {
+    if (report) {
+      const updatedReport = new ReportData<
+        GypsumBoard,
+        GypsumBoardCategory,
+        BoardProduction,
+        Delays
+      >(report.product, report.productionList, tableData, delays);
+
+      updatedReport.updateDelays(updatedDelay);
+      setReport(updatedReport);
+    }
+  };
+
+
 
   const updateReportData = () => {
     if (report) {
@@ -132,18 +149,16 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       // Создаем новый экземпляр продукта (например, GypsumBoard или Gypsum)
       const updatedProduct = selectedProduct ?? report.product;
 
-      
-      
 
       // Создаем новый экземпляр ReportData с обновленными значениями
-      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(updatedProduct, updatedProductionList,  tableData, delays);
+      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(updatedProduct, updatedProductionList, tableData, delays);
 
       setReport(updatedReport); // Обновляем значение report
       onSave(updatedReport); // Сохраняем обновленный отчет
     }
   }
 
-  
+
 
   return (
     <Modal show={show} onHide={onHide} centered={true} fullscreen={true}>
@@ -151,116 +166,91 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
         <Modal.Title>Редактирование данных</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Container>
+        <Container fluid>
           <Row>
-            <Col className="col-4 bordered">
-              <Form.Group controlId="id">
+            <Col className="col-6 bordered">
+              {/* <Form.Group controlId="id">
                 <Form.Label>ID:</Form.Label>
                 <Form.Control
                   type="text"
                   value={reportData.productionList.id}
                   readOnly
                 />
-              </Form.Group>
-              {/* <Form.Group>
-                <Form.Label>Дата начала работы:</Form.Label>
-                <DatePicker
-                  timeInputLabel="Время:"
-                  showIcon
-                  showTimeInput
-                  selected={startDate}
-                  onChange={(e) => {
-                    setStartDate(e);
-                  }}
-                  dateFormat="yyyy-MM-dd HH:mm:ss" 
-                />
-              </Form.Group>   */}
-              <Form.Group>
-                <Form.Label>Дата начала работы:</Form.Label>
-                <LocalizationProvider
-                  dateAdapter={AdapterDayjs}
-                  adapterLocale={dayjs.locale("ru")}
-                >
-                  <Stack spacing={3}>
-                    <MobileTimePicker
-                      label="Время:"
-                      value={dayjs(startDate)}
-                      onChange={(newValue) =>
-                        newValue
-                          ? setStartDate(newValue?.toDate())
-                          : setStartDate(new Date())
-                      }
-                      // renderInput={(params) => <TextField {...params} />}
-                      minutesStep={1}
-                      ampm={false}
-                    />
-                    <DateTimePicker
-                      label="Дата"
-                      value={dayjs(startDate)}
-                      onChange={(newValue) =>
-                        newValue
-                          ? setStartDate(newValue?.toDate())
-                          : setStartDate(new Date())
-                      }
-                      // renderInput={(params) => <TextField {...params} />}
-                      ampm={false}
-                    />
-                  </Stack>
-                </LocalizationProvider>
-              </Form.Group>
-
-              <Form.Group>
-                <Form.Label>Дата и время окончания работы:</Form.Label>
-                <LocalizationProvider
-                  dateAdapter={AdapterDayjs}
-                  adapterLocale={dayjs.locale("ru")}
-                >
-                  <Stack spacing={3}>
-                    <MobileTimePicker
-                      label="Время:"
-                      value={dayjs(endDate)}
-                      onChange={(newValue) =>
-                        newValue
-                          ? setEndDate(newValue?.toDate())
-                          : setStartDate(new Date())
-                      }
-                      // renderInput={(params) => <TextField {...params} />}
-                      minutesStep={1}
-                      ampm={false}
-                    />
-                    <DateTimePicker
-                      label="Дата"
-                      value={dayjs(endDate)}
-                      onChange={(newValue) =>
-                        newValue
-                          ? setEndDate(newValue?.toDate())
-                          : setStartDate(new Date())
-                      }
-                      // renderInput={(params) => <TextField {...params} />}
-                      ampm={false}
-                    />
-                  </Stack>
-                </LocalizationProvider>
-              </Form.Group>
-
-              {/* <Form.Group>
-                <Form.Label>Дата окончания работы:</Form.Label>
-                <DatePicker
-                  timeInputLabel="Время:"
-                  showIcon
-                  showTimeInput
-                  selected={endDate}
-                  onChange={(date: Date | null) => {
-                    if (date) {
-                      setEndDate(date);                    
-
-                    }
-                  }}
-                  
-                  dateFormat="yyyy-MM-dd HH:mm:ss" // Формат даты и времени
-                />
               </Form.Group> */}
+
+
               <Form.Group>
+                <Form.Label>Начало работы:</Form.Label>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={dayjs.locale("ru")}
+                >
+                  <Stack spacing={3}>
+                    {/* <MobileTimePicker
+                      label="Время:"
+                      value={dayjs(startDate)}
+                      onChange={(newValue) =>
+                        newValue
+                          ? setStartDate(newValue?.toDate())
+                          : setStartDate(new Date())
+                      }
+                      // renderInput={(params) => <TextField {...params} />}
+                      minutesStep={1}
+                      ampm={false}
+                    /> */}
+                    <MobileDateTimePicker
+                      label="Дата"
+                      value={dayjs(startDate)}
+                      onChange={(newValue) =>
+                        newValue
+                          ? setStartDate(newValue?.toDate())
+                          : setStartDate(new Date())
+                      }
+                      // renderInput={(params) => <TextField {...params} />}
+                      ampm={false}
+                      orientation="landscape"
+                    />
+                  </Stack>
+                </LocalizationProvider>
+              </Form.Group>
+            </Col>
+            <Col className="col-6 bordered">
+              <Form.Group>
+                <Form.Label>Окончание работы:</Form.Label>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={dayjs.locale("ru")}
+                >
+                  <Stack spacing={3}>
+                    {/* <MobileTimePicker
+                      label="Время:"
+                      value={dayjs(endDate)}
+                      onChange={(newValue) =>
+                        newValue
+                          ? setEndDate(newValue?.toDate())
+                          : setStartDate(new Date())
+                      }
+                      // renderInput={(params) => <TextField {...params} />}
+                      minutesStep={1}
+                      ampm={false}
+                    /> */}
+                    <MobileDateTimePicker
+                      label="Дата"
+                      value={dayjs(endDate)}
+                      onChange={(newValue) =>
+                        newValue
+                          ? setEndDate(newValue?.toDate())
+                          : setStartDate(new Date())
+                      }
+                      // renderInput={(params) => <TextField {...params} />}
+                      ampm={false}
+                      orientation="landscape"
+                    />
+                  </Stack>
+                </LocalizationProvider>
+              </Form.Group>
+
+              {/* <Form.Group>
                 <Stack spacing={3}>
                   <Form.Label>Дата производства</Form.Label>
                   <LocalizationProvider
@@ -283,92 +273,108 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                     readOnly={true}
                   />
                 </Stack>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Смена</Form.Label>
-                <Form.Select
-                  value={selectedShift ? selectedShift.name : ""}
-                  onChange={(e) => {
-                    const selectedShiftName = e.target.value;
-                    const foundShift = shiftList.find(
-                      (shift) => shift.name === selectedShiftName
-                    );
-                    setSelectedShift(foundShift || null);
-                  }}
-                >
-                  {shiftList.map((shift) => (
-                    <option key={shift.id} value={shift.name}>
-                      {shift.name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group>
-                <Form.Label>Гипсокартон</Form.Label>
-                <Form.Select
-                  value={selectedProduct ? selectedProduct.id.toString() : "0"}
-                  onChange={(e) => {
-                    const selectedProductId = parseInt(e.target.value);
-                    const foundGypsumBoard = gypsumBoardList.find(
-                      (gypsumBoard) => gypsumBoard.id === selectedProductId
-                    );
-                    setSelectedProduct(foundGypsumBoard || null);
-                  }}
-                >
-                  {gypsumBoardList.map((gypsumBoard) => (
-                    <option
-                      key={gypsumBoard.id}
-                      value={gypsumBoard.id.toString()}
-                    >
-                      {getName(gypsumBoard)}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+              </Form.Group> */}
             </Col>
-            <Col className="col-6">
-              <CategoriesTable
-                categories={tableData}
-                handleEditCategory={handleEditCategory}
-              />
-              {/* <Table striped bordered hover size="sm" responsive> */}
-              {/* <thead> */}
-              {/* <tr> */}
-              {/* <th>Категория</th> */}
-              {/* <th>Значение</th> */}
-              {/* <th>Действия</th> */}
-              {/* </tr> */}
-              {/* </thead> */}
-              {/* <tbody> */}
-              {/* {(tableData).length > 0 ? ( */}
-              {/* (tableData).map((entry) => ( */}
-              {/* <tr key={entry.category.id}> */}
-              {/* <td>{entry.category.title}</td> */}
-              {/* <td> */}
-              {/* <Button */}
-              {/* variant="secondary" */}
-              {/* style={{ right: 0 }} */}
-              {/* onClick={() => handleEditCategory(entry)} */}
-              {/* > */}
-              {/* <TiEdit /> */}
-              {/* </Button>{" "} */}
-              {/* {entry.value}{" "} */}
-              {/* </td> */}
-              {/* <td>
+            <Row>
+              <Col className="col-6 bordered">
+                <Form.Group>
+                  <Form.Label>Смена</Form.Label>
+                  <Form.Select
+                    value={selectedShift ? selectedShift.name : ""}
+                    onChange={(e) => {
+                      const selectedShiftName = e.target.value;
+                      const foundShift = shiftList.find(
+                        (shift) => shift.name === selectedShiftName
+                      );
+                      setSelectedShift(foundShift || null);
+                    }}
+                  >
+                    {shiftList.map((shift) => (
+                      <option key={shift.id} value={shift.name}>
+                        {shift.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col className="col-6 bordered">
+                <Form.Group>
+                  <Form.Label>Гипсокартон</Form.Label>
+                  <Form.Select
+                    value={selectedProduct ? selectedProduct.id.toString() : "0"}
+                    onChange={(e) => {
+                      const selectedProductId = parseInt(e.target.value);
+                      const foundGypsumBoard = gypsumBoardList.find(
+                        (gypsumBoard) => gypsumBoard.id === selectedProductId
+                      );
+                      setSelectedProduct(foundGypsumBoard || null);
+                    }}
+                  >
+                    {gypsumBoardList.map((gypsumBoard) => (
+                      <option
+                        key={gypsumBoard.id}
+                        value={gypsumBoard.id.toString()}
+                      >
+                        {getName(gypsumBoard)}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              
+              <Col className="col-lg-5 col-sm-8">
+                <h3 className="text-center"> Данные по производству</h3>
+                <CategoriesTable
+                  categories={tableData}
+                  handleEditCategory={handleEditCategory}
+                />
+                {/* <Table striped bordered hover size="sm" responsive> */}
+                {/* <thead> */}
+                {/* <tr> */}
+                {/* <th>Категория</th> */}
+                {/* <th>Значение</th> */}
+                {/* <th>Действия</th> */}
+                {/* </tr> */}
+                {/* </thead> */}
+                {/* <tbody> */}
+                {/* {(tableData).length > 0 ? ( */}
+                {/* (tableData).map((entry) => ( */}
+                {/* <tr key={entry.category.id}> */}
+                {/* <td>{entry.category.title}</td> */}
+                {/* <td> */}
+                {/* <Button */}
+                {/* variant="secondary" */}
+                {/* style={{ right: 0 }} */}
+                {/* onClick={() => handleEditCategory(entry)} */}
+                {/* > */}
+                {/* <TiEdit /> */}
+                {/* </Button>{" "} */}
+                {/* {entry.value}{" "} */}
+                {/* </td> */}
+                {/* <td>
                             <Button variant="primary" onClick={() => handleEditCategory(entry)}><TiEdit /></Button>
                           </td> */}
-              {/* </tr> */}
-              {/* )) */}
-              {/* ) : ( */}
-              {/* <tr> */}
-              {/* <td colSpan={3}>Нет данных для отображения</td> */}
-              {/* </tr> */}
-              {/* )} */}
-              {/* </tbody> */}
-              {/* </Table> */}
-            </Col>
+                {/* </tr> */}
+                {/* )) */}
+                {/* ) : ( */}
+                {/* <tr> */}
+                {/* <td colSpan={3}>Нет данных для отображения</td> */}
+                {/* </tr> */}
+                {/* )} */}
+                {/* </tbody> */}
+                {/* </Table> */}
+
+              </Col>
+              <Col className="col-lg-7 col-sm-8">
+                <DelaysTable delays={delays} handleEditDelay={handleEditDelay} />
+              </Col>
+            </Row>
           </Row>
+          
+            
+          
         </Container>
       </Modal.Body>
       <Modal.Footer>
@@ -398,7 +404,21 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
           setEditCategoryShow(false);
         }}
       />
+      <EditDelayModal
+        show={editDelayShow}
+        delay={selectedDelay}
+        onHide={() => setEditDelayShow(false)}
+        onSave={(selectedDelay) => {
+          // Реализация сохранения изменений категории
+          console.log("Сохранено новое значение категории:", selectedDelay);
+          handleDelayUpdate(selectedDelay);
+          // Закрываем модальное окно редактирования категории
+          setEditDelayShow(false);
+        }}
+      />
     </Modal>
+  
+    
   );
 };
 

@@ -56,10 +56,10 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   }
 
   return (
-    <Container className="mt-5">
+    <Container fluid className="mt-5">
       <Row>
         <Col>
-          <Table striped bordered hover size="sm" variant="light" >
+          <Table striped bordered hover responsive size="sm" variant="light" >
             <thead className="table-dark">
               <tr>
                 <th className="text-center">ID</th>

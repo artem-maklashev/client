@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
 import GypsumBoardInputData from "../../../model/inputData/GypsumBoardInputData";
 
-interface GypsumBoardShowProps {
+interface GypsumBoardPlanFactTableProps {
     monthIndex: number;
     year: number;
     }
 
 export function GypsumBoardPlanFactTable(monthIndex: number, year: number): any {
-    const GypsumBoardShow: React.FC<GypsumBoardShowProps> = (props) => {
+    const GypsumBoardShow: React.FC<GypsumBoardPlanFactTableProps> = () => {
         const [gypsumBoardData, setGypsumBoardData] = useState<GypsumBoardInputData[]>([]);
         const [isLoading, setIsLoading] = useState<boolean>(true);
         const [errorText, setErrorText] = useState<string | null>(null);

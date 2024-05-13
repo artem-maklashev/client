@@ -13,10 +13,10 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
   handleEditCategory,
 }) => {
   return (
-    <Table striped bordered hover size="sm" responsive>
+    <Table striped bordered hover size="sm" >
       <thead>
         <tr>
-          <th>Категория</th>
+          <th>Вид производства</th>
           <th>Значение</th>
           {/* <th>Действия</th> */}
         </tr>

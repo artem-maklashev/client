@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Form, FormControl, Nav, Navbar, NavbarBrand, NavDropdown } from "react-bootstrap";
+import React, { useState } from "react";
+import { Nav, Navbar, NavbarBrand, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 interface NavigationBarProps {
@@ -13,19 +13,21 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
         // alert("Вы вышли из системы");
         onLogout(); // Вызываем функцию выхода из системы
     };
+    const [expanded, setExpanded] = useState(false);
 
+    const handleNavClose = () => setExpanded(false);
     return (
-        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" >        
+        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} >        
             <div className="container-fluid">
                 <NavbarBrand as={Link} to="/">Декоратор</NavbarBrand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Home</Nav.Link>
                         <NavDropdown title="Гипсокартон" id="board-dropdown">
-                            <NavDropdown.Item as={Link} to="/board">Производство</NavDropdown.Item>
-                            <NavDropdown.Item as={Link} to="/boardDelays">Простои</NavDropdown.Item>
-                            <NavDropdown.Item as={Link} to="/boardDefects">Брак</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/boardDefects" onClick={handleNavClose}>Брак</NavDropdown.Item>
                         </NavDropdown>
                         <Nav.Link as={Link} to="/boardReport" disabled={false}>Выпуск ГСП</Nav.Link>
                         {tokenValid ? (
