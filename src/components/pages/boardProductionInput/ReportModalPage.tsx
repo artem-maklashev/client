@@ -324,7 +324,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
             </Row>
             <Row>
               
-              <Col className="col-lg-5 col-sm-8">
+              <Col className="col-lg-5 col-sm-12">
                 <h3 className="text-center"> Данные по производству</h3>
                 <CategoriesTable
                   categories={tableData}
@@ -367,7 +367,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                 {/* </Table> */}
 
               </Col>
-              <Col className="col-lg-7 col-sm-8">
+              <Col className="col-lg-7 col-sm-12">
                 <DelaysTable delays={delays} handleEditDelay={handleEditDelay} />
               </Col>
             </Row>
