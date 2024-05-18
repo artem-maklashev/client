@@ -38,8 +38,8 @@ const DelaysTable: React.FC<DelaysTableProps> = ({
                     delays.map((entry) => (
                         <tr key={entry.id}>
                             <td>{entry.id}</td>
-                            <td>{new Date(entry.startTime).toISOString()}</td>
-                            <td>{entry.endTime.toString()}</td>
+                            <td>{new Date(entry.startTime).toUTCString()}</td>
+                            <td>{new Date(entry.endTime).toUTCString()}</td>
                             <td>{(new Date(entry.endTime).getTime()- new Date(entry.startTime).getTime())/(1000*60)}</td>
                             <td>{entry.shift.name}</td>
                             {/* <td>

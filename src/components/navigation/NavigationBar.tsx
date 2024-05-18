@@ -29,7 +29,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDefects" onClick={handleNavClose}>Брак</NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link as={Link} to="/boardReport" disabled={false}>Выпуск ГСП</Nav.Link>
+                        <Nav.Link as={Link} to="/boardReport" disabled={false} onClick={handleNavClose}>Выпуск ГСП</Nav.Link>
                         {tokenValid ? (
                             <Nav.Link as={Link} to="/login" onClick={handleLogout}>Logout</Nav.Link>
                         ) : (
