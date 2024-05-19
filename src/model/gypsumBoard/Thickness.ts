@@ -2,9 +2,11 @@ class Thickness {
     id: number;
     value: string;
 
-    constructor(id: number, value: string) {
-        this.id = id;
-        this.value = value;
+    constructor();
+    constructor(id: number, value: string);
+    constructor(id?: number, value?: string) {
+        this.id = id !== undefined ? id : 0;
+        this.value = value !== undefined ? value : '';
     }
 }
 export default Thickness;

@@ -7,7 +7,6 @@ import Length from "./Length";
 import Thickness from "./Thickness";
 import Width from "./Width";
 
-
 class GypsumBoard extends Product {
 
     boardType: BoardType;
@@ -16,15 +15,34 @@ class GypsumBoard extends Product {
     width: Width;
     length: Length;
     name: string;    
-    
 
-    constructor(id: number, ptype: ProductTypes, tradeMark: TradeMark, boardType: BoardType, edge: Edge, thickness: Thickness, width: Width, length: Length) {
-        super(id, ptype, tradeMark);
-        this.boardType = boardType;
-        this.edge = edge;
-        this.thickness = thickness;
-        this.width = width;
-        this.length = length;   
+    constructor();
+    constructor(
+        id: number, ptype: ProductTypes, tradeMark: TradeMark, 
+        boardType: BoardType, edge: Edge, thickness: Thickness, 
+        width: Width, length: Length
+    );
+    constructor(
+        id?: number, ptype?: ProductTypes, tradeMark?: TradeMark, 
+        boardType?: BoardType, edge?: Edge, thickness?: Thickness, 
+        width?: Width, length?: Length
+    ) {
+        if (id !== undefined && ptype !== undefined && tradeMark !== undefined && boardType !== undefined && edge !== undefined && thickness !== undefined && width !== undefined && length !== undefined) {
+            super(id, ptype, tradeMark);
+            this.boardType = boardType;
+            this.edge = edge;
+            this.thickness = thickness;
+            this.width = width;
+            this.length = length;   
+        } else {
+            // Значения по умолчанию
+            super(0, new ProductTypes(), new TradeMark());
+            this.boardType = new BoardType();
+            this.edge = new Edge();
+            this.thickness = new Thickness();
+            this.width = new Width();
+            this.length = new Length();
+        }
         this.name = this.toString();
     }
 

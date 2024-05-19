@@ -2,13 +2,12 @@ class Shift {
     id: number;
     name: string;
 
-
-    constructor(id: number, name: string) {
-        this.id = id;
-        this.name = name;
+    constructor();
+    constructor(id: number, name: string);
+    constructor(id?: number, name?: string) {
+        this.id = id !== undefined ? id : 0;
+        this.name = name !== undefined ? name : '';
     }
-
-
-
 }
+
 export default Shift;

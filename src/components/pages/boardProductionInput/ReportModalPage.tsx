@@ -161,7 +161,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       <Modal.Body>
         <Container fluid>
           <Row>
-            <Col className="col-2 bordered">
+          <Col className="col-lg-2 col-sm-6 bordered">
               <Form.Group>
                 <Form.Label>Начало работы:</Form.Label>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale("ru")}>
@@ -179,7 +179,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                 </LocalizationProvider>
               </Form.Group>
             </Col>
-            <Col className="col-2 bordered">
+            <Col className="col-lg-2 col-sm-6 bordered">
               <Form.Group>
                 <Form.Label>Окончание работы:</Form.Label>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale("ru")}>
@@ -198,7 +198,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
               </Form.Group>
             </Col>
             <Row>
-              <Col className="col-2 bordered">
+            <Col className="col-lg-2 col-sm-6 bordered">
                 <Form.Group>
                   <Form.Label>Смена</Form.Label>
                   <Form.Select
@@ -219,7 +219,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col className="col-2 bordered">
+              <Col className="col-lg-3 col-sm-6 bordered">
                 <Form.Group>
                   <Form.Label>Гипсокартон</Form.Label>
                   <Form.Select
