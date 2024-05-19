@@ -25,5 +25,25 @@ class FetchDelaysData {
         }
     
     }
+    async getUnit(id: number) {
+        try {
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/unit/${id}`);
+            return response.data;
+        }catch (error) {
+            console.error('Ошибка при получении данных о узле', error);
+            throw error; 
+        }
+    }
+    async getUnitPart(id: number) {
+        try {
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/unitPart/${id}`);
+            return response.data;
+        }catch (error) {
+            console.error('Ошибка при получении данных о детали', error);
+            throw error; 
+        }
+    }
+
+
 }
 export default FetchDelaysData;

@@ -29,13 +29,13 @@ import CategoriesTable from "./CategoriesTable";
 import DelaysTable from "./DelaysTable";
 import EditDelayModal from "./EditDelayModal";
 import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+// import utc from 'dayjs/plugin/utc';
+// import timezone from 'dayjs/plugin/timezone';
+// import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(customParseFormat);
+// dayjs.extend(utc);
+// dayjs.extend(timezone);
+// dayjs.extend(customParseFormat);
 
 interface ReportModalPageProps {
   show: boolean;
@@ -44,7 +44,7 @@ interface ReportModalPageProps {
   onSave: (reportData: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => void;
 }
 
-const formatLocalDateTime = (date : Date) => new Date(date.toLocaleString().slice(0, 19).replace('T',' '));
+// const formatLocalDateTime = (date : Date) => new Date(date.toLocaleString().slice(0, 19).replace('T',' '));
 
 const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onHide, onSave }) => {
   const [selectedShift, setSelectedShift] = useState<Shift | null>(reportData ? reportData.productionList.shift : null);
@@ -138,7 +138,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       const updatedProductionList = { ...report.productionList };
       updatedProductionList.shift = selectedShift || shiftList[0];
       updatedProductionList.productionStart = startDate || new Date();
-      updatedProductionList.productionFinish = (new Date(dayjs(endDate).utc(true).toISOString()) || new Date());
+      updatedProductionList.productionFinish = endDate || new Date();//(new Date(dayjs(endDate).utc(true).toISOString()) || new Date());
       const updatedProduct = selectedProduct ?? report.product;
 
       const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
@@ -147,7 +147,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
         tableData,
         delays
       );
-      setEndDate(new Date(dayjs(updatedReport.productionList.productionFinish).utc(true).toISOString()));
+      
       setReport(updatedReport);
       onSave(updatedReport);
     }
@@ -161,7 +161,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       <Modal.Body>
         <Container fluid>
           <Row>
-            <Col className="col-6 bordered">
+            <Col className="col-2 bordered">
               <Form.Group>
                 <Form.Label>Начало работы:</Form.Label>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale("ru")}>
@@ -179,7 +179,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                 </LocalizationProvider>
               </Form.Group>
             </Col>
-            <Col className="col-6 bordered">
+            <Col className="col-2 bordered">
               <Form.Group>
                 <Form.Label>Окончание работы:</Form.Label>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale("ru")}>
@@ -188,8 +188,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                       label="Дата"
                       value={endDate ? dayjs(endDate.toLocaleString()) : null}
                       onChange={(newValue) => {
-                        setEndDate(newValue ? newValue.toDate() : new Date());
-                        alert(newValue?.utc(true).toISOString());
+                        setEndDate(newValue?.toDate() || new Date());                        
                       }}
                       ampm={false}
                       orientation="landscape"
@@ -199,7 +198,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
               </Form.Group>
             </Col>
             <Row>
-              <Col className="col-6 bordered">
+              <Col className="col-2 bordered">
                 <Form.Group>
                   <Form.Label>Смена</Form.Label>
                   <Form.Select
@@ -220,7 +219,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col className="col-6 bordered">
+              <Col className="col-2 bordered">
                 <Form.Group>
                   <Form.Label>Гипсокартон</Form.Label>
                   <Form.Select
@@ -259,7 +258,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
           Закрыть
         </Button>
         <Button variant="primary" onClick={() => {
-          alert('Установлена дата и время окончания ' + endDate);
+          //alert('Установлена дата и время окончания ' + endDate);
           updateReportData();
           onHide();
         }}>
