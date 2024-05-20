@@ -43,6 +43,16 @@ class FetchDelaysData {
             throw error; 
         }
     }
+    async getDelayTypes() {
+        try {
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/delayType`);
+            return response.data;
+        }catch (error) {
+            console.error('Ошибка при получении данных о детали', error);
+            throw error; 
+        }
+    }
+
 
 
 }

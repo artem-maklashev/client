@@ -59,7 +59,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   const [report, setReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [delays, setDelays] = useState<Delays[]>([]);
   const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
-  
+
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -146,7 +146,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
         tableData,
         delays
       );
-      
+
       setReport(updatedReport);
       onSave(updatedReport);
     }
@@ -160,7 +160,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       <Modal.Body>
         <Container fluid>
           <Row>
-          <Col className="col-lg-2 col-sm-6 bordered">
+            <Col className="col-lg-2 col-sm-6 bordered">
               <Form.Group>
                 <Form.Label>Начало работы:</Form.Label>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale("ru")}>
@@ -187,7 +187,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                       label="Дата"
                       value={endDate ? dayjs(endDate) : null}
                       onChange={(newValue) => {
-                        setEndDate(newValue?.toDate() || new Date());                        
+                        setEndDate(newValue?.toDate() || new Date());
                       }}
                       ampm={false}
                       orientation="landscape"
@@ -197,7 +197,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
               </Form.Group>
             </Col>
             <Row>
-            <Col className="col-lg-2 col-sm-6 bordered">
+              <Col className="col-lg-2 col-sm-6 bordered">
                 <Form.Group>
                   <Form.Label>Смена</Form.Label>
                   <Form.Select
@@ -246,7 +246,17 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                 <CategoriesTable categories={tableData} handleEditCategory={handleEditCategory} />
               </Col>
               <Col className="col-lg-7 col-sm-12">
-                <DelaysTable delays={delays} handleEditDelay={handleEditDelay} />
+                <Row>
+                  <DelaysTable delays={delays} handleEditDelay={handleEditDelay} />
+                </Row>
+                <Row className="justify-content-center">
+                  <Button type="button" variant="outline-primary" size="sm" style={{width: '150px'}} onClick={() => {
+                    //alert('Установлена дата и время окончания ' + endDate);
+                    setEditDelayShow(true);
+                  }}>
+                    Добавить простой
+                  </Button>
+                </Row>
               </Col>
             </Row>
           </Row>
@@ -276,6 +286,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       <EditDelayModal
         show={editDelayShow}
         delay={selectedDelay}
+        shift={selectedShift}
+        product={selectedProduct}
         onHide={() => setEditDelayShow(false)}
         onSave={(updatedDelay) => {
           handleDelayUpdate(updatedDelay);
