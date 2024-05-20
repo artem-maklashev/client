@@ -40,7 +40,7 @@ const BoardProductionPage: React.FC = () => {
     }
 
     const onSave = (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-        // saveUpdatedReport(report);
+        saveUpdatedReport(report);
         setShowReportModal(false);
     }
 

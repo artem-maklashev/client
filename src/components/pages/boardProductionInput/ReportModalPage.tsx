@@ -201,7 +201,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                 <Form.Group>
                   <Form.Label>Смена</Form.Label>
                   <Form.Select
-                    value={selectedShift ? selectedShift.name : ""}
+                    value={selectedShift ? selectedShift.name : shiftList[1].name}
                     onChange={(e) => {
                       const selectedShiftName = e.target.value;
                       const foundShift = shiftList.find(
@@ -222,7 +222,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                 <Form.Group>
                   <Form.Label>Гипсокартон</Form.Label>
                   <Form.Select
-                    value={selectedProduct ? selectedProduct.id.toString() : "0"}
+                    value={selectedProduct ? selectedProduct.id.toString() : gypsumBoardList[0].id.toString()}
                     onChange={(e) => {
                       const selectedProductId = parseInt(e.target.value);
                       const foundGypsumBoard = gypsumBoardList.find(
