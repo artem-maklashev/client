@@ -38,7 +38,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
-                <Modal.Title>Редактирование категории</Modal.Title>
+                <Modal.Title>{category?.category.title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form.Group controlId="categoryValue">

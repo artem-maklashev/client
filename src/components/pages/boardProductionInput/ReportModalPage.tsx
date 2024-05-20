@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -186,7 +185,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   <Stack spacing={3}>
                     <MobileDateTimePicker
                       label="Дата"
-                      value={endDate ? dayjs(endDate.toLocaleString()) : null}
+                      value={endDate ? dayjs(endDate) : null}
                       onChange={(newValue) => {
                         setEndDate(newValue?.toDate() || new Date());                        
                       }}

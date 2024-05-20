@@ -11,12 +11,11 @@ class ReportData<T extends Product, U extends ProductCategories, V extends Produ
     delays: X[];
 
 
-    constructor(product: T, productionList: ProductionList, productions: V[], delays: X[]) {
+    constructor(product: T, productionList: ProductionList, productions: V[], delays?: X[]) {
+        this.product = product;
         this.productionList = productionList;
         this.productions = productions;
-        this.product = product;
-        this.delays = delays;
-
+        this.delays = delays || [];
     }
 
     /**

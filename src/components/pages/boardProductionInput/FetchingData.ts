@@ -1,5 +1,4 @@
 import {useCallback, useEffect, useState} from "react";
-import BoardProduction from "../../../model/production/BoardProduction";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 
 export const FetchData = (selectedStartDate: string, selectedEndDate: string) => {
