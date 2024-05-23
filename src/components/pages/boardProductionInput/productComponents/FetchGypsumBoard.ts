@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
-import { api } from "../../../service/Api";
+import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
+import { api } from "../../../../service/Api";
 
 export const GypsumBoardList = () => {
     const [ gypsumBoardList, setGypsumBoardList] = useState<GypsumBoard[]>([]);

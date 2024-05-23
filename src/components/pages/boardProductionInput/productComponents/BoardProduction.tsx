@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import ProductionListTable from "./productionListTable";
 import { ProductionLogData } from "./productionLogData";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import ReportData from "../../../model/ReportData";
-import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
-import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
-import BoardProduction from "../../../model/production/BoardProduction";
-import Delays from "../../../model/delays/Delays";
-import ReportModalPage from "./ReportModalPage";
-import { saveUpdatedReport } from "./SaveUpdatedReport";
-import NewReport from "./NewReport";
+import ReportData from "../../../../model/ReportData";
+import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCategory";
+import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
+import BoardProduction from "../../../../model/production/BoardProduction";
+import Delays from "../../../../model/delays/Delays";
+import ReportModalPage from "../ReportModalPage";
+import { saveUpdatedReport } from "../SaveUpdatedReport";
+import NewReport from "../NewReport";
 
 
 const BoardProductionPage: React.FC = () => {
@@ -46,7 +46,7 @@ const BoardProductionPage: React.FC = () => {
 
     // Данные загружены успешно
     return (
-        <Container fluid className="mt-5 " style={{ backgroundColor: 'grey' }}>
+        <Container fluid className="mt-5 mb-5" style={{ backgroundColor: 'grey' }}>
             <Row>
                 <Col className="col-12">
                     <ProductionListTable boardProductions={reposts} />
@@ -55,7 +55,7 @@ const BoardProductionPage: React.FC = () => {
             </Row>
             <Row className="justify-content-center ">
                 <Col className="col-2">
-                    <Button onClick={() => { handleAddReport() }}>Добавить отчет</Button>
+                    <Button onClick={() => { handleAddReport() }} style={{width: '150px'}}>Добавить отчет</Button>
                 </Col>
             </Row>
             <ReportModalPage show={showReportModal} reportData={newReport} onHide={() => setShowReportModal(false)} onSave={onSave}></ReportModalPage>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import Shift from "../../../model/Shift";
-import { api } from "../../../service/Api";
+import Shift from "../../../../model/Shift";
+import { api } from "../../../../service/Api";
 
 export const ShiftList = () => {
     const [ shiftList, setShiftList] = useState<Shift[]>([]);

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { api } from "../../../service/Api";
-import BoardProduction from "../../../model/production/BoardProduction";
-import ReportData from "../../../model/ReportData";
-import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
-import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
-import Delays from "../../../model/delays/Delays";
+import { api } from "../../../../service/Api";
+import BoardProduction from "../../../../model/production/BoardProduction";
+import ReportData from "../../../../model/ReportData";
+import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
+import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCategory";
+import Delays from "../../../../model/delays/Delays";
 
 // interface ProductionLogDataProps {
 //     prodictionList: ProductionList[],

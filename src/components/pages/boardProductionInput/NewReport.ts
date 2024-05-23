@@ -4,7 +4,7 @@ import Shift from "../../../model/Shift";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import BoardProduction from "../../../model/production/BoardProduction";
 import ProductionList from "../../../model/production/ProductionList";
-import FetchCategories from "./FetchCategories";
+import FetchCategories from "./productComponents/FetchCategories";
 
 const NewReport = async () => {
     const fetcher = new FetchCategories();

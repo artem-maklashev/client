@@ -1,15 +1,15 @@
-import BoardProduction from "../production/BoardProduction";
 import Defects from "./Defects";
+import ProductionList from './../production/ProductionList';
 
 class BoardDefectsLog {
     id: number;
-    boardProduction: BoardProduction;
+    productionList: ProductionList;
     value: number;
     defects: Defects;
 
-    constructor(id: number, boardProduction: BoardProduction, value: number, defects: Defects) {
+    constructor(id: number, productionList: ProductionList, value: number, defects: Defects) {
         this.id = id;
-        this.boardProduction = boardProduction;
+        this.productionList = productionList;
         this.value = value;
         this.defects = defects;
     }

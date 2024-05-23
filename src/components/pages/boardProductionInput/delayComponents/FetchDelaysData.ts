@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
-import { api } from "../../../service/Api";
-import Division from "../../../model/delays/Division";
-import ProductionArea from "../../../model/delays/ProductionArea";
+import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
+import { api } from "../../../../service/Api";
+import Division from "../../../../model/delays/Division";
+import ProductionArea from "../../../../model/delays/ProductionArea";
 
 
 class FetchDelaysData {

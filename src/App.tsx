@@ -10,7 +10,7 @@ import Footer from "./components/navigation/Footer";
 import RegistrationPage from "./components/pages/RegistrationPage";
 import LoginPage from "./components/pages/LoginPage";
 import { api, setAuthToken } from "./service/Api";
-import BoardProductionPage from './components/pages/boardProductionInput/BoardProduction';
+import BoardProductionPage from './components/pages/boardProductionInput/productComponents/BoardProduction';
 
 // function App() {
 //     const [validatingToken, setValidatingToken] = useState(true);

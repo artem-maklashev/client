@@ -1,6 +1,6 @@
 import { Button, Table } from "react-bootstrap";
 import React from "react";
-import BoardProduction from "../../../model/production/BoardProduction";
+import BoardProduction from "../../../../model/production/BoardProduction";
 import { TiEdit } from "react-icons/ti";
 
 interface CategoriesTableProps {

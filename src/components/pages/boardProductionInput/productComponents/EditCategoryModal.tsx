@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import ProductCategoryMapEntry from "../../../model/production/ProductCategoryMapEntry";
-import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
-import BoardProduction from "../../../model/production/BoardProduction";
+import ProductCategoryMapEntry from "../../../../model/production/ProductCategoryMapEntry";
+import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCategory";
+import BoardProduction from "../../../../model/production/BoardProduction";
 
 
 interface EditCategoryModalProps {

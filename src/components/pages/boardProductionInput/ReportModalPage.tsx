@@ -9,11 +9,11 @@ import {
 } from "react-bootstrap";
 import "../../pages/MyStyle.css";
 import ReportData from "../../../model/ReportData";
-import { ShiftList } from "./FetchShiftList";
+import { ShiftList } from "./productComponents/FetchShiftList";
 import Shift from "../../../model/Shift";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
-import { GypsumBoardList } from "./FetchGypsumBoard";
-import EditCategoryModal from "./EditCategoryModal";
+import { GypsumBoardList } from "./productComponents/FetchGypsumBoard";
+import EditCategoryModal from "./productComponents/EditCategoryModal";
 import "react-datepicker/dist/react-datepicker.css";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -24,12 +24,14 @@ import 'dayjs/locale/ru';
 import BoardProduction from "../../../model/production/BoardProduction";
 import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import Delays from "../../../model/delays/Delays";
-import CategoriesTable from "./CategoriesTable";
-import DelaysTable from "./DelaysTable";
-import EditDelayModal from "./EditDelayModal";
+import CategoriesTable from "./productComponents/CategoriesTable";
+import DelaysTable from "./delayComponents/DelaysTable";
+import EditDelayModal from "./delayComponents/EditDelayModal";
 import dayjs from "dayjs";
 import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
 import DefectsTable from "./DefectsTable";
+import ProductionList from "../../../model/production/ProductionList";
+import FetchCategories from "./productComponents/FetchCategories";
 // import utc from 'dayjs/plugin/utc';
 // import timezone from 'dayjs/plugin/timezone';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -64,7 +66,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
   const [defects, setDefects] = useState<BoardDefectsLog[]>([]);
   const [seletedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
-
+  const fetcher = new FetchCategories();
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -133,7 +135,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   };
 
   const handleDelayUpdate = (updatedDelay: Delays): void => {
-    
+
     if (report) {
       const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
         report.product,
@@ -148,7 +150,34 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     }
   };
 
-  const handleDefectUpdate = (updatedDefect: BoardDefectsLog): void => {
+  //     if (startDate && endDate && selectedShift && selectedProduct ) {
+  //       if (!reportData) {
+  //     const newProductionLog = new ProductionList(
+  //       -1,
+  //       startDate,
+  //       endDate,
+  //       new Date(),
+  //       selectedShift,
+  //       await fetcher.getProductionType()
+  //     );
+  //     const newReport = new ReportData(
+  //       selectedProduct,
+  //       newProductionLog,
+  //       selectedCategory,
+  //       delays,
+  //       setDefects(defects.push())
+  //     )
+  //   }
+  //   // }
+  //   const newDefect = new BoardDefectsLog(
+  //     -1,
+  //     newProductionLog,
+
+  //   )
+  // };
+
+  const handleDefectUpdate = async (updatedDefect: BoardDefectsLog): Promise<void> => {
+
     if (report) {
       const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
         report.product,
@@ -157,11 +186,34 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
         delays,
         defects
       );
-
       updatedReport.updateDefect(updatedDefect);
       setReport(updatedReport);
+    } else {
+      if (startDate && selectedShift && selectedCategory) {
+        if (startDate && endDate && selectedShift && selectedProduct) {
+          if (!reportData) {
+            const newProductionLog = new ProductionList(
+              -1,
+              startDate,
+              endDate,
+              new Date(),
+              selectedShift,
+              await fetcher.getProductionType()
+            );
+            const newReport = new ReportData(
+              selectedProduct,
+              newProductionLog,
+              tableData,
+              delays,
+              defects);
+            newReport.updateDefect(updatedDefect);
+            setReport(newReport);
+          }
+        }
+      }
     }
   }
+
 
   const updateReportData = () => {
     if (report) {
@@ -283,7 +335,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   <DelaysTable delays={delays} handleEditDelay={handleEditDelay} />
                 </Row>
                 <Row className="justify-content-center">
-                  <Button type="button" variant="outline-primary" size="sm" style={{width: '150px'}} onClick={() => {
+                  <Button type="button" variant="outline-primary" size="sm" style={{ width: '150px' }} onClick={() => {
                     //alert('Установлена дата и время окончания ' + endDate);
                     setEditDelayShow(true);
                   }}>
@@ -294,7 +346,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                   <DefectsTable defects={defects} handleEditDefects={handleEditDefect} />
                 </Row>
                 <Row className="justify-content-center">
-                  <Button type="button" variant="outline-primary" size="sm" style={{width: '150px'}} onClick={() => {
+                  <Button type="button" variant="outline-primary" size="sm" style={{ width: '150px' }} onClick={() => {
                     //alert('Установлена дата и время окончания ' + endDate);
                     setEditDefectsShow(true);
                   }}>

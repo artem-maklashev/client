@@ -5,15 +5,15 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Stack } from "@mui/material";
 import dayjs from 'dayjs';
 import FetchDelaysData from "./FetchDelaysData";
-import Division from "../../../model/delays/Division";
-import ProductionArea from "../../../model/delays/ProductionArea";
-import Delays from "../../../model/delays/Delays";
-import Unit from "../../../model/delays/Unit";
-import UnitPart from "../../../model/delays/UnitPart";
-import Product from "../../../model/Product";
-import Shift from "../../../model/Shift";
-import DelayType from "../../../model/delays/DelayType";
-import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
+import Division from "../../../../model/delays/Division";
+import ProductionArea from "../../../../model/delays/ProductionArea";
+import Delays from "../../../../model/delays/Delays";
+import Unit from "../../../../model/delays/Unit";
+import UnitPart from "../../../../model/delays/UnitPart";
+import Product from "../../../../model/Product";
+import Shift from "../../../../model/Shift";
+import DelayType from "../../../../model/delays/DelayType";
+import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 
 interface EditDelayModalProps {
     show: boolean;

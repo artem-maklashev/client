@@ -1,7 +1,7 @@
 import { Button, Table } from "react-bootstrap";
 import React from "react";
 import { TiEdit } from "react-icons/ti";
-import Delays from "../../../model/delays/Delays";
+import Delays from "../../../../model/delays/Delays";
 
 interface DelaysTableProps {
     delays: Delays[];
