@@ -28,6 +28,8 @@ import CategoriesTable from "./CategoriesTable";
 import DelaysTable from "./DelaysTable";
 import EditDelayModal from "./EditDelayModal";
 import dayjs from "dayjs";
+import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
+import DefectsTable from "./DefectsTable";
 // import utc from 'dayjs/plugin/utc';
 // import timezone from 'dayjs/plugin/timezone';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -53,12 +55,15 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   const [selectedCategory, setSelectedCategory] = useState<BoardProduction | null>(null);
   const [editCategoryShow, setEditCategoryShow] = useState(false);
   const [editDelayShow, setEditDelayShow] = useState(false);
+  const [editDefectsShow, setEditDefectsShow] = useState(false);
   const [tableData, setTableData] = useState<BoardProduction[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [report, setReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [delays, setDelays] = useState<Delays[]>([]);
   const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
+  const [defects, setDefects] = useState<BoardDefectsLog[]>([]);
+  const [seletedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
 
 
   const getName = (gboard: GypsumBoard) => {
@@ -86,6 +91,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       setEndDate(reportData.productionList.productionFinish);
       setDelays(reportData.delays);
       setReport(reportData);
+      setDefects(reportData.defectsLogs);
+      setDefects(reportData.defectsLogs);
     }
   }, [show, reportData]);
 
@@ -103,13 +110,21 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     setEditDelayShow(true);
   }
 
+  const handleEditDefect = (defect: BoardDefectsLog) => {
+    setSelectedDefect(defect);
+    setEditDefectsShow(true);
+  }
+
+
+
   const handleCategoryUpdate = (updatedCategory: BoardProduction): void => {
     if (report) {
       const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
         report.product,
         report.productionList,
         tableData,
-        delays
+        delays,
+        defects
       );
 
       updatedReport.updateProductions(updatedCategory);
@@ -118,18 +133,35 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   };
 
   const handleDelayUpdate = (updatedDelay: Delays): void => {
+    
     if (report) {
       const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
         report.product,
         report.productionList,
         tableData,
-        delays
+        delays,
+        defects
       );
 
       updatedReport.updateDelays(updatedDelay);
       setReport(updatedReport);
     }
   };
+
+  const handleDefectUpdate = (updatedDefect: BoardDefectsLog): void => {
+    if (report) {
+      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
+        report.product,
+        report.productionList,
+        tableData,
+        delays,
+        defects
+      );
+
+      updatedReport.updateDefect(updatedDefect);
+      setReport(updatedReport);
+    }
+  }
 
   const updateReportData = () => {
     if (report) {
@@ -144,7 +176,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
         updatedProduct,
         updatedProductionList,
         tableData,
-        delays
+        delays,
+        defects
       );
 
       setReport(updatedReport);
@@ -255,6 +288,17 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
                     setEditDelayShow(true);
                   }}>
                     Добавить простой
+                  </Button>
+                </Row>
+                <Row>
+                  <DefectsTable defects={defects} handleEditDefects={handleEditDefect} />
+                </Row>
+                <Row className="justify-content-center">
+                  <Button type="button" variant="outline-primary" size="sm" style={{width: '150px'}} onClick={() => {
+                    //alert('Установлена дата и время окончания ' + endDate);
+                    setEditDefectsShow(true);
+                  }}>
+                    Добавить дефекты
                   </Button>
                 </Row>
               </Col>

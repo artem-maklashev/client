@@ -17,28 +17,29 @@ const DelaysTable: React.FC<DelaysTableProps> = ({
         <h3 className="text-center">
             Простои
         </h3>
-        <Table striped bordered hover size="sm" responsive>
+        <Table striped bordered hover size="sm" responsive variant="dark">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    
                     <th>Время начала</th>
                     <th>Время окончания</th>
                     <th>Длительность </th>
-                    <th>Смена</th>
+                    
                     <th>Деталь</th>
                     <th>Оборудование/Причина</th>
                     <th>Участок</th>
+                    <th>Редактировать</th>
                 </tr>
             </thead>
             <tbody>
                 {delays.length > 0 ? (
                     delays.map((entry) => (
                         <tr key={entry.id}>
-                            <td>{entry.id}</td>
+                            
                             <td>{new Date(entry.startTime).toLocaleString()}</td>
                             <td>{new Date(entry.endTime).toLocaleString()}</td>
                             <td>{(new Date(entry.endTime).getTime()- new Date(entry.startTime).getTime())/(1000*60)}</td>
-                            <td>{entry.shift.name}</td>                            
+                                                       
                             <td>{entry.unitPart.name}</td>
                             <td>{entry.unitPart.unit.name}</td>
                             <td>{entry.unitPart.unit.productionArea.name}</td>                            

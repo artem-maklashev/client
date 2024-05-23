@@ -1,21 +1,25 @@
 import Product from "./Product";
+import BoardDefectsLog from "./defects/BoardDefectsLog";
 import AllDelays from "./delays/AllDalays";
 import ProductCategories from "./production/ProductCategories";
 import Production from "./production/Production";
 import ProductionList from "./production/ProductionList";
 
 class ReportData<T extends Product, U extends ProductCategories, V extends Production<U, T>, X extends AllDelays<T>> {
+    
     productionList: ProductionList;
     product!: T;
     productions: V[];
     delays: X[];
+    defectsLogs: BoardDefectsLog[];
 
 
-    constructor(product: T, productionList: ProductionList, productions: V[], delays?: X[]) {
+    constructor(product: T, productionList: ProductionList, productions: V[], delays?: X[], defects?: BoardDefectsLog[]) {
         this.product = product;
         this.productionList = productionList;
         this.productions = productions;
         this.delays = delays || [];
+        this.defectsLogs = defects || [];
     }
 
     /**
@@ -46,6 +50,17 @@ class ReportData<T extends Product, U extends ProductCategories, V extends Produ
         });
         return this;
     }
+
+    updateDefect(defect: BoardDefectsLog) {
+        this.defectsLogs.map((entry) => {
+            if (entry.id === defect.id) {
+                return defect;
+            } else {
+                return entry;
+            }
+        });
+        return this;
+      }
 
 }
 

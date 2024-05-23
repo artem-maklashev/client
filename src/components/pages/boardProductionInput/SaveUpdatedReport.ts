@@ -1,4 +1,5 @@
 import ReportData from "../../../model/ReportData";
+import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
 import Delays from "../../../model/delays/Delays";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
