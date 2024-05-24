@@ -4,9 +4,9 @@ import Defects from "../../../../model/defects/Defects";
 import { api } from "../../../../service/Api";
 
 class FetchDefectData {
-    async getDefectTypes(defectReasonId: number) {
+    async getDefectTypes() {
         try {
-            const response = await api.get(`${process.env.REACT_APP_API_URL}/defectTypes/${defectReasonId}`);
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/defectTypes`);
             return response.data as DefectTypes[];
         } catch (error) {
             console.error('Ошибка при получении данных о типах дефекта', error);

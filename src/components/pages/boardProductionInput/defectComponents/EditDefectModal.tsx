@@ -41,8 +41,8 @@ const EditDefectModal: React.FC<EditDefectModalProps> = ({
         }
     }
 
-    const fetchDefectTypes = async (defectReasonId: number) => {
-        const types = await fetcher.getDefectTypes(defectReasonId);
+    const fetchDefectTypes = async () => {
+        const types = await fetcher.getDefectTypes();
         setDefectTypeList(types);
         if (types.length > 0 && !defect) {
             setDefectType(types[0]);
@@ -89,7 +89,7 @@ const EditDefectModal: React.FC<EditDefectModalProps> = ({
 
     useEffect(() => {
         if (reason) {
-            fetchDefectTypes(reason.id);
+            fetchDefectTypes();
         } else {
             setDefectTypeList([]);
         }
