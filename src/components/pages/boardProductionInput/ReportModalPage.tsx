@@ -32,6 +32,7 @@ import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
 import DefectsTable from "./DefectsTable";
 import ProductionList from "../../../model/production/ProductionList";
 import FetchCategories from "./productComponents/FetchCategories";
+import EditDefectModal from "./defectComponents/EditDefectModal";
 // import utc from 'dayjs/plugin/utc';
 // import timezone from 'dayjs/plugin/timezone';
 // import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -150,32 +151,6 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
     }
   };
 
-  //     if (startDate && endDate && selectedShift && selectedProduct ) {
-  //       if (!reportData) {
-  //     const newProductionLog = new ProductionList(
-  //       -1,
-  //       startDate,
-  //       endDate,
-  //       new Date(),
-  //       selectedShift,
-  //       await fetcher.getProductionType()
-  //     );
-  //     const newReport = new ReportData(
-  //       selectedProduct,
-  //       newProductionLog,
-  //       selectedCategory,
-  //       delays,
-  //       setDefects(defects.push())
-  //     )
-  //   }
-  //   // }
-  //   const newDefect = new BoardDefectsLog(
-  //     -1,
-  //     newProductionLog,
-
-  //   )
-  // };
-
   const handleDefectUpdate = async (updatedDefect: BoardDefectsLog): Promise<void> => {
 
     if (report) {
@@ -234,6 +209,17 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
 
       setReport(updatedReport);
       onSave(updatedReport);
+    }
+
+    const createProductionList = async () => {
+      // const newProductionLog = new ProductionList(
+      //   -1,
+      //   new Date(),
+      //   new Date(),
+      //   new Date(),
+      //   selectedShift,
+      //   await fetcher.getProductionType()
+      // );
     }
   }
 
@@ -389,6 +375,16 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
           handleDelayUpdate(updatedDelay);
           setEditDelayShow(false);
         }}
+      />
+      <EditDefectModal
+        show={editDefectsShow}
+        defect={seletedDefect}
+        onHide={() => setEditDefectsShow(false)}
+        onSave={(updatedDefect) => {
+          handleDefectUpdate(updatedDefect);
+          setEditDefectsShow(false);
+        }
+        }
       />
     </Modal>
   );
