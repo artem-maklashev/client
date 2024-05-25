@@ -96,7 +96,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       setReport(reportData);
       setDefects(reportData.defectsLogs);
       setDefects(reportData.defectsLogs);
-    }
+    } //добавить начальные значения если новый отчет
   }, [show, reportData]);
 
   if (!reportData) {
@@ -136,56 +136,51 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   };
 
   const handleDelayUpdate = (updatedDelay: Delays): void => {
-
-    if (report) {
-      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
-        report.product,
-        report.productionList,
-        tableData,
-        delays,
-        defects
-      );
-
-      updatedReport.updateDelays(updatedDelay);
-      setReport(updatedReport);
+    // Найти элемент по id
+    const findIndex = delays.findIndex((delay) => delay.id === updatedDelay.id);
+  
+    if (findIndex !== -1) {
+      // Если найден, обновить элемент
+      delays[findIndex] = updatedDelay;
+    } else {
+      // Если не найден, создать новый id
+      updatedDelay.id = (() => {
+        let min = delays[0].id;
+        delays.forEach((delay) => {
+          if (delay.id < min) {
+            min = delay.id;
+          }
+        });
+        return min - 1;
+      })();
+      // Добавить новый элемент
+      delays.push(updatedDelay);
     }
   };
+  
 
   const handleDefectUpdate = async (updatedDefect: BoardDefectsLog): Promise<void> => {
-
-    if (report) {
-      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
-        report.product,
-        report.productionList,
-        tableData,
-        delays,
-        defects
-      );
-      updatedReport.updateDefect(updatedDefect);
-      setReport(updatedReport);
-    } else {
-      if (startDate && selectedShift && selectedCategory) {
-        if (startDate && endDate && selectedShift && selectedProduct) {
-          if (!reportData) {
-            const newProductionLog = new ProductionList(
-              -1,
-              startDate,
-              endDate,
-              new Date(),
-              selectedShift,
-              await fetcher.getProductionType()
-            );
-            const newReport = new ReportData(
-              selectedProduct,
-              newProductionLog,
-              tableData,
-              delays,
-              defects);
-            newReport.updateDefect(updatedDefect);
-            setReport(newReport);
+    const find = defects.find((isFind) => isFind.id === updatedDefect.id);
+    if (!find) {
+      updatedDefect.id = (() => {
+        let max = delays[0].id;
+        defects.forEach((defect) => {
+          if (defect.id > max) {
+            max = defect.id;
           }
+        });
+        return max + 1;
+      })();
+    }
+    if (defects.length > 0) {
+      defects.forEach((defect) => {
+        if (defect.id === updatedDefect.id) {
+          defect.defects = updatedDefect.defects;
+          defect.value = updatedDefect.value;
         }
-      }
+      })
+    } else {
+      defects.push(updatedDefect);
     }
   }
 

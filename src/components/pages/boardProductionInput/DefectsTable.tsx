@@ -19,9 +19,9 @@ const DefectsTable: React.FC<DefectsTableProps> = ({
         </h3>
         <Table striped bordered hover size="sm" responsive variant="dark">
             <thead>
-                <tr>                    
-                    <th>Тип дефекта</th>
-                    <th>Причина дефекта</th>                    
+                <tr>   
+                <th>Причины дефекта</th>                 
+                    <th>Тип дефекта</th>                                       
                     <th>Количество </th>
                    <th>Редактировать</th>
                 </tr>
@@ -30,10 +30,9 @@ const DefectsTable: React.FC<DefectsTableProps> = ({
                 {defects.length > 0 ? (
                     defects.map((entry) => (
                         <tr key={entry.id}>
-                            <td>{entry.defects.defectTypes.name}</td>
                             <td>{entry.defects.defectReason.name}</td>
-                            <td>{entry.value}</td>
-                        
+                            <td>{entry.defects.defectTypes.name}</td>                            
+                            <td>{entry.value}</td>                        
                             <td>
                                 <Button
                                     variant="secondary"

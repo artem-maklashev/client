@@ -78,6 +78,14 @@ const EditDefectModal: React.FC<EditDefectModalProps> = ({
             //     }
             // }
             onHide();
+        } else {
+            const newDefect = new BoardDefectsLog(
+                -1,                
+                value,
+                selecteddefect!
+            );
+            onSave(newDefect);
+            onHide();
         }
     }
 
