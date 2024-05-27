@@ -10,7 +10,6 @@ import ProductionArea from "../../../../model/delays/ProductionArea";
 import Delays from "../../../../model/delays/Delays";
 import Unit from "../../../../model/delays/Unit";
 import UnitPart from "../../../../model/delays/UnitPart";
-import Product from "../../../../model/Product";
 import Shift from "../../../../model/Shift";
 import DelayType from "../../../../model/delays/DelayType";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
@@ -32,13 +31,13 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
     onHide,
     onSave
 }) => {
-    const [startTime, setStartTime] = useState<Date>(delay ? delay.startTime : new Date());
-    const [endTime, setEndTime] = useState<Date>(delay ? delay.endTime : new Date());
-    const [division, setDivision] = useState<Division | null>(delay ? delay.unitPart.unit.productionArea.division : null);
-    const [productionArea, setProductionArea] = useState<ProductionArea | null>(delay ? delay.unitPart.unit.productionArea : null);
-    const [unit, setUnit] = useState<Unit | null>(delay?.unitPart.unit || null);
-    const [unitPart, setUnitPart] = useState<UnitPart | null>(delay?.unitPart || null);
-    const [selectedDelayType, setSelectedDelayType] = useState<DelayType | null>(delay ? delay.delayType : null);
+    const [startTime, setStartTime] = useState<Date>(new Date());
+    const [endTime, setEndTime] = useState<Date>(new Date());
+    const [division, setDivision] = useState<Division | null>(null);
+    const [productionArea, setProductionArea] = useState<ProductionArea | null>(null);
+    const [unit, setUnit] = useState<Unit | null>(null);
+    const [unitPart, setUnitPart] = useState<UnitPart | null>(null);
+    const [selectedDelayType, setSelectedDelayType] = useState<DelayType | null>(null);
 
     const [divisionList, setDivisionList] = useState<Division[]>([]);
     const [productionAreaList, setProductionAreaList] = useState<ProductionArea[]>([]);
@@ -164,6 +163,24 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
         }
     }, [show, delay, delayTypeList]);
 
+    useEffect(() => {
+        if (productionAreaList.length > 0 && !productionArea) {
+            setProductionArea(productionAreaList[0]);
+        }
+    }, [productionAreaList]);
+
+    useEffect(() => {
+        if (unitList.length > 0 && !unit) {
+            setUnit(unitList[0]);
+        }
+    }, [unitList]);
+
+    useEffect(() => {
+        if (unitPartList.length > 0 && !unitPart) {
+            setUnitPart(unitPartList[0]);
+        }
+    }, [unitPartList]);
+
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
@@ -171,7 +188,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
             </Modal.Header>
             <Modal.Body>
                 <Form.Group>
-                    <Form.Label>Дата и время начала простоя:</Form.Label>
+                    <Form.Label><strong>Дата и время начала простоя:</strong></Form.Label>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
                         <Stack spacing={3}>
                             <MobileTimePicker
@@ -195,7 +212,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     </LocalizationProvider>
                 </Form.Group>
                 <Form.Group controlId="endTime">
-                    <Form.Label>Время окончания:</Form.Label>
+                    <Form.Label><strong>Время окончания:</strong></Form.Label>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
                         <Stack spacing={3}>
                             <MobileTimePicker
@@ -219,7 +236,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     </LocalizationProvider>
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Тип простоя</Form.Label>
+                    <Form.Label><strong>Тип простоя</strong></Form.Label>
                     <Form.Select
                         value={selectedDelayType?.id || 0}
                         onChange={(e) => {
@@ -236,7 +253,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     </Form.Select>
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Подразделение</Form.Label>
+                    <Form.Label><strong>Подразделение</strong></Form.Label>
                     <Form.Select
                         value={division?.id || 0}
                         onChange={(e) => {
@@ -253,7 +270,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     </Form.Select>
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Участок</Form.Label>
+                    <Form.Label><strong>Участок</strong></Form.Label>
                     <Form.Select
                         value={productionArea?.id || ''}
                         onChange={(e) => {
@@ -270,7 +287,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     </Form.Select>
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Оборудование или причина</Form.Label>
+                    <Form.Label><strong>Оборудование или причина</strong></Form.Label>
                     <Form.Select
                         value={unit?.id || ''}
                         onChange={(e) => {
@@ -287,7 +304,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     </Form.Select>
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Деталь</Form.Label>
+                    <Form.Label><strong>Деталь</strong></Form.Label>
                     <Form.Select
                         value={unitPart?.id || ''}
                         onChange={(e) => {

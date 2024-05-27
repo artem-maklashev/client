@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const baseURL = process.env.REACT_APP_API_URL; // Замените на ваш URL API
 
@@ -24,6 +25,28 @@ export const setAuthToken = (token: string | null): void => {
         api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('authToken')}`;
     } else {
         delete api.defaults.headers.common['Authorization'];
+    }
+};
+
+interface MyJwtPayload {
+    sub: string;
+    roles: string;
+    approved: boolean;
+    iat: number;
+    exp: number;
+}
+
+export const getUserRole = (): string | null => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+        // Используйте интерфейс для типизации декодированного токена
+        const decodedToken = jwtDecode<MyJwtPayload>(token);
+        return decodedToken.roles; // Предполагая, что роль пользователя находится в свойстве roles
+    } catch (error) {
+        console.error('Failed to decode token:', error);
+        return null;
     }
 };
 

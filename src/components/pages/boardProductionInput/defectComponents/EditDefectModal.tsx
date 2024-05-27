@@ -1,4 +1,3 @@
-import Delays from "../../../../model/delays/Delays";
 import BoardDefectsLog from "../../../../model/defects/BoardDefectsLog";
 import React, { useEffect, useState } from "react";
 import ProductionList from "../../../../model/production/ProductionList";
@@ -21,9 +20,9 @@ const EditDefectModal: React.FC<EditDefectModalProps> = ({
     onHide,
     onSave
 }) => {
-    const [productionList, setProductionList] = useState<ProductionList | null>(null);
+    // const [productionList, setProductionList] = useState<ProductionList | null>(null);
     const [value, setValue] = useState<number>(0);
-    const [newDefect, setDefect] = useState<Defects | null>(null);
+    // const [newDefect, setDefect] = useState<Defects | null>(null);
     const [reasonList, setReasonList] = useState<DefectReason[]>([]);
     const [reason, setReason] = useState<DefectReason | null>(defect ? defect.defects.defectReason : null);
     const [defectTypeList, setDefectTypeList] = useState<DefectTypes[]>([]);
