@@ -13,6 +13,7 @@ import UnitPart from "../../../../model/delays/UnitPart";
 import Shift from "../../../../model/Shift";
 import DelayType from "../../../../model/delays/DelayType";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
+import { getUserRole } from "../../../../service/Api";
 
 interface EditDelayModalProps {
     show: boolean;
@@ -325,7 +326,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                 <Button variant="secondary" onClick={onHide}>
                     Отмена
                 </Button>
-                <Button variant="primary" onClick={handleSave}>
+                <Button variant="primary" onClick={handleSave} disabled={getUserRole()=== 'USER' || 'ADMIN' ? false : true }>
                     Сохранить
                 </Button>
             </Modal.Footer>
