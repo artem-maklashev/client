@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { DateTimePicker, LocalizationProvider, MobileTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -46,47 +46,53 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
     const [unitPartList, setUnitPartList] = useState<UnitPart[]>([]);
     const [delayTypeList, setDelayTypeList] = useState<DelayType[]>([]);
 
-    const fetcher = new FetchDelaysData();
+    const fetcher = useMemo(() => new FetchDelaysData(), []);
 
-    const fetchDivisions = async () => {
-        const divisions = await fetcher.getDivisions();
-        setDivisionList(divisions);
-        if (divisions.length > 0 && !division) {
-            setDivision(divisions[0]);
+    const fetchDivisions = useCallback(async () => {
+        if (!division) {
+            const divisions = await fetcher.getDivisions();
+            setDivisionList(divisions);
+            if (divisions.length > 0 && !division) {
+                setDivision((prevDivision) => prevDivision || divisions[0]);
+            }
         }
-    };
+    }, [division, fetcher]);
 
-    const fetchProductionAreas = async (divisionId: number) => {
+    const fetchProductionAreas = useCallback(async (divisionId: number) => {
         const productionAreas = await fetcher.getProductionArea(divisionId);
         setProductionAreaList(productionAreas);
         if (productionAreas.length > 0 && !productionArea) {
             setProductionArea(productionAreas[0]);
         }
-    };
+    }, [productionArea, fetcher]);
 
-    const fetchUnits = async (productionAreaId: number) => {
-        const units = await fetcher.getUnit(productionAreaId);
-        setUnitList(units);
-        if (units.length > 0 && !unit) {
-            setUnit(units[0]);
+    const fetchUnits = useCallback(async (productionAreaId: number) => {
+        if (productionAreaId) {
+            const units = await fetcher.getUnit(productionAreaId);
+            setUnitList(units);
+            if (units.length > 0 && !unit) {
+                setUnit(units[0]);
+            }
+        } else {
+            setUnit(null);
         }
-    };
+    }, [unit, fetcher]);
 
-    const fetchUnitParts = async (unitId: number) => {
+    const fetchUnitParts = useCallback(async (unitId: number) => {
         const unitParts = await fetcher.getUnitPart(unitId);
         setUnitPartList(unitParts);
         if (unitParts.length > 0 && !unitPart) {
-            setUnitPart(unitParts[0]);
+            setUnitPart((prevUnitPart) => prevUnitPart || unitParts[0]);
         }
-    };
+    }, [unitPart, fetcher]);
 
-    const fetchDelayTypes = async () => {
+    const fetchDelayTypes = useCallback(async () => {
         const delayTypes = await fetcher.getDelayTypes();
         setDelayTypeList(delayTypes);
         if (delayTypes.length > 0 && !selectedDelayType) {
             setSelectedDelayType(delayTypes[0]);
         }
-    };
+    }, [selectedDelayType, fetcher]);
 
     const handleSave = () => {
         if (delay) {
@@ -115,34 +121,54 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
 
     useEffect(() => {
         if (show) {
-            fetchDivisions();
-            fetchDelayTypes();
+            setDivision(null);
+            setProductionArea(null);
+            setUnit(null);
+            setUnitPart(null);
+            setSelectedDelayType(null);
+
+            // fetchDivisions();
+            // fetchDelayTypes();
         }
     }, [show]);
+    useEffect(() => {
+        const updateDivision = async () => {
+            if (!division) {
+                fetchDivisions();
+            }
+        }
+        updateDivision();
+    }, [division, fetchDivisions]);
 
     useEffect(() => {
-        if (division) {
-            fetchProductionAreas(division.id);
-        } else {
-            setProductionAreaList([]);
-        }
-    }, [division]);
+        const updateProductionAreas = async () => {
+            if (!productionArea && division) {
+                await fetchProductionAreas(division.id);
+                setUnit(null);
+            }
+        };
+        updateProductionAreas();
+    }, [division, fetchProductionAreas]);
 
     useEffect(() => {
-        if (productionArea) {
-            fetchUnits(productionArea.id);
-        } else {
-            setUnitList([]);
-        }
-    }, [productionArea]);
+        const updateUnits = async () => {
+            if (productionArea) {
+                await fetchUnits(productionArea.id);
+            } else {
+                setUnit(null);
+            }
+        };
+        updateUnits();
+    }, [productionArea, fetchUnits]);
 
     useEffect(() => {
-        if (unit) {
-            fetchUnitParts(unit.id);
-        } else {
-            setUnitPartList([]);
-        }
-    }, [unit]);
+        const updateUnitParts = async () => {
+            if (unit) {
+                await fetchUnitParts(unit.id);
+            }
+        };
+        updateUnitParts();
+    }, [unit, fetchUnitParts]);
 
     useEffect(() => {
         if (show && delay) {
@@ -163,24 +189,6 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
             setSelectedDelayType(delayTypeList[0] || null);
         }
     }, [show, delay, delayTypeList]);
-
-    useEffect(() => {
-        if (productionAreaList.length > 0 && !productionArea) {
-            setProductionArea(productionAreaList[0]);
-        }
-    }, [productionAreaList]);
-
-    useEffect(() => {
-        if (unitList.length > 0 && !unit) {
-            setUnit(unitList[0]);
-        }
-    }, [unitList]);
-
-    useEffect(() => {
-        if (unitPartList.length > 0 && !unitPart) {
-            setUnitPart(unitPartList[0]);
-        }
-    }, [unitPartList]);
 
     return (
         <Modal show={show} onHide={onHide}>
@@ -257,10 +265,13 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     <Form.Label><strong>Подразделение</strong></Form.Label>
                     <Form.Select
                         value={division?.id || 0}
-                        onChange={(e) => {
+                        onChange={async (e) => {
                             const selectedDivisionId = parseInt(e.target.value);
                             const foundDivision = divisionList.find((division) => division.id === selectedDivisionId);
                             setDivision(foundDivision || null);
+                            if (foundDivision) {
+                                await fetchProductionAreas(foundDivision.id);
+                            }
                         }}
                     >
                         {divisionList.map((division) => (
@@ -274,10 +285,13 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     <Form.Label><strong>Участок</strong></Form.Label>
                     <Form.Select
                         value={productionArea?.id || ''}
-                        onChange={(e) => {
+                        onChange={async (e) => {
                             const selectedProductionAreaId = parseInt(e.target.value);
                             const foundProductionArea = productionAreaList.find((area) => area.id === selectedProductionAreaId);
                             setProductionArea(foundProductionArea || null);
+                            if (foundProductionArea) {
+                                await fetchUnits(foundProductionArea.id);
+                            }
                         }}
                     >
                         {productionAreaList.map((area) => (
@@ -291,10 +305,13 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                     <Form.Label><strong>Оборудование или причина</strong></Form.Label>
                     <Form.Select
                         value={unit?.id || ''}
-                        onChange={(e) => {
+                        onChange={async (e) => {
                             const selectedUnitId = parseInt(e.target.value);
                             const foundUnit = unitList.find((unit) => unit.id === selectedUnitId);
                             setUnit(foundUnit || null);
+                            if (foundUnit) {
+                                await fetchUnitParts(foundUnit.id);
+                            }
                         }}
                     >
                         {unitList.map((unit) => (
@@ -326,7 +343,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                 <Button variant="secondary" onClick={onHide}>
                     Отмена
                 </Button>
-                <Button variant="primary" onClick={handleSave} disabled={getUserRole()=== 'USER' || 'ADMIN' ? false : true }>
+                <Button variant="primary" onClick={handleSave} disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' ? false : true}>
                     Сохранить
                 </Button>
             </Modal.Footer>
