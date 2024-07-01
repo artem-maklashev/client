@@ -53,7 +53,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
             const divisions = await fetcher.getDivisions();
             setDivisionList(divisions);
             if (divisions.length > 0 && !division) {
-                setDivision((prevDivision) => prevDivision || divisions[0]);
+                setDivision((prevDivision: any) => prevDivision || divisions[0]);
             }
         }
     }, [division, fetcher]);
