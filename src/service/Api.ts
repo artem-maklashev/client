@@ -37,7 +37,7 @@ interface MyJwtPayload {
 }
 
 export const getUserRole = (): string | null => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (!token) return null;
 
     try {
