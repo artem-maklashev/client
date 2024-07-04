@@ -3,7 +3,7 @@ import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import ReportData from "../../../../model/ReportData";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import ReportModalPage from "../ReportModalPage";
-import { TiEdit } from "react-icons/ti";
+import { TiEdit, TiTrash } from "react-icons/ti";
 import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCategory";
 import { saveUpdatedReport } from "../SaveUpdatedReport";
 import BoardProduction from "../../../../model/production/BoardProduction";
@@ -53,7 +53,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
       setShowModal(false);
     }
 
-  }
+  }  
 
   return (
     <Container fluid className="mt-5">
@@ -121,6 +121,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                       >
                         <TiEdit />
                       </Button>
+                     
                     </td>
                   </tr>
                 )) :

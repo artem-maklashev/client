@@ -154,10 +154,18 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
         return min - 1;
       })();
       // Добавить новый элемент
-      delays.push(updatedDelay);
+      delays.push(updatedDelay);      
     }
+    setDelays([...delays]);
   };
   
+const handleRemoveDelay = (removingDelay: Delays): void => {
+    // alert('Получен массив размером: ' + updatedDelays.length);
+    const updatedDelays = delays.filter((delay) => delay.id !== removingDelay.id);
+    setDelays([...updatedDelays]);
+    if (report) {
+    report.delays = updatedDelays;}
+  }
 
   const handleDefectUpdate = async (updatedDefect: BoardDefectsLog): Promise<void> => {
     const find = defects.find((isFind) => isFind.id === updatedDefect.id);
@@ -183,6 +191,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
       defects.push(updatedDefect);
     }
   }
+
+  
 
 
   const updateReportData = () => {
@@ -313,7 +323,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
               </Col>
               <Col className="col-lg-7 col-sm-12">
                 <Row>
-                  <DelaysTable delays={delays} handleEditDelay={handleEditDelay} />
+                  <DelaysTable delays={delays} handleEditDelay={handleEditDelay} handleRemoveDelay = {handleRemoveDelay}/>
                 </Row>
                 <Row className="justify-content-center">
                   <Button type="button" variant="outline-primary" size="sm" style={{ width: '150px' }} onClick={() => {
