@@ -47,13 +47,13 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
         }
         return item;
       });
-      setReportData(updatedList);      
+      setReportData(updatedList);
       console.log("обновлен список отчетов размером ", updatedList.length);
       saveUpdatedReport(updatedReport);
       setShowModal(false);
     }
 
-  }  
+  }
 
   return (
     <Container fluid className="mt-5">
@@ -72,7 +72,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                 <th> </th>
               </tr>
             </thead>
-            
+
             <tbody>
               {reportData ?
                 reportData.map((item) => (
@@ -121,7 +121,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                       >
                         <TiEdit />
                       </Button>
-                     
+
                     </td>
                   </tr>
                 )) :
@@ -131,8 +131,14 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
           </Table>
         </Col>
       </Row>
-      <ReportModalPage show={showModal} reportData={selectedItem} onHide={() => setShowModal(false)} onSave={onSave} />
-
+      <ReportModalPage
+        show={showModal}
+        reportData={selectedItem}
+        onHide={() => {
+          setShowModal(false);
+          setReportData(boardProductions)
+        }} 
+        onSave={onSave} />
     </Container>
   );
 };

@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  Button,
-  Form,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
+import { Modal, Button, Form, Col, Container, Row } from "react-bootstrap";
 import "../../pages/MyStyle.css";
 import ReportData from "../../../model/ReportData";
 import { ShiftList } from "./productComponents/FetchShiftList";
@@ -15,12 +8,12 @@ import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import { GypsumBoardList } from "./productComponents/FetchGypsumBoard";
 import EditCategoryModal from "./productComponents/EditCategoryModal";
 import "react-datepicker/dist/react-datepicker.css";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import { Stack } from "@mui/material";
-import 'dayjs/locale/ru';
+import "dayjs/locale/ru";
 import BoardProduction from "../../../model/production/BoardProduction";
 import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import Delays from "../../../model/delays/Delays";
@@ -30,29 +23,37 @@ import EditDelayModal from "./delayComponents/EditDelayModal";
 import dayjs from "dayjs";
 import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
 import DefectsTable from "./DefectsTable";
-import ProductionList from "../../../model/production/ProductionList";
-import FetchCategories from "./productComponents/FetchCategories";
 import EditDefectModal from "./defectComponents/EditDefectModal";
-// import utc from 'dayjs/plugin/utc';
-// import timezone from 'dayjs/plugin/timezone';
-// import customParseFormat from 'dayjs/plugin/customParseFormat';
-
-// dayjs.extend(utc);
-// dayjs.extend(timezone);
-// dayjs.extend(customParseFormat);
 
 interface ReportModalPageProps {
   show: boolean;
-  reportData: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null;
+  reportData: ReportData<
+    GypsumBoard,
+    GypsumBoardCategory,
+    BoardProduction,
+    Delays
+  > | null;
   onHide: () => void;
-  onSave: (reportData: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => void;
+  onSave: (
+    reportData: ReportData<
+      GypsumBoard,
+      GypsumBoardCategory,
+      BoardProduction,
+      Delays
+    >
+  ) => void;
 }
 
-// const formatLocalDateTime = (date : Date) => new Date(date.toLocaleString().slice(0, 19).replace('T',' '));
-
-const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onHide, onSave }) => {
-  const [selectedShift, setSelectedShift] = useState<Shift | null>(reportData ? reportData.productionList.shift : null);
-  const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(reportData ? (reportData.product as GypsumBoard) : null);
+const ReportModalPage: React.FC<ReportModalPageProps> = ({
+  show,
+  reportData,
+  onHide,
+  onSave,
+}) => {
+  
+  const [draftReport, setDraftReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
+  const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(null);
   const { shiftList } = ShiftList();
   const { gypsumBoardList } = GypsumBoardList();
   const [selectedCategory, setSelectedCategory] = useState<BoardProduction | null>(null);
@@ -62,12 +63,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   const [tableData, setTableData] = useState<BoardProduction[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [report, setReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [delays, setDelays] = useState<Delays[]>([]);
   const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
   const [defects, setDefects] = useState<BoardDefectsLog[]>([]);
-  const [seletedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
-  const fetcher = new FetchCategories();
+  const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
+
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -87,16 +87,22 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
 
   useEffect(() => {
     if (show && reportData) {
-      setSelectedShift(reportData.productionList.shift);
-      setSelectedProduct(reportData.product as GypsumBoard);
-      setTableData(reportData.productions);
-      setStartDate(reportData.productionList.productionStart);
-      setEndDate(reportData.productionList.productionFinish);
-      setDelays(reportData.delays);
-      setReport(reportData);
-      setDefects(reportData.defectsLogs);
-      setDefects(reportData.defectsLogs);
-    } //добавить начальные значения если новый отчет
+      const draftData = new ReportData(
+        reportData.product,
+        reportData.productionList,
+        reportData.productions,
+        reportData.delays,
+        reportData.defectsLogs
+      );
+      setDraftReport(draftData);
+      setSelectedShift(draftData.productionList.shift);
+      setSelectedProduct(draftData.product as GypsumBoard);
+      setTableData(draftData.productions);
+      setStartDate(draftData.productionList.productionStart);
+      setEndDate(draftData.productionList.productionFinish);
+      setDelays(draftData.delays);
+      setDefects(draftData.defectsLogs);
+    }
   }, [show, reportData]);
 
   if (!reportData) {
@@ -111,63 +117,66 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({ show, reportData, onH
   const handleEditDelay = (delay: Delays) => {
     setSelectedDelay(delay);
     setEditDelayShow(true);
-  }
+  };
 
   const handleEditDefect = (defect: BoardDefectsLog) => {
     setSelectedDefect(defect);
     setEditDefectsShow(true);
-  }
-
-
+  };
 
   const handleCategoryUpdate = (updatedCategory: BoardProduction): void => {
-    if (report) {
-      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
-        report.product,
-        report.productionList,
-        tableData,
-        delays,
-        defects
-      );
+    if (draftReport) {
+      const updatedReport = new ReportData<
+        GypsumBoard,
+        GypsumBoardCategory,
+        BoardProduction,
+        Delays
+      >(draftReport.product, draftReport.productionList, tableData, delays, defects);
 
       updatedReport.updateProductions(updatedCategory);
-      setReport(updatedReport);
+      setDraftReport(updatedReport);
     }
   };
 
   const handleDelayUpdate = (updatedDelay: Delays): void => {
     // Найти элемент по id
     const findIndex = delays.findIndex((delay) => delay.id === updatedDelay.id);
-  
+
     if (findIndex !== -1) {
       // Если найден, обновить элемент
       delays[findIndex] = updatedDelay;
     } else {
       // Если не найден, создать новый id
-      updatedDelay.id = (() => {
-        let min = delays[0].id;
-        delays.forEach((delay) => {
-          if (delay.id < min) {
-            min = delay.id;
-          }
-        });
-        return min - 1;
-      })();
-      // Добавить новый элемент
-      delays.push(updatedDelay);      
+      if (delays.length > 0) {
+        updatedDelay.id = (() => {
+          let min = delays[0].id;
+          delays.forEach((delay) => {
+            if (delay.id < min) {
+              min = delay.id;
+            }
+          });
+          return min - 1;
+        })();
+      }
+      // Добавить новый элемент      
+      delays.push(updatedDelay);
     }
     setDelays([...delays]);
   };
-  
-const handleRemoveDelay = (removingDelay: Delays): void => {
-    // alert('Получен массив размером: ' + updatedDelays.length);
-    const updatedDelays = delays.filter((delay) => delay.id !== removingDelay.id);
-    setDelays([...updatedDelays]);
-    if (report) {
-    report.delays = updatedDelays;}
-  }
 
-  const handleDefectUpdate = async (updatedDefect: BoardDefectsLog): Promise<void> => {
+  const handleRemoveDelay = (removingDelay: Delays): void => {
+    const updatedDelays = delays.filter(
+      (delay) => delay.id !== removingDelay.id
+    );
+    setDelays([...updatedDelays]);
+    if (draftReport) {
+      draftReport.delays = updatedDelays;
+    }
+  };
+
+  const handleDefectUpdate = async (
+    updatedDefect: BoardDefectsLog
+  ): Promise<void> => {
     const find = defects.find((isFind) => isFind.id === updatedDefect.id);
     if (!find) {
       updatedDefect.id = (() => {
@@ -186,50 +195,26 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
           defect.defects = updatedDefect.defects;
           defect.value = updatedDefect.value;
         }
-      })
+      });
     } else {
       defects.push(updatedDefect);
     }
-  }
+    setDefects([...defects]);
+  };
 
-  
-
-
-  const updateReportData = () => {
-    if (report) {
-
-      const updatedProductionList = { ...report.productionList };
-      updatedProductionList.shift = selectedShift || shiftList[0];
-      updatedProductionList.productionStart = startDate || new Date();
-      updatedProductionList.productionFinish = endDate || new Date();//(new Date(dayjs(endDate).utc(true).toISOString()) || new Date());
-      const updatedProduct = selectedProduct ?? report.product;
-
-      const updatedReport = new ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>(
-        updatedProduct,
-        updatedProductionList,
-        tableData,
-        delays,
-        defects
-      );
-
-      setReport(updatedReport);
-      onSave(updatedReport);
+  const handleSave = () => {
+    if (draftReport) {
+      onSave(draftReport);
     }
+    onHide();
+  };
 
-    const createProductionList = async () => {
-      // const newProductionLog = new ProductionList(
-      //   -1,
-      //   new Date(),
-      //   new Date(),
-      //   new Date(),
-      //   selectedShift,
-      //   await fetcher.getProductionType()
-      // );
-    }
-  }
+  const handleClose = () => {
+    onHide();
+  };
 
   return (
-    <Modal show={show} onHide={onHide} centered={true} fullscreen={true}>
+    <Modal show={show} onHide={handleClose} centered={true} fullscreen={true}>
       <Modal.Header closeButton className="custom-modal-header">
         <Modal.Title>Редактирование данных</Modal.Title>
       </Modal.Header>
@@ -239,13 +224,18 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
             <Col className="col-lg-2 col-sm-6 bordered">
               <Form.Group>
                 <Form.Label>Начало работы:</Form.Label>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale("ru")}>
-                  <Stack spacing={3}>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={dayjs.locale("ru")}
+                >
+                  <Stack                     spacing={3}>
                     <MobileDateTimePicker
                       label="Дата"
                       value={startDate ? dayjs(startDate) : null}
                       onChange={(newValue) =>
-                        setStartDate(newValue ? dayjs(newValue).toDate() : new Date())
+                        setStartDate(
+                          newValue ? dayjs(newValue).toDate() : new Date()
+                        )
                       }
                       ampm={false}
                       orientation="landscape"
@@ -257,7 +247,10 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
             <Col className="col-lg-2 col-sm-6 bordered">
               <Form.Group>
                 <Form.Label>Окончание работы:</Form.Label>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={dayjs.locale("ru")}>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={dayjs.locale("ru")}
+                >
                   <Stack spacing={3}>
                     <MobileDateTimePicker
                       label="Дата"
@@ -277,7 +270,9 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
                 <Form.Group>
                   <Form.Label>Смена</Form.Label>
                   <Form.Select
-                    value={selectedShift ? selectedShift.name : shiftList[1].name}
+                    value={
+                      selectedShift ? selectedShift.name : shiftList[1].name
+                    }
                     onChange={(e) => {
                       const selectedShiftName = e.target.value;
                       const foundShift = shiftList.find(
@@ -298,7 +293,11 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
                 <Form.Group>
                   <Form.Label>Гипсокартон</Form.Label>
                   <Form.Select
-                    value={selectedProduct ? selectedProduct.id.toString() : gypsumBoardList[0].id.toString()}
+                    value={
+                      selectedProduct
+                        ? selectedProduct.id.toString()
+                        : gypsumBoardList[0].id.toString()
+                    }
                     onChange={(e) => {
                       const selectedProductId = parseInt(e.target.value);
                       const foundGypsumBoard = gypsumBoardList.find(
@@ -308,7 +307,10 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
                     }}
                   >
                     {gypsumBoardList.map((gypsumBoard) => (
-                      <option key={gypsumBoard.id} value={gypsumBoard.id.toString()}>
+                      <option
+                        key={gypsumBoard.id}
+                        value={gypsumBoard.id.toString()}
+                      >
                         {getName(gypsumBoard)}
                       </option>
                     ))}
@@ -319,28 +321,48 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
             <Row>
               <Col className="col-lg-5 col-sm-12">
                 <h3 className="text-center">Данные по производству</h3>
-                <CategoriesTable categories={tableData} handleEditCategory={handleEditCategory} />
+                <CategoriesTable
+                  categories={tableData}
+                  handleEditCategory={handleEditCategory}
+                />
               </Col>
               <Col className="col-lg-7 col-sm-12">
                 <Row>
-                  <DelaysTable delays={delays} handleEditDelay={handleEditDelay} handleRemoveDelay = {handleRemoveDelay}/>
+                  <DelaysTable
+                    delays={delays}
+                    handleEditDelay={handleEditDelay}
+                    handleRemoveDelay={handleRemoveDelay}
+                  />
                 </Row>
                 <Row className="justify-content-center">
-                  <Button type="button" variant="outline-primary" size="sm" style={{ width: '150px' }} onClick={() => {
-                    //alert('Установлена дата и время окончания ' + endDate);
-                    setEditDelayShow(true);
-                  }}>
+                  <Button
+                    type="button"
+                    variant="outline-primary"
+                    size="sm"
+                    style={{ width: "150px" }}
+                    onClick={() => {
+                      setEditDelayShow(true);
+                    }}
+                  >
                     Добавить простой
                   </Button>
                 </Row>
                 <Row>
-                  <DefectsTable defects={defects} handleEditDefects={handleEditDefect} />
+                  <DefectsTable
+                    defects={defects}
+                    handleEditDefects={handleEditDefect}
+                  />
                 </Row>
                 <Row className="justify-content-center">
-                  <Button type="button" variant="outline-primary" size="sm" style={{ width: '150px' }} onClick={() => {
-                    //alert('Установлена дата и время окончания ' + endDate);
-                    setEditDefectsShow(true);
-                  }}>
+                  <Button
+                    type="button"
+                    variant="outline-primary"
+                    size="sm"
+                    style={{ width: "150px" }}
+                    onClick={() => {
+                      setEditDefectsShow(true);
+                    }}
+                  >
                     Добавить дефекты
                   </Button>
                 </Row>
@@ -350,14 +372,13 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
         </Container>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={handleClose}>
           Закрыть
         </Button>
-        <Button variant="primary" onClick={() => {
-          //alert('Установлена дата и время окончания ' + endDate);
-          updateReportData();
-          onHide();
-        }}>
+        <Button
+          variant="primary"
+          onClick={handleSave}
+        >
           Сохранить изменения
         </Button>
       </Modal.Footer>
@@ -383,16 +404,16 @@ const handleRemoveDelay = (removingDelay: Delays): void => {
       />
       <EditDefectModal
         show={editDefectsShow}
-        defect={seletedDefect}
+        defect={selectedDefect}
         onHide={() => setEditDefectsShow(false)}
         onSave={(updatedDefect) => {
           handleDefectUpdate(updatedDefect);
           setEditDefectsShow(false);
-        }
-        }
+        }}
       />
     </Modal>
   );
 };
 
 export default ReportModalPage;
+

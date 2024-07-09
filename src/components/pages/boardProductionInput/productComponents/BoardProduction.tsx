@@ -15,7 +15,7 @@ import NewReport from "../NewReport";
 const BoardProductionPage: React.FC = () => {
     // При использовании хука ProductionLogData, деструктурируем объект, который он возвращает
     const { productionList, } = ProductionLogData();
-    const [reposts, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>(productionList);
+    const [reports, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>(productionList);
     const [showReportModal, setShowReportModal] = useState<boolean>(false);
     const [newReport, setNewReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
 
@@ -44,21 +44,32 @@ const BoardProductionPage: React.FC = () => {
         setShowReportModal(false);
     }
 
+    const refreshProductionList = () => {
+        const updatedProductionList = ProductionLogData().productionList;
+        setReports(updatedProductionList);
+    };
+
     // Данные загружены успешно
     return (
         <Container fluid className="mt-5 mb-5" style={{ backgroundColor: 'grey' }}>
             <Row>
                 <Col className="col-12">
-                    <ProductionListTable boardProductions={reposts} />
+                    <ProductionListTable boardProductions={reports} />
 
                 </Col>
             </Row>
             <Row className="justify-content-center ">
                 <Col className="col-2">
-                    <Button onClick={() => { handleAddReport() }} style={{width: '150px'}}>Добавить отчет</Button>
+                    <Button onClick={() => { handleAddReport() }} style={{ width: '150px' }}>Добавить отчет</Button>
                 </Col>
             </Row>
-            <ReportModalPage show={showReportModal} reportData={newReport} onHide={() => setShowReportModal(false)} onSave={onSave}></ReportModalPage>
+            <ReportModalPage
+                show={showReportModal}
+                reportData={newReport}
+                onHide={() => {
+                    setShowReportModal(false);                                        
+                    refreshProductionList();
+                }} onSave={onSave}></ReportModalPage>
         </Container>
 
     );

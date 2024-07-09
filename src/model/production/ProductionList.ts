@@ -1,4 +1,3 @@
-import GypsumBoard from "../gypsumBoard/GypsumBoard";
 import Shift from "../Shift";
 import ProductTypes from "../ProductTypes";
 

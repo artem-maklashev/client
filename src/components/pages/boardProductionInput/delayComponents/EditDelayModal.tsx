@@ -47,14 +47,14 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
     const [delayTypeList, setDelayTypeList] = useState<DelayType[]>([]);
 
     const fetcher = useMemo(() => new FetchDelaysData(), []);
-    console.log(getUserRole());
-     const fetchDivisions = useCallback(async () => {
+    // console.log(getUserRole());
+    const fetchDivisions = useCallback(async () => {
         const divisions = await fetcher.getDivisions();
         setDivisionList(divisions);
 
         if (divisions.length > 0) {
             const firstDivision = divisions[0];
-            setDivision(firstDivision);
+            if (!division) {setDivision(firstDivision);}
         }
     }, [fetcher]);
 
@@ -64,7 +64,9 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
 
         if (productionAreas.length > 0) {
             const firstProductionArea = productionAreas[0];
+            if (!productionArea) {
             setProductionArea(firstProductionArea);
+            }
         }
     }, [fetcher]);
 
@@ -74,7 +76,9 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
 
         if (units.length > 0) {
             const firstUnit = units[0];
-            setUnit(firstUnit);
+            if (!unit) {
+                setUnit(firstUnit);
+            }
         }
     }, [fetcher]);
 
@@ -84,7 +88,9 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
 
         if (unitParts.length > 0) {
             const firstUnitPart = unitParts[0];
+            if (!unitPart) {
             setUnitPart(firstUnitPart);
+            }
         }
     }, [fetcher]);
 
