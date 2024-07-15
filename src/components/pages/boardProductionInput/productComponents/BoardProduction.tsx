@@ -39,10 +39,11 @@ const BoardProductionPage: React.FC = () => {
         setShowReportModal(true);
     }
 
-    const onSave = (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-        saveUpdatedReport(report);
+    const onSave = async (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
+        await saveUpdatedReport(report);
         setShowReportModal(false);
-    }
+        refreshProductionList(); // Обновить список отчетов после сохранения
+    };   
 
     const refreshProductionList = () => {
         const updatedProductionList = ProductionLogData().productionList;

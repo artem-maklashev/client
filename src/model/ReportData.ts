@@ -14,12 +14,28 @@ class ReportData<T extends Product, U extends ProductCategories, V extends Produ
     defectsLogs: BoardDefectsLog[];
 
 
-    constructor(product: T, productionList: ProductionList, productions: V[], delays?: X[], defects?: BoardDefectsLog[]) {
-        this.product = product;
-        this.productionList = productionList;
-        this.productions = productions;
-        this.delays = delays || [];
-        this.defectsLogs = defects || [];
+    constructor(
+        productOrReportData: T | ReportData<T, U, V, X>,
+        productionList?: ProductionList,
+        productions?: V[],
+        delays?: X[],
+        defects?: BoardDefectsLog[]
+    ) {
+        if (productOrReportData instanceof ReportData) {
+            // Если передан объект ReportData, копируем его свойства
+            this.product = productOrReportData.product;
+            this.productionList = { ...productOrReportData.productionList };
+            this.productions = productOrReportData.productions.map(p => ({ ...p }));
+            this.delays = productOrReportData.delays.map(d => ({ ...d }));
+            this.defectsLogs = productOrReportData.defectsLogs.map(dl => ({ ...dl }));
+        } else {
+            // Если переданы отдельные параметры, инициализируем свойства напрямую
+            this.product = productOrReportData;
+            this.productionList = productionList!;
+            this.productions = productions || [];
+            this.delays = delays || [];
+            this.defectsLogs = defects || [];
+        }
     }
 
     /**

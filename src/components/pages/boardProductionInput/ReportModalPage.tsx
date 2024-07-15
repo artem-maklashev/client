@@ -87,13 +87,14 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   useEffect(() => {
     if (show && reportData) {
-      const draftData = new ReportData(
-        reportData.product,
-        reportData.productionList,
-        reportData.productions,
-        reportData.delays,
-        reportData.defectsLogs
-      );
+      // const draftData = new ReportData(
+      //   reportData.product,
+      //   reportData.productionList,
+      //   reportData.productions,
+      //   reportData.delays,
+      //   reportData.defectsLogs
+      // );
+      const draftData = structuredClone(reportData); //клонируем объект чтобы из-за ссылочного типа данных не затрагивались основные
       setDraftReport(draftData);
       setSelectedShift(draftData.productionList.shift);
       setSelectedProduct(draftData.product as GypsumBoard);

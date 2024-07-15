@@ -26,7 +26,10 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
     event: React.MouseEvent<HTMLElement>,
     item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
   ) => {
-    setSelectedItem(item);
+    console.log(typeof(item) );
+    const selectedItem = new ReportData(item.product, item.productionList, item.productions, item.delays, item.defectsLogs );
+    console.log(selectedItem);
+    setSelectedItem(selectedItem);
     setShowModal(true);
 
   };

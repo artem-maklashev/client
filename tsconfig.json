@@ -20,7 +20,8 @@
     "noEmit": true,
     "jsx": "react",
     "outDir": "build",
-    "declaration": true
+    "declaration": true,
+    "sourceMap": true
   },
   "include": [
     "src"
