@@ -25,6 +25,9 @@ import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
 import DefectsTable from "./DefectsTable";
 import EditDefectModal from "./defectComponents/EditDefectModal";
 
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
+
 interface ReportModalPageProps {
   show: boolean;
   reportData: ReportData<
@@ -50,7 +53,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   onHide,
   onSave,
 }) => {
-  
+
   const [draftReport, setDraftReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(null);
@@ -204,6 +207,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   const handleSave = () => {
+    console.log("Установлено значение startDate в ReportMoadl: " + startDate);
     if (draftReport) {
       onSave(draftReport);
     }
@@ -229,14 +233,15 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                   dateAdapter={AdapterDayjs}
                   adapterLocale={dayjs.locale("ru")}
                 >
-                  <Stack                     spacing={3}>
+                  <Stack spacing={3}>
                     <MobileDateTimePicker
                       label="Дата"
                       value={startDate ? dayjs(startDate) : null}
-                      onChange={(newValue) =>
+                      onChange={(newValue) => {
                         setStartDate(
-                          newValue ? dayjs(newValue).toDate() : new Date()
-                        )
+                          newValue ? dayjs.utc(newValue).local().toDate() : new Date()
+                        );                        
+                      }
                       }
                       ampm={false}
                       orientation="landscape"
@@ -257,7 +262,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                       label="Дата"
                       value={endDate ? dayjs(endDate) : null}
                       onChange={(newValue) => {
-                        setEndDate(newValue?.toDate() || new Date());
+                        setEndDate(newValue ? dayjs(newValue).toDate() : new Date());
                       }}
                       ampm={false}
                       orientation="landscape"
