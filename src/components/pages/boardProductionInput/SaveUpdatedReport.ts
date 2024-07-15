@@ -7,6 +7,8 @@ import BoardProduction from "../../../model/production/BoardProduction";
 import { api } from "../../../service/Api";
 
 export const saveUpdatedReport = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>): Promise<void> => {
+    console.log("======*****======");
+    console.log(updatedReport);
     const formateDate = (date: Date)  => {
         const newDate = new Date(date);
         const offset = newDate.getTimezoneOffset()/60;
