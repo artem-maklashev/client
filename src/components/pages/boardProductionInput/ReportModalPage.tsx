@@ -26,6 +26,7 @@ import DefectsTable from "./DefectsTable";
 import EditDefectModal from "./defectComponents/EditDefectModal";
 
 import utc from 'dayjs/plugin/utc';
+import ApiService from "../../../service/ApiService";
 dayjs.extend(utc);
 
 interface ReportModalPageProps {
@@ -207,8 +208,16 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   const handleSave = () => {
-    console.log("Установлено значение startDate в ReportMoadl: " + startDate);
+    console.log("Установлено значение startDate в ReportMoadl: " + startDate);    
+    console.log("Установлено значение endDate в ReportMoadl: " + endDate);    
+
     if (draftReport) {
+      draftReport.product = selectedProduct as GypsumBoard;
+      draftReport.productionList.productionStart =startDate ? new Date(startDate) : new Date();
+      draftReport.productionList.productionFinish = endDate ? new Date(endDate) : new Date();
+      draftReport.productionList.shift = selectedShift || shiftList[0];
+      draftReport.delays = delays;
+      draftReport.defectsLogs = defects;
       onSave(draftReport);
     }
     onHide();
@@ -216,6 +225,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   const handleClose = () => {
     onHide();
+  };
+
+  const handleDateChange = (newValue: any) => {
+    return ApiService.getFormatedLocalDateFromDayjs(newValue);
   };
 
   return (
@@ -237,12 +250,13 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                     <MobileDateTimePicker
                       label="Дата"
                       value={startDate ? dayjs(startDate) : null}
-                      onChange={(newValue) => {
-                        setStartDate(
-                          newValue ? dayjs.utc(newValue).local().toDate() : new Date()
-                        );                        
-                      }
-                      }
+                      // onChange={(newValue) => {
+                      //   setStartDate(
+                      //     newValue ? new Date(dayjs.utc(newValue).local().format('YYYY-MM-DDTHH:mm:ss')) : new Date()
+                      //   );                        
+                      // }
+                      // }
+                      onChange={(newValue) => setStartDate(handleDateChange(newValue))}
                       ampm={false}
                       orientation="landscape"
                     />
@@ -262,7 +276,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                       label="Дата"
                       value={endDate ? dayjs(endDate) : null}
                       onChange={(newValue) => {
-                        setEndDate(newValue ? dayjs(newValue).toDate() : new Date());
+                        setEndDate(handleDateChange(newValue));
                       }}
                       ampm={false}
                       orientation="landscape"

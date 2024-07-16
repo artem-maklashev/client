@@ -1,6 +1,9 @@
 import Plan from "../model/gypsumBoard/Plan";
 import {api} from "./Api";
 import BoardProduction from "../model/production/BoardProduction";
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 
 class ApiService {
@@ -51,6 +54,15 @@ class ApiService {
         const month = (firstDay.getUTCMonth() + 1).toString().padStart(2, '0');
 
         return `${year}-${month}-01`;
+    }
+
+    static getFormatedLocalDateFromDayjs(newValue: any): Date {
+        if (dayjs.isDayjs(newValue)) {
+            const formattedDate = dayjs(newValue).utc().local().format('YYYY-MM-DDTHH:mm:ss');
+            return (new Date(formattedDate));
+          } else {
+            return (new Date(newValue));
+          }
     }
 }
 

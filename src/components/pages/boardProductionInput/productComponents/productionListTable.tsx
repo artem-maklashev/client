@@ -21,6 +21,9 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] | null>(null);
 
+  useEffect(() => {    
+    setReportData(boardProductions);
+}, [boardProductions]);
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -34,17 +37,10 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   };
 
-  useEffect(() => {
-    if (boardProductions) {
-      setReportData(boardProductions);
-
-    }
-
-  }, [boardProductions]);
-
   const onSave = (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
+    console.log("Сохраняемый отчет (время начала): " + updatedReport.productionList.productionStart);
     if (reportData) {
-      const updatedList = reportData?.map((item) => {
+      const updatedList = reportData.map((item) => {
         if (item.productionList.id === updatedReport.productionList.id) {
           return updatedReport;
         }
@@ -139,7 +135,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
         reportData={selectedItem}
         onHide={() => {
           setShowModal(false);
-          setReportData(boardProductions)
+          // setReportData(boardProductions)
         }} 
         onSave={onSave} />
     </Container>

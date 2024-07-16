@@ -11,11 +11,9 @@ import ReportModalPage from "../ReportModalPage";
 import { saveUpdatedReport } from "../SaveUpdatedReport";
 import NewReport from "../NewReport";
 
-
 const BoardProductionPage: React.FC = () => {
-    // При использовании хука ProductionLogData, деструктурируем объект, который он возвращает
-    const { productionList, } = ProductionLogData();
-    const [reports, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>(productionList);
+    const { productionList } = ProductionLogData();
+    const [reports, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>([]);
     const [showReportModal, setShowReportModal] = useState<boolean>(false);
     const [newReport, setNewReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
 
@@ -37,43 +35,42 @@ const BoardProductionPage: React.FC = () => {
 
     const handleAddReport = () => {
         setShowReportModal(true);
-    }
+    };
 
     const onSave = async (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
         await saveUpdatedReport(report);
         setShowReportModal(false);
-        refreshProductionList(); // Обновить список отчетов после сохранения
-    };   
+        await refreshProductionList(); // Обновить список отчетов после сохранения
+    };
 
-    const refreshProductionList = () => {
-        const updatedProductionList = ProductionLogData().productionList;
+    const refreshProductionList = async () => {
+        const updatedProductionList = await ProductionLogData().productionList; // или используйте реальную функцию
         setReports(updatedProductionList);
     };
 
-    // Данные загружены успешно
     return (
         <Container fluid className="mt-5 mb-5" style={{ backgroundColor: 'grey' }}>
             <Row>
                 <Col className="col-12">
                     <ProductionListTable boardProductions={reports} />
-
                 </Col>
             </Row>
-            <Row className="justify-content-center ">
+            <Row className="justify-content-center">
                 <Col className="col-2">
-                    <Button onClick={() => { handleAddReport() }} style={{ width: '150px' }}>Добавить отчет</Button>
+                    <Button onClick={handleAddReport} style={{ width: '150px' }}>Добавить отчет</Button>
                 </Col>
             </Row>
             <ReportModalPage
                 show={showReportModal}
                 reportData={newReport}
                 onHide={() => {
-                    setShowReportModal(false);                                        
+                    setShowReportModal(false);
                     refreshProductionList();
-                }} onSave={onSave}></ReportModalPage>
+                }}
+                onSave={onSave}
+            />
         </Container>
-
     );
-}
+};
 
 export default BoardProductionPage;
