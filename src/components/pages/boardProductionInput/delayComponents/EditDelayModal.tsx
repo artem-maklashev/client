@@ -14,6 +14,7 @@ import Shift from "../../../../model/Shift";
 import DelayType from "../../../../model/delays/DelayType";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import { getUserRole } from "../../../../service/Api";
+import ApiService from "../../../../service/ApiService";
 
 interface EditDelayModalProps {
     show: boolean;
@@ -191,6 +192,10 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
         }
     }, [show, delay, delayTypeList]);
 
+    function handleDateChange(newValue: dayjs.Dayjs | null): React.SetStateAction<Date> {
+        return ApiService.getFormatedLocalDateFromDayjs(newValue);
+    }
+
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
@@ -205,7 +210,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                                 label="Время:"
                                 value={dayjs(startTime)}
                                 onChange={(newValue) => {
-                                    setStartTime(newValue ? dayjs(newValue).toDate() : new Date());
+                                    setStartTime(handleDateChange(newValue));
                                 }}
                                 minutesStep={1}
                                 ampm={false}
@@ -214,7 +219,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                                 label="Дата"
                                 value={dayjs(startTime).isValid() ? dayjs(startTime) : dayjs(new Date())}
                                 onChange={(newValue) => {
-                                    setStartTime(newValue ? dayjs(newValue).toDate() : new Date());
+                                    setStartTime(handleDateChange(newValue));
                                 }}
                                 ampm={false}
                             />
@@ -229,7 +234,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                                 label="Время:"
                                 value={dayjs(endTime)}
                                 onChange={(newValue) => {
-                                    setEndTime(newValue ? dayjs(newValue).toDate() : new Date());
+                                    setEndTime(handleDateChange(newValue));
                                 }}
                                 minutesStep={1}
                                 ampm={false}
@@ -238,7 +243,7 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
                                 label="Дата"
                                 value={dayjs(endTime).isValid() ? dayjs(endTime) : dayjs(new Date())}
                                 onChange={(newValue) => {
-                                    setEndTime(newValue ? dayjs(newValue).toDate() : new Date());
+                                    setEndTime(handleDateChange(newValue));
                                 }}
                                 ampm={false}
                             />
