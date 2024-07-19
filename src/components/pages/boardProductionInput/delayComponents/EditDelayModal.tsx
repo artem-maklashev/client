@@ -25,7 +25,7 @@ interface EditDelayModalProps {
     onSave: (updatedDelay: Delays) => void;
 }
 
-const EditCategoryModal: React.FC<EditDelayModalProps> = ({
+const EditDelayModal: React.FC<EditDelayModalProps> = ({
     show,
     delay,
     shift,
@@ -358,4 +358,4 @@ const EditCategoryModal: React.FC<EditDelayModalProps> = ({
     );
 };
 
-export default EditCategoryModal;
+export default EditDelayModal;

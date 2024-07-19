@@ -27,6 +27,7 @@ import EditDefectModal from "./defectComponents/EditDefectModal";
 
 import utc from 'dayjs/plugin/utc';
 import ApiService from "../../../service/ApiService";
+import ProductionList from "../../../model/production/ProductionList";
 dayjs.extend(utc);
 
 interface ReportModalPageProps {
@@ -107,6 +108,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       setEndDate(draftData.productionList.productionFinish);
       setDelays(draftData.delays);
       setDefects(draftData.defectsLogs);
+    } else {
+      //Todo Сделать инициализацию при создании нового отчета и reportData = null
     }
   }, [show, reportData]);
 
@@ -130,17 +133,24 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   const handleCategoryUpdate = (updatedCategory: BoardProduction): void => {
-    if (draftReport) {
-      const updatedReport = new ReportData<
-        GypsumBoard,
-        GypsumBoardCategory,
-        BoardProduction,
-        Delays
-      >(draftReport.product, draftReport.productionList, tableData, delays, defects);
+    // if (draftReport) {
+    //   const updatedReport = new ReportData<
+    //     GypsumBoard,
+    //     GypsumBoardCategory,
+    //     BoardProduction,
+    //     Delays
+    //   >(draftReport.product, draftReport.productionList, tableData, delays, defects);
 
-      updatedReport.updateProductions(updatedCategory);
-      setDraftReport(updatedReport);
-    }
+    //   updatedReport.updateProductions(updatedCategory);
+    //   setDraftReport(updatedReport);
+    // }    
+    tableData.forEach(categorie => {
+      categorie.product = selectedProduct || gypsumBoardList[0];
+      categorie.productionList = draftReport?.productionList || new ProductionList()
+      if (categorie.category.id === updatedCategory.category.id) {
+        categorie.value = updatedCategory.value;
+      }
+    });
   };
 
   const handleDelayUpdate = (updatedDelay: Delays): void => {
@@ -149,9 +159,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
     if (findIndex !== -1) {
       // Если найден, обновить элемент
+      console.log("ОБНОВЛЯЕМ ПРОСТОЙ:\nСтарый простой:\n" + delays[findIndex] + "\nНовый простой\n" + updatedDelay);
       delays[findIndex] = updatedDelay;
     } else {
       // Если не найден, создать новый id
+      console.log("Создаем новый простой");
       if (delays.length > 0) {
         updatedDelay.id = (() => {
           let min = delays[0].id;
@@ -163,6 +175,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
           return min - 1;
         })();
       }
+      console.log(updatedDelay);
       // Добавить новый элемент      
       delays.push(updatedDelay);
     }
@@ -218,6 +231,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       draftReport.productionList.shift = selectedShift || shiftList[0];
       draftReport.delays = delays;
       draftReport.defectsLogs = defects;
+      draftReport.productions = tableData;
       onSave(draftReport);
     }
     onHide();

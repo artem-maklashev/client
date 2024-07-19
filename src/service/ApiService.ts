@@ -58,8 +58,8 @@ class ApiService {
 
     static getFormatedLocalDateFromDayjs(newValue: any): Date {
         if (dayjs.isDayjs(newValue)) {
-            const formattedDate = dayjs(newValue).utc().local().format('YYYY-MM-DDTHH:mm:ss');
-            return (new Date(formattedDate));
+            const formattedDate = dayjs(newValue).utc().local().format('YYYY-MM-DDTHH:mm');
+            return (new Date(new Date(formattedDate).setSeconds(0)));
           } else {
             return (new Date(newValue));
           }
