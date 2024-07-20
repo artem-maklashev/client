@@ -5,6 +5,7 @@ import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import BoardProduction from "../../../model/production/BoardProduction";
 import { api } from "../../../service/Api";
+import ApiService from './../../../service/ApiService';
 
 export const saveUpdatedReport = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>): Promise<void> => {
     console.log("======*****======");
@@ -24,8 +25,9 @@ export const saveUpdatedReport = async (updatedReport: ReportData<GypsumBoard, G
     //     delay.endTime = formateDate(delay.endTime);
     //  })
 
-    try {        
-        console.log('Sending startdate: ' + updatedReport.productionList.productionStart);
+    try {    
+        const newStartDate =  ApiService.removeTimeZone(updatedReport.productionList.productionStart)   
+        console.log('Sending startdate: ' + newStartDate);
         console.log('Sending enddate: ' + updatedReport.productionList.productionFinish);
         // Отправляем обновленный отчет на сервер
         const response = await api.put(`${process.env.REACT_APP_API_URL}/boardProduction`, updatedReport);

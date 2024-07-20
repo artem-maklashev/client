@@ -64,6 +64,16 @@ class ApiService {
             return (new Date(newValue));
           }
     }
+
+    static removeTimeZone(date: Date) {
+        const offset = date.getTimezoneOffset()*60000;
+        
+        const dateMils = date.getTime();
+       
+        const newDate = new Date(dateMils-offset);
+        console.log("Преобразуем: " + date +"\ngetTimezoneOffset: " + offset+ "\ndateMils: " + dateMils +"\nПреобразованная дата: " + newDate);
+        return newDate;
+    }
 }
 
 export default ApiService;
