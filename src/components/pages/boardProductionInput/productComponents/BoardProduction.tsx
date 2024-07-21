@@ -9,7 +9,8 @@ import BoardProduction from "../../../../model/production/BoardProduction";
 import Delays from "../../../../model/delays/Delays";
 import ReportModalPage from "../ReportModalPage";
 import { saveUpdatedReport } from "../SaveUpdatedReport";
-import NewReport from "../NewReport";
+
+import { createNewReport } from './../NewReport';
 
 const BoardProductionPage: React.FC = () => {
     const { productionList } = ProductionLogData();
@@ -23,8 +24,10 @@ const BoardProductionPage: React.FC = () => {
 
     useEffect(() => {
         const fetchReportData = async () => {
-            const data = await NewReport();
+            const data = await createNewReport();
+           
             setNewReport(data);
+            
             console.log(data);
         };
 
@@ -44,7 +47,7 @@ const BoardProductionPage: React.FC = () => {
     };
 
     const refreshProductionList = async () => {
-        const updatedProductionList = await ProductionLogData().productionList; // или используйте реальную функцию
+        const updatedProductionList = ProductionLogData().productionList; // или используйте реальную функцию
         setReports(updatedProductionList);
     };
 

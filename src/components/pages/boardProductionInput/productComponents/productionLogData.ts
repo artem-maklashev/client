@@ -37,7 +37,7 @@ import Delays from "../../../../model/delays/Delays";
 
 // export default ProductionLogData;
 
-export const ProductionLogData = () => {
+export function ProductionLogData()  {
     const [productionList, setProductionList] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
 

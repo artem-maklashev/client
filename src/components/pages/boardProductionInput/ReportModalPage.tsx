@@ -10,7 +10,6 @@ import EditCategoryModal from "./productComponents/EditCategoryModal";
 import "react-datepicker/dist/react-datepicker.css";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
 import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import { Stack } from "@mui/material";
 import "dayjs/locale/ru";
@@ -24,10 +23,11 @@ import dayjs from "dayjs";
 import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
 import DefectsTable from "./DefectsTable";
 import EditDefectModal from "./defectComponents/EditDefectModal";
-
 import utc from 'dayjs/plugin/utc';
 import ApiService from "../../../service/ApiService";
 import ProductionList from "../../../model/production/ProductionList";
+import {createNewReport} from "./NewReport";
+import ProductTypes from "../../../model/ProductTypes";
 dayjs.extend(utc);
 
 interface ReportModalPageProps {
@@ -72,7 +72,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
   const [defects, setDefects] = useState<BoardDefectsLog[]>([]);
   const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
-
+  
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -110,8 +110,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       setDefects(draftData.defectsLogs);
     } else {
       //Todo Сделать инициализацию при создании нового отчета и reportData = null
+      createNewReport().then((emptyReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
+        setDraftReport(emptyReport);
+      });
     }
-  }, [show, reportData]);
+  }, [reportData, show]);
 
   if (!reportData) {
     return null;
@@ -146,7 +149,15 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     // }    
     tableData.forEach(categorie => {
       categorie.product = selectedProduct || gypsumBoardList[0];
-      categorie.productionList = draftReport?.productionList || new ProductionList()
+      categorie.productionList = draftReport?.productionList ||
+        new ProductionList(
+          -1, 
+          startDate || new Date(), 
+          endDate || new Date(), 
+          new Date(), 
+          selectedShift || shiftList[0], 
+          new ProductTypes(1, "")
+        );
       if (categorie.category.id === updatedCategory.category.id) {
         categorie.value = updatedCategory.value;
       }
@@ -221,12 +232,12 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   const handleSave = () => {
-    console.log("Установлено значение startDate в ReportMoadl: " + startDate);    
-    console.log("Установлено значение endDate в ReportMoadl: " + endDate);    
+    console.log("Установлено значение startDate в ReportMoadl: " + startDate);
+    console.log("Установлено значение endDate в ReportMoadl: " + endDate);
 
     if (draftReport) {
       draftReport.product = selectedProduct as GypsumBoard;
-      draftReport.productionList.productionStart =startDate ? new Date(startDate) : new Date();
+      draftReport.productionList.productionStart = startDate ? new Date(startDate) : new Date();
       draftReport.productionList.productionFinish = endDate ? new Date(endDate) : new Date();
       draftReport.productionList.shift = selectedShift || shiftList[0];
       draftReport.delays = delays;
