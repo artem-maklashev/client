@@ -26,7 +26,7 @@ import EditDefectModal from "./defectComponents/EditDefectModal";
 import utc from 'dayjs/plugin/utc';
 import ApiService from "../../../service/ApiService";
 import ProductionList from "../../../model/production/ProductionList";
-import {createNewReport} from "./NewReport";
+import { createNewReport } from "./NewReport";
 import ProductTypes from "../../../model/ProductTypes";
 dayjs.extend(utc);
 
@@ -72,7 +72,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
   const [defects, setDefects] = useState<BoardDefectsLog[]>([]);
   const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
-  
+
 
   const getName = (gboard: GypsumBoard) => {
     return (
@@ -91,7 +91,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   useEffect(() => {
-    if (show && reportData) {
+    if (show) {
       // const draftData = new ReportData(
       //   reportData.product,
       //   reportData.productionList,
@@ -99,24 +99,26 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       //   reportData.delays,
       //   reportData.defectsLogs
       // );
-      const draftData = structuredClone(reportData); //клонируем объект чтобы из-за ссылочного типа данных не затрагивались основные
-      setDraftReport(draftData);
-      setSelectedShift(draftData.productionList.shift);
-      setSelectedProduct(draftData.product as GypsumBoard);
-      setTableData(draftData.productions);
-      setStartDate(draftData.productionList.productionStart);
-      setEndDate(draftData.productionList.productionFinish);
-      setDelays(draftData.delays);
-      setDefects(draftData.defectsLogs);
-    } else {
-      //Todo Сделать инициализацию при создании нового отчета и reportData = null
-      createNewReport().then((emptyReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-        setDraftReport(emptyReport);
-      });
+      if (reportData) {
+        const draftData = structuredClone(reportData); //клонируем объект чтобы из-за ссылочного типа данных не затрагивались основные
+        setDraftReport(draftData);
+        setSelectedShift(draftData.productionList.shift);
+        setSelectedProduct(draftData.product as GypsumBoard);
+        setTableData(draftData.productions);
+        setStartDate(draftData.productionList.productionStart);
+        setEndDate(draftData.productionList.productionFinish);
+        setDelays(draftData.delays);
+        setDefects(draftData.defectsLogs);
+      } else {
+        //Todo Сделать инициализацию при создании нового отчета и reportData = null
+        createNewReport(shiftList[0]).then((emptyReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
+          setDraftReport(emptyReport);
+        });
+      }
     }
-  }, [reportData, show]);
+  }, [show]);
 
-  if (!reportData) {
+  if (!draftReport) {
     return null;
   }
 
@@ -151,11 +153,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       categorie.product = selectedProduct || gypsumBoardList[0];
       categorie.productionList = draftReport?.productionList ||
         new ProductionList(
-          -1, 
-          startDate || new Date(), 
-          endDate || new Date(), 
-          new Date(), 
-          selectedShift || shiftList[0], 
+          -1,
+          startDate || new Date(),
+          endDate || new Date(),
+          new Date(),
+          selectedShift || shiftList[0],
           new ProductTypes(1, "")
         );
       if (categorie.category.id === updatedCategory.category.id) {
@@ -243,6 +245,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       draftReport.delays = delays;
       draftReport.defectsLogs = defects;
       draftReport.productions = tableData;
+      console.log("СОХРАНЯЕМ ДАННЫЕ В NEW CATEGORY");
+      console.log(draftReport);
       onSave(draftReport);
     }
     onHide();

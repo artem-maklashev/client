@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { api } from "../../../../service/Api";
 import BoardProduction from "../../../../model/production/BoardProduction";

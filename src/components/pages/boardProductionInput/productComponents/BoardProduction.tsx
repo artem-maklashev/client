@@ -22,19 +22,19 @@ const BoardProductionPage: React.FC = () => {
         setReports(productionList);
     }, [productionList]);
 
-    useEffect(() => {
-        const fetchReportData = async () => {
-            const data = await createNewReport();
+    // useEffect(() => {
+    //     const fetchReportData = async () => {
+    //         const data = await createNewReport();
            
-            setNewReport(data);
+    //         setNewReport(data);
             
-            console.log(data);
-        };
+    //         console.log(data);
+    //     };
 
-        if (showReportModal) {
-            fetchReportData();
-        }
-    }, [showReportModal]);
+    //     if (showReportModal) {
+    //         fetchReportData();
+    //     }
+    // }, [showReportModal]);
 
     const handleAddReport = () => {
         setShowReportModal(true);
@@ -58,7 +58,7 @@ const BoardProductionPage: React.FC = () => {
                 </Col>
             </Row>
             <Row className="justify-content-center">
-                <Col className="col-2">
+                <Col className="col-2 mb-5">
                     <Button onClick={handleAddReport} style={{ width: '150px' }}>Добавить отчет</Button>
                 </Col>
             </Row>

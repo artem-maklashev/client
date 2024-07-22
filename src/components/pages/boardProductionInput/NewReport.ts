@@ -7,23 +7,22 @@ import BoardProduction from "../../../model/production/BoardProduction";
 import ProductionList from "../../../model/production/ProductionList";
 import FetchCategories from "./productComponents/FetchCategories";
 
-export function createNewReport() {
+export async function createNewReport(shift: Shift) {
     // Логика для создания нового отчета, без использования хуков
     const productionList = new ProductionList(
       -1,
       new Date(),
       new Date(),
       new Date(),
-      new Shift(),
+      shift,
       new ProductTypes(1, "ГСП")
     );
     
     const fetcher = new FetchCategories();
-  return fetcher.getCategories().then(categories => {           
-    const productions: BoardProduction[] = [];
-    categories.forEach(category => {
-      productions.push(new BoardProduction(-1, productionList, new GypsumBoard(), category, 0));
-    });
-    return new ReportData(new GypsumBoard(), productionList, productions, []);
+  const categories = await fetcher.getCategories();
+  const productions: BoardProduction[] = [];
+  categories.forEach(category => {
+    productions.push(new BoardProduction(-1, productionList, new GypsumBoard(), category, 0));
   });
+  return new ReportData(new GypsumBoard(), productionList, productions, []);
 }
