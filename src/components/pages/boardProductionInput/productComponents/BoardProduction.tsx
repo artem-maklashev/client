@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductionListTable from "./productionListTable";
-import { ProductionLogData } from "./productionLogData";
+import { useProductionLogData } from "./productionLogData";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import ReportData from "../../../../model/ReportData";
 import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCategory";
@@ -13,7 +13,7 @@ import { saveUpdatedReport } from "../SaveUpdatedReport";
 import { createNewReport } from './../NewReport';
 
 const BoardProductionPage: React.FC = () => {
-    const { productionList } = ProductionLogData();
+    const  { productionList, fetchProductionData } = useProductionLogData();
     const [reports, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>([]);
     const [showReportModal, setShowReportModal] = useState<boolean>(false);
     const [newReport, setNewReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
@@ -47,8 +47,7 @@ const BoardProductionPage: React.FC = () => {
     };
 
     const refreshProductionList = async () => {
-        const updatedProductionList = ProductionLogData().productionList; // или используйте реальную функцию
-        setReports(updatedProductionList);
+        fetchProductionData();
     };
 
     return (

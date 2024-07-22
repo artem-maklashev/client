@@ -37,25 +37,27 @@ import Delays from "../../../../model/delays/Delays";
 
 // export default ProductionLogData;
 
-export function ProductionLogData()  {
+export function useProductionLogData()  {
     const [productionList, setProductionList] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>([]);
-    const [errorText, setErrorText] = useState<string | null>(null);
+    // const [errorText, setErrorText] = useState<string | null>(null);
 
     const fetchProductionData = useCallback(async () => {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductions_10`);
-            const data: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] = response.data;
+            const data: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] = response.data;            
             setProductionList(data);
         } catch (error) {
             console.error('fetch productionList failed', error);
-            setErrorText('Данные по ProductionList не могут быть загружены. Попробуйте позже.');
+            // setErrorText('Данные по ProductionList не могут быть загружены. Попробуйте позже.');
+            console.error('fetch productionList failed', error);
+            alert('Данные по ProductionList не могут быть загружены. Попробуйте позже.');
         }
     }, []);
+
     useEffect(() => {
-        const fetchData = async () => {
-            await fetchProductionData();
-        };
-        fetchData();
+       
+            fetchProductionData();
+        
     }, [fetchProductionData]);
-    return { productionList, errorText };
+    return { productionList, fetchProductionData };
 };
