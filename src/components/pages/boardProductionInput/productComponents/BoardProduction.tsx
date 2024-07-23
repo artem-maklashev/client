@@ -11,6 +11,7 @@ import ReportModalPage from "../ReportModalPage";
 import { saveUpdatedReport } from "../SaveUpdatedReport";
 
 import { createNewReport } from './../NewReport';
+import { getUserRole } from "../../../../service/Api";
 
 const BoardProductionPage: React.FC = () => {
     const  { productionList, fetchProductionData } = useProductionLogData();
@@ -50,6 +51,10 @@ const BoardProductionPage: React.FC = () => {
         fetchProductionData();
     };
 
+    function handleRemoveReport(entry: any): void {
+        throw new Error("Function not implemented.");
+    }
+
     return (
         <Container fluid className="mt-5 mb-5" style={{ backgroundColor: 'grey' }}>
             <Row>
@@ -60,6 +65,7 @@ const BoardProductionPage: React.FC = () => {
             <Row className="justify-content-center">
                 <Col className="col-2 mb-5">
                     <Button onClick={handleAddReport} style={{ width: '150px' }}>Добавить отчет</Button>
+                    
                 </Col>
             </Row>
             <ReportModalPage

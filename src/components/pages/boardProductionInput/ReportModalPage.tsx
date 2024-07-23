@@ -380,7 +380,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                   <DelaysTable
                     delays={delays}
                     handleEditDelay={handleEditDelay}
-                    handleRemoveDelay={handleRemoveDelay}
+                    handleRemoveDelay={handleRemoveDelay}                  
                   />
                 </Row>
                 <Row className="justify-content-center">

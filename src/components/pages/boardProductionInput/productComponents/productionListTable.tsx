@@ -8,6 +8,7 @@ import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCatego
 import { saveUpdatedReport } from "../SaveUpdatedReport";
 import BoardProduction from "../../../../model/production/BoardProduction";
 import Delays from "../../../../model/delays/Delays";
+import { getUserRole } from "../../../../service/Api";
 
 
 interface ProductionListTableProps {
@@ -21,16 +22,16 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] | null>(null);
 
-  useEffect(() => {    
+  useEffect(() => {
     setReportData(boardProductions);
-}, [boardProductions]);
+  }, [boardProductions]);
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
     item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
   ) => {
-    console.log(typeof(item) );
-    const selectedItem = new ReportData(item.product, item.productionList, item.productions, item.delays, item.defectsLogs );
+    console.log(typeof (item));
+    const selectedItem = new ReportData(item.product, item.productionList, item.productions, item.delays, item.defectsLogs);
     console.log(selectedItem);
     setSelectedItem(selectedItem);
     setShowModal(true);
@@ -54,6 +55,12 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   }
 
+  const handleRemoveReport = (
+    event: React.MouseEvent<HTMLElement>,
+    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <Container fluid className="mt-5">
       <Row>
@@ -62,13 +69,13 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
             <thead className="table-dark">
               <tr>
                 <th className="text-center">ID</th>
-                <th className="text-center">Дата начала работы</th>
-                <th className="text-center">Дата окончания работы</th>
-                <th className="text-center">Дата производства</th>
+                <th className="text-center">Начало производства</th>
+                <th className="text-center">Окончание производства</th>
+                <th className="text-center">Дата</th>
                 <th className="text-center">Смена</th>
-                <th className="text-center">Вид продукции</th>
+                {/* <th className="text-center">Вид продукции</th> */}
                 <th className="text-center">Наименование</th>
-                <th> </th>
+                <th className="text-center p-3">Редактир.</th>
               </tr>
             </thead>
 
@@ -80,7 +87,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                       <span>{item.productionList.id}</span>
                     </td>
                     <td>
-                      <span>
+                      <span >
                         {new Date(
                           item.productionList.productionStart
                         ).toLocaleString()}
@@ -101,7 +108,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                       </span>
                     </td>
                     <td>{item.productionList.shift.name}</td>
-                    <td>{item.productionList.type.name}</td>
+                    {/* <td>{item.productionList.type.name}</td> */}
                     <td>
                       <span>
 
@@ -113,14 +120,22 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                         {(item.product as GypsumBoard).length.value}
                       </span>
                     </td>
-                    <td>
+                    <td style={{width:150}}>
                       <Button
                         variant="secondary"
                         onClick={(evt) => handleClick(evt, item)}
                       >
                         <TiEdit />
                       </Button>
-
+                       
+                      <Button
+                        variant="secondary"
+                        onClick={(evt) => handleRemoveReport(evt, item)}
+                        style={{ color: "red" }}
+                        disabled={getUserRole() === 'ADMIN' ? false : true}
+                      >
+                        <TiTrash />
+                      </Button>
                     </td>
                   </tr>
                 )) :
@@ -134,9 +149,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
         show={showModal}
         reportData={selectedItem}
         onHide={() => {
-          setShowModal(false);
-          // setReportData(boardProductions)
-        }} 
+          setShowModal(false);         
+        }}
         onSave={onSave} />
     </Container>
   );
