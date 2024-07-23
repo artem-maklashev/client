@@ -91,32 +91,32 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   useEffect(() => {
-    if (show) {
-      // const draftData = new ReportData(
-      //   reportData.product,
-      //   reportData.productionList,
-      //   reportData.productions,
-      //   reportData.delays,
-      //   reportData.defectsLogs
-      // );
-      if (reportData) {
-        const draftData = structuredClone(reportData); //клонируем объект чтобы из-за ссылочного типа данных не затрагивались основные
-        setDraftReport(draftData);
-        setSelectedShift(draftData.productionList.shift);
-        setSelectedProduct(draftData.product as GypsumBoard);
-        setTableData(draftData.productions);
-        setStartDate(draftData.productionList.productionStart);
-        setEndDate(draftData.productionList.productionFinish);
-        setDelays(draftData.delays);
-        setDefects(draftData.defectsLogs);
+    const initializeReportData = async () => {
+      if (!reportData) {
+        const emptyReport = await createNewReport(shiftList[0], gypsumBoardList[0]);
+        setDraftReport(structuredClone(emptyReport));
       } else {
-        //Todo Сделать инициализацию при создании нового отчета и reportData = null
-        createNewReport(shiftList[0]).then((emptyReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-          setDraftReport(emptyReport);
-        });
+        setDraftReport(structuredClone(reportData));
       }
+    };
+
+    if (show) {
+      initializeReportData();
     }
-  }, [show]);
+  }, [show, reportData, shiftList]);
+
+  useEffect(() => {
+    if (draftReport) {
+      setSelectedShift(draftReport.productionList.shift);
+      setSelectedProduct(draftReport.product as GypsumBoard);
+      setTableData(draftReport.productions);
+      setStartDate(draftReport.productionList.productionStart);
+      setEndDate(draftReport.productionList.productionFinish);
+      setDelays(draftReport.delays);
+      setDefects(draftReport.defectsLogs);
+    }
+  }, [draftReport]);
+
 
   if (!draftReport) {
     return null;

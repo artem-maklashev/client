@@ -46,8 +46,7 @@ export function useProductionLogData()  {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductions_10`);
             const data: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] = response.data;            
             setProductionList(data);
-        } catch (error) {
-            console.error('fetch productionList failed', error);
+        } catch (error) {            
             // setErrorText('Данные по ProductionList не могут быть загружены. Попробуйте позже.');
             console.error('fetch productionList failed', error);
             alert('Данные по ProductionList не могут быть загружены. Попробуйте позже.');

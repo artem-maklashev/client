@@ -6,7 +6,7 @@ class FetchCategories {
     async getCategories() {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/gypsumCategories`);
-            return response.data as GypsumBoardCategory[];
+            return (response.data as GypsumBoardCategory[]).sort((a, b) => a.id - b.id );
         } catch (error) {
             console.error('Ошибка при получении данных о категориях выпуска гипсокартона', error);
             throw error; // Вы можете обработать ошибку в компоненте, который использует этот класс
