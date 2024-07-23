@@ -58,7 +58,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   const handleRemoveReport = (
     event: React.MouseEvent<HTMLElement>,
     item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-    throw new Error("Function not implemented.");
+    alert("Function not implemented.");
   }
 
   return (
