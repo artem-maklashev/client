@@ -169,7 +169,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const handleDelayUpdate = (updatedDelay: Delays): void => {
     // Найти элемент по id
     const findIndex = delays.findIndex((delay) => delay.id === updatedDelay.id);
-  
+
     if (findIndex !== -1) {
       // Если найден, обновить элемент
       console.log("ОБНОВЛЯЕМ ПРОСТОЙ:\nСтарый простой:\n", delays[findIndex], "\nНовый простой\n", updatedDelay);
@@ -177,7 +177,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     } else {
       // Если не найден, создать новый id
       console.log("Создаем новый простой");
-  
+
       // Проверяем, есть ли элементы в delays
       if (delays.length > 0) {
         // Находим минимальный id и создаем новый id
@@ -187,12 +187,12 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         // Если список пустой, установим id равным -1
         updatedDelay.id = -2;
       }
-      
+
       console.log(updatedDelay);
       // Добавить новый элемент      
       delays.push(updatedDelay);
     }
-    
+
     // Обновить состояние
     setDelays([...delays]);
   };
@@ -382,7 +382,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                   <DelaysTable
                     delays={delays}
                     handleEditDelay={handleEditDelay}
-                    handleRemoveDelay={handleRemoveDelay}                  
+                    handleRemoveDelay={handleRemoveDelay}
                   />
                 </Row>
                 <Row className="justify-content-center">
@@ -419,6 +419,31 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                 </Row>
               </Col>
             </Row>
+          </Row>
+          <Row>
+            <Col className="col-lg-5 col-sm-12">
+              <h3 className="text-center">
+                Проверка:{" "}
+                {draftReport && draftReport.productions.length > 0 ? (
+                  (() => {
+                    const result = (
+                      draftReport.productions[0].value * 2 -
+                      draftReport.productions.reduce((sum, item) => sum + item.value, 0)
+                    ).toFixed(1);
+
+                    const isNonZero = parseFloat(result) !== 0;
+
+                    return (
+                      <span style={{ color: isNonZero ? 'red' : 'inherit' }}>
+                        {result}
+                      </span>
+                    );
+                  })()
+                ) : (
+                  "Нет данных"
+                )}
+              </h3>
+            </Col>
           </Row>
         </Container>
       </Modal.Body>
