@@ -169,29 +169,31 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const handleDelayUpdate = (updatedDelay: Delays): void => {
     // Найти элемент по id
     const findIndex = delays.findIndex((delay) => delay.id === updatedDelay.id);
-
+  
     if (findIndex !== -1) {
       // Если найден, обновить элемент
-      console.log("ОБНОВЛЯЕМ ПРОСТОЙ:\nСтарый простой:\n" + delays[findIndex] + "\nНовый простой\n" + updatedDelay);
+      console.log("ОБНОВЛЯЕМ ПРОСТОЙ:\nСтарый простой:\n", delays[findIndex], "\nНовый простой\n", updatedDelay);
       delays[findIndex] = updatedDelay;
     } else {
       // Если не найден, создать новый id
       console.log("Создаем новый простой");
+  
+      // Проверяем, есть ли элементы в delays
       if (delays.length > 0) {
-        updatedDelay.id = (() => {
-          let min = delays[0].id;
-          delays.forEach((delay) => {
-            if (delay.id < min) {
-              min = delay.id;
-            }
-          });
-          return min - 1;
-        })();
+        // Находим минимальный id и создаем новый id
+        const minId = Math.min(...delays.map(delay => delay.id));
+        updatedDelay.id = minId - 1;
+      } else {
+        // Если список пустой, установим id равным -1
+        updatedDelay.id = -2;
       }
+      
       console.log(updatedDelay);
       // Добавить новый элемент      
       delays.push(updatedDelay);
     }
+    
+    // Обновить состояние
     setDelays([...delays]);
   };
 
