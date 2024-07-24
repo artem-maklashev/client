@@ -213,7 +213,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     const find = defects.find((isFind) => isFind.id === updatedDefect.id);
     if (!find) {
       updatedDefect.id = (() => {
-        let max = delays[0].id;
+        let max = 0;
+        if (delays.length > 0) {
+          max = delays[0].id;
+        }
         defects.forEach((defect) => {
           if (defect.id > max) {
             max = defect.id;
@@ -221,16 +224,16 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         });
         return max + 1;
       })();
-    }
-    if (defects.length > 0) {
-      defects.forEach((defect) => {
-        if (defect.id === updatedDefect.id) {
-          defect.defects = updatedDefect.defects;
-          defect.value = updatedDefect.value;
-        }
-      });
-    } else {
       defects.push(updatedDefect);
+    } else {
+      if (defects.length > 0) {
+        defects.forEach((defect) => {
+          if (defect.id === updatedDefect.id) {
+            defect.defects = updatedDefect.defects;
+            defect.value = updatedDefect.value;
+          }
+        });
+      }
     }
     setDefects([...defects]);
   };
@@ -484,6 +487,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         onHide={() => setEditDefectsShow(false)}
         onSave={(updatedDefect) => {
           handleDefectUpdate(updatedDefect);
+          setSelectedDefect(null);
           setEditDefectsShow(false);
         }}
       />

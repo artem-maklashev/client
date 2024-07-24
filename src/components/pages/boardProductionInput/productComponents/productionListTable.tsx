@@ -83,51 +83,53 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
               {reportData ?
                 reportData.map((item) => (
                   <tr key={item.productionList.id}>
-                    <td>
+                    <td className="text-nowrap">
                       <span>{item.productionList.id}</span>
                     </td>
-                    <td>
+                    <td className="text-nowrap">
                       <span >
                         {new Date(
                           item.productionList.productionStart
                         ).toLocaleString()}
                       </span>
                     </td>
-                    <td>
+                    <td className="text-nowrap">
                       <span>
                         {new Date(
                           item.productionList.productionFinish
                         ).toLocaleString()}
                       </span>
                     </td>
-                    <td>
-                      <span>
+                    <td className="text-nowrap">
+                      <span><strong>
                         {new Date(
                           item.productionList.productionDate
                         ).toLocaleDateString()}
+                      </strong>
                       </span>
                     </td>
-                    <td>{item.productionList.shift.name}</td>
+                    <td className="text-nowrap"><strong>{item.productionList.shift.name}</strong></td>
                     {/* <td>{item.productionList.type.name}</td> */}
-                    <td>
+                    <td className="text-nowrap">
                       <span>
-
-                        {item.product.tradeMark.name} тип{" "}
-                        {(item.product as GypsumBoard).boardType.name}-
-                        {(item.product as GypsumBoard).edge.name}{" "}
-                        {(item.product as GypsumBoard).thickness.value}-
-                        {(item.product as GypsumBoard).width.value}-
-                        {(item.product as GypsumBoard).length.value}
+                        <strong>
+                          {item.product.tradeMark.name} тип{" "}
+                          {(item.product as GypsumBoard).boardType.name}-
+                          {(item.product as GypsumBoard).edge.name}{" "}
+                          {(item.product as GypsumBoard).thickness.value}-
+                          {(item.product as GypsumBoard).width.value}-
+                          {(item.product as GypsumBoard).length.value}
+                        </strong>
                       </span>
                     </td>
-                    <td style={{width:150}}>
+                    <td style={{ width: 150 }}>
                       <Button
                         variant="secondary"
                         onClick={(evt) => handleClick(evt, item)}
                       >
                         <TiEdit />
                       </Button>
-                       
+
                       <Button
                         variant="secondary"
                         onClick={(evt) => handleRemoveReport(evt, item)}
@@ -149,7 +151,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
         show={showModal}
         reportData={selectedItem}
         onHide={() => {
-          setShowModal(false);         
+          setShowModal(false);
         }}
         onSave={onSave} />
     </Container>

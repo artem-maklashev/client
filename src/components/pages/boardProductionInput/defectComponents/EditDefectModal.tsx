@@ -1,5 +1,5 @@
 import BoardDefectsLog from "../../../../model/defects/BoardDefectsLog";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ProductionList from "../../../../model/production/ProductionList";
 import Defects from "../../../../model/defects/Defects";
 import FetchDefectData from "./FetchDefectData";
@@ -20,108 +20,86 @@ const EditDefectModal: React.FC<EditDefectModalProps> = ({
     onHide,
     onSave
 }) => {
-    // const [productionList, setProductionList] = useState<ProductionList | null>(null);
     const [value, setValue] = useState<number>(0);
-    // const [newDefect, setDefect] = useState<Defects | null>(null);
     const [reasonList, setReasonList] = useState<DefectReason[]>([]);
-    const [reason, setReason] = useState<DefectReason | null>(defect ? defect.defects.defectReason : null);
+    const [reason, setReason] = useState<DefectReason | null>(null);
     const [defectTypeList, setDefectTypeList] = useState<DefectTypes[]>([]);
-    const [defectType, setDefectType] = useState<DefectTypes | null>(defect ? defect.defects.defectTypes : null);
+    const [defectType, setDefectType] = useState<DefectTypes | null>(null);
     const [defectsList, setDefectsList] = useState<Defects[]>([]);
-    const [selecteddefect, setSelectedDefect] = useState<Defects | null>(defect ? defect.defects : null);
+    const [selecteddefect, setSelectedDefect] = useState<Defects | null>(null);
 
-    const fetcher = new FetchDefectData();
+    const fetcher = useMemo(() => new FetchDefectData(), []);
 
-    const fetchDefectReasons = async () => {
+    const fetchDefectReasons = useCallback(async () => {
         const reasons = await fetcher.getDefectReason();
         setReasonList(reasons);
-        if (reasons.length > 0 && !defect) {
+        if (reasons.length > 0 && !reason) {
             setReason(reasons[0]);
         }
-    }
+    }, [fetcher]);
 
-    const fetchDefectTypes = async () => {
+    const fetchDefectTypes = useCallback(async () => {
         const types = await fetcher.getDefectTypes();
         setDefectTypeList(types);
-        if (types.length > 0 && !defect) {
+        if (types.length > 0 && !defectType) {
             setDefectType(types[0]);
         }
-    }
+    }, [fetcher]);
 
-    const fetchDefects = async (defectReasonId: number, defectTypeId: number) => {
+    const fetchDefects = useCallback(async (defectReasonId: number, defectTypeId: number) => {
         const defects = await fetcher.getDefects(defectReasonId, defectTypeId);
         setDefectsList(defects);
-        if (defects.length > 0 && !defect) {
+        if (defects.length > 0 && !selecteddefect) {
             setSelectedDefect(defects[0]);
         }
-    }
+    }, [fetcher]);
 
     const handleSave = () => {
         if (defect) {
             defect.defects = selecteddefect!;
             defect.value = value;
             onSave(defect);
-            // } else {
-            //     if (unitPart && shift && product) {
-            //         const newDelay = new Delays(
-            //             -1,
-            //             new Date(),
-            //             startTime,
-            //             endTime,
-            //             unitPart,
-            //             shift,
-            //             product,
-            //             selectedDelayType!
-            //         );
-            //         onSave(newDelay);
-            //     }
-            // }
             onHide();
         } else {
             const newDefect = new BoardDefectsLog(
-                -1,                
+                -1,
                 value,
                 selecteddefect!
             );
             onSave(newDefect);
             onHide();
         }
-    }
+    };
 
     useEffect(() => {
         if (show) {
+            setValue(0);
+            setReason(null);
+            setDefectType(null);
+            setSelectedDefect(null);
+
             fetchDefectReasons();
-        }
-    }, [show]);
-
-    useEffect(() => {
-        if (reason) {
             fetchDefectTypes();
-        } else {
-            setDefectTypeList([]);
+
+            if (defect) {
+                setReason(defect.defects.defectReason);
+                setDefectType(defect.defects.defectTypes);
+                setSelectedDefect(defect.defects);
+                setValue(defect.value);
+            }
         }
-    }, [reason]);
+    }, [show, fetchDefectReasons, fetchDefectTypes, defect]);
 
     useEffect(() => {
-        if (defectType && reason) {
+        if (reason && defectType) {
             fetchDefects(reason.id, defectType.id);
-        } else {
-            setDefectsList([]);
         }
-    }, [defectType, reason]);
-
-    useEffect(() => {
-        if (show && defect) {
-            setReason(defect.defects.defectReason);
-            setDefectType(defect.defects.defectTypes);
-            setSelectedDefect(defect.defects);
-        }
-    }, [defect, show]);
+    }, [reason, defectType, fetchDefects]);
 
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
-                <Modal.Title>Редактирование дефекта</Modal.Title>
+                <Modal.Title>Редактирование дефекта ID-"{defect?.id}"</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form.Group>
