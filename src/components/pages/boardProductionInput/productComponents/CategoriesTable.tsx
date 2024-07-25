@@ -31,6 +31,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
                   variant="secondary"
                   style={{ right: 0 }}
                   onClick={() => handleEditCategory(entry)}
+                  disabled={entry.category.id === 6}
                 >
                   <TiEdit />
                 </Button>{" "}

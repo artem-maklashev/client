@@ -69,8 +69,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
             <thead className="table-dark">
               <tr>
                 <th className="text-center">ID</th>
-                <th className="text-center">Начало производства</th>
-                <th className="text-center">Окончание производства</th>
+                <th className="text-center">Время производства</th>
+                {/* <th className="text-center">Окончание производства</th> */}
                 <th className="text-center">Дата</th>
                 <th className="text-center">Смена</th>
                 {/* <th className="text-center">Вид продукции</th> */}
@@ -92,8 +92,9 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                           item.productionList.productionStart
                         ).toLocaleString()}
                       </span>
-                    </td>
-                    <td className="text-nowrap">
+                    {/* </td>
+                    <td className="text-nowrap"> */}
+                    {"-"}
                       <span>
                         {new Date(
                           item.productionList.productionFinish

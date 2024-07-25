@@ -93,9 +93,12 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   useEffect(() => {
     const initializeReportData = async () => {
       if (!reportData) {
+        console.log("Создание нового отчета...");
         const emptyReport = await createNewReport(shiftList[0], gypsumBoardList[0]);
+        console.log("Новый отчет создан:", emptyReport);
         setDraftReport(structuredClone(emptyReport));
       } else {
+        console.log("Использование существующего отчета:", reportData);
         setDraftReport(structuredClone(reportData));
       }
     };
@@ -114,13 +117,36 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       setEndDate(draftReport.productionList.productionFinish);
       setDelays(draftReport.delays);
       setDefects(draftReport.defectsLogs);
+      console.log("Получены данные в draftReport:\n", draftReport);
+    } else {
+      console.log("draftReport еще не установлен.");
     }
   }, [draftReport]);
 
+  useEffect(() => {
+    if (!draftReport) return;
+  
+    const defectsSum = defects.reduce((sum, defect) => sum + defect.value, 0);
+    console.log("defectsSum: " + defectsSum);
+  
+    // Создаем новый массив с обновленным значением
+    const updatedTableData: BoardProduction[] = tableData.map((category) => {
+      if (category.category.id === 6) {
+        return { ...category, value: defectsSum } as BoardProduction;
+      }
+      return category;
+    });
+    console.log(updatedTableData);
+  
+    // Обновляем состояние
+    setTableData(updatedTableData);
+  }, [defects, draftReport]);
 
   if (!draftReport) {
     return null;
   }
+
+
 
   const handleEditCategory = (category: BoardProduction) => {
     setSelectedCategory(category);
@@ -138,17 +164,6 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   const handleCategoryUpdate = (updatedCategory: BoardProduction): void => {
-    // if (draftReport) {
-    //   const updatedReport = new ReportData<
-    //     GypsumBoard,
-    //     GypsumBoardCategory,
-    //     BoardProduction,
-    //     Delays
-    //   >(draftReport.product, draftReport.productionList, tableData, delays, defects);
-
-    //   updatedReport.updateProductions(updatedCategory);
-    //   setDraftReport(updatedReport);
-    // }    
     tableData.forEach(categorie => {
       categorie.product = selectedProduct || gypsumBoardList[0];
       categorie.productionList = draftReport?.productionList ||
@@ -265,6 +280,20 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     return ApiService.getFormatedLocalDateFromDayjs(newValue);
   };
 
+  function categoryWithId(id: number): number {
+    // Проверьте текущее состояние tableData
+    // console.log("Текущее состояние tableData:", tableData);
+
+    // Найдите элемент по id
+    const foundItem = tableData.find((item) => item.category.id === id);
+
+    // Проверьте найденный элемент
+    // console.log(`Найденный элемент для id=${id}:`, foundItem);
+
+    // Верните значение или 0, если элемент не найден
+    return foundItem?.value || 0;
+  }
+
   return (
     <Modal show={show} onHide={handleClose} centered={true} fullscreen={true}>
       <Modal.Header closeButton className="custom-modal-header">
@@ -379,6 +408,40 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                   categories={tableData}
                   handleEditCategory={handleEditCategory}
                 />
+                <Row>
+                  <h4 className="text-center">
+                    Проверка:{" "}
+                    {draftReport && tableData.length > 0 ? (
+
+                      (() => {
+                        const result = (
+                          categoryWithId(1) * 2 -
+                          tableData.reduce((sum, item) => sum + (item?.value || 0), 0)
+                        ).toFixed(1);
+
+                        const isNonZero = parseFloat(result) !== 0;
+
+                        return (
+                          <span style={{ color: isNonZero ? 'red' : 'inherit' }}>
+                            {result}
+                          </span>
+                        );
+                      })()
+                    ) : (
+                      "Нет данных"
+                    )}
+
+                  </h4>
+                  <h4 className="text-center">
+                    Процент брака: {
+                      (categoryWithId(1) > 0 ?
+                        (1 - (categoryWithId(2) + categoryWithId(3) + categoryWithId(4)) / categoryWithId(1)) * 100
+                        : 0).toFixed(2)}
+                    {"%"}
+                  </h4>
+                </Row>
+
+
               </Col>
               <Col className="col-lg-7 col-sm-12">
                 <Row>
@@ -425,27 +488,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
           </Row>
           <Row>
             <Col className="col-lg-5 col-sm-12">
-              <h3 className="text-center">
-                Проверка:{" "}
-                {draftReport && draftReport.productions.length > 0 ? (
-                  (() => {
-                    const result = (
-                      draftReport.productions[0].value * 2 -
-                      draftReport.productions.reduce((sum, item) => sum + item.value, 0)
-                    ).toFixed(1);
 
-                    const isNonZero = parseFloat(result) !== 0;
-
-                    return (
-                      <span style={{ color: isNonZero ? 'red' : 'inherit' }}>
-                        {result}
-                      </span>
-                    );
-                  })()
-                ) : (
-                  "Нет данных"
-                )}
-              </h3>
             </Col>
           </Row>
         </Container>
