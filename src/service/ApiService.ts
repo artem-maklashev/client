@@ -38,6 +38,23 @@ class ApiService {
             throw error;
         }
     }
+    
+    static async deleteReport(id: number): Promise<void> {
+        try {
+            // Отправляем DELETE-запрос на сервер
+            const response = await api.delete(`${this.baseUrl}/boardProduction/${id}`);
+            
+            // Проверяем успешность ответа
+            if (response.status === 200) {
+              console.log('Отчет успешно удален');
+            } else {
+              console.error('Не удалось удалить отчет', response.statusText);
+            }
+          } catch (error) {
+            // Обработка ошибки
+            console.error('Ошибка при удалении записи', error);
+          }
+    }
 
     static getFormattedDate(date: Date): string {
         const year = date.getFullYear();

@@ -118,6 +118,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       setDelays(draftReport.delays);
       setDefects(draftReport.defectsLogs);
       console.log("Получены данные в draftReport:\n", draftReport);
+      console.log(tableData);
     } else {
       console.log("draftReport еще не установлен.");
     }
@@ -129,19 +130,21 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     const defectsSum = defects.reduce((sum, defect) => sum + defect.value, 0);
     console.log("defectsSum: " + defectsSum);
   
-    // Создаем новый массив с обновленным значением
-    const updatedTableData: BoardProduction[] = tableData.map((category) => {
-      if (category.category.id === 6) {
-        return { ...category, value: defectsSum } as BoardProduction;
-      }
-      return category;
-    });
-    console.log(updatedTableData);
+    // Обновляем tableData на основе defects
+    setTableData(prevTableData => {
+      // Создаем новый массив с обновленным значением
+      const updatedTableData: BoardProduction[] = prevTableData.map(category => {
+        if (category.category.id === 6) {
+          return { ...category, value: defectsSum } as BoardProduction;
+        }
+        return category;
+      });
   
-    // Обновляем состояние
-    setTableData(updatedTableData);
+      console.log(updatedTableData);
+      return updatedTableData;
+    });
   }, [defects, draftReport]);
-
+  
   if (!draftReport) {
     return null;
   }

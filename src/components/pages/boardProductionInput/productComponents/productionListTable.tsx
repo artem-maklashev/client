@@ -9,6 +9,7 @@ import { saveUpdatedReport } from "../SaveUpdatedReport";
 import BoardProduction from "../../../../model/production/BoardProduction";
 import Delays from "../../../../model/delays/Delays";
 import { getUserRole } from "../../../../service/Api";
+import ApiService from "../../../../service/ApiService";
 
 
 interface ProductionListTableProps {
@@ -55,10 +56,22 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   }
 
-  const handleRemoveReport = (
+  const handleRemoveReport = async (
     event: React.MouseEvent<HTMLElement>,
-    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-    alert("Function not implemented.");
+    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
+  ) => {
+    try {
+      await ApiService.deleteReport(item.productionList.id);
+      if (reportData) {
+        const updatedList = reportData.filter(
+          (report) => report.productionList.id !== item.productionList.id
+        );
+        setReportData(updatedList);
+      }
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      // Optional: show an error message to the user
+    }
   }
 
   return (
