@@ -18,8 +18,6 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
 
     const fetchDelaysData = useCallback(async () => {
         try {
-
-
             const params = new URLSearchParams({
                 startDate: selectedStartDate,
                 endDate: selectedEndDate
@@ -31,7 +29,6 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
             if (!response.data) {
                 throw new Error(`Ошибка при запросе: ${response.status} ${response.statusText}`);
             }
-
             const data: Delays[] = await response.data;
             setErrorText(null);
             setDelaysData(data);
@@ -143,7 +140,6 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
             {errorText && <div className="error-message">{errorText}</div>}
             <Container className="p-lg-2 mb-5">
                 <Row xs={1} md={1} lg={1} className="d-flex justify-content-center">
-
                     <div className="col-lg-11 ">
                         <Tabs defaultActiveKey="table">
                             <Tab eventKey="table" title="Таблица" >
@@ -161,9 +157,9 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
                                 </Container>
 
                             </Tab>
-                            <Tab eventKey="opinion" title="В разработке" disabled={true}>
+                            {/* <Tab eventKey="opinion" title="В разработке" disabled={true}>
                                 В разработке...
-                            </Tab>
+                            </Tab> */}
                         </Tabs>
                     </div>
 

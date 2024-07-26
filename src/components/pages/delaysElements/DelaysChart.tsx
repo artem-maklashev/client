@@ -25,17 +25,16 @@ const DelaysChart: React.FC<DelaysChartProps> = ({delays_data}) => {
 
             return (
                 <Row>
-
                     <div key={`chart-${chartIndex}`}>
                         <h4>{delayType}: {totalDelta} минут</h4>
                         <Row id={`delaysChart-${chartIndex}`}>
-                            <div className="col" style={{width: "100%", height: "300px"}}>
+                            <div className="col" style={{width: "100%", height: `${chartData.length * 50}px`}}>
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
                                         data={chartData}
                                         layout="vertical"
                                         margin={{top: 5, right: 50, bottom: 20, left: 10}}
-                                    >cd
+                                    >
                                         <CartesianGrid strokeDasharray="3 3"/>
                                         <XAxis type="number"
                                                dataKey={"delta"}/> {/* Use entry[1] for the delay value */}

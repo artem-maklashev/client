@@ -82,6 +82,11 @@ const MainPage: React.FC<MainPageProps> = () => {
         return `${year}-${month}-${day}`;
     }
 
+    const deviation = value - toTodayPlan;
+    const deviationText = deviation > 0
+        ? `Опережение на ${deviation.toFixed(0)} м²`
+        : `Отставание ${Math.abs(deviation).toFixed(0)} м²`;
+
     return (
         <Container className="mt-5 " fluid>
         <Row className="mt-5 justify-content-center text-center">
@@ -108,7 +113,7 @@ const MainPage: React.FC<MainPageProps> = () => {
                             <p>{plan} м²</p>
                         </Card.Text>
                         <Card.Subtitle>Отклонение</Card.Subtitle>
-                        <Card.Text>{(value - toTodayPlan).toFixed(0)} м²</Card.Text>
+                        <Card.Text>{deviationText}</Card.Text>
                         <Card.Subtitle>Процент брака</Card.Subtitle>
                         <Card.Text>{defectPercentResult.toFixed(2)}%</Card.Text>
                         <Card.Subtitle>Сегодня в производстве</Card.Subtitle>

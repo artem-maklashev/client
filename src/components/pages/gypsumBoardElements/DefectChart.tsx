@@ -2,6 +2,7 @@ import BoardProduction from "../../../model/production/BoardProduction";
 import {Tooltip, AreaChart, YAxis, CartesianGrid, XAxis, Area, Label, ResponsiveContainer} from "recharts";
 import React from "react";
 import DefectChartData from "./DefectChartData";
+import { Card } from "react-bootstrap";
 
 // Класс для представления данных
 // class ChartData {
@@ -91,7 +92,8 @@ const DefectChart: React.FC<BoardProductionProps> = ({data}) => {
         return (
             // <div className="row">
             <div className="col-12 mb-5" style={{width: '100%', height: '300px'}}>
-                <h3 className="text-center">Процент брака</h3>
+                <Card className="col-12 mb-5" style={{width: '100%', height: '300px'}}>
+                <Card.Title className="text-center">Процент брака</Card.Title>
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={data1}
                                margin={{top: 30, right: 30, left: 0, bottom: 0}}>
@@ -99,7 +101,7 @@ const DefectChart: React.FC<BoardProductionProps> = ({data}) => {
                         <defs>
                             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                                <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                                <stop offset="95%" stopColor="#8884d8" stopOpacity={0.2}/>
                             </linearGradient>
                         </defs>
                         <XAxis dataKey="pDay"/>
@@ -113,6 +115,7 @@ const DefectChart: React.FC<BoardProductionProps> = ({data}) => {
                               fill="url(#colorUv)"/>
                     </AreaChart>
                 </ResponsiveContainer>
+                </Card>
             </div>
 
         );

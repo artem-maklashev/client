@@ -1,15 +1,15 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import GypsumBoardInputData from "../../model/inputData/GypsumBoardInputData";
 import GypsumBoardTable from "./gypsumBoardElements/GypsumBoardTable";
-import {Col, Container, Row, Tab, Tabs} from "react-bootstrap";
+import { Card, Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import './MyStyle.css'
 import EdgeChart from "./gypsumBoardElements/EdgeChart";
 import DefectChart from "./gypsumBoardElements/DefectChart";
 import ThicknessChart from "./gypsumBoardElements/ThicknessChart";
-import {useFetchProductionData} from "./commonElements/GetProductionData";
+import { useFetchProductionData } from "./commonElements/GetProductionData";
 import TypesChart from './gypsumBoardElements/TypesChart';
 import GypsumBoardChart from "./gypsumBoardElements/GypsumBoardChart";
-import {api} from "../../service/Api";
+import { api } from "../../service/Api";
 
 interface GypsumBoardShowProps {
 }
@@ -61,7 +61,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
         if (event.target.id === "startDateInput") {
             setSelectedStartDate(enteredDate);
-            
+
             setErrorText(null);
         } else if (event.target.id === "endDateInput") {
             setSelectedEndDate(enteredDate);
@@ -69,7 +69,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
         } else {
             setErrorText(`Invalid date format. Please use ${getLocalizedDateFormat()}.`);
         }
-        fetchGypsumBoardData();        
+        fetchGypsumBoardData();
     };
 
     function getCurrentDate(): string {
@@ -104,7 +104,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
     }, []);
 
     return (
-        <div className="row mt-5 justify-content-center" style={{backgroundColor: '#b5b5b5'}}>
+        <div className="row mt-5 justify-content-center" style={{ backgroundColor: '#b5b5b5' }}>
             <Container className="container mt-auto">
                 <div className="row mt-5">
                     <div className="col-md-3 mb-3 mx-auto">
@@ -159,32 +159,34 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                             )}
 
                             <Col className="d-flex justify-content-center">
-                                <GypsumBoardTable data={gypsumBoardData}/>
+                                <GypsumBoardTable data={gypsumBoardData} />
                             </Col>
                         </Tab>
                         <Tab eventKey="bar" title="График">
                             <Col className="col-12">
                                 <Row className="justify-content-center">
                                     <Col xs={12} sm={6} md={4} lg={4}>
-                                        <GypsumBoardChart raw_data={gypsumBoardData}/>
+                                        <GypsumBoardChart raw_data={gypsumBoardData} />
                                     </Col>
                                     <Col xs={12} sm={6} md={4} lg={4}>
                                         <Row className="d-flex justify-content-center">
-                                            <EdgeChart edgeData={productionData}/>
+                                            <Card>
+                                                <EdgeChart edgeData={productionData} />
+                                            </Card>
                                         </Row>
                                         <Row className="d-flex justify-content-center">
-                                            <ThicknessChart edgeData={productionData}/>
+                                            <Card>
+                                                <ThicknessChart edgeData={productionData} />
+                                            </Card>
                                         </Row>
                                     </Col>
-                                    <Col xs={12} sm={12} md={4} lg={4} className="d-flex align-items-center" >
-
-                                            <TypesChart edgeData={productionData}/>
-
+                                    <Col xs={12} sm={6} md={4} lg={4} className="d-flex align-items-center justify-content-center" >
+                                        <TypesChart edgeData={productionData} />
                                     </Col>
                                 </Row>
                                 <Row className="d-flex justify-content-center">
                                     <Col xs={12} className="col-xxl">
-                                        <DefectChart data={productionData}/>
+                                        <DefectChart data={productionData} />
                                     </Col>
                                 </Row>
                             </Col>
