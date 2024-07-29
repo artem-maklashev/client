@@ -5,6 +5,8 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import GypsumBoard from "../model/gypsumBoard/GypsumBoard";
 import Specification from "../model/specification/Specification";
+import ProductionList from "../model/production/ProductionList";
+import MaterialConsumption from "../model/specification/MaterialConsumption";
 dayjs.extend(utc);
 
 
@@ -105,7 +107,18 @@ class ApiService {
             console.error('Ошибка при получении спецификации', error);
             return [];
           }
-        }    
+        } 
+        
+    static async fetchConsumption(productionList: ProductionList) : Promise<MaterialConsumption[]> {
+        try {
+            const response = await api.post(`${this.baseUrl}/specifications/getConsumption`, productionList);
+            console.log("Получены данные о расходе материалов");
+            return response.data;
+        } catch (error) {
+            console.error('Ошибка при получении расхода материалов', error);
+            return [];
+        }
+    }
 }
 
 export default ApiService;

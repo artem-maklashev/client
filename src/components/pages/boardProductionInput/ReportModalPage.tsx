@@ -572,9 +572,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         show={editConsumtionShow}
         product={selectedProduct}
         productionTotal={tableData[0] ? tableData[0].value : 0}
-        onHide={() => setEditConsumtionShow(false)} 
-        specifications={specification}        // onSave={(updatedConsumption) => {
-        //   // handleConsumptionUpdate(updatedConsumption);
+        onHide={() => setEditConsumtionShow(false)}
+        specifications={specification} 
+        produtionList={draftReport.productionList}  
+        // onSave={(updatedConsumption) => {      
+        // handleConsumptionUpdate(updatedConsumption);
         //   setEditConsumtionShow(false);
         // }
       // }
