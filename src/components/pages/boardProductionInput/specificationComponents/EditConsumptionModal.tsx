@@ -27,35 +27,46 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     useEffect(() => {
         console.log(specifications);
         if (specifications) {
-            specification.sort((a,b) => a.material.id - b.material.id);
+            specification.sort((a, b) => a.material.id - b.material.id);
             setSpecification(specifications);
         }
     }, [specification, specifications]);
 
-    useEffect(() =>{
+    useEffect(() => {
         const fetchConsumptionData = async () => {
             if (produtionList) {
                 const data = await ApiService.fetchConsumption(produtionList);
-                return data;            
-            } else 
-            {
-                specification.forEach((item) => {
-                let newConsumption = new MaterialConsumption(-1, new ProductionList(-1, new Date(), new Date(),), item.material, 0)
-            })
-                return [];
+                if (data.length > 0) {
+                    return data;
+                } else {
+                    const newConsumptionList: MaterialConsumption[] = [];
+                    specification.forEach((item) => {
+                        let newConsumption = new MaterialConsumption(-1, produtionList, item.material, 0);
+                        newConsumptionList.push(newConsumption);
+                    })
+                    return newConsumptionList;
+                } }
+                else
+                {
+                    const newConsumptionList: MaterialConsumption[] = [];
+                    specification.forEach((item) => {
+                        let newConsumption = new MaterialConsumption(-1, new ProductionList(), item.material, 0);
+                        newConsumptionList.push(newConsumption);
+                    })
+                    return  newConsumptionList;
+                }
             }
-        }
 
-        const getConsumption = async () => {
-            const consumption = await fetchConsumptionData();
-            setDraftConsumption(consumption);
-        }
-        getConsumption();
-    }, [produtionList]);
+            const getConsumption = async () => {
+                const consumption = await fetchConsumptionData();
+                setDraftConsumption(consumption);
+            }
+            getConsumption();
+        }, [produtionList]);
 
     return (
-        <Modal show={show} onHide={onHide} scrollable={true} animation={true} 	aria-labelledby="dark"
->
+        <Modal show={show} onHide={onHide} scrollable={true} animation={true} aria-labelledby="dark"
+        >
             <Modal.Header closeButton={true} data-bs-theme="light">
                 <Modal.Title>Расход материалов</Modal.Title>
             </Modal.Header>
@@ -75,7 +86,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                                     <tr key={entry.id}>
                                         <td>{entry.material.name}</td>
                                         <td>{entry.quantity}</td>
-                                        <td>{(entry.quantity*productionTotal).toFixed(2)}</td>
+                                        <td>{(entry.quantity * productionTotal).toFixed(2)}</td>
                                     </tr>
                                 )
                                 )
