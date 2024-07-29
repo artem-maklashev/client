@@ -1,5 +1,5 @@
 import ProductionList from "../production/ProductionList";
-import Material from "./material";
+import Material from "./Material";
 
 class MaterialConsumption {
     private id: number;

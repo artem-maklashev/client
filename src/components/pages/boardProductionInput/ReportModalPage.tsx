@@ -28,6 +28,9 @@ import ApiService from "../../../service/ApiService";
 import ProductionList from "../../../model/production/ProductionList";
 import { createNewReport } from "./NewReport";
 import ProductTypes from "../../../model/ProductTypes";
+import MaterialConsumption from "../../../model/specification/MaterialConsumption";
+import Specification from "../../../model/specification/Specification";
+import EditConsumptionModal from "./specificationComponents/EditConsumptionModal";
 dayjs.extend(utc);
 
 interface ReportModalPageProps {
@@ -72,6 +75,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
   const [defects, setDefects] = useState<BoardDefectsLog[]>([]);
   const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
+  const [editConsumtionShow, setEditConsumtionShow] = useState(false);
+  const [specification, setSpecification] = useState<Specification[]>([]);
 
 
   const getName = (gboard: GypsumBoard) => {
@@ -89,6 +94,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       gboard.length.value
     );
   };
+
 
   useEffect(() => {
     const initializeReportData = async () => {
@@ -125,11 +131,27 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   }, [draftReport]);
 
   useEffect(() => {
+    const fetchSpecification = async () => {
+      if (selectedProduct) {
+        const data = await ApiService.fetchSpecification(selectedProduct);
+        return data;
+      } else {
+        return [];
+      }
+    };
+    const getSpecification = async () => {
+      const specificationData = await fetchSpecification();
+      setSpecification(specificationData);
+    }
+    getSpecification();
+  }, [selectedProduct]);
+
+  useEffect(() => {
     if (!draftReport) return;
-  
+
     const defectsSum = defects.reduce((sum, defect) => sum + defect.value, 0);
     console.log("defectsSum: " + defectsSum);
-  
+
     // Обновляем tableData на основе defects
     setTableData(prevTableData => {
       // Создаем новый массив с обновленным значением
@@ -139,12 +161,12 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         }
         return category;
       });
-  
+
       console.log(updatedTableData);
       return updatedTableData;
     });
   }, [defects, draftReport]);
-  
+
   if (!draftReport) {
     return null;
   }
@@ -486,14 +508,23 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                     Добавить дефекты
                   </Button>
                 </Row>
+                <Row className="justify-content-center mt-5">
+                  <Button
+                    type="button"
+                    variant="outline-primary"
+                    size="sm"
+                    style={{ width: "150px" }}
+                    onClick={() => {
+                      setEditConsumtionShow(true);
+                    }}
+                  >
+                    Расход материалов
+                  </Button>
+                </Row>
               </Col>
             </Row>
           </Row>
-          <Row>
-            <Col className="col-lg-5 col-sm-12">
 
-            </Col>
-          </Row>
         </Container>
       </Modal.Body>
       <Modal.Footer>
@@ -536,6 +567,16 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
           setSelectedDefect(null);
           setEditDefectsShow(false);
         }}
+      />
+      <EditConsumptionModal
+        show={editConsumtionShow}
+        product={selectedProduct}
+        onHide={() => setEditConsumtionShow(false)} 
+        specifications={specification}        // onSave={(updatedConsumption) => {
+        //   // handleConsumptionUpdate(updatedConsumption);
+        //   setEditConsumtionShow(false);
+        // }
+      // }
       />
     </Modal>
   );

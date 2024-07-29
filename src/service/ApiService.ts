@@ -3,6 +3,8 @@ import {api} from "./Api";
 import BoardProduction from "../model/production/BoardProduction";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
+import GypsumBoard from "../model/gypsumBoard/GypsumBoard";
+import Specification from "../model/specification/Specification";
 dayjs.extend(utc);
 
 
@@ -91,6 +93,19 @@ class ApiService {
         console.log("Преобразуем: " + date +"\ngetTimezoneOffset: " + offset+ "\ndateMils: " + dateMils +"\nПреобразованная дата: " + newDate);
         return newDate;
     }
+
+    static async fetchSpecification(product : GypsumBoard) : Promise<Specification[]> {       
+        try {            
+            const response = await api.post(`${this.baseUrl}/specifications/getSpecificationByProduct`, product);
+            console.log("Получена спецификация \n" + response.data.toString());
+           return response.data; 
+           
+          } catch (error) {
+            // Обработка ошибки
+            console.error('Ошибка при получении спецификации', error);
+            return [];
+          }
+        }    
 }
 
 export default ApiService;

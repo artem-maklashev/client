@@ -1,5 +1,5 @@
 import GypsumBoard from "../gypsumBoard/GypsumBoard";
-import Material from "./material";
+import Material from "./Material";
 
 class Specification {
     id: number;
