@@ -3,29 +3,34 @@ import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import MaterialConsumption from "../../../../model/specification/MaterialConsumption";
 import Specification from "../../../../model/specification/Specification";
 import { Modal, Table } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 interface EditConsumpionProps {
     show: boolean;
     specifications: Specification[];
     product: GypsumBoard | null;
+    productionTotal: number;
     onHide: () => void;
     // onSave: (updatedConsumptions: MaterialConsumption[]) => void;
 }
 
 const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
-    show, specifications, product, onHide
+    show, specifications, product, productionTotal, onHide
 }) => {
     const [specification, setSpecification] = useState<Specification[]>(specifications);
     useEffect(() => {
         console.log(specifications);
         if (specifications) {
+            specification.sort((a,b) => a.material.id - b.material.id);
             setSpecification(specifications);
         }
-    }, [specifications]);
+    }, [specification, specifications]);
 
     return (
-        <Modal show={show} onHide={onHide}>
-            <Modal.Header closeButton>
+        <Modal show={show} onHide={onHide} scrollable={true} animation={true} 	aria-labelledby="dark"
+>
+            <Modal.Header closeButton={true} data-bs-theme="light">
                 <Modal.Title>Расход материалов</Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -34,6 +39,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                         <tr>
                             <th>Наименование</th>
                             <th>Норма</th>
+                            <th>По норме</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,6 +49,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                                     <tr key={entry.id}>
                                         <td>{entry.material.name}</td>
                                         <td>{entry.quantity}</td>
+                                        <td>{(entry.quantity*productionTotal).toFixed(2)}</td>
                                     </tr>
                                 )
                                 )

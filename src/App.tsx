@@ -11,6 +11,8 @@ import RegistrationPage from "./components/pages/RegistrationPage";
 import LoginPage from "./components/pages/LoginPage";
 import { api, setAuthToken } from "./service/Api";
 import BoardProductionPage from './components/pages/boardProductionInput/productComponents/BoardProduction';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 // function App() {
 //     const [validatingToken, setValidatingToken] = useState(true);
