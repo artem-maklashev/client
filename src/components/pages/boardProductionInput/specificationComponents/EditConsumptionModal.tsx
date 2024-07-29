@@ -6,6 +6,9 @@ import { Modal, Table } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProductionList from "../../../../model/production/ProductionList";
 import ApiService from "../../../../service/ApiService";
+import Material from "../../../../model/specification/Material";
+import { Button } from "@mui/material";
+import { get } from "http";
 
 
 interface EditConsumpionProps {
@@ -45,9 +48,8 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                         newConsumptionList.push(newConsumption);
                     })
                     return newConsumptionList;
-                } }
-                else
-                {
+                }
+            } else {
                     const newConsumptionList: MaterialConsumption[] = [];
                     specification.forEach((item) => {
                         let newConsumption = new MaterialConsumption(-1, new ProductionList(), item.material, 0);
@@ -62,13 +64,38 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                 setDraftConsumption(consumption);
             }
             getConsumption();
-        }, [produtionList]);
+    }, [produtionList]);
+    
+    const getMaterialConsumption = (material: Specification) => {
+        const factQuantity = draftConsumption.find(item => item.$material.id === material.id)?.$quantity;
+        if (!factQuantity) {
+            // draftConsumption.push(new MaterialConsumption(-1, produtionList, material.material, 0));
+            return 0;
+        }
+        return factQuantity;
+    }
+
+    function handleHide(): void {
+        setDraftConsumption([]);
+        setSpecification([]);
+        onHide();
+    }
+
+    const getDifference = (entry: Specification) => {
+        return getMaterialConsumption(entry) - entry.quantity*productionTotal;
+    }
+    
+
+    function handleConsumptionUpdate(entry: Specification): void {
+        throw new Error("Function not implemented.");
+    }
 
     return (
-        <Modal show={show} onHide={onHide} scrollable={true} animation={true} aria-labelledby="dark"
+        <Modal show={show} onHide={handleHide} scrollable={true} animation={true} aria-labelledby="dark"
         >
             <Modal.Header closeButton={true} data-bs-theme="light">
                 <Modal.Title>Расход материалов</Modal.Title>
+                <p>{ draftConsumption.length}</p>
             </Modal.Header>
             <Modal.Body>
                 <Table striped bordered hover size="sm" variant="dark" >
@@ -77,6 +104,8 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                             <th>Наименование</th>
                             <th>Норма</th>
                             <th>По норме</th>
+                            <th>Факт</th>
+                            <th>Отклонение</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,6 +116,14 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                                         <td>{entry.material.name}</td>
                                         <td>{entry.quantity}</td>
                                         <td>{(entry.quantity * productionTotal).toFixed(2)}</td>
+                                        <td>
+                                            <Button color="primary" onClick={() => handleConsumptionUpdate(entry)}>
+                                                🖊
+                                            </Button>
+                                            {getMaterialConsumption(entry)}</td>
+                                        <td
+                                        style={getDifference(entry) > 0 ? {color: 'red'} : {color: 'green'}}
+                                        >{getDifference(entry).toFixed(2)}</td>
                                     </tr>
                                 )
                                 )
