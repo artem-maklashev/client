@@ -7,8 +7,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ProductionList from "../../../../model/production/ProductionList";
 import ApiService from "../../../../service/ApiService";
 import Material from "../../../../model/specification/Material";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { get } from "http";
+import { getUserRole } from "../../../../service/Api";
 
 
 interface EditConsumpionProps {
@@ -18,11 +19,11 @@ interface EditConsumpionProps {
     produtionList: ProductionList;
     productionTotal: number;
     onHide: () => void;
-    // onSave: (updatedConsumptions: MaterialConsumption[]) => void;
+    onSave: (updatedConsumptions: MaterialConsumption[]) => void;
 }
 
 const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
-    show, specifications, product, productionTotal, produtionList, onHide
+    show, specifications, product, productionTotal, produtionList, onHide, onSave
 }) => {
     const [specification, setSpecification] = useState<Specification[]>(specifications);
     const [draftConsumption, setDraftConsumption] = useState<MaterialConsumption[]>([]);
@@ -85,13 +86,22 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
         return getMaterialConsumption(entry) - entry.quantity*productionTotal;
     }
     
+    const handleMaterialConsumptionChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, entry: Specification) => {
+        const updatedConsumption = draftConsumption.map((item) =>
+            item.$material.id === entry.material.id 
+                ? new MaterialConsumption(item.$id, item.$productionList, item.$material, Number(event.target.value))
+                : item
+        );
+        setDraftConsumption(updatedConsumption);
+       }
+   
 
-    function handleConsumptionUpdate(entry: Specification): void {
-        throw new Error("Function not implemented.");
+    function handleSave(): void {
+       onSave(draftConsumption);
     }
 
     return (
-        <Modal show={show} onHide={handleHide} scrollable={true} animation={true} aria-labelledby="dark"
+        <Modal show={show} onHide={handleHide} scrollable={true} animation={true} aria-labelledby="dark" size="lg"
         >
             <Modal.Header closeButton={true} data-bs-theme="light">
                 <Modal.Title>Расход материалов</Modal.Title>
@@ -117,10 +127,20 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                                         <td>{entry.quantity}</td>
                                         <td>{(entry.quantity * productionTotal).toFixed(2)}</td>
                                         <td>
-                                            <Button color="primary" onClick={() => handleConsumptionUpdate(entry)}>
+                                            {/* <Button color="primary" onClick={() => handleConsumptionUpdate(entry)}>
                                                 🖊
-                                            </Button>
-                                            {getMaterialConsumption(entry)}</td>
+                                            </Button> */}
+                                            <TextField
+                                            id="outlined-number"
+                                            // label="Значение"
+                                            type="number"
+                                            color="primary"                                            
+                                            defaultValue={getMaterialConsumption(entry)}
+                                            size="small"
+                                            onChange={(event) => handleMaterialConsumptionChange(event, entry)}                                            
+                                            InputProps={{
+                                                style: { color: 'white' }}}/>
+                                            </td>
                                         <td
                                         style={getDifference(entry) > 0 ? {color: 'red'} : {color: 'green'}}
                                         >{getDifference(entry).toFixed(2)}</td>
@@ -137,6 +157,14 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                     </tbody>
                 </Table>
             </Modal.Body>
+            <Modal.Footer>
+            <Button onClick={onHide} color="primary" >
+                    Отмена
+                </Button>
+                <Button variant="contained" onClick={handleSave} disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' ? false : true}>
+                    Сохранить
+                </Button>
+            </Modal.Footer>
         </Modal>
     );
 }

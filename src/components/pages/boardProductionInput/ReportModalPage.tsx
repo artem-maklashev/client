@@ -319,6 +319,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     return foundItem?.value || 0;
   }
 
+  const handleSaveConsumption = (updatedConsumptions: MaterialConsumption[]) => {
+    setEditConsumtionShow(false);
+    alert("Нажата конопка сохранения расхода.\nПередан массив данных размером " + updatedConsumptions.length);
+  }
+
   return (
     <Modal show={show} onHide={handleClose} centered={true} fullscreen={true}>
       <Modal.Header closeButton className="custom-modal-header">
@@ -572,13 +577,14 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         show={editConsumtionShow}
         product={selectedProduct}
         productionTotal={tableData[0] ? tableData[0].value : 0}
+        produtionList={draftReport.productionList}
         onHide={() => setEditConsumtionShow(false)}
-        specifications={specification} 
-        produtionList={draftReport.productionList}  
-        // onSave={(updatedConsumption) => {      
-        // handleConsumptionUpdate(updatedConsumption);
-        //   setEditConsumtionShow(false);
-        // }
+        specifications={specification}
+        onSave={handleSaveConsumption}
+      // onSave={(updatedConsumption) => {      
+      // handleConsumptionUpdate(updatedConsumption);
+      //   setEditConsumtionShow(false);
+      // }
       // }
       />
     </Modal>
