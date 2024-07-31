@@ -112,7 +112,7 @@ class ApiService {
     static async fetchConsumption(productionList: ProductionList) : Promise<MaterialConsumption[]> {
         try {
             const response = await api.post(`${this.baseUrl}/specifications/getConsumption`, productionList);
-            console.log("Получены данные о расходе материалов" + response.data);
+            console.log("Получены данные о расходе материалов");
             return response.data ;
         } catch (error) {
             console.error('Ошибка при получении расхода материалов', error);

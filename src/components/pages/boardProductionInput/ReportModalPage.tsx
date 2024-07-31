@@ -135,7 +135,9 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       if (selectedProduct) {
         const data = await ApiService.fetchSpecification(selectedProduct);
         setSpecification(data);
+        console.log("Спецификация установлена " + specification.length);
       } else {
+        console.log("Спецификация не установлена");
         setSpecification([]);
       }
     };

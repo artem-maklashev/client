@@ -6,9 +6,8 @@ import { Container, Form, Modal, Table } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProductionList from "../../../../model/production/ProductionList";
 import ApiService from "../../../../service/ApiService";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import { getUserRole } from "../../../../service/Api";
-
 
 interface EditConsumpionProps {
     show: boolean;
@@ -23,12 +22,14 @@ interface EditConsumpionProps {
 const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     show, specifications, product, productionTotal, produtionList, onHide, onSave
 }) => {
-    const [specification, setSpecification] = useState<Specification[]>(specifications);
+    const [specification, setSpecification] = useState<Specification[]>([]);
     const [draftConsumption, setDraftConsumption] = useState<MaterialConsumption[]>([]);
 
     useEffect(() => {
+        console.log("Initial specifications:", specifications);
         if (specifications) {
-            const sortedSpecifications = [...specifications].sort((a, b) => a.material.id - b.material.id);
+            const sortedSpecifications = specifications.sort((a, b) => a.material.id - b.material.id);
+            console.log("Sorted specifications:", sortedSpecifications);
             setSpecification(sortedSpecifications);
         }
     }, [specifications]);
@@ -38,7 +39,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
             if (produtionList) {
                 const data = await ApiService.fetchConsumption(produtionList);
                 if (data.length > 0) {
-                    console.log("Получен расход в размере " + data.length);
+                    console.log("Получен расход в размере", data.length);
                     return data;
                 } else {
                     const newConsumptionList: MaterialConsumption[] = specification.map((item) => {
@@ -57,10 +58,12 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
         const getConsumption = async () => {
             const consumption = await fetchConsumptionData();
             setDraftConsumption(consumption);
-            console.log("Consumption: \n" + consumption);
+            console.log("Consumption length:", consumption.length);
         };
 
-        getConsumption();
+        if (produtionList) {
+            getConsumption();
+        }
     }, [produtionList, specification]);
 
     const getMaterialConsumption = (specification: Specification) => {
@@ -92,14 +95,9 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     };
 
     return (
-        <Modal show={show} onHide={handleHide} scrollable={true} animation={true} aria-labelledby="dark" size="lg" 
-        backdrop="static" // Эта строка предотвращает закрытие модального окна при клике вне его
-        keyboard={false}
-        
-        >
-            <Modal.Header closeButton={false} data-bs-theme="light">
+        <Modal show={show} onHide={handleHide} scrollable={true} animation={true} size="lg" backdrop="static" keyboard={false}>
+            <Modal.Header closeButton>
                 <Modal.Title>Расход материалов</Modal.Title>
-                <p>{draftConsumption.length}</p>
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>
@@ -114,56 +112,38 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                             </tr>
                         </thead>
                         <tbody>
-                            {specification.length > 0 ?
-                                (
-                                    specification.map((entry) => (
-                                        <tr key={entry.id}>
-                                            <td>{entry.material.name}</td>
-                                            <td>{entry.quantity}</td>
-                                            <td>{(entry.quantity * productionTotal).toFixed(2)}</td>
-                                            <td className="auto-width">
-                                                {/* <Button color="primary" onClick={() => handleConsumptionUpdate(entry)}>
-                                                🖊
-                                            </Button> */}
-                                                <Form.Control
-                                                    className="w-150"
-                                                    type="number"                                                    
-                                                    defaultValue={getMaterialConsumption(entry)}
-                                                    size="sm"
-                                                    onChange={(event) => handleMaterialConsumptionChange(event, entry)}
-                                                    style={{ color: 'white', backgroundColor: 'transparent' }}
-                                                />
-                                                {/* <TextField
-                                                    id="outlined-number"
-                                                    // label="Значение"
-                                                    type="number"
-                                                    color="primary"
-                                                    defaultValue={getMaterialConsumption(entry)}
-                                                    size="small"
-                                                    onChange={(event) => handleMaterialConsumptionChange(event, entry)}
-                                                    InputProps={{
-                                                        style: { color: 'white' }
-                                                    }} /> */}
-                                            </td>
-                                            <td
-                                                style={getDifference(entry) > 0 ? { color: 'red' } : { color: 'green' }}
-                                            ><strong>{getDifference(entry).toFixed(2)}</strong> {(getDifference(entry) * 100 / (entry.quantity * productionTotal)).toFixed(2)}%</td>
-                                        </tr>
-                                    )
-                                    )
-                                ) : (
-
-                                    <tr>
-                                        <td colSpan={2}>Нет данных</td>
+                            {specification.length > 0 ? (
+                                specification.map((entry) => (
+                                    <tr key={entry.id}>
+                                        <td>{entry.material.name}</td>
+                                        <td>{entry.quantity}</td>
+                                        <td>{(entry.quantity * productionTotal).toFixed(2)}</td>
+                                        <td className="auto-width">
+                                            <Form.Control
+                                                className="w-150"
+                                                type="number"
+                                                defaultValue={getMaterialConsumption(entry)}
+                                                size="sm"
+                                                onChange={(event) => handleMaterialConsumptionChange(event, entry)}
+                                                style={{ color: 'white', backgroundColor: 'transparent' }}
+                                            />
+                                        </td>
+                                        <td style={getDifference(entry) > 0 ? { color: 'red' } : { color: 'green' }}>
+                                            <strong>{getDifference(entry).toFixed(2)}</strong> {(getDifference(entry) * 100 / (entry.quantity * productionTotal)).toFixed(2)}%
+                                        </td>
                                     </tr>
-
-                                )}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5}>Нет данных</td>
+                                </tr>
+                            )}
                         </tbody>
                     </Table>
                 </Container>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={onHide} color="primary" >
+                <Button onClick={onHide} color="primary">
                     Отмена
                 </Button>
                 <Button variant="contained" onClick={handleSave} disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' ? false : true}>
@@ -172,5 +152,6 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
             </Modal.Footer>
         </Modal>
     );
-}
+};
+
 export default EditConsumptionModal;
