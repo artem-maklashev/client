@@ -96,7 +96,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
 
     return (
         <Modal show={show} onHide={handleHide} scrollable={true} animation={true} size="lg" backdrop="static" keyboard={false}>
-            <Modal.Header closeButton>
+            <Modal.Header >
                 <Modal.Title>Расход материалов</Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -128,9 +128,10 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                                                 style={{ color: 'white', backgroundColor: 'transparent' }}
                                             />
                                         </td>
-                                        <td style={getDifference(entry) > 0 ? { color: 'red' } : { color: 'green' }}>
-                                            <strong>{getDifference(entry).toFixed(2)}</strong> {(getDifference(entry) * 100 / (entry.quantity * productionTotal)).toFixed(2)}%
+                                        <td style={{ color: getDifference(entry) > 0 ? 'red' : 'green' }}>
+                                            <strong>{getDifference(entry).toFixed(2)}</strong> {entry.quantity && productionTotal ? (getDifference(entry) * 100 / (entry.quantity * productionTotal)).toFixed(2) : '--'}%
                                         </td>
+
                                     </tr>
                                 ))
                             ) : (
