@@ -6,9 +6,7 @@ import { Modal, Table } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProductionList from "../../../../model/production/ProductionList";
 import ApiService from "../../../../service/ApiService";
-import Material from "../../../../model/specification/Material";
 import { Button, TextField } from "@mui/material";
-import { get } from "http";
 import { getUserRole } from "../../../../service/Api";
 
 
@@ -31,50 +29,46 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     useEffect(() => {
         console.log(specifications);
         if (specifications) {
-            specification.sort((a, b) => a.material.id - b.material.id);
-            setSpecification(specifications);
+            const sortedSpecifications = [...specifications].sort((a, b) => a.material.id - b.material.id);
+            setSpecification(sortedSpecifications);
         }
-    }, [specification, specifications]);
+    }, [specifications]);
 
     useEffect(() => {
         const fetchConsumptionData = async () => {
             if (produtionList) {
                 const data = await ApiService.fetchConsumption(produtionList);
                 if (data.length > 0) {
+                    console.log("Получен расход в размере " + data.length );
                     return data;
                 } else {
-                    const newConsumptionList: MaterialConsumption[] = [];
-                    specification.forEach((item) => {
-                        let newConsumption = new MaterialConsumption(-1, produtionList, item.material, 0);
-                        newConsumptionList.push(newConsumption);
-                    })
+                    const newConsumptionList: MaterialConsumption[] = specification.map((item) => {
+                        return new MaterialConsumption(-1, produtionList, item.material, 0);
+                    });
                     return newConsumptionList;
                 }
             } else {
-                    const newConsumptionList: MaterialConsumption[] = [];
-                    specification.forEach((item) => {
-                        let newConsumption = new MaterialConsumption(-1, new ProductionList(), item.material, 0);
-                        newConsumptionList.push(newConsumption);
-                    })
-                    return  newConsumptionList;
-                }
+                const newConsumptionList: MaterialConsumption[] = specification.map((item) => {
+                    return new MaterialConsumption(-1, new ProductionList(), item.material, 0);
+                });
+                return newConsumptionList;
             }
+        };
 
-            const getConsumption = async () => {
-                const consumption = await fetchConsumptionData();
-                setDraftConsumption(consumption);
-            }
-            getConsumption();
-    }, [produtionList]);
+        const getConsumption = async () => {
+            const consumption = await fetchConsumptionData();
+            setDraftConsumption(consumption);
+            console.log("Consumption: \n" + (consumption));
+        };
+
+        getConsumption();
+    }, [produtionList, specification]);
     
-    const getMaterialConsumption = (material: Specification) => {
-        const factQuantity = draftConsumption.find(item => item.$material.id === material.id)?.$quantity;
-        if (!factQuantity) {
-            // draftConsumption.push(new MaterialConsumption(-1, produtionList, material.material, 0));
-            return 0;
-        }
-        return factQuantity;
-    }
+    const getMaterialConsumption = (specification: Specification) => {
+        const factQuantity = draftConsumption.find(item => item && item.material && item.material.id === specification.material.id);
+        return factQuantity ? factQuantity.quantity : 0;
+    };
+    
 
     function handleHide(): void {
         setDraftConsumption([]);
@@ -88,8 +82,8 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     
     const handleMaterialConsumptionChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, entry: Specification) => {
         const updatedConsumption = draftConsumption.map((item) =>
-            item.$material.id === entry.material.id 
-                ? new MaterialConsumption(item.$id, item.$productionList, item.$material, Number(event.target.value))
+            item.material.id === entry.material.id 
+                ? new MaterialConsumption(item.id, item.productionList, item.material, Number(event.target.value))
                 : item
         );
         setDraftConsumption(updatedConsumption);
