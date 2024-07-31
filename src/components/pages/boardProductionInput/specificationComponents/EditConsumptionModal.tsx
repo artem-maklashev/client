@@ -95,8 +95,9 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
         <Modal show={show} onHide={handleHide} scrollable={true} animation={true} aria-labelledby="dark" size="lg" 
         backdrop="static" // Эта строка предотвращает закрытие модального окна при клике вне его
         keyboard={false}
+        
         >
-            <Modal.Header closeButton={true} data-bs-theme="light">
+            <Modal.Header closeButton={false} data-bs-theme="light">
                 <Modal.Title>Расход материалов</Modal.Title>
                 <p>{draftConsumption.length}</p>
             </Modal.Header>
