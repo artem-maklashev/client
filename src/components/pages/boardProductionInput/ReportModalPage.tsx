@@ -134,16 +134,13 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     const fetchSpecification = async () => {
       if (selectedProduct) {
         const data = await ApiService.fetchSpecification(selectedProduct);
-        return data;
+        setSpecification(data);
       } else {
-        return [];
+        setSpecification([]);
       }
     };
-    const getSpecification = async () => {
-      const specificationData = await fetchSpecification();
-      setSpecification(specificationData);
-    }
-    getSpecification();
+  
+    fetchSpecification();
   }, [selectedProduct]);
 
   useEffect(() => {
