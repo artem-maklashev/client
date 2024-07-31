@@ -27,7 +27,6 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     const [draftConsumption, setDraftConsumption] = useState<MaterialConsumption[]>([]);
 
     useEffect(() => {
-        console.log(specifications);
         if (specifications) {
             const sortedSpecifications = [...specifications].sort((a, b) => a.material.id - b.material.id);
             setSpecification(sortedSpecifications);
@@ -39,7 +38,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
             if (produtionList) {
                 const data = await ApiService.fetchConsumption(produtionList);
                 if (data.length > 0) {
-                    console.log("Получен расход в размере " + data.length );
+                    console.log("Получен расход в размере " + data.length);
                     return data;
                 } else {
                     const newConsumptionList: MaterialConsumption[] = specification.map((item) => {
@@ -58,41 +57,39 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
         const getConsumption = async () => {
             const consumption = await fetchConsumptionData();
             setDraftConsumption(consumption);
-            console.log("Consumption: \n" + (consumption));
+            console.log("Consumption: \n" + consumption);
         };
 
         getConsumption();
     }, [produtionList, specification]);
-    
+
     const getMaterialConsumption = (specification: Specification) => {
-        const factQuantity = draftConsumption.find(item => item && item.material && item.material.id === specification.material.id);
+        const factQuantity = draftConsumption.find(item => item.material.id === specification.material.id);
         return factQuantity ? factQuantity.quantity : 0;
     };
-    
 
-    function handleHide(): void {
+    const handleHide = (): void => {
         setDraftConsumption([]);
         setSpecification([]);
         onHide();
-    }
+    };
 
     const getDifference = (entry: Specification) => {
-        return getMaterialConsumption(entry) - entry.quantity*productionTotal;
-    }
-    
+        return getMaterialConsumption(entry) - entry.quantity * productionTotal;
+    };
+
     const handleMaterialConsumptionChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, entry: Specification) => {
         const updatedConsumption = draftConsumption.map((item) =>
-            item.material.id === entry.material.id 
+            item.material.id === entry.material.id
                 ? new MaterialConsumption(item.id, item.productionList, item.material, Number(event.target.value))
                 : item
         );
         setDraftConsumption(updatedConsumption);
-       }
-   
+    };
 
-    function handleSave(): void {
-       onSave(draftConsumption);
-    }
+    const handleSave = (): void => {
+        onSave(draftConsumption);
+    };
 
     return (
         <Modal show={show} onHide={handleHide} scrollable={true} animation={true} aria-labelledby="dark" size="lg"
@@ -137,7 +134,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                                             </td>
                                         <td
                                         style={getDifference(entry) > 0 ? {color: 'red'} : {color: 'green'}}
-                                        >{getDifference(entry).toFixed(2)}</td>
+                                        ><strong>{getDifference(entry).toFixed(2)}</strong> {(getDifference(entry)*100/(entry.quantity * productionTotal)).toFixed(2)}%</td>
                                     </tr>
                                 )
                                 )
