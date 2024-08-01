@@ -82,6 +82,10 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     };
 
     const handleMaterialConsumptionChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, entry: Specification) => {
+        const findConsumption = draftConsumption.find((cons) => cons.material.id === entry.material.id)
+        if (!findConsumption) {
+            draftConsumption.push(new MaterialConsumption(-1, produtionList, entry.material, 0))
+        }
         const updatedConsumption = draftConsumption.map((item) =>
             item.material.id === entry.material.id
                 ? new MaterialConsumption(item.id, item.productionList, item.material, Number(event.target.value))
