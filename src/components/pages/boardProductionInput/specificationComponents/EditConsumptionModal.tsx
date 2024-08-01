@@ -91,7 +91,8 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     };
 
     const handleSave = (): void => {
-        onSave(draftConsumption);
+        const consumptions = draftConsumption.filter((consumption) => consumption.quantity > 0);
+        onSave(consumptions);
     };
 
     return (

@@ -48,7 +48,8 @@ interface ReportModalPageProps {
       GypsumBoardCategory,
       BoardProduction,
       Delays
-    >
+    >,
+    consumptions: MaterialConsumption[]
   ) => void;
 }
 
@@ -77,6 +78,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
   const [editConsumtionShow, setEditConsumtionShow] = useState(false);
   const [specification, setSpecification] = useState<Specification[]>([]);
+  const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
 
 
   const getName = (gboard: GypsumBoard) => {
@@ -291,7 +293,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       draftReport.productions = tableData;
       console.log("СОХРАНЯЕМ ДАННЫЕ В NEW CATEGORY");
       console.log(draftReport);
-      onSave(draftReport);
+      onSave(draftReport, consumptions);
     }
     onHide();
   };
@@ -320,7 +322,9 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   const handleSaveConsumption = (updatedConsumptions: MaterialConsumption[]) => {
     setEditConsumtionShow(false);
+    setConsumptions(updatedConsumptions);
     alert("Нажата конопка сохранения расхода.\nПередан массив данных размером " + updatedConsumptions.length);
+    console.log(updatedConsumptions);
   }
 
   return (

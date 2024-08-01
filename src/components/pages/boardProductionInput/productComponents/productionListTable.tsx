@@ -5,11 +5,12 @@ import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import ReportModalPage from "../ReportModalPage";
 import { TiEdit, TiTrash } from "react-icons/ti";
 import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCategory";
-import { saveUpdatedReport } from "../SaveUpdatedReport";
+import { saveConsumptions, saveUpdatedReport } from "../SaveUpdatedReport";
 import BoardProduction from "../../../../model/production/BoardProduction";
 import Delays from "../../../../model/delays/Delays";
 import { getUserRole } from "../../../../service/Api";
 import ApiService from "../../../../service/ApiService";
+import MaterialConsumption from "../../../../model/specification/MaterialConsumption";
 
 
 interface ProductionListTableProps {
@@ -39,7 +40,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   };
 
-  const onSave = (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
+  const onSave = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>, updatedConsumptions: MaterialConsumption[]) => {
     console.log("Сохраняемый отчет (время начала): " + updatedReport.productionList.productionStart);
     if (reportData) {
       const updatedList = reportData.map((item) => {
@@ -50,11 +51,30 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
       });
       setReportData(updatedList);
       console.log("обновлен список отчетов размером ", updatedList.length);
-      saveUpdatedReport(updatedReport);
-      setShowModal(false);
+  
+      try {
+        let savedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> = await saveUpdatedReport(updatedReport);
+        console.log(savedReport);
+  
+        if (savedReport) {
+          if (updatedConsumptions && updatedConsumptions.length > 0) {
+            updatedConsumptions.forEach((consumption) => consumption.productionList = savedReport.productionList);
+            try {
+              console.log("сохраняем расход")
+              await saveConsumptions(updatedConsumptions);
+            } catch (consumptionError) {
+              console.error("Ошибка при сохранении расхода:", consumptionError);
+            }
+          }
+        }
+  
+        setShowModal(false);
+      } catch (error) {
+        console.error("Ошибка при сохранении отчета:", error);
+      }
     }
-
-  }
+  };
+  
 
   const handleRemoveReport = async (
     event: React.MouseEvent<HTMLElement>,
