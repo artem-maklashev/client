@@ -65,46 +65,52 @@ class DefectsDataPrepare {
     getCategorySummary() {
         const categorySummary: { [categoryName: string]: number } = {};
         this.productionData.forEach(production => {
-            const shiftName: string = (production.productionList.shift && production.productionList.shift.name) || 'Unknown Shift';
             const categoryName = production.category.title;
-            if (production.category.id > 4 ) {
+            if (production.category.id > 4 && production.category.id !== 6) {
                 if (!categorySummary[categoryName]) {
                     categorySummary[categoryName] = 0;
                 }
                 categorySummary[categoryName] += production.value;
             }
         });
+        // this.defectsData.forEach((defect) => {
+        //     const categoryName = defect.defects.defectTypes.name;
+        //     if (!categorySummary[categoryName]) {
+        //         categorySummary[categoryName] = 0;
+        //     }
+        //     categorySummary[categoryName] += defect.value;       
+        // })
         return categorySummary;
     }
 
-    getDefectsByDate() {
-        const defectsByDate: DefectChartData[] = [];
-        this.productionData.forEach(production => {
-            if (production.category.id < 5) {
-                const existingData = defectsByDate.find((item) => {
-                    return item.pDate === production.productionList.productionDate;
-                });
-            
-                if (existingData) {
-                    // Если данные существуют, добавьте значение к существующему значению
-                    if (production.category.id > 1 && production.category.id < 5) {
-                        existingData.value += production.value;
-                    } else
-                        existingData.totalValue += production.value;
-                } else {
+getDefectsByDate() {
+    const defectsByDate: DefectChartData[] = [];
+    this.productionData.forEach(production => {
+        if (production.category.id < 5) {
+            const existingData = defectsByDate.find((item) => {
+                return item.pDate === production.productionList.productionDate;
+            });
+
+            if (existingData) {
+                // Если данные существуют, добавьте значение к существующему значению
+                if (production.category.id > 1 && production.category.id < 5) {
+                    existingData.value += production.value;
+                } else
+                    existingData.totalValue += production.value;
+            } else {
                 // Если данных нет, создайте новый объект ChartData и добавьте его в массив
                 let newData: DefectChartData;
-                    if (production.category.id === 2 || production.category.id === 3 || production.category.id === 4) {
+                if (production.category.id === 2 || production.category.id === 3 || production.category.id === 4) {
                     newData = new DefectChartData(production.productionList.productionDate, production.value, 0, 0);
                 } else {
                     newData = new DefectChartData(production.productionList.productionDate, 0, production.value, 0);
                 }
                 defectsByDate.push(newData);
-            }            
+            }
         }
-        });
-        return defectsByDate;
-    }
+    });
+    return defectsByDate;
+}
 }
 
 export default DefectsDataPrepare;

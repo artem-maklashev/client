@@ -48,7 +48,7 @@ const DefectsTable: React.FC<DefectsTableProps> = ({defectsLog, data}) => {
                 <tr>
                     <td>Итого:</td>
                     <td colSpan={2} className="text-center">
-                        <strong>{Object.values(summaryDefects).reduce((acc, value) => acc + value, 0).toFixed(2)} м²</strong>
+                        <strong>{(Object.values(summaryDefects).reduce((acc, value) => acc + value, 0)).toFixed(2)} м²</strong>
                     </td>
                 </tr>
                 </tbody>

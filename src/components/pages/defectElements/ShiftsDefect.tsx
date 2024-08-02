@@ -91,7 +91,9 @@ const ShiftsDefect: React.FC<ShiftsDefectProps> = ({defectsLog, data}) => {
                         <tbody className="table-dark">
                             <tr>
                                 <td>Итого</td>
-                                <td><strong>{categorySummary.reduce((acc: number, [,value]) => acc + value, 0).toFixed(2)} м²</strong></td>
+                                <td><strong>{(categorySummary.reduce((acc: number, [,value]) => acc + value, 0)
+                            + defectsLog.reduce((acc, defectsLog) => acc=acc+defectsLog.value,0)
+                            ).toFixed(2)} м²</strong></td>
                             </tr>
                         </tbody>
                     </Table>
