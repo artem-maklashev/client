@@ -25,6 +25,8 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Home</Nav.Link>
                         <NavDropdown title="Гипсокартон" id="board-dropdown">
+                            <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose}>Основные показатели</NavDropdown.Item>
+                            <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDefects" onClick={handleNavClose}>Брак</NavDropdown.Item>

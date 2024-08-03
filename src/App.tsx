@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import {BrowserRouter as Router, Route, Routes, Navigate, useNavigate} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import NavigationBar from "./components/navigation/NavigationBar";
 import GypsumBoardShow2 from "./components/pages/GypsumBoardShow2";
 import DelaysShow from "./components/pages/DelaysShow";
 import DefectsShow from "./components/pages/DefectsShow";
-import BoardProductionInputForm from "./components/pages/BoardProductionInputForm";
 import MainPage from "./components/pages/MainPage";
 import Footer from "./components/navigation/Footer";
 import RegistrationPage from "./components/pages/RegistrationPage";
 import LoginPage from "./components/pages/LoginPage";
-import { api, setAuthToken } from "./service/Api";
+import { api } from "./service/Api";
 import BoardProductionPage from './components/pages/boardProductionInput/productComponents/BoardProduction';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import DashBoard from './components/pages/DashBoard';
+import 'react-date-range/dist/styles.css'; // main css file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+
+
 
 
 // function App() {
@@ -81,7 +85,7 @@ function App() {
                         localStorage.removeItem('authToken'); // Удаление недействительного токена
                         setTokenValid(false);
                         setValidatingToken(true);
-                       // navigate("/login");
+                        // navigate("/login");
                     } else {
                         setTokenValid(true);
                     }
@@ -91,7 +95,7 @@ function App() {
             } else {
                 setTokenValid(false);
             }
-                setValidatingToken(false);
+            setValidatingToken(false);
         }
 
         validateToken();
@@ -117,11 +121,12 @@ function App() {
         // <Router>
         <div>
             <NavigationBar tokenValid={tokenValid} onLogout={handleLogout} />
-            <Routes>
+            <Routes>                
+                <Route path="/dashBoard" element={tokenValid ? <DashBoard /> : <Navigate to="/login" />} />
                 <Route path="/board" element={tokenValid ? <GypsumBoardShow2 /> : <Navigate to="/login" />} />
-                <Route path="/boardDelays" element={tokenValid? <DelaysShow /> : <Navigate to="/login" />} />
+                <Route path="/boardDelays" element={tokenValid ? <DelaysShow /> : <Navigate to="/login" />} />
                 <Route path="/boardDefects" element={tokenValid ? <DefectsShow /> : <Navigate to="/login" />} />
-                <Route path="/boardReport" element={tokenValid? <BoardProductionPage /> : <Navigate to="/login" />} />
+                <Route path="/boardReport" element={tokenValid ? <BoardProductionPage /> : <Navigate to="/login" />} />
                 <Route path="/" element={tokenValid ? <MainPage /> : <Navigate to="/login" />} />
                 {/*<Route path="/" element={<MainPage />} />*/}
                 <Route path="/register" element={<RegistrationPage />} />

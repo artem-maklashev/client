@@ -106,7 +106,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
                     <div className="col-md-3 mb-3 mx-auto">
                         <div className="input-group">
                           <span className="input-group-text" id="basic-addon1">
-                            Дата начала
+                            C
                           </span>
                             <input
                                 type="date"
@@ -121,7 +121,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
                         <div className="col-md-3 mb-3 mx-auto">
                             <div className="input-group">
                                 <span className="input-group-text" id="basic-addon1">
-                                    Дата окончания
+                                    До
                                 </span>
                                 <input
                                     type="date"

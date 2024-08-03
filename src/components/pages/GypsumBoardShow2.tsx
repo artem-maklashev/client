@@ -24,6 +24,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
     const fetchGypsumBoardData = useCallback(async () => {
         try {
+            setGypsumBoardData([]);
             setLoading(true);
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard`, {
                 params: {
