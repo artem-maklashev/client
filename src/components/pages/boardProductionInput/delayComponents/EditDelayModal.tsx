@@ -55,7 +55,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
 
         if (divisions.length > 0) {
             const firstDivision = divisions[0];
-            if (!division) {setDivision(firstDivision);}
+            setDivision(firstDivision); 
         }
     }, [fetcher]);
 
@@ -64,10 +64,9 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         setProductionAreaList(productionAreas);
 
         if (productionAreas.length > 0) {
-            const firstProductionArea = productionAreas[0];
-            if (!productionArea) {
-            setProductionArea(firstProductionArea);
-            }
+            const firstProductionArea = productionAreas[0];            
+                setProductionArea(firstProductionArea);
+            fetchUnits(firstProductionArea.id);
         }
     }, [fetcher]);
 
@@ -77,21 +76,17 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
 
         if (units.length > 0) {
             const firstUnit = units[0];
-            if (!unit) {
-                setUnit(firstUnit);
-            }
+            setUnit(firstUnit);
+            fetchUnitParts(firstUnit.id);          
         }
     }, [fetcher]);
 
     const fetchUnitParts = useCallback(async (unitId: number) => {
         const unitParts = await fetcher.getUnitPart(unitId);
         setUnitPartList(unitParts);
-
         if (unitParts.length > 0) {
-            const firstUnitPart = unitParts[0];
-            if (!unitPart) {
-            setUnitPart(firstUnitPart);
-            }
+            const firstUnitPart = unitParts[0];            
+                setUnitPart(firstUnitPart);          
         }
     }, [fetcher]);
 
@@ -161,8 +156,8 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
             setUnitList([]);
             setUnitPartList([]);
             fetchUnits(productionArea.id);
-        }
-    }, [productionArea, fetchUnits]);
+
+        }, [productionArea, fetchUnits]);
 
     useEffect(() => {
         if (unit) {
@@ -363,7 +358,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
                 </Form.Group>
             </Modal.Body>
             <Modal.Footer>
-                
+
                 <Button variant="secondary" onClick={onHide}>
                     Отмена
                 </Button>

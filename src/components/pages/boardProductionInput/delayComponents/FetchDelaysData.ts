@@ -3,6 +3,8 @@ import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import { api } from "../../../../service/Api";
 import Division from "../../../../model/delays/Division";
 import ProductionArea from "../../../../model/delays/ProductionArea";
+import Unit from "../../../../model/delays/Unit";
+import UnitPart from "../../../../model/delays/UnitPart";
 
 
 class FetchDelaysData {
@@ -28,7 +30,7 @@ class FetchDelaysData {
     async getUnit(id: number) {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/unit/${id}`);
-            return response.data;
+            return response.data as Unit[];
         }catch (error) {
             console.error('Ошибка при получении данных о узле', error);
             throw error; 
@@ -37,7 +39,7 @@ class FetchDelaysData {
     async getUnitPart(id: number) {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/unitPart/${id}`);
-            return response.data;
+            return response.data as UnitPart[];
         }catch (error) {
             console.error('Ошибка при получении данных о детали', error);
             throw error; 
