@@ -109,7 +109,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         if (delay) {
             delay.startTime = startTime;
             delay.endTime = endTime;
-            delay.unitPart.unit.productionArea = productionArea!;
+            delay.unitPart = unitPart!;
             delay.delayType = selectedDelayType!;
             onSave(delay);
         } else {
@@ -173,6 +173,16 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
     }, [unit, fetchUnitParts]);
 
     useEffect(() => {
+        console.log("Division:", division);
+        console.log("ProductionArea:", productionArea);
+        console.log("Unit:", unit);
+        console.log("UnitPart:", unitPart);
+        console.log("SelectedDelayType:", selectedDelayType);
+    }, [division, productionArea, unit, unitPart, selectedDelayType]);
+
+  
+
+    useEffect(() => {
         if (show && delay) {
             setStartTime(delay.startTime);
             setEndTime(delay.endTime);
@@ -191,6 +201,12 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
             setSelectedDelayType(delayTypeList[0] || null);
         }
     }, [show, delay, delayTypeList]);
+
+    useEffect(() => {
+        if (unitPart) {
+            console.log("Set UnitPart:", unitPart.name);
+        }
+    }, [unitPart]);
 
     function handleDateChange(newValue: dayjs.Dayjs | null): React.SetStateAction<Date> {
         return ApiService.getFormatedLocalDateFromDayjs(newValue);
@@ -335,6 +351,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
                             const selectedUnitPartId = parseInt(e.target.value);
                             const foundUnitPart = unitPartList.find((unitPart) => unitPart.id === selectedUnitPartId);
                             setUnitPart(foundUnitPart || null);
+                            
                         }}
                     >
                         {unitPartList.map((unitPart) => (

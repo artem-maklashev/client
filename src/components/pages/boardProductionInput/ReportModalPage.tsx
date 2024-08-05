@@ -221,8 +221,12 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
       // Проверяем, есть ли элементы в delays
       if (delays.length > 0) {
+
         // Находим минимальный id и создаем новый id
-        const minId = Math.min(...delays.map(delay => delay.id));
+        let minId= Math.min(...delays.map(delay => delay.id));
+        if (minId > 0) {
+          minId = -1;
+        }
         updatedDelay.id = minId - 1;
       } else {
         // Если список пустой, установим id равным -1
@@ -491,6 +495,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                     size="sm"
                     style={{ width: "150px" }}
                     onClick={() => {
+                      setSelectedDelay(null);
                       setEditDelayShow(true);
                     }}
                   >
@@ -510,6 +515,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                     size="sm"
                     style={{ width: "150px" }}
                     onClick={() => {
+                      setSelectedDefect(null);
                       setEditDefectsShow(true);
                     }}
                   >
