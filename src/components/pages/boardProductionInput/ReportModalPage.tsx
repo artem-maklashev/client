@@ -327,7 +327,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const handleSaveConsumption = (updatedConsumptions: MaterialConsumption[]) => {
     setEditConsumtionShow(false);
     setConsumptions(updatedConsumptions);
-    alert("Нажата конопка сохранения расхода.\nПередан массив данных размером " + updatedConsumptions.length);
+    // alert("Нажата конопка сохранения расхода.\nПередан массив данных размером " + updatedConsumptions.length);
     console.log(updatedConsumptions);
   }
 
@@ -525,8 +525,11 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                 <Row className="justify-content-center mt-5">
                   <Button
                     type="button"
-                    variant="outline-primary"
-                    size="sm"
+                    variant={
+                     
+                      "outline-primary"
+                      
+                    }                    size="sm"
                     style={{ width: "150px" }}
                     onClick={() => {
                       setEditConsumtionShow(true);
@@ -566,7 +569,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         delay={selectedDelay}
         shift={selectedShift}
         product={selectedProduct}
-        onHide={() => setEditDelayShow(false)}
+        onHide={() => {setEditDelayShow(false); setSelectedDelay(null);}}
         onSave={(updatedDelay) => {
           handleDelayUpdate(updatedDelay);
           setEditDelayShow(false);

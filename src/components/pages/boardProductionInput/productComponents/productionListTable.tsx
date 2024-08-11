@@ -108,6 +108,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                 <th className="text-center">Смена</th>
                 {/* <th className="text-center">Вид продукции</th> */}
                 <th className="text-center">Наименование</th>
+                <th className="text-center">Простои</th>
                 <th className="text-center p-3">Редактир.</th>
               </tr>
             </thead>
@@ -155,6 +156,14 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                           {(item.product as GypsumBoard).length.value}
                         </strong>
                       </span>
+                    </td>
+                    <td className="text-center">
+                      {item.delays.reduce((acc, delay) => {
+                        const start = new Date(delay.startTime);
+                        const end = new Date(delay.endTime);
+                        const diffInDays = (end.getTime() - start.getTime()) / (1000 * 60);
+                        return acc + diffInDays;
+                      }, 0)}
                     </td>
                     <td style={{ width: 150 }}>
                       <Button

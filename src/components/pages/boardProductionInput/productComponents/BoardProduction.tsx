@@ -10,8 +10,6 @@ import Delays from "../../../../model/delays/Delays";
 import ReportModalPage from "../ReportModalPage";
 import { saveUpdatedReport } from "../SaveUpdatedReport";
 
-import { createNewReport } from './../NewReport';
-import { getUserRole } from "../../../../service/Api";
 
 const BoardProductionPage: React.FC = () => {
     const  { productionList, fetchProductionData } = useProductionLogData();
