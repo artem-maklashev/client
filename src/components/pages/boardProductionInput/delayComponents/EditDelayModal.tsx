@@ -46,7 +46,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
     const [unitList, setUnitList] = useState<Unit[]>([]);
     const [unitPartList, setUnitPartList] = useState<UnitPart[]>([]);
     const [delayTypeList, setDelayTypeList] = useState<DelayType[]>([]);
-
+    const [isDeleayInitial, setDelayInitial] = useState<boolean>(false);
     const fetcher = useMemo(() => new FetchDelaysData(), []);
 
     const fetchData = useCallback(async () => {
@@ -56,7 +56,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
                 fetcher.getDelayTypes()
             ]);
             setDivisionList(divisions);
-            setDelayTypeList(delayTypes);
+            setDelayTypeList(delayTypes);            
         } catch (error) {
             console.error("Ошибка загрузки данных", error);
         }
@@ -96,21 +96,128 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
     }, [fetchData, show]);
 
     useEffect(() => {
-        if (delay) {
-            const { productionArea } = delay.unitPart.unit;
-            setStartTime(delay.startTime);
-            setEndTime(delay.endTime);
-            setDivision(productionArea.division);
-            setProductionArea(productionArea);
-            setUnit(delay.unitPart.unit);
-            setUnitPart(delay.unitPart);
-            setSelectedDelayType(delay.delayType);
+        const fetchDraftData = async () => {
+            try {
+                await fetchData();
+                if (delay) {
+                    await fetchProductionAreas(delay.unitPart.unit.productionArea.division.id);
+                    await fetchUnits(delay.unitPart.unit.productionArea.id);
+                    await fetchUnitParts(delay.unitPart.unit.id);
 
-            fetchProductionAreas(productionArea.division.id);
-            fetchUnits(productionArea.id);
-            fetchUnitParts(delay.unitPart.unit.id);
+                    setStartTime(delay.startTime);
+                    setEndTime(delay.endTime);
+                    setDivision(delay.unitPart.unit.productionArea.division);
+                    setProductionArea(delay.unitPart.unit.productionArea);
+                    setUnit(delay.unitPart.unit);
+                    setUnitPart(delay.unitPart);
+                    setSelectedDelayType(delay.delayType);
+                } else {     
+                    setDivision(divisionList[0]);               
+                    console.log("delay = null");                  
+                    console.log(division);
+                    if (division) {
+                        await fetchProductionAreas(divisionList[0].id);
+                        
+                    }
+                    // if (productionAreaList.length > 0) {
+                    //     await fetchUnits(productionAreaList[0].id);
+                    // }
+                    // if (unitList.length > 0) {
+                    //     await fetchUnitParts(unitList[0].id);
+                    // }                    
+                }
+                setDelayInitial(true);
+            } catch (error) {
+                console.error("Ошибка при загрузке данных:", error);
+            }
+        };
+
+        if (show) {
+            fetchDraftData();
+
         }
-    }, [delay, fetchProductionAreas, fetchUnits, fetchUnitParts]);
+    }, [show]);
+
+    useEffect(() => {
+        const fetchAndSetProductionAreas = async () => {
+            if (division && isDeleayInitial === true) {
+                console.log("Reciving ProductionArea");
+                try {
+                    await fetchProductionAreas(division.id);
+                } catch (error) {
+                    console.error("Ошибка при загрузке участков:", error);
+                    setProductionArea(null);
+                }
+            }
+        };
+
+        fetchAndSetProductionAreas();
+    }, [division]);
+
+    useEffect(() => {
+        // Определяем первый элемент списка или null
+        const setFirstProductionArea = () => {
+            setProductionArea(prevProductionArea => {
+                return productionAreaList[0] || null;
+            });
+        };
+        if (isDeleayInitial === true)
+            setFirstProductionArea();
+    }, [productionAreaList]);
+
+    useEffect(() => {
+        console.log("resiving Unit");
+        const fetchUnitsAsync = async () => {
+            if (productionArea) {
+                try {
+                    await fetchUnits(productionArea.id);
+                } catch (error) {
+                    console.error("Ошибка при загрузке оборудования:", error);
+
+                }
+            } else {
+                setUnitList([]);
+                setUnit(null);
+            }
+        };
+
+        fetchUnitsAsync();
+    }, [productionArea]);
+
+    useEffect(() => {
+        // Определяем первый элемент списка или null
+        const setFirstUnit = () => {
+            setUnit(prevUnit => {
+                return unitList[0] || null;
+            });
+        };
+        if (isDeleayInitial === true)
+            setFirstUnit();
+    }, [unitList]);
+
+    useEffect(() => {
+        console.log("resiving UnitPart");
+        const fetchUnitPartsAsync = async () => {
+            if (unit) {
+                try {
+                    await fetchUnitParts(unit.id);
+                } catch (error) {
+                    console.error("Ошибка при загрузке деталей:", error);
+                }
+            } else {
+                setUnitPart(null);
+                setUnitPartList([]);
+            }
+        };
+
+        fetchUnitPartsAsync();
+    }, [unit]);
+
+    useEffect(() => {
+        if (!unitPart && unitPartList.length > 0 && isDeleayInitial === true) {
+            setUnitPart(unitPartList[0]);
+        }
+    }, [unitPart, unitPartList]);
 
     const handleSave = () => {
         if (delay) {
@@ -141,27 +248,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         return ApiService.getFormatedLocalDateFromDayjs(newValue);
     }
 
-    useEffect(() => {
-        if (productionArea) {
-            fetchUnits(productionArea.id);
-        }
-    }, [productionArea, fetchUnits]);
 
-    useEffect(() => {
-        if (unit) {
-            fetchUnitParts(unit.id);            
-        }
-    }, [unit, fetchUnitParts]);
-    
-    useEffect(() => {
-    //     if (unitPartList.length > 0 && unit) {
-    //         setUnitPart(unitPartList[0]); // Обновляем unitPart при изменении списка
-    //     }
-    // }, [unitPartList, unit]);
-        if (!unitPart) {
-            setUnitPart(unitPartList[0])
-        }
-    },[unitPart, unitPartList]);
 
     const handleProductionAreaChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 
@@ -170,164 +257,167 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         setProductionArea(foundProductionArea || null);
         if (foundProductionArea) {
             await fetchUnits(foundProductionArea.id);
-            if (unitList.length > 0) {
-                setUnit(unitList[0]); // Устанавливаем первый unit
-            }
+            setUnit(null);
         }
     }
 
 
-return (
-    <Modal show={show} onHide={onHide}>
-        <Modal.Header closeButton>
-            <Modal.Title>Редактирование Простоя</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            <Form.Group>
-                <Form.Label><strong>Дата и время начала простоя:</strong></Form.Label>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-                    <Stack spacing={3}>
-                        <MobileTimePicker
-                            label="Время:"
-                            value={dayjs(startTime)}
-                            onChange={(newValue) => setStartTime(handleDateChange(newValue))}
-                            minutesStep={1}
-                            ampm={false}
-                        />
-                        <DateTimePicker
-                            label="Дата"
-                            value={dayjs(startTime).isValid() ? dayjs(startTime) : dayjs(new Date())}
-                            onChange={(newValue) => setStartTime(handleDateChange(newValue))}
-                            ampm={false}
-                        />
-                    </Stack>
-                </LocalizationProvider>
-            </Form.Group>
-            <Form.Group controlId="endTime">
-                <Form.Label><strong>Время окончания:</strong></Form.Label>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-                    <Stack spacing={3}>
-                        <MobileTimePicker
-                            label="Время:"
-                            value={dayjs(endTime)}
-                            onChange={(newValue) => setEndTime(handleDateChange(newValue))}
-                            minutesStep={1}
-                            ampm={false}
-                        />
-                        <DateTimePicker
-                            label="Дата"
-                            value={dayjs(endTime).isValid() ? dayjs(endTime) : dayjs(new Date())}
-                            onChange={(newValue) => setEndTime(handleDateChange(newValue))}
-                            ampm={false}
-                        />
-                    </Stack>
-                </LocalizationProvider>
-            </Form.Group>
-            <Form.Group>
-                <Form.Label><strong>Тип простоя</strong></Form.Label>
-                <Form.Select
-                    value={selectedDelayType?.id || 0}
-                    onChange={(e) => {
-                        const selectedDelayTypeId = parseInt(e.target.value);
-                        const foundDelayType = delayTypeList.find((type) => type.id === selectedDelayTypeId);
-                        setSelectedDelayType(foundDelayType || null);
-                    }}
-                >
-                    {delayTypeList.map((type) => (
-                        <option key={type.id} value={type.id}>
-                            {type.name}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Form.Group>
-                <Form.Label><strong>Подразделение</strong></Form.Label>
-                <Form.Select
-                    value={division?.id || 0}
-                    onChange={async (e) => {
-                        const selectedDivisionId = parseInt(e.target.value);
-                        const foundDivision = divisionList.find((div) => div.id === selectedDivisionId);
-                        setDivision(foundDivision || null);
-                        if (foundDivision) {
-                            await fetchProductionAreas(foundDivision.id);
-                            setProductionArea(null);
-                            setUnit(null);
-                            setUnitPart(null);
-                        }
-                    }}
-                >
-                    {divisionList.map((div) => (
-                        <option key={div.id} value={div.id}>
-                            {div.name}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Form.Group>
-                <Form.Label><strong>Участок</strong></Form.Label>
-                <Form.Select
-                    value={productionArea?.id || ''}
-                    onChange={handleProductionAreaChange}
+    function handleClose(): void {
+        setDelayInitial(false);
+        onHide();
+    }
 
+    return (
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Редактирование Простоя</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form.Group>
+                    <Form.Label><strong>Дата и время начала простоя:</strong></Form.Label>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+                        <Stack spacing={3}>
+                            <MobileTimePicker
+                                label="Время:"
+                                value={dayjs(startTime)}
+                                onChange={(newValue) => setStartTime(handleDateChange(newValue))}
+                                minutesStep={1}
+                                ampm={false}
+                            />
+                            <DateTimePicker
+                                label="Дата"
+                                value={dayjs(startTime).isValid() ? dayjs(startTime) : dayjs(new Date())}
+                                onChange={(newValue) => setStartTime(handleDateChange(newValue))}
+                                ampm={false}
+                            />
+                        </Stack>
+                    </LocalizationProvider>
+                </Form.Group>
+                <Form.Group controlId="endTime">
+                    <Form.Label><strong>Время окончания:</strong></Form.Label>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+                        <Stack spacing={3}>
+                            <MobileTimePicker
+                                label="Время:"
+                                value={dayjs(endTime)}
+                                onChange={(newValue) => setEndTime(handleDateChange(newValue))}
+                                minutesStep={1}
+                                ampm={false}
+                            />
+                            <DateTimePicker
+                                label="Дата"
+                                value={dayjs(endTime).isValid() ? dayjs(endTime) : dayjs(new Date())}
+                                onChange={(newValue) => setEndTime(handleDateChange(newValue))}
+                                ampm={false}
+                            />
+                        </Stack>
+                    </LocalizationProvider>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label><strong>Тип простоя</strong></Form.Label>
+                    <Form.Select
+                        value={selectedDelayType?.id || 0}
+                        onChange={(e) => {
+                            const selectedDelayTypeId = parseInt(e.target.value);
+                            const foundDelayType = delayTypeList.find((type) => type.id === selectedDelayTypeId);
+                            setSelectedDelayType(foundDelayType || null);
+                        }}
+                    >
+                        {delayTypeList.map((type) => (
+                            <option key={type.id} value={type.id}>
+                                {type.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label><strong>Подразделение</strong></Form.Label>
+                    <Form.Select
+                        value={division?.id || 0}
+                        onChange={async (e) => {
+                            const selectedDivisionId = parseInt(e.target.value);
+                            const foundDivision = divisionList.find((div) => div.id === selectedDivisionId);
+                            setDivision(foundDivision || null);
+                            if (foundDivision) {
+                                await fetchProductionAreas(foundDivision.id);
+                                setProductionArea(null);
+                                setUnit(null);
+                                setUnitPart(null);
+                            }
+                        }}
+                    >
+                        {divisionList.map((div) => (
+                            <option key={div.id} value={div.id}>
+                                {div.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label><strong>Участок</strong></Form.Label>
+                    <Form.Select
+                        value={productionArea?.id || ''}
+                        onChange={handleProductionAreaChange}
+
+                    >
+                        {productionAreaList.map((area) => (
+                            <option key={area.id} value={area.id}>
+                                {area.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label><strong>Оборудование или причина</strong></Form.Label>
+                    <Form.Select
+                        value={unit?.id || ''}
+                        onChange={async (e) => {
+                            const selectedUnitId = parseInt(e.target.value);
+                            const foundUnit = unitList.find((u) => u.id === selectedUnitId);
+                            setUnit(foundUnit || null);
+                            if (foundUnit) {
+                                await fetchUnitParts(foundUnit.id);
+                                setUnitPart(null);
+                            }
+                        }}
+                    >
+                        {unitList.map((u) => (
+                            <option key={u.id} value={u.id}>
+                                {u.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label><strong>Деталь</strong></Form.Label>
+                    <Form.Select
+                        value={unitPart?.id || ''}
+                        onChange={(e) => {
+                            const selectedUnitPartId = parseInt(e.target.value);
+                            const foundUnitPart = unitPartList.find((part) => part.id === selectedUnitPartId);
+                            setUnitPart(foundUnitPart || null);
+                        }}
+                    >
+                        {unitPartList.map((part) => (
+                            <option key={part.id} value={part.id}>
+                                {part.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={onHide}>Отмена</Button>
+                <Button
+                    variant="primary"
+                    onClick={handleSave}
+                    disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' ? false : true}
                 >
-                    {productionAreaList.map((area) => (
-                        <option key={area.id} value={area.id}>
-                            {area.name}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Form.Group>
-                <Form.Label><strong>Оборудование или причина</strong></Form.Label>
-                <Form.Select
-                    value={unit?.id || ''}
-                    onChange={async (e) => {
-                        const selectedUnitId = parseInt(e.target.value);
-                        const foundUnit = unitList.find((u) => u.id === selectedUnitId);
-                        setUnit(foundUnit || null);
-                        if (foundUnit) {
-                            await fetchUnitParts(foundUnit.id);
-                            setUnitPart(null);
-                        }
-                    }}
-                >
-                    {unitList.map((u) => (
-                        <option key={u.id} value={u.id}>
-                            {u.name}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Form.Group>
-                <Form.Label><strong>Деталь</strong></Form.Label>
-                <Form.Select
-                    value={unitPart?.id || ''}
-                    onChange={(e) => {
-                        const selectedUnitPartId = parseInt(e.target.value);
-                        const foundUnitPart = unitPartList.find((part) => part.id === selectedUnitPartId);
-                        setUnitPart(foundUnitPart || null);
-                    }}
-                >
-                    {unitPartList.map((part) => (
-                        <option key={part.id} value={part.id}>
-                            {part.name}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>Отмена</Button>
-            <Button
-                variant="primary"
-                onClick={handleSave}
-                disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' ? false : true}
-            >
-                Сохранить
-            </Button>
-        </Modal.Footer>
-    </Modal>
-);
+                    Сохранить
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 };
 
 export default EditDelayModal;

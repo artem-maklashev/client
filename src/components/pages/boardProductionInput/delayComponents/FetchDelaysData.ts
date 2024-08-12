@@ -11,6 +11,7 @@ class FetchDelaysData {
     async getDivisions() {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/division`);
+            console.log("Получены подразделения: " + JSON.stringify(response.data));
             return response.data as Division[];
         } catch (error) {
             console.error('Ошибка при получении данных о дивизиях', error);
