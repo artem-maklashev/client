@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Nav, Navbar, NavbarBrand, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { getUserRole } from "../../service/Api";
 
 interface NavigationBarProps {
     tokenValid?: boolean; // Пропс для проверки валидности токена
@@ -25,7 +26,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Home</Nav.Link>
                         <NavDropdown title="Гипсокартон" id="board-dropdown">
-                            <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose}>Основные показатели</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose} disabled={getUserRole() === 'ADMIN' ? false : true}>Основные показатели</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>
