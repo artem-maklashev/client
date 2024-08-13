@@ -42,8 +42,10 @@ class ApiService {
     static async fetchBoardProduction(startDate: Date, endDate: Date): Promise<BoardProduction[]> {
         try {
             const params = {
-                startDate: this.getFormattedDate(startDate),
-                endDate: this.getFormattedDate(endDate)
+                startDate: (startDate),
+                endDate: (endDate)
+                // startDate: this.getFormattedDate(startDate),
+                // endDate: this.getFormattedDate(endDate)
             };
             const response = await api.get(`${this.baseUrl}/allboard/production`, { params });
             return response.data;

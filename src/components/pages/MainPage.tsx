@@ -51,7 +51,7 @@ const MainPage: React.FC<MainPageProps> = () => {
         (board) => board.category.id < 5
     );
     const todayPlan = boardPlanData.filter(
-        (plan) => plan.planDate === getCurrentDate()
+        (plan) => plan.planDate === new Date(getCurrentDate())
     );
     const toTodayPlan = boardPlanData
         .filter((plan) => new Date(plan.planDate) < new Date(getCurrentDate()))
