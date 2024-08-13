@@ -10,11 +10,11 @@ import BoardProduction from "../../model/production/BoardProduction";
 interface DashBoardProps {
 
 }
-
+const now = new Date();
 const DashBoard: React.FC<DashBoardProps> = () => {
     const [selectedRange, setSelectedRange] = useState<{ startDate: Date | null, endDate: Date | null }>({
-        startDate: null,
-        endDate: null,
+        startDate: new Date(now.getFullYear(), now.getMonth(), 1),
+        endDate: now,
     });
     const [planData, setPlanData] = useState<Plan[]>([]);
     const [productionData, setProductionData] = useState<BoardProduction[]>([]);
@@ -48,6 +48,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
         fetchPlan();
         fetchProduction();        
     }, [selectedRange])
+    
 
     return (
         <Container className="mt-5 ">

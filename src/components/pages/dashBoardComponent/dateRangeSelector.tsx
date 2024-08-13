@@ -11,8 +11,9 @@ interface DayRangeSelectorProps {
 }
 
 const DayRangeSelector: React.FC<DayRangeSelectorProps> = ({ onDatesChange }) => {
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    const now = new Date();
+    const [startDate, setStartDate] = useState<Date | null>(new Date(now.getFullYear(), now.getMonth(), 1));
+    const [endDate, setEndDate] = useState<Date | null>(now);
 
     const handleChange = (dates: [Date | null, Date | null]) => {
         const [start, end] = dates;
