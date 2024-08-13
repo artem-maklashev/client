@@ -60,13 +60,13 @@ class ApiService {
         try {
             const now = new Date();
             // const startDate = new Date(now.getFullYear(), now.getUTCMonth() + 1, 1);
-            const startDate = this.getFirstDate();
+            const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
 
 
             const params = {
                 startDate: startDate,
-                endDate: this.getFormattedDate(now)
+                endDate: new Date().toISOString()
             };
             const response = await api.get(`${this.baseUrl}/allboard/production`, { params });
             return response.data;

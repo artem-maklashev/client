@@ -27,33 +27,35 @@ const DayRangeSelector: React.FC<DayRangeSelectorProps> = ({ onDatesChange }) =>
 
 
     return (
-        <Col className='col-3'>
+        <Col className="col-lg-3 col-sm-6" >
             <Card className="mt-5 ">
                 <Card.Header className='text-center'>Выберите период</Card.Header>
                 <Card.Body d-flex flex-column align-items-center>
                     <Form className="justify-content-center">
                         <Form.Group className="text-center">
-                            <DatePicker
-                                locale={ru}
-                                selected={startDate}
-                                onChange={handleChange}
-                                startDate={startDate}
-                                endDate={endDate}
-                                selectsRange
-                                dateFormat="d.MM.yyyy"
-                                minDate={addDays(new Date(), -60)}
-                                maxDate={new Date()}
-                                monthsShown={2} // Показывать три месяца одновременно
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                            />
+                            <Col >
+                                <DatePicker
+                                    locale={ru}
+                                    selected={startDate}
+                                    onChange={handleChange}
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    selectsRange
+                                    dateFormat="d.MM.yyyy"
+                                    minDate={addDays(new Date(), -60)}
+                                    maxDate={new Date()}
+                                    monthsShown={2} // Показывать три месяца одновременно
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
+                                />
+                            </Col>
                         </Form.Group>
                     </Form>
 
                 </Card.Body>
             </Card>
-        </Col>
+        </Col >
     );
 };
 

@@ -115,12 +115,13 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
                             <Tooltip content={<CustomTooltip />} />
                             <Legend formatter={legendFormatter}/>
                             <Line type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={3} />
-                            <Line type="monotone" dataKey="productionValue" stroke="#82ca9d" activeDot={{ r: 8 }} strokeWidth={3}/>
+                            <Line type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3}/>
                             {/* Примечание: Строка `Line` ниже закомментирована, но может быть использована */}
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>
             </Card.Body>
+            <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer>
         </Card>
     );
 };

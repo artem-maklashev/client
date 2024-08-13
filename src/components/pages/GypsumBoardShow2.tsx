@@ -28,8 +28,8 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
             setLoading(true);
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard`, {
                 params: {
-                    startDate: selectedStartDate,
-                    endDate: selectedEndDate
+                    startDate:selectedStartDate ? new Date(selectedStartDate).toISOString() : new Date().toISOString(),
+                    endDate: selectedEndDate ? new Date(selectedEndDate).toISOString() : new Date().toISOString()
                 }
             });
 

@@ -14,8 +14,8 @@ export const useFetchProductionData = (
         if (selectedStartDate && selectedEndDate) {
             try {
                 const params = new URLSearchParams({
-                    startDate: selectedStartDate,
-                    endDate: selectedEndDate,
+                    startDate: selectedStartDate ? new Date(selectedStartDate).toISOString() : new Date().toISOString(),
+                    endDate: selectedEndDate ? new Date(selectedEndDate).toISOString() : new Date().toISOString(),
                 });
 
                 const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/production?${params.toString()}`);
