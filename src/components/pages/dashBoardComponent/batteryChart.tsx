@@ -13,7 +13,17 @@ interface BatteryChartProps {
 const BatteryChart: React.FC<BatteryChartProps> = ({ planData, factData }) => {
     const plan = planData.reduce((acc, plan) => acc + plan.planValue, 0);
     const fact = factData.reduce((acc, fact) => acc + fact.value, 0);
+    const lastProductionDateMils = (
+        Math.max.apply(
+            null,
+            factData.map(fact => new Date(fact.productionList.productionDate).getTime())
+        )
+    );
 
+    const lastProductionDate = new Date(lastProductionDateMils);
+    lastProductionDate.setDate(lastProductionDate.getDate()+1);
+    const planToLastProductionDate = planData.filter((plan) => new Date(new Date(plan.planDate).toISOString()) <= lastProductionDate).reduce((acc, plan) => acc + plan.planValue, 0);
+    console.log(planToLastProductionDate);
     // Данные для отображения
     const data = [{ name: 'Plan vs Fact', value: fact }];
     const maxValue = Math.max(plan, fact);
@@ -24,8 +34,7 @@ const BatteryChart: React.FC<BatteryChartProps> = ({ planData, factData }) => {
                 <Card.Header className='text-center'>Выполнение плана</Card.Header>
                 <Card.Body style={{ width: '300px', height: '320px' }}>
                     <Card.Text className='text-center'>План: {plan} м²</Card.Text>
-                    <Card.Text className='text-center'>Факт: {fact.toFixed(2)} м²</Card.Text>
-                    <Card.Text className='text-center'>Отклонение: {fact>plan ? '+':""}{(fact-plan).toFixed(2)} м² ({((fact-plan)*100/plan).toFixed(2)} %)</Card.Text>
+                    <Card.Text className='text-center'>Факт: {fact.toFixed(2)} м²</Card.Text>                                        
                     <ResponsiveContainer>
                         <BarChart
                             width={300}
@@ -45,12 +54,14 @@ const BatteryChart: React.FC<BatteryChartProps> = ({ planData, factData }) => {
                             <YAxis type="category" dataKey="name" hide />
                             {/* <Tooltip /> */}
                             <ReferenceLine y={plan} stroke="gray" strokeWidth={2} label="Plan" />
-                            <Bar dataKey="value" fill={fact >= plan ? "#4CAF50" : "#F44336"}
+                            <Bar dataKey="value" fill={fact >= planToLastProductionDate ? "#4CAF50" : "#F44336"}
                                 fillOpacity={0.6} // прозрачность
                                 barSize={92} />
                         </BarChart>
                     </ResponsiveContainer>
                 </Card.Body>
+                <Card.Subtitle className='text-center'>Отклонение: {fact>plan ? '+':""}{(fact-plan).toFixed(2)} м² </Card.Subtitle>
+                <Card.Subtitle className='text-center'>({((fact-plan)*100/plan).toFixed(2)} %)</Card.Subtitle>
             </Card>
         </Col>
     );
