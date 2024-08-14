@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContaine
 import Plan from '../../../model/gypsumBoard/Plan';
 import BoardProduction from '../../../model/production/BoardProduction';
 import battery from './images/battery_outline_in_a_circle_blhptsyz0g2b.svg'; // Импорт изображения
-import { Card, Col } from 'react-bootstrap';
+import { Card, Col, Table } from 'react-bootstrap';
 
 interface BatteryChartProps {
     planData: Plan[];
@@ -21,47 +21,79 @@ const BatteryChart: React.FC<BatteryChartProps> = ({ planData, factData }) => {
     );
 
     const lastProductionDate = new Date(lastProductionDateMils);
-    lastProductionDate.setDate(lastProductionDate.getDate()+1);
+    lastProductionDate.setDate(lastProductionDate.getDate() + 1);
     const planToLastProductionDate = planData.filter((plan) => new Date(new Date(plan.planDate).toISOString()) <= lastProductionDate).reduce((acc, plan) => acc + plan.planValue, 0);
     console.log(planToLastProductionDate);
     // Данные для отображения
     const data = [{ name: 'Plan vs Fact', value: fact }];
     const maxValue = Math.max(plan, fact);
-
-    return (
-        <Col className="col-12 mt-2" >
-            <Card>
-                <Card.Header className='text-center'>Выполнение плана</Card.Header>
-                <Card.Body style={{ width: '300px', height: '320px' }}>
-                    <Card.Text className='text-center'>План: {plan} м²</Card.Text>
-                    <Card.Text className='text-center'>Факт: {fact.toFixed(2)} м²</Card.Text>                                        
-                    <ResponsiveContainer>
+    const batteryBlok = (
+        <ResponsiveContainer height={50} width={100} className="align-content center">
                         <BarChart
-                            width={300}
-                            height={180}
+                            // width={150}
+                            // height={150}
                             data={data}
                             layout="vertical"
-                            margin={{ top: 0, right: 50, left: 72, bottom: 88 }}
+                            margin={{ top: 0, right: 32, left: 30, bottom: 0 }}
                         >
+
                             <defs>
-                                <pattern id="bgImage" patternUnits="userSpaceOnUse" width="300" height="200">
-                                    <image href={battery} x="0" y="0" width="300" height="200" />
+                                <pattern id="bgImage" patternUnits="userSpaceOnUse" width="100%" height="100%">
+                                    <image href={battery} x="0" y="0" width="100%" height="100%" />
                                 </pattern>
                             </defs>
-                            <rect x={0} y={0} width={300} height={180} fill="url(#bgImage)" />
+                            <rect x={0} y={0} width={'100%'} height={'100%'} fill="url(#bgImage)" />
+
                             {/* <CartesianGrid strokeDasharray="3 3" /> */}
                             <XAxis type="number" hide domain={[0, maxValue]} />
                             <YAxis type="category" dataKey="name" hide />
                             {/* <Tooltip /> */}
-                            <ReferenceLine y={plan} stroke="gray" strokeWidth={2} label="Plan" />
+                            {/* <ReferenceLine y={plan} stroke="gray" strokeWidth={2} label="Plan" /> */}
                             <Bar dataKey="value" fill={fact >= planToLastProductionDate ? "#4CAF50" : "#F44336"}
                                 fillOpacity={0.6} // прозрачность
-                                barSize={92} />
+                                barSize={22} />
                         </BarChart>
                     </ResponsiveContainer>
+    );
+    return (
+        <Col className="col-12 mt-2" >
+            <Card>
+                <Card.Header className='text-center'><h5>Выполнение плана</h5></Card.Header>
+                <Card.Body style={{ width: '100%', height: '100%' }} className='d-flex justify-content-center align-items-center'>
+                    <Col col-6 className='text-left'>
+                    <strong>                        
+                        <Card.Text className='text-center '>                           
+                            <Table>
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>м²</td>
+                                        <td>%</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr  >
+                                        <td className='align-middle'>План</td>
+                                        <td className='align-middle'>{plan} </td>
+                                        <td className='d-flex justify-content-center align-items-center'>{batteryBlok}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Факт</td>
+                                        <td>{fact.toFixed(2)}</td>
+                                        <td>{plan ? (fact*100/plan).toFixed(2) : 0} </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Откл.</td>
+                                        <td>{fact > plan ? '+' : ""}{(fact - plan).toFixed(2)}</td>
+                                        <td>{((fact - plan) * 100 / plan).toFixed(2)}</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                        </Card.Text>
+                        </strong>
+                    </Col>                   
                 </Card.Body>
-                <Card.Subtitle className='text-center'>Отклонение: {fact>plan ? '+':""}{(fact-plan).toFixed(2)} м² </Card.Subtitle>
-                <Card.Subtitle className='text-center'>({((fact-plan)*100/plan).toFixed(2)} %)</Card.Subtitle>
+
             </Card>
         </Col>
     );

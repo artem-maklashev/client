@@ -94,8 +94,8 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
 
     return (
 
-        <Card className="mt-5 text-center bg-body-primary">
-            <Card.Header><h4>План-факт производства</h4></Card.Header>
+        <Card className="mt-lg-5 text-center bg-body-primary">
+            <Card.Header><h5>План-факт производства</h5></Card.Header>
             <Card.Body>
                 <Col className="col-12 " style={{ width: '100%', height: '300px' }}>
                     <ResponsiveContainer>
@@ -123,7 +123,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
                     </ResponsiveContainer>
                 </Col>
             </Card.Body>
-            <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer>
+            {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}
         </Card>
     );
 };

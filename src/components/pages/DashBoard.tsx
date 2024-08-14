@@ -50,9 +50,9 @@ const DashBoard: React.FC<DashBoardProps> = () => {
 
 
     return (
-        <Container className="mt-5 ">
-            <Row >
-                <Col className="col-lg-3 col-sm-6">
+        <Container fluid className="mt-3 mb-5">
+            <Row lg={12} sm={12} md={12}>
+                <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
                     <Row>
                         <DayRangeSelector onDatesChange={handleDatesChange} />
                     </Row>
@@ -63,7 +63,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                         <BatteryChart planData={planData} factData={productionData}/>
                     </Row>
                 </Col>
-                <Col className="col-9">
+                <Col lg={9} sm={12} className="mb-5">
                     <PlanFactChart planData={planData} productionData={productionData} />
                 </Col>
             </Row>

@@ -18,11 +18,11 @@ const Speedometr: React.FC<SpeedometrProps> = ({ productionData }) => {
 
     const data: DataItem[] = [
         { name: '0 - 2 %', value: 2, color: '#00FF7F' },
-        { name: '2 - 2.5 %', value: 0.5, color: '#FFA07A' },
-        { name: '2.5 - 3%', value: 0.5, color: '#CD5C5C' },
+        { name: '2 - 2.5 %', value: 0.5, color: '#FFED38' },
+        { name: '2.5 - 3%', value: 0.5, color: '#F83E5B' },
     ];
 
-    const cx = 135;
+    const cx = 100;
     const cy = 75;
     const iR = 50;
     const oR = 75;
@@ -79,11 +79,11 @@ const Speedometr: React.FC<SpeedometrProps> = ({ productionData }) => {
     return (
         <Col className="col-12 mt-2" >
             <Card >
-                <Card.Header className='text-center'>Процет брака</Card.Header>
-                <Card.Body style={{ width: '100%', height: '150px' }}>
+                <Card.Header className='text-center'><h5>Процет брака</h5></Card.Header>
+                <Card.Body style={{ width: '100%', height: '150px' }} className='d-flex justify-content-center align-items-center'>
                     <h3 className='text-center'>{value.toFixed(2)} %</h3>
-                    <ResponsiveContainer >
-                        <PieChart width={200} height={100}>
+                    <ResponsiveContainer height={100} width={200}>
+                        <PieChart width={150} height={100}>
                             <Pie
                                 dataKey="value"
                                 startAngle={180}

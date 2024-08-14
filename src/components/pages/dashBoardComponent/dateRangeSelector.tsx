@@ -30,7 +30,7 @@ const DayRangeSelector: React.FC<DayRangeSelectorProps> = ({ onDatesChange }) =>
     return (
         <Col className="col-12" >
             <Card className="mt-5 ">
-                <Card.Header className='text-center'>Выберите период</Card.Header>
+                <Card.Header className='text-center'><h5>Выберите период</h5></Card.Header>
                 <Card.Body d-flex flex-column align-items-center>
                     <Form className="justify-content-center">
                         <Form.Group className="text-center">
