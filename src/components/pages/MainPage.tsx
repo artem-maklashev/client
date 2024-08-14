@@ -51,8 +51,9 @@ const MainPage: React.FC<MainPageProps> = () => {
         (board) => board.category.id < 5
     );
     const todayPlan = boardPlanData.filter(
-        (plan) => plan.planDate === new Date(getCurrentDate())
+        (plan) => new Date(plan.planDate).toDateString() === new Date(getCurrentDate()).toDateString()
     );
+   
     const toTodayPlan = boardPlanData
         .filter((plan) => new Date(plan.planDate) < new Date(getCurrentDate()))
         .reduce((acc, plan) => acc + plan.planValue, 0);
@@ -91,7 +92,7 @@ const MainPage: React.FC<MainPageProps> = () => {
         <Container className="mt-5 " fluid>
         <Row className="mt-5 justify-content-center text-center">
             <h2 className="mt-3 mb-3">Показатели за текущий месяц</h2>
-            <Col className="mt-3 col-lg-2 col-sm-12">
+            <Col className="mt-3 col-lg-3 col-sm-6">
                 <Card className="text-center bg-body-primary">
                     <Card.Body>
                         <Card.Header className="mb-2">

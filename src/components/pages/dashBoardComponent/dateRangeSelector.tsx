@@ -28,7 +28,7 @@ const DayRangeSelector: React.FC<DayRangeSelectorProps> = ({ onDatesChange }) =>
 
 
     return (
-        <Col className="col-lg-3 col-sm-6" >
+        <Col className="col-12" >
             <Card className="mt-5 ">
                 <Card.Header className='text-center'>Выберите период</Card.Header>
                 <Card.Body d-flex flex-column align-items-center>
@@ -44,7 +44,7 @@ const DayRangeSelector: React.FC<DayRangeSelectorProps> = ({ onDatesChange }) =>
                                     selectsRange
                                     dateFormat="d.MM.yyyy"
                                     minDate={addDays(new Date(), -60)}
-                                    maxDate={new Date()}
+                                    maxDate={addDays(new Date(), 30)}
                                     monthsShown={2} // Показывать три месяца одновременно
                                     showMonthDropdown
                                     showYearDropdown

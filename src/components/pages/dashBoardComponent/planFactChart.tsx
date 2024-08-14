@@ -78,6 +78,8 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
         // Суммируем значения производства и обновляем запись
         entry.productionValue = productionValues.reduce((acc: number, value: number) => acc + value, 0);
     });
+
+    
     // Функция для форматирования подписи в легенде
     const legendFormatter = (value: string) => {
         switch (value) {
