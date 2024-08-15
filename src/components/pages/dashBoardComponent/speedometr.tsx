@@ -79,7 +79,7 @@ const Speedometr: React.FC<SpeedometrProps> = ({ productionData }) => {
     return (
         <Col className="col-12 mt-2" >
             <Card >
-                <Card.Header className='text-center'><h5>Процет брака</h5></Card.Header>
+                <Card.Header className='text-center'><h5>Процент брака</h5></Card.Header>
                 <Card.Body style={{ width: '100%', height: '150px' }} className='d-flex justify-content-center align-items-center'>
                     <h3 className='text-center'>{value.toFixed(2)} %</h3>
                     <ResponsiveContainer height={100} width={200}>

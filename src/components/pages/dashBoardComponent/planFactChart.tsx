@@ -7,6 +7,7 @@ import BoardProduction from "../../../model/production/BoardProduction";
 interface PlanFactChartProps {
     planData: Plan[];
     productionData: BoardProduction[];
+    allProductionData: BoardProduction[];
 }
 
 interface CustomTooltipProps {
@@ -18,22 +19,27 @@ interface CombinedData {
     planDate: string;
     planValue: number;
     productionValue: number;
+    totalValue: number;
+    defectPercent: number;
 }
 
-const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData }) => {
+const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData, allProductionData }) => {
     console.log("Данные по производству: " + productionData?.length);
     console.log((productionData[0]?.productionList.productionDate));
     console.log(planData[0]?.planDate);
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
             // Убедитесь, что данные корректно обрабатываются
-            const { planDate, planValue, productionValue } = payload[0]?.payload || {};
+            const { planDate, planValue, productionValue, defectPercent } = payload[0]?.payload || {};
             return (
-                <div className="custom-tooltip" style={{ background: 'white' }}>
-                    <p className="label">{`Дата: ${planDate}`}</p>
-                    <p className="label">{`План: ${planValue}`}</p>
-                    <p className="intro">{`Факт: ${productionValue.toFixed(0)}`}</p>
-                    <p className="desc">{`Отклонение: ${(productionValue - planValue).toFixed(0)}`}</p>
+                <div className="custom-tooltip" style={{ background: 'transparent ' }}>
+                    <strong>
+                        <p className="label">{`Дата: ${planDate}`}</p>
+                        <p className="label">{`План: ${planValue}`}</p>
+                        <p className="intro">{`Факт: ${productionValue.toFixed(0)}`}</p>
+                        <p className="desc">{`Отклонение: ${(productionValue - planValue).toFixed(0)}`}</p>
+                        <p className="desc">{`Брак: ${defectPercent} %`}</p>
+                    </strong>
                 </div>
             );
         }
@@ -56,7 +62,9 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
             acc.push({
                 planDate: planDateStr,
                 planValue: plan.planValue,
-                productionValue: 0 // Изначально значение производства равно 0
+                productionValue: 0, // Изначально значение производства равно 0
+                totalValue: 0,
+                defectPercent: 0
             });
         }
 
@@ -74,12 +82,22 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
                 return prodDateStr === entry.planDate;
             })
             .map((prod: BoardProduction) => prod.value);
+        const totalValues = allProductionData
+            .filter((prod) => {
+                const prodDate = new Date(prod.productionList.productionDate);
+                prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
+                const prodDateStr = prodDate.toISOString().split('T')[0];
+                return prodDateStr === entry.planDate && prod.category.id === 1;
+            })
+            .map((prod: BoardProduction) => prod.value);
 
         // Суммируем значения производства и обновляем запись
         entry.productionValue = productionValues.reduce((acc: number, value: number) => acc + value, 0);
+        entry.totalValue = totalValues.reduce((acc: number, value: number) => acc + value, 0);
+        entry.defectPercent = entry.totalValue ? Number(((1 - entry.productionValue / entry.totalValue) * 100).toFixed(2)) : 0;
     });
 
-    
+
     // Функция для форматирования подписи в легенде
     const legendFormatter = (value: string) => {
         switch (value) {
@@ -87,6 +105,8 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
                 return 'Плановое значение';
             case 'productionValue':
                 return 'Фактическое производство';
+            case 'defectPercent':
+                return 'Процент брака'
             default:
                 return value;
         }
@@ -97,7 +117,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
         <Card className="mt-lg-5 text-center bg-body-primary">
             <Card.Header><h5>План-факт производства</h5></Card.Header>
             <Card.Body>
-                <Col className="col-12 " style={{ width: '100%', height: '300px' }}>
+                <Col className="col-12 " style={{ width: '100%', height: '278px' }}>
                     <ResponsiveContainer>
                         <LineChart
                             title="План-факт производства"
@@ -113,12 +133,14 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData 
                         >
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="planDate" />
-                            <YAxis />
+                            <YAxis yAxisId="left" />
+                            <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} />
                             <Tooltip content={<CustomTooltip />} />
-                            <Legend formatter={legendFormatter}/>
-                            <Line type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={3} />
-                            <Line type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3}/>
-                            {/* Примечание: Строка `Line` ниже закомментирована, но может быть использована */}
+                            <Legend formatter={legendFormatter} />
+                            <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={3} />
+                            <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
+                            <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d"  strokeWidth={2} />
+
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>

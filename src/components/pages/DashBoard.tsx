@@ -8,6 +8,7 @@ import PlanFactChart from "./dashBoardComponent/planFactChart";
 import BoardProduction from "../../model/production/BoardProduction";
 import Speedometr from "./dashBoardComponent/speedometr";
 import BatteryChart from "./dashBoardComponent/batteryChart";
+import EdgesAndThikness from "./dashBoardComponent/edgesAndThickness";
 
 interface DashBoardProps {
 
@@ -42,12 +43,20 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                 console.log("Получены данные по производству в размере " + fetchedProduction.length);
                 setAllProductionData(fetchedProduction);
                 const production = filterBoardProductions(fetchedProduction);
-                setProductionData(production);                
+                setProductionData(production);
             }
         }
         fetchData();
     }, [selectedRange])
 
+    const uniqueTradeMarks = productionData.reduce((acc, curr) => {
+        if (!acc.includes(curr.product.tradeMark.name)) {
+            acc.push(curr.product.tradeMark.name);
+        }
+        return acc;
+    }, [] as string[]);
+
+    const colWidth = 12 / uniqueTradeMarks.length;
 
     return (
         <Container fluid className="mt-3 mb-5">
@@ -57,14 +66,29 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                         <DayRangeSelector onDatesChange={handleDatesChange} />
                     </Row>
                     <Row>
-                        <Speedometr productionData={allProductionData}/>
+                        <Speedometr productionData={allProductionData} />
                     </Row>
                     <Row>
-                        <BatteryChart planData={planData} factData={productionData}/>
+                        <BatteryChart planData={planData} factData={productionData} />
                     </Row>
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
-                    <PlanFactChart planData={planData} productionData={productionData} />
+                    <Row>
+                        <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
+                    </Row>
+                    <Row>
+                        
+                        {uniqueTradeMarks.map(tradeMark => {
+                            // Фильтруем данные по торговой марке
+                            const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
+
+                            return (
+                                <Col key={tradeMark} lg={colWidth} sm={12}>                                    
+                                    <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
+                                </Col>
+                            );
+                        })}
+                    </Row>
                 </Col>
             </Row>
         </Container>
