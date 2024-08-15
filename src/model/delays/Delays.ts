@@ -5,6 +5,7 @@ import DelayType from "./DelayType";
 import AllDelays from "./AllDalays";
 
 class Delays extends AllDelays<GypsumBoard> {
+    value: any;
     
 
 

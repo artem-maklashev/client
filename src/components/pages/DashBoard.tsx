@@ -9,6 +9,8 @@ import BoardProduction from "../../model/production/BoardProduction";
 import Speedometr from "./dashBoardComponent/speedometr";
 import BatteryChart from "./dashBoardComponent/batteryChart";
 import EdgesAndThikness from "./dashBoardComponent/edgesAndThickness";
+import Delays from "../../model/delays/Delays";
+import DelaysChartBoard from "./dashBoardComponent/delaysChart";
 
 interface DashBoardProps {
 
@@ -22,6 +24,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [planData, setPlanData] = useState<Plan[]>([]);
     const [productionData, setProductionData] = useState<BoardProduction[]>([]);
     const [allProductionData, setAllProductionData] = useState<BoardProduction[]>([]);
+    const [delays, setDelays] = useState<Delays[]>([]);
 
     function handleDatesChange(startDate: Date | null, endDate: Date | null): void {
         setSelectedRange({ startDate, endDate });
@@ -44,6 +47,8 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                 setAllProductionData(fetchedProduction);
                 const production = filterBoardProductions(fetchedProduction);
                 setProductionData(production);
+                const fetchedDelays = await ApiService.fetchDelaysData(selectedRange.startDate, selectedRange.endDate);
+                setDelays(fetchedDelays);
             }
         }
         fetchData();
@@ -76,18 +81,18 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                     <Row>
                         <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
                     </Row>
-                    <Row>
-                        
-                        {uniqueTradeMarks.map(tradeMark => {
-                            // Фильтруем данные по торговой марке
+                    <Row>                        
+                        {uniqueTradeMarks.map(tradeMark => {                            
                             const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
-
                             return (
                                 <Col key={tradeMark} lg={colWidth} sm={12}>                                    
                                     <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
                                 </Col>
                             );
                         })}
+                    </Row>
+                    <Row>
+                        <DelaysChartBoard delays={delays} />
                     </Row>
                 </Col>
             </Row>

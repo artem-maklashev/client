@@ -152,6 +152,23 @@ class ApiService {
             return [];
         }
     }
+
+    static async fetchDelaysData(selectedStartDate: Date, selectedEndDate: Date) {
+        try {
+            const params = new URLSearchParams({
+                startDate: this.getFormattedDate(selectedStartDate),
+                endDate: this.getFormattedDate(selectedEndDate)
+            });
+
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params}`);
+
+            return response.data;
+            
+        } catch (error: any) {
+            console.error(`Произошла ошибка при получени  простоев: ${error.message}`);
+            
+        }
+    }
 }
 
 export default ApiService;
