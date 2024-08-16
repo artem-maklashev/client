@@ -7,6 +7,7 @@ import GypsumBoard from "../model/gypsumBoard/GypsumBoard";
 import Specification from "../model/specification/Specification";
 import ProductionList from "../model/production/ProductionList";
 import MaterialConsumption from "../model/specification/MaterialConsumption";
+import { addDays } from "date-fns";
 dayjs.extend(utc);
 
 
@@ -155,6 +156,9 @@ class ApiService {
 
     static async fetchDelaysData(selectedStartDate: Date, selectedEndDate: Date) {
         try {
+            selectedStartDate = addDays(selectedStartDate,1);
+            selectedEndDate = addDays(selectedEndDate,1);
+            
             const params = new URLSearchParams({
                 startDate: this.getFormattedDate(selectedStartDate),
                 endDate: this.getFormattedDate(selectedEndDate)
