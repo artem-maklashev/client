@@ -116,8 +116,8 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
 
         <Card className="mt-lg-5 text-center bg-body-primary">
             <Card.Header><h5>План-факт производства</h5></Card.Header>
-            <Card.Body>
-                <Col className="col-12 " style={{ width: '100%', height: '278px' }}>
+            <Card.Body style={{ overflowX: 'auto' }}>
+                <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
                     <ResponsiveContainer>
                         <LineChart
                             title="План-факт производства"

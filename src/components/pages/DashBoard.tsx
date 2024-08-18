@@ -83,7 +83,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
                     <Row>
-                        <Col>
+                        <Col >
                             <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
                         </Col>
                     </Row>
