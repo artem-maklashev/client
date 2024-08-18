@@ -24,9 +24,12 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/">Home</Nav.Link>
+                        <Nav.Link as={Link} to="/" onClick={handleNavClose}>Home</Nav.Link>
                         <NavDropdown title="Гипсокартон" id="board-dropdown">
-                            <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose} disabled={getUserRole() === 'ADMIN' ? false : true}>Основные показатели</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose} disabled={
+                                // getUserRole() === 'ADMIN' ? false : true}
+                                false}
+                                >Основные показатели</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>

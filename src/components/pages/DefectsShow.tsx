@@ -1,11 +1,13 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BoardDefectsLog from "../../model/defects/BoardDefectsLog";
-import {Col, Container, Row, Tab, Tabs} from "react-bootstrap";
+import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import DefectsTable from "./defectElements/DefectsTable";
-import {useFetchProductionData} from "./commonElements/GetProductionData";
+import { useFetchProductionData } from "./commonElements/GetProductionData";
 import ShiftsDefect from "./defectElements/ShiftsDefect";
 import ChartDefects from "./defectElements/ChartDefects";
-import {api} from "../../service/Api";
+import { api } from "../../service/Api";
+import ApiService from "../../service/ApiService";
+import BoardProduction from "../../model/production/BoardProduction";
 
 interface DefectsShowProps {
 }
@@ -15,11 +17,10 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
     const [errorText, setErrorText] = useState<string | null>(null);
     const [selectedStartDate, setSelectedStartDate] = useState<string>(getFirstDate()); // Set initial date to today
     const [selectedEndDate, setSelectedEndDate] = useState<string>(getCurrentDate()); // Set initial date to today
-    const {productionData,} = useFetchProductionData(selectedStartDate, selectedEndDate);
+    const [productionData, setProductionData] = useState<BoardProduction[]>([])
+    // let { productionData, } = useFetchProductionData(selectedStartDate, selectedEndDate);
     const fetchDefectsData = useCallback(async () => {
         try {
-
-
             const params = new URLSearchParams({
                 startDate: selectedStartDate,
                 endDate: selectedEndDate
@@ -35,7 +36,7 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
             const data: BoardDefectsLog[] = await response.data;
             setErrorText(null);
             setDefectsData(data);
-            
+
         } catch (error: any) {
             console.error(`Произошла ошибка: ${error.message}`);
             setErrorText(error.message);
@@ -46,7 +47,10 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchDefectsData();
+            await fetchDefectsData(); 
+            const prod = await ApiService.fetchBoardProduction(new Date(selectedStartDate),new Date (selectedEndDate));
+            // console.log('Fetched production data:', prod); // Логируем полученные данные
+            setProductionData(prod);        
         };
 
         fetchData();
@@ -106,14 +110,14 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
     console.log("Передаю данные по производству в размере " + productionData.length)
 
     return (
-        <div className="row mt-5" style={{backgroundColor: '#b5b5b5'}}>
+        <div className="row mt-5" style={{ backgroundColor: '#b5b5b5' }}>
             <Container className="container mt-auto">
                 <div className="row mt-5 justify-content-center">
                     <div className="col-md-3 mb-3 mx-auto">
                         <div className="input-group">
-                          <span className="input-group-text" id="basic-addon1">
-                            Дата начала
-                          </span>
+                            <span className="input-group-text" id="basic-addon1">
+                                Дата начала
+                            </span>
                             <input
                                 type="date"
                                 id="startDateInput"
@@ -152,10 +156,10 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
                                 <Tab eventKey="table" title="Таблица" className="mb-5">
                                     <Row className="justify-content-center ">
                                         <Col className="col-lg-8">
-                                            <DefectsTable defectsLog={defectsData} data={productionData}/>
+                                            <DefectsTable defectsLog={defectsData} data={productionData} />
                                         </Col>
                                         <Col className="col-lg-3 ">
-                                            <ShiftsDefect data={productionData} defectsLog={defectsData}/>
+                                            <ShiftsDefect data={productionData} defectsLog={defectsData} />
                                         </Col>
                                     </Row>
                                 </Tab>
