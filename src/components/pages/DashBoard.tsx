@@ -11,6 +11,7 @@ import BatteryChart from "./dashBoardComponent/batteryChart";
 import EdgesAndThikness from "./dashBoardComponent/edgesAndThickness";
 import Delays from "../../model/delays/Delays";
 import DelaysChartBoard from "./dashBoardComponent/delaysChart";
+import ShiftDefects from "./dashBoardComponent/shiftDefects";
 
 interface DashBoardProps {
 
@@ -76,23 +77,30 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                     <Row>
                         <BatteryChart planData={planData} factData={productionData} />
                     </Row>
+                    <Row>
+                        <ShiftDefects shiftProduction={allProductionData} />
+                    </Row>
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
                     <Row>
-                        <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
+                        <Col>
+                            <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
+                        </Col>
                     </Row>
-                    <Row>                        
-                        {uniqueTradeMarks.map(tradeMark => {                            
+                    <Row>
+                        {uniqueTradeMarks.map(tradeMark => {
                             const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
                             return (
-                                <Col key={tradeMark} lg={colWidth} sm={12}>                                    
+                                <Col key={tradeMark} lg={colWidth} sm={12}>
                                     <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
                                 </Col>
                             );
                         })}
                     </Row>
                     <Row>
-                        <DelaysChartBoard delays={delays} />
+                        <Col>
+                            <DelaysChartBoard delays={delays} />
+                        </Col>
                     </Row>
                 </Col>
             </Row>
