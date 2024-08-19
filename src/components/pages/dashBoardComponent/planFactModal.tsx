@@ -74,7 +74,7 @@ const PlanFactModal: React.FC<PlanFactModalProps> = ({ plan, fact, delays, show,
                 <Card.Body>
                     <Table striped bordered hover>
                         <thead className="table-dark">
-                            <tr>
+                            <tr className="text-center">
                                 <th>Вид Гипсокартона</th>
                                 <th>План</th>
                                 <th>Факт</th>
@@ -91,11 +91,11 @@ const PlanFactModal: React.FC<PlanFactModalProps> = ({ plan, fact, delays, show,
                                 </tr>
                             ))}
                             
-                                <tr className="table-success">
+                                <tr className="table-dark">
                                     <td>Итого</td>
-                                    <td>{result.reduce((sum, item) => sum + item.plan, 0)}</td>
-                                    <td>{result.reduce((sum, item) => sum + item.fact, 0)}</td>
-                                    <td>{result.reduce((sum, item) => sum + (item.fact - item.plan), 0)}</td>
+                                    <td className="text-center">{result.reduce((sum, item) => sum + item.plan, 0)}</td>
+                                    <td className="text-center">{result.reduce((sum, item) => sum + item.fact, 0)}</td>
+                                    <td className="text-center">{result.reduce((sum, item) => sum + (item.fact - item.plan), 0)}</td>
                                 </tr>
                             
                         </tbody>
