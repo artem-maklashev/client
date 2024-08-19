@@ -1,8 +1,11 @@
-import React from "react";
-import { Card, Col } from "react-bootstrap";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import React, { useState } from "react";
+import { Card, Col, Modal } from "react-bootstrap";
+import { CartesianGrid, CurveProps, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Plan from "../../../model/gypsumBoard/Plan";
 import BoardProduction from "../../../model/production/BoardProduction";
+import PlanFactModal from "./planFactModal";
+import Delays from "../../../model/delays/Delays";
+import { addDays } from "date-fns";
 
 interface PlanFactChartProps {
     planData: Plan[];
@@ -23,10 +26,23 @@ interface CombinedData {
     defectPercent: number;
 }
 
+interface LineChartPayload {
+    payload: {
+        [key: string]: string | number; // Замените any на конкретные типы данных, если они известны
+    };
+}
+
 const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData, allProductionData }) => {
     console.log("Данные по производству: " + productionData?.length);
     console.log((productionData[0]?.productionList.productionDate));
     console.log(planData[0]?.planDate);
+
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [modalPlan, setModalPlan] = useState<Plan[]>([]);
+    const [modalFact, setModalFact] = useState<BoardProduction[]>([]);
+    const [modalDate, setModalDate] = useState<string>('');
+    // const [modalDelays, setModalDelays] = useState<Delays[]>([]);
+
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
             // Убедитесь, что данные корректно обрабатываются
@@ -77,7 +93,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
             .filter((prod: BoardProduction) => {
 
                 const prodDate = new Date(prod.productionList.productionDate);
-                prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
+                prodDate.setDate(prodDate.getDate() +1);//TODO типы возвращаемых дат не сходятся
                 const prodDateStr = prodDate.toISOString().split('T')[0];
                 return prodDateStr === entry.planDate;
             })
@@ -112,6 +128,28 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
         }
     };
 
+    const closeModal = () => {
+        setShowModal(false);
+    }
+
+    
+
+    const handleClick = (data: any) => {
+        if (data) {
+            console.log('Дата:', data.planDate);
+            console.log('Плановое значение:', data.planValue);
+            const factData = allProductionData.filter((prod) => 
+                new Date(addDays(prod.productionList.productionDate,1)).toISOString().split('T')[0] === data.planDate 
+            && prod.category.id > 1 
+            && prod.category.id <4); 
+            setModalDate(data.planDate); 
+            setModalFact(factData);
+            setShowModal(true);
+        } else {
+            console.error('Данные не определены');
+        }
+    };
+
     return (
 
         <Card className="mt-lg-5 text-center bg-body-primary">
@@ -130,6 +168,8 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                                 left: 20,
                                 bottom: 5,
                             }}
+                            onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
+                            
                         >
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="planDate" />
@@ -137,7 +177,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                             <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend formatter={legendFormatter} />
-                            <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={3} />
+                            <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8,  }} strokeWidth={3} />
                             <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
                             <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d"  strokeWidth={2} />
 
@@ -146,7 +186,13 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                 </Col>
             </Card.Body>
             {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}
+        <Card.Footer>
+            <PlanFactModal show={showModal} plan={[]} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate}/>
+
+            
+        </Card.Footer>
         </Card>
+        
     );
 };
 
