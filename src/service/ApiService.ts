@@ -13,6 +13,7 @@ dayjs.extend(utc);
 
 class ApiService {
     private static baseUrl = process.env.REACT_APP_API_URL;
+    private static plusDays = Number(process.env.REACT_APP_PLUS_DAYS);
 
     static async fetchTodayPlan(): Promise<Plan[]> {
         try {
@@ -28,9 +29,9 @@ class ApiService {
         try {
             const params = {
                 // startDate: this.getFormattedDate(startDate),
-                startDate: (startDate),
+                startDate: addDays(startDate, this.plusDays),
                 // endDate: this.getFormattedDate(endDate)
-                endDate: (endDate)
+                endDate: addDays(endDate, this.plusDays)
             };
             const response = await api.get(`${this.baseUrl}/planForThePeriod`, { params });
             return response.data;
@@ -43,8 +44,8 @@ class ApiService {
     static async fetchBoardProduction(startDate: Date, endDate: Date): Promise<BoardProduction[]> {
         try {
             const params = {
-                startDate: (startDate),
-                endDate: (endDate)
+                startDate: addDays(startDate, this.plusDays),
+                endDate: addDays(endDate, this.plusDays)
                 // startDate: this.getFormattedDate(startDate),
                 // endDate: this.getFormattedDate(endDate)
             };
@@ -58,17 +59,19 @@ class ApiService {
 
 
     static async fetchTodayBoardProduction(): Promise<BoardProduction[]> {
+        const now = new Date();
+        // const startDate = new Date(now.getFullYear(), now.getUTCMonth() + 1, 1);
+        const startDate = (new Date(now.getFullYear(), now.getMonth(), 1))
+        console.error("Дата наачала запроса выпуска на сегодня:" + startDate);
+        console.error("Преобразованная дата начала будет:" + (addDays(startDate, this.plusDays)).toISOString());
+        
+        const params = {
+            startDate: (addDays(startDate, this.plusDays)).toISOString(),
+            endDate: (addDays(now, this.plusDays)).toISOString()
+        };
+
         try {
-            const now = new Date();
-            // const startDate = new Date(now.getFullYear(), now.getUTCMonth() + 1, 1);
-            const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-
-
-            const params = {
-                startDate: startDate,
-                endDate: new Date().toISOString()
-            };
             const response = await api.get(`${this.baseUrl}/allboard/production`, { params });
             return response.data;
         } catch (error: any) {
@@ -156,9 +159,9 @@ class ApiService {
 
     static async fetchDelaysData(selectedStartDate: Date, selectedEndDate: Date) {
         try {
-            selectedStartDate = addDays(selectedStartDate,1);
-            selectedEndDate = addDays(selectedEndDate,1);
-            
+            selectedStartDate = addDays(selectedStartDate, 1 + this.plusDays);
+            selectedEndDate = addDays(selectedEndDate, 1 + this.plusDays);
+
             const params = new URLSearchParams({
                 startDate: this.getFormattedDate(selectedStartDate),
                 endDate: this.getFormattedDate(selectedEndDate)
@@ -167,10 +170,10 @@ class ApiService {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params}`);
 
             return response.data;
-            
+
         } catch (error: any) {
             console.error(`Произошла ошибка при получени  простоев: ${error.message}`);
-            
+
         }
     }
 }
