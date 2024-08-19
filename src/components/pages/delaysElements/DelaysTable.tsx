@@ -5,9 +5,10 @@ import {Col, Row} from "react-bootstrap";
 
 interface DelaysTableProps {
     data: Delays[];
+    planDuration: number;
 }
 
-const DelaysTable: React.FC<DelaysTableProps> = ({data}) => {
+const DelaysTable: React.FC<DelaysTableProps> = ({data, planDuration}) => {
     if (data.length === 0) {
         return <div>Данных нет</div>;
     }
@@ -69,28 +70,31 @@ const DelaysTable: React.FC<DelaysTableProps> = ({data}) => {
                     >
                         <thead className="table-dark text-center">
                         <tr>
-                            <th>Тип простоя</th>
+                            {/* <th>Тип простоя</th> */}
                             <th>Участок</th>
                             <th>Узел</th>
                             <th>Деталь</th>
                             <th>Длительность</th>
+                            <th>%</th>
                         </tr>
                         </thead>
                         <tbody>
                         {tableData.map((item, index) => (
                             <tr key={`${delayType}-${index}`}>
-                                <td>{item.delayType.name}</td>
+                                {/* <td>{item.delayType.name}</td> */}
                                 <td>{item.unitPart.unit.productionArea.name}</td>
                                 <td>{item.unitPart.unit.name}</td>
                                 <td>{item.unitPart.name}</td>
                                 <td align="center">{item.delta}</td>
+                                <td align="center" style={{fontSize: 12}}>{planDuration ? (item.delta*100/planDuration).toFixed(2) : 0 } %</td>
                             </tr>
                         ))}
                         {/* Добавляем промежуточные итоги для каждой таблицы */}
                         <tr key={`total-${tableIndex}`} className="table-success">
-                            <td>{delayType}</td>
+                            {/* <td>{delayType}</td> */}
                             <td colSpan={3} className="text-end"><strong>Итого</strong></td>
                             <td className="text-center"><strong>{delaysSummary[delayType]}</strong></td>
+                            <td className="text-center" style={{fontSize: 12}}><strong>{planDuration ? (delaysSummary[delayType]*100/planDuration).toFixed(2) : 0} %</strong></td>
                         </tr>
                         </tbody>
                     </table>

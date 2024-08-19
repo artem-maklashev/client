@@ -52,9 +52,7 @@ const EdgeChart: React.FC<BoardProductionProps> = ({ edgeData }) => {
 
     const containerWidth = 400;
 
-    return (
-        <div className="col-6 " style={{width: '100%', height: '400px'}}>
-            <h3 className="text-center">Тип кромки</h3>
+    return (       
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Tooltip label="name>" />
@@ -79,7 +77,7 @@ const EdgeChart: React.FC<BoardProductionProps> = ({ edgeData }) => {
                     </Pie>
                 </PieChart>
             </ResponsiveContainer>
-        </div>
+       
     );
 };
 

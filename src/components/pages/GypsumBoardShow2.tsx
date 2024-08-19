@@ -28,7 +28,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
             setLoading(true);
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard`, {
                 params: {
-                    startDate:selectedStartDate ? new Date(selectedStartDate).toISOString() : new Date().toISOString(),
+                    startDate: selectedStartDate ? new Date(selectedStartDate).toISOString() : new Date().toISOString(),
                     endDate: selectedEndDate ? new Date(selectedEndDate).toISOString() : new Date().toISOString()
                 }
             });
@@ -171,18 +171,32 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                                     </Col>
                                     <Col xs={12} sm={6} md={4} lg={4}>
                                         <Row className="d-flex justify-content-center">
+                                            <Col>
                                             <Card>
-                                                <EdgeChart edgeData={productionData} />
+                                                <Card.Header className='text-center'><h3>Кромка</h3></Card.Header>
+                                                <Card.Body style={{ width: "100%", height: `340px` }} >
+                                                    <EdgeChart edgeData={productionData} />
+                                                </Card.Body>
                                             </Card>
+                                            </Col>
                                         </Row>
                                         <Row className="d-flex justify-content-center">
-                                            <Card>
-                                                <ThicknessChart edgeData={productionData} />
-                                            </Card>
+                                            <Col>
+                                                <Card>
+                                                    <Card.Header className='text-center'><h3>Толщина</h3></Card.Header>
+                                                    <Card.Body style={{ width: "100%", height: `340px` }} >
+                                                        <ThicknessChart edgeData={productionData} />
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
                                         </Row>
                                     </Col>
-                                    <Col xs={12} sm={6} md={4} lg={4} className="d-flex align-items-center justify-content-center" >
-                                        <TypesChart edgeData={productionData} />
+                                    <Col xs={12} sm={6} md={4} lg={4} >
+                                        <Row className="d-flex justify-content-center">
+                                            <Col>
+                                                <TypesChart edgeData={productionData} />
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
                                 <Row className="d-flex justify-content-center">

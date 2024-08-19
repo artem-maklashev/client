@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Tooltip, Cell, Legend, ResponsiveContainer, BarChart, CartesianGrid, Bar, LabelList, XAxis, YAxis } from 'recharts';
 import BoardProduction from "../../../model/production/BoardProduction";
-import { Card, Container } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 
 // Класс для представления данных
 class ChartData {
@@ -53,33 +53,34 @@ const TypesChart: React.FC<BoardProductionProps> = ({ edgeData }) => {
     }
 
     return (
-        <Card style={{ width: '100%', height: `${data2.length * 50+25}px` }}>
-            <div style={{ width: "100%", height: `${data2.length * 50}px` }}>
-                <h3 className="text-center">Тип ГСП</h3>
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                        data={data2}
-                        layout="vertical"
-                        margin={{ top: 5, bottom: 20 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" dataKey="value" hide />
-                        <YAxis
-                            type="category"
-                            dataKey="name"
-                            tick={{ stroke: 'black', strokeWidth: 0.5, fontSize: 12 }}
-                        />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="#3498db" onClick={handleClick} animationDuration={500} barSize={50}>
-                            <LabelList position="right" offset={5}
-                                formatter={(value: number) => {
-                                    return value.toFixed(2);
-                                }} />
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
-        </Card>
+            <Card>
+                <Card.Header><h3 className="text-center">Тип ГСП</h3></Card.Header>
+                <Card.Body style={{ width: "100%", height: `${data2.length * 50}px` }} >
+                    <ResponsiveContainer width={'100%'} height={'100%'}>
+                        <BarChart                            
+                            data={data2}
+                            layout="vertical"
+                            margin={{ top: 5, bottom: 20, right: 70 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis type="number" dataKey="value" hide />
+                            <YAxis
+                                type="category"
+                                dataKey="name"
+                                tick={{ stroke: 'black', strokeWidth: 0.5, fontSize: 12 }}
+                            />
+                            <Tooltip />
+                            <Bar dataKey="value" fill="#3498db" onClick={handleClick} animationDuration={500} barSize={50}>
+                                <LabelList position="right"
+                                    formatter={(value: number) => {
+                                        return value.toFixed(2);
+                                    }} />
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </Card.Body>
+            </Card>
+
 
     );
 };

@@ -14,6 +14,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
     const [errorText, setErrorText] = useState<string | null>(null);
     const [selectedStartDate, setSelectedStartDate] = useState<string>(getFirstDate()); // Set initial date to today
     const [selectedEndDate, setSelectedEndDate] = useState<string>(getCurrentDate()); // Set initial date to today
+    const [planDuartion, setPlanDuration] = useState<number>(0);
 
 
     const fetchDelaysData = useCallback(async () => {
@@ -44,6 +45,9 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
         const fetchData = async () => {
             await fetchDelaysData();
         };
+
+        const newDuration = (new Date(selectedEndDate).getTime() - new Date(selectedStartDate).getTime())/(1000*60);
+        setPlanDuration(newDuration);
 
         fetchData();
     }, [selectedStartDate, selectedEndDate, fetchDelaysData]);
@@ -145,7 +149,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
                             <Tab eventKey="table" title="Таблица" >
                                 <Col>
                                     <Row >
-                                        <DelaysTable data={delaysData}/>
+                                        <DelaysTable data={delaysData} planDuration={planDuartion}/>
                                     </Row>
                                 </Col>
                             </Tab>
