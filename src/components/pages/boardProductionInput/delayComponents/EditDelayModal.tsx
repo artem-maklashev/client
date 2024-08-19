@@ -110,9 +110,10 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
                     setProductionArea(delay.unitPart.unit.productionArea);
                     setUnit(delay.unitPart.unit);
                     setUnitPart(delay.unitPart);
-                    setSelectedDelayType(delay.delayType);
+                    setSelectedDelayType(delay.delayType || delayTypeList[0]);
                 } else {     
-                    setDivision(divisionList[0]);               
+                    setDivision(divisionList[0]);
+                    setSelectedDelayType(delayTypeList[0]);               
                     console.log("delay = null");                  
                     console.log(division);
                     if (division) {
@@ -218,6 +219,12 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
             setUnitPart(unitPartList[0]);
         }
     }, [unitPart, unitPartList]);
+
+    useEffect(() => {
+        if (selectedDelayType) {
+            setSelectedDelayType(selectedDelayType);
+        }
+    }, [selectedDelayType])
 
     const handleSave = () => {
         if (delay) {
