@@ -61,7 +61,7 @@ const PlanFactModal: React.FC<PlanFactModalProps> = ({ plan, fact, delays, show,
             gypsumboard.boardType.name + '-' +
             gypsumboard.edge.name + ' ' +
             gypsumboard.length.value + '-' +
-            gypsumboard.width.value + ' ' +
+            gypsumboard.width.value + '-' +
             gypsumboard.thickness.value
     }
 
@@ -69,7 +69,7 @@ const PlanFactModal: React.FC<PlanFactModalProps> = ({ plan, fact, delays, show,
         <Modal show={show} onHide={onHide} centered={true} close>
             <Modal.Header closeButton className="custom-modal-header">
                 Данные за {date}
-                </Modal.Header>
+            </Modal.Header>
             <Card>
                 <Card.Body>
                     <Table striped bordered hover>
@@ -78,26 +78,26 @@ const PlanFactModal: React.FC<PlanFactModalProps> = ({ plan, fact, delays, show,
                                 <th>Вид Гипсокартона</th>
                                 <th>План</th>
                                 <th>Факт</th>
-                                <th>Отклонение</th>
+                                <th>+/-</th>
                             </tr>
                         </thead>
                         <tbody>
                             {result.map((item, index) => (
-                                <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.plan}</td>
-                                    <td>{item.fact.toFixed(2)}</td>
-                                    <td>{(item.fact - item.plan).toFixed(2)}</td>
+                                <tr key={index} >
+                                    <td className="text-left">{item.name}</td>
+                                    <td className="text-center">{item.plan}</td>
+                                    <td className="text-center">{item.fact.toFixed(0)}</td>
+                                    <td className="text-center">{(item.fact - item.plan).toFixed(0)}</td>
                                 </tr>
                             ))}
-                            
-                                <tr className="table-dark">
-                                    <td>Итого</td>
-                                    <td className="text-center">{result.reduce((sum, item) => sum + item.plan, 0)}</td>
-                                    <td className="text-center">{result.reduce((sum, item) => sum + item.fact, 0)}</td>
-                                    <td className="text-center">{result.reduce((sum, item) => sum + (item.fact - item.plan), 0)}</td>
-                                </tr>
-                            
+
+                            <tr className="table-dark">
+                                <td>Итого</td>
+                                <td className="text-center">{result.reduce((sum, item) => sum + item.plan, 0)}</td>
+                                <td className="text-center">{result.reduce((sum, item) => sum + item.fact, 0)}</td>
+                                <td className="text-center">{result.reduce((sum, item) => sum + (item.fact - item.plan), 0).toFixed(0)}</td>
+                            </tr>
+
                         </tbody>
                     </Table>
                 </Card.Body>

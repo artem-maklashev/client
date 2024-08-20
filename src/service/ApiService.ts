@@ -8,6 +8,7 @@ import Specification from "../model/specification/Specification";
 import ProductionList from "../model/production/ProductionList";
 import MaterialConsumption from "../model/specification/MaterialConsumption";
 import { addDays } from "date-fns";
+import { format, fromZonedTime, toZonedTime  } from "date-fns-tz";
 dayjs.extend(utc);
 
 
@@ -27,9 +28,13 @@ class ApiService {
 
     static async fetchPlan(startDate: Date, endDate: Date): Promise<Plan[]> {
         try {
+            const timeZone = 'Europe/Samara';
+            const zonedStart = toZonedTime(startDate, timeZone);
+            const formatedStart = format(zonedStart, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", { timeZone });
+
             const params = {
                 // startDate: this.getFormattedDate(startDate),
-                startDate: addDays(startDate, this.plusDays),
+                startDate: formatedStart,//addDays(startDate, this.plusDays),
                 // endDate: this.getFormattedDate(endDate)
                 endDate: addDays(endDate, this.plusDays)
             };

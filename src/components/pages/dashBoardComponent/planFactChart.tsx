@@ -142,6 +142,9 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                 new Date(addDays(prod.productionList.productionDate,1)).toISOString().split('T')[0] === data.planDate 
             && prod.category.id > 1 
             && prod.category.id <4); 
+            const plan = planData.filter((plan) => 
+                new Date(addDays(plan.planDate,0)).toISOString().split('T')[0] === data.planDate);
+            setModalPlan(plan);
             setModalDate(data.planDate); 
             setModalFact(factData);
             setShowModal(true);
@@ -187,7 +190,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
             </Card.Body>
             {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}
         <Card.Footer>
-            <PlanFactModal show={showModal} plan={[]} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate}/>
+            <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate}/>
 
             
         </Card.Footer>
