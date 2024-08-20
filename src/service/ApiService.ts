@@ -8,7 +8,7 @@ import Specification from "../model/specification/Specification";
 import ProductionList from "../model/production/ProductionList";
 import MaterialConsumption from "../model/specification/MaterialConsumption";
 import { addDays } from "date-fns";
-import { format, fromZonedTime, toZonedTime  } from "date-fns-tz";
+import { format, fromZonedTime, toZonedTime } from "date-fns-tz";
 dayjs.extend(utc);
 
 
@@ -28,15 +28,13 @@ class ApiService {
 
     static async fetchPlan(startDate: Date, endDate: Date): Promise<Plan[]> {
         try {
-            const timeZone = 'Europe/Samara';
-            const zonedStart = toZonedTime(startDate, timeZone);
-            const formatedStart = format(zonedStart, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", { timeZone });
+           
 
             const params = {
                 // startDate: this.getFormattedDate(startDate),
-                startDate: formatedStart,//addDays(startDate, this.plusDays),
+                startDate: this.formatDateToISO(startDate),//addDays(startDate, this.plusDays),
                 // endDate: this.getFormattedDate(endDate)
-                endDate: addDays(endDate, this.plusDays)
+                endDate: this.formatDateToISO(endDate)//addDays(endDate, this.plusDays)
             };
             const response = await api.get(`${this.baseUrl}/planForThePeriod`, { params });
             return response.data;
@@ -49,8 +47,8 @@ class ApiService {
     static async fetchBoardProduction(startDate: Date, endDate: Date): Promise<BoardProduction[]> {
         try {
             const params = {
-                startDate: addDays(startDate, this.plusDays),
-                endDate: addDays(endDate, this.plusDays)
+                startDate: this.formatDateToISO(startDate) ,
+                endDate: this.formatDateToISO(endDate)
                 // startDate: this.getFormattedDate(startDate),
                 // endDate: this.getFormattedDate(endDate)
             };
@@ -69,7 +67,7 @@ class ApiService {
         const startDate = (new Date(now.getFullYear(), now.getMonth(), 1))
         console.error("Дата наачала запроса выпуска на сегодня:" + startDate);
         console.error("Преобразованная дата начала будет:" + (addDays(startDate, this.plusDays)).toISOString());
-        
+
         const params = {
             startDate: (addDays(startDate, this.plusDays)).toISOString(),
             endDate: (addDays(now, this.plusDays)).toISOString()
@@ -100,6 +98,12 @@ class ApiService {
             // Обработка ошибки
             console.error('Ошибка при удалении записи', error);
         }
+    }
+
+    static formatDateToISO(date: Date) {
+        const timeZone = 'Europe/Samara';
+        const zonedDate = toZonedTime(date, timeZone);
+        return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", { timeZone });
     }
 
     static getFormattedDate(date: Date): string {

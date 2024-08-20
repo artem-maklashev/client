@@ -16,7 +16,7 @@ import ShiftDefects from "./dashBoardComponent/shiftDefects";
 interface DashBoardProps {
 
 }
-const now = new Date();
+const now = new Date(new Date().setHours(0));
 const DashBoard: React.FC<DashBoardProps> = () => {
     const [selectedRange, setSelectedRange] = useState<{ startDate: Date | null, endDate: Date | null }>({
         startDate: new Date(now.getFullYear(), now.getMonth(), 1),

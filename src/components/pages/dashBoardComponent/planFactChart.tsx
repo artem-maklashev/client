@@ -6,6 +6,8 @@ import BoardProduction from "../../../model/production/BoardProduction";
 import PlanFactModal from "./planFactModal";
 import Delays from "../../../model/delays/Delays";
 import { addDays } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import ApiService from "../../../service/ApiService";
 
 interface PlanFactChartProps {
     planData: Plan[];
@@ -33,6 +35,9 @@ interface LineChartPayload {
 }
 
 const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData, allProductionData }) => {
+
+    const timeZone = process.env.REACT_APP_TIMEZONE;
+
     console.log("Данные по производству: " + productionData?.length);
     console.log((productionData[0]?.productionList.productionDate));
     console.log(planData[0]?.planDate);
@@ -92,17 +97,18 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
         const productionValues = productionData
             .filter((prod: BoardProduction) => {
 
-                const prodDate = new Date(prod.productionList.productionDate);
-                prodDate.setDate(prodDate.getDate() +1);//TODO типы возвращаемых дат не сходятся
-                const prodDateStr = prodDate.toISOString().split('T')[0];
+                const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
+                // prodDate.setDate(prodDate.getDate() +1);//TODO типы возвращаемых дат не сходятся
+                const prodDateStr = prodDate.split('T')[0];
                 return prodDateStr === entry.planDate;
             })
             .map((prod: BoardProduction) => prod.value);
         const totalValues = allProductionData
             .filter((prod) => {
-                const prodDate = new Date(prod.productionList.productionDate);
-                prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
-                const prodDateStr = prodDate.toISOString().split('T')[0];
+                const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
+                                // const prodDate = new Date(prod.productionList.productionDate);
+                // prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
+                const prodDateStr = prodDate.split('T')[0];
                 return prodDateStr === entry.planDate && prod.category.id === 1;
             })
             .map((prod: BoardProduction) => prod.value);
@@ -132,20 +138,20 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
         setShowModal(false);
     }
 
-    
+
 
     const handleClick = (data: any) => {
         if (data) {
             console.log('Дата:', data.planDate);
             console.log('Плановое значение:', data.planValue);
-            const factData = allProductionData.filter((prod) => 
-                new Date(addDays(prod.productionList.productionDate,1)).toISOString().split('T')[0] === data.planDate 
-            && prod.category.id > 1 
-            && prod.category.id <4); 
-            const plan = planData.filter((plan) => 
-                new Date(addDays(plan.planDate,0)).toISOString().split('T')[0] === data.planDate);
+            const factData = allProductionData.filter((prod) =>
+                new Date(addDays(prod.productionList.productionDate, 1)).toISOString().split('T')[0] === data.planDate
+                && prod.category.id > 1
+                && prod.category.id < 4);
+            const plan = planData.filter((plan) =>
+                new Date(plan.planDate).toISOString().split('T')[0] === data.planDate);
             setModalPlan(plan);
-            setModalDate(data.planDate); 
+            setModalDate(data.planDate);
             setModalFact(factData);
             setShowModal(true);
         } else {
@@ -172,7 +178,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                                 bottom: 5,
                             }}
                             onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
-                            
+
                         >
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="planDate" />
@@ -180,22 +186,22 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                             <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend formatter={legendFormatter} />
-                            <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8,  }} strokeWidth={3} />
+                            <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
                             <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
-                            <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d"  strokeWidth={2} />
+                            <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d" strokeWidth={2} />
 
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>
             </Card.Body>
             {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}
-        <Card.Footer>
-            <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate}/>
+            <Card.Footer>
+                <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
 
-            
-        </Card.Footer>
+
+            </Card.Footer>
         </Card>
-        
+
     );
 };
 
