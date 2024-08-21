@@ -172,8 +172,8 @@ class ApiService {
             // selectedEndDate = addDays(selectedEndDate, 1 + this.plusDays);
 
             const params = new URLSearchParams({
-                startDate: this.formatDateToISO(selectedStartDate),
-                endDate: this.formatDateToISO(selectedEndDate)
+                startDate: this.formatDateToISO(selectedStartDate).split('T')[0],
+                endDate: this.formatDateToISO(selectedEndDate).split('T')[0]
             });
 
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params}`);
