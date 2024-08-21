@@ -69,8 +69,8 @@ class ApiService {
         console.error("Преобразованная дата начала будет:" + (addDays(startDate, this.plusDays)).toISOString());
 
         const params = {
-            startDate: (addDays(startDate, this.plusDays)).toISOString(),
-            endDate: (addDays(now, this.plusDays)).toISOString()
+            startDate: this.formatDateToISO(startDate) ,
+                endDate: this.formatDateToISO(now)
         };
 
         try {

@@ -111,9 +111,6 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
         if (!active || !payload || payload.length === 0) {
             return null;
         }
-       
-
-
         return (
             <div style={{ fontSize: '14px', textAlign: 'center', background: 'AppWorkspace', fontFamily: 'sans-serif' }}>
                 <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>{label}</p>
@@ -154,24 +151,27 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                         <YAxis type="number" hide />
                         <Tooltip content={<CustomTooltip />} />
                         <Legend content={<CustomLegend />} />
-                        {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => (
-                            <Bar
-                                key={key}
-                                dataKey={key}
-                                stackId="a"
-                                fill={COLORS[index % COLORS.length] || '#E6399B'}
-                                legendType='circle'
+                        {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => {
+                            console.log("Rendering Bar for key:", key);
+                            return (
+                                <Bar
+                                    key={key}
+                                    dataKey={key}
+                                    stackId="a"
+                                    fill={COLORS[index % COLORS.length] || '#E6399B'}
+                                    legendType='circle'
 
-                            >
+                                >
 
 
-                            </Bar>
-                        ))}
+                                </Bar>
+                            )
+                        })}
                         <Line type="monotone" dot={false} dataKey="totalTime" stroke='transparent'
                             label={{ fill: 'blue', fontSize: 12, position: 'top' }}
                             legendType='none' />
                     </ComposedChart>
-                </ResponsiveContainer>                
+                </ResponsiveContainer>
             </Card.Body>
         </Card>
     );
