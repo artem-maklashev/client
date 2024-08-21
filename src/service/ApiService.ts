@@ -66,7 +66,7 @@ class ApiService {
         // const startDate = new Date(now.getFullYear(), now.getUTCMonth() + 1, 1);
         const startDate = (new Date(now.getFullYear(), now.getMonth(), 1))
         console.error("Дата наачала запроса выпуска на сегодня:" + startDate);
-        console.error("Преобразованная дата начала будет:" + (addDays(startDate, this.plusDays)).toISOString());
+        console.error("Преобразованная дата начала будет:" + this.formatDateToISO(startDate));
 
         const params = {
             startDate: this.formatDateToISO(startDate) ,
@@ -168,12 +168,12 @@ class ApiService {
 
     static async fetchDelaysData(selectedStartDate: Date, selectedEndDate: Date) {
         try {
-            selectedStartDate = addDays(selectedStartDate, 1 + this.plusDays);
-            selectedEndDate = addDays(selectedEndDate, 1 + this.plusDays);
+            // selectedStartDate = addDays(selectedStartDate, 1 + this.plusDays);
+            // selectedEndDate = addDays(selectedEndDate, 1 + this.plusDays);
 
             const params = new URLSearchParams({
-                startDate: this.getFormattedDate(selectedStartDate),
-                endDate: this.getFormattedDate(selectedEndDate)
+                startDate: this.formatDateToISO(selectedStartDate),
+                endDate: this.formatDateToISO(selectedEndDate)
             });
 
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params}`);
