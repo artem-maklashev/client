@@ -48,10 +48,7 @@ const BoardProductionPage: React.FC = () => {
     const refreshProductionList = async () => {
         fetchProductionData();
     };
-
-    function handleRemoveReport(entry: any): void {
-        throw new Error("Function not implemented.");
-    }
+    
 
     return (
         <Container fluid className="mt-5 mb-5" style={{ backgroundColor: 'grey' }}>

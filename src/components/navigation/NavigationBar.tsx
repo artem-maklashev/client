@@ -35,7 +35,15 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDefects" onClick={handleNavClose}>Брак</NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link as={Link} to="/boardReport" disabled={false} onClick={handleNavClose}>Выпуск ГСП</Nav.Link>
+
+                        <NavDropdown title="Выпуск ГСП" id="board-production">
+                            <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose}>Добавить выпуск</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
+                                getUserRole() === 'ADMIN' ? false : true}>Найти выпуск</NavDropdown.Item > 
+                        </NavDropdown>        
+
+
+                        {/* <Nav.Link as={Link} to="/boardReport" disabled={false} onClick={handleNavClose}>Выпуск ГСП</Nav.Link> */}
                         {tokenValid ? (
                             <Nav.Link as={Link} to="/login" onClick={handleLogout}>Logout</Nav.Link>
                         ) : (

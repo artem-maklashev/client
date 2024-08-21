@@ -185,6 +185,25 @@ class ApiService {
 
         }
     }
+
+    static async fetchReports(selectedDate: Date) {
+        try {
+            // selectedStartDate = addDays(selectedStartDate, 1 + this.plusDays);
+            // selectedEndDate = addDays(selectedEndDate, 1 + this.plusDays);
+
+            const params = new URLSearchParams({
+                date: this.formatDateToISO(selectedDate)              
+            });
+
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductionsByDate?${params}`);
+
+            return response.data;
+
+        } catch (error: any) {
+            console.error(`Произошла ошибка при поиске отчетов за дату ${selectedDate}: ${error.message}`);
+
+        }
+    }
 }
 
 export default ApiService;
