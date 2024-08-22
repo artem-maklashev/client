@@ -133,18 +133,52 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   }, [draftReport]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchSpecification = async () => {
-      if (selectedProduct) {
+      if (selectedProduct && isMounted) {
         const data = await ApiService.fetchSpecification(selectedProduct);
         setSpecification(data);
-        console.log("Спецификация установлена " + specification.length);
-      } else {
-        console.log("Спецификация не установлена");
-        setSpecification([]);
       }
     };
-  
+
     fetchSpecification();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedProduct]);
+
+
+
+  useEffect(() => {
+    if (selectedProduct) {
+        console.log("Заменяем продукт в BoardProductions на " + JSON.stringify(selectedProduct));
+
+        const updatedTableData = tableData.map((prod) =>
+            prod.product.id !== selectedProduct.id
+                ? { ...prod, product: selectedProduct }
+                : prod
+        );
+
+        setTableData(updatedTableData as BoardProduction[]);
+        
+    }
+}, [selectedProduct]);
+
+useEffect(() => {
+  console.log("Обновлённое tableData:", tableData);
+}, [tableData]);
+
+
+  useEffect(() => {
+    if (selectedProduct) {
+      console.log("Заменяем продукт в простоях на " + JSON.stringify(selectedProduct));
+      const updatedDelays = delays.map((delay) =>
+        delay.product !== selectedProduct ? { ...delay, product: selectedProduct } : delay
+      );
+      setDelays(updatedDelays);
+    }
   }, [selectedProduct]);
 
   useEffect(() => {
@@ -223,7 +257,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       if (delays.length > 0) {
 
         // Находим минимальный id и создаем новый id
-        let minId= Math.min(...delays.map(delay => delay.id));
+        let minId = Math.min(...delays.map(delay => delay.id));
         if (minId > 0) {
           minId = -1;
         }
@@ -526,10 +560,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                   <Button
                     type="button"
                     variant={
-                     
+
                       "outline-primary"
-                      
-                    }                    size="sm"
+
+                    } size="sm"
                     style={{ width: "150px" }}
                     onClick={() => {
                       setEditConsumtionShow(true);
@@ -569,7 +603,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         delay={selectedDelay}
         shift={selectedShift}
         product={selectedProduct}
-        onHide={() => {setEditDelayShow(false); setSelectedDelay(null);}}
+        onHide={() => { setEditDelayShow(false); setSelectedDelay(null); }}
         onSave={(updatedDelay) => {
           handleDelayUpdate(updatedDelay);
           setEditDelayShow(false);

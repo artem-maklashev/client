@@ -145,7 +145,7 @@ class ApiService {
     static async fetchSpecification(product: GypsumBoard): Promise<Specification[]> {
         try {
             const response = await api.post(`${this.baseUrl}/specifications/getSpecificationByProduct`, product);
-            console.log("Получена спецификация \n" + response.data.toString());
+            console.log("Получена спецификация \n" + JSON.stringify(response.data));
             return response.data;
 
         } catch (error) {

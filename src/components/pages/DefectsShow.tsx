@@ -8,6 +8,7 @@ import ChartDefects from "./defectElements/ChartDefects";
 import { api } from "../../service/Api";
 import ApiService from "../../service/ApiService";
 import BoardProduction from "../../model/production/BoardProduction";
+import Preloader from "./commonElements/preloader";
 
 interface DefectsShowProps {
 }
@@ -19,7 +20,10 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
     const [selectedEndDate, setSelectedEndDate] = useState<string>(getCurrentDate()); // Set initial date to today
     const [productionData, setProductionData] = useState<BoardProduction[]>([])
     // let { productionData, } = useFetchProductionData(selectedStartDate, selectedEndDate);
+    const [loading, setLoading] = useState<boolean>(false);
+
     const fetchDefectsData = useCallback(async () => {
+        setLoading(true);
         try {
             const params = new URLSearchParams({
                 startDate: selectedStartDate,
@@ -41,16 +45,18 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
             console.error(`Произошла ошибка: ${error.message}`);
             setErrorText(error.message);
             setDefectsData([]);
+        } finally {
+            setLoading(false);
         }
     }, [selectedStartDate, selectedEndDate]);
 
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchDefectsData(); 
-            const prod = await ApiService.fetchBoardProduction(new Date(selectedStartDate),new Date (selectedEndDate));
+            await fetchDefectsData();
+            const prod = await ApiService.fetchBoardProduction(new Date(selectedStartDate), new Date(selectedEndDate));
             // console.log('Fetched production data:', prod); // Логируем полученные данные
-            setProductionData(prod);        
+            setProductionData(prod);
         };
 
         fetchData();
@@ -148,6 +154,9 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
 
 
             {errorText && <div className="error-message">{errorText}</div>}
+            {loading && (
+                <Preloader />
+            )}
             <Container className="p-lg-2 mb-5">
                 <Row xs={1} md={5} lg={1} className="d-flex justify-content-center">
                     <Row className="d-flex justify-content-center">

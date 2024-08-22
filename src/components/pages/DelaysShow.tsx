@@ -1,9 +1,10 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Delays from "../../model/delays/Delays";
-import {Col, Container, Row, Tab, Tabs} from "react-bootstrap";
+import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import DelaysTable from "./delaysElements/DelaysTable";
 import DelaysChart from "./delaysElements/DelaysChart";
-import {api} from "../../service/Api";
+import { api } from "../../service/Api";
+import Preloader from "./commonElements/preloader";
 
 interface DelaysShowProps {
 }
@@ -15,9 +16,11 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
     const [selectedStartDate, setSelectedStartDate] = useState<string>(getFirstDate()); // Set initial date to today
     const [selectedEndDate, setSelectedEndDate] = useState<string>(getCurrentDate()); // Set initial date to today
     const [planDuartion, setPlanDuration] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
 
 
     const fetchDelaysData = useCallback(async () => {
+        setLoading(true);
         try {
             const params = new URLSearchParams({
                 startDate: selectedStartDate,
@@ -37,6 +40,8 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
             console.error(`Произошла ошибка: ${error.message}`);
             setErrorText(error.message);
             setDelaysData([]);
+        } finally {
+            setLoading(false);
         }
     }, [selectedStartDate, selectedEndDate]);
 
@@ -46,7 +51,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
             await fetchDelaysData();
         };
 
-        const newDuration = (new Date(selectedEndDate).getTime() - new Date(selectedStartDate).getTime())/(1000*60);
+        const newDuration = (new Date(selectedEndDate).getTime() - new Date(selectedStartDate).getTime()) / (1000 * 60);
         setPlanDuration(newDuration);
 
         fetchData();
@@ -104,14 +109,14 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
 
 
     return (
-        <div className="row mt-5" style={{backgroundColor: '#b5b5b5'}}>
+        <div className="row mt-5" style={{ backgroundColor: '#b5b5b5' }}>
             <Container className="container mt-auto">
                 <div className="row mt-5">
                     <div className="col-md-3 mb-3 mx-auto">
                         <div className="input-group">
-                          <span className="input-group-text" id="basic-addon1">
-                            C
-                          </span>
+                            <span className="input-group-text" id="basic-addon1">
+                                C
+                            </span>
                             <input
                                 type="date"
                                 id="startDateInput"
@@ -142,6 +147,9 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
 
 
             {errorText && <div className="error-message">{errorText}</div>}
+            {loading && (
+                <Preloader />
+            )}
             <Container className="p-lg-2 mb-5">
                 <Row xs={1} md={1} lg={1} className="d-flex justify-content-center">
                     <div className="col-lg-11 ">
@@ -149,14 +157,14 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
                             <Tab eventKey="table" title="Таблица" >
                                 <Col>
                                     <Row >
-                                        <DelaysTable data={delaysData} planDuration={planDuartion}/>
+                                        <DelaysTable data={delaysData} planDuration={planDuartion} />
                                     </Row>
                                 </Col>
                             </Tab>
                             <Tab eventKey="bar" title="График">
                                 <Container className="align-items-center justify-content-center" >
                                     <Row>
-                                        <DelaysChart delays_data={delaysData}/>
+                                        <DelaysChart delays_data={delaysData} />
                                     </Row>
                                 </Container>
 

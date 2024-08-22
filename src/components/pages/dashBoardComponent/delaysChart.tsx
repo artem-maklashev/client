@@ -134,7 +134,8 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
     return (
         <Card className="mt-2 text-center bg-body-primary">
             <Card.Header><h5>Простои</h5></Card.Header>
-            <Card.Body style={{ width: '100%', height: '300px', marginTop: '1px' }} className='d-flex justify-content-center align-items-center'>
+            <Card.Body style={{ overflowX: 'auto' }}>
+                <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart
                         data={combinedData}
@@ -172,6 +173,7 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                             legendType='none' />
                     </ComposedChart>
                 </ResponsiveContainer>
+                </Col>
             </Card.Body>
         </Card>
     );

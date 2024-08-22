@@ -4,17 +4,18 @@ import { Card, Col, Container, Row } from "react-bootstrap";
 import ApiService from "../../service/ApiService";
 import BoardProduction from "../../model/production/BoardProduction";
 import WeatherWidget from "./WeatherWidget";
+import Preloader from "./commonElements/preloader";
 
 interface MainPageProps { }
 
 const MainPage: React.FC<MainPageProps> = () => {
     const [boardPlanData, setBoardPlanData] = useState<Plan[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
-    const [boardProductionData, setBoardProductionData] = useState<
-        BoardProduction[]
-    >([]);
+    const [boardProductionData, setBoardProductionData] = useState<BoardProduction[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const fetchPlan = useCallback(async () => {
+        setLoading(true);
         try {
             const data = await ApiService.fetchTodayPlan();
             setErrorText(null);
@@ -22,10 +23,13 @@ const MainPage: React.FC<MainPageProps> = () => {
         } catch (error: any) {
             setErrorText(error.message);
             setBoardPlanData([]);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
     const fetchBoardProduction = useCallback(async () => {
+        setLoading(true);
         try {
             const data = await ApiService.fetchTodayBoardProduction();
             setErrorText(null);
@@ -33,10 +37,13 @@ const MainPage: React.FC<MainPageProps> = () => {
         } catch (error: any) {
             setErrorText(error.message);
             setBoardProductionData([]);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
     React.useEffect(() => {
+
         const fetchData = async () => {
             await fetchPlan();
             await fetchBoardProduction();
@@ -94,6 +101,9 @@ const MainPage: React.FC<MainPageProps> = () => {
         <Container className="mt-5 " fluid>
             <Row className="mt-5 justify-content-center text-center">
                 <h2 className="mt-3 mb-3">Показатели за текущий месяц</h2>
+                {loading && (
+                    <Preloader />
+                )}
                 <Col className="mt-3 col-lg-3 col-sm-6">
                     <Card className="text-center bg-body-primary">
                         <Card.Body>

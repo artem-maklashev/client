@@ -12,11 +12,12 @@ import EdgesAndThikness from "./dashBoardComponent/edgesAndThickness";
 import Delays from "../../model/delays/Delays";
 import DelaysChartBoard from "./dashBoardComponent/delaysChart";
 import ShiftDefects from "./dashBoardComponent/shiftDefects";
+import Preloader from "./commonElements/preloader";
 
 interface DashBoardProps {
 
 }
-const now = new Date(new Date().setHours(0));
+const now = new Date(ApiService.formatDateToISO(new Date()));
 const DashBoard: React.FC<DashBoardProps> = () => {
     const [selectedRange, setSelectedRange] = useState<{ startDate: Date | null, endDate: Date | null }>({
         startDate: new Date(now.getFullYear(), now.getMonth(), 1),
@@ -26,6 +27,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [productionData, setProductionData] = useState<BoardProduction[]>([]);
     const [allProductionData, setAllProductionData] = useState<BoardProduction[]>([]);
     const [delays, setDelays] = useState<Delays[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     function handleDatesChange(startDate: Date | null, endDate: Date | null): void {
         setSelectedRange({ startDate, endDate });
@@ -37,19 +39,30 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     }
 
     useEffect(() => {
+        setProductionData([]);
+        setPlanData([]);
+        setAllProductionData([]);
+        setDelays([]);
         const fetchData = async () => {
-            if (selectedRange.startDate !== null && selectedRange.endDate !== null) {
-                // console.log(selectedRange.startDate);
-                const fetchedPlan = await ApiService.fetchPlan(selectedRange.startDate, selectedRange.endDate);
-                console.log("Получен план в размере " + fetchedPlan.length + " записей");
-                setPlanData(fetchedPlan);
-                const fetchedProduction = await ApiService.fetchBoardProduction(selectedRange.startDate, selectedRange.endDate);
-                console.log("Получены данные по производству в размере " + fetchedProduction.length);
-                setAllProductionData(fetchedProduction);
-                const production = filterBoardProductions(fetchedProduction);
-                setProductionData(production);
-                const fetchedDelays = await ApiService.fetchDelaysData(selectedRange.startDate, selectedRange.endDate);
-                setDelays(fetchedDelays);
+            setLoading(true);
+            try {
+                if (selectedRange.startDate !== null && selectedRange.endDate !== null) {
+                    // console.log(selectedRange.startDate);
+                    const fetchedPlan = await ApiService.fetchPlan(selectedRange.startDate, selectedRange.endDate);
+                    console.log("Получен план в размере " + fetchedPlan.length + " записей");
+                    setPlanData(fetchedPlan);
+                    const fetchedProduction = await ApiService.fetchBoardProduction(selectedRange.startDate, selectedRange.endDate);
+                    console.log("Получены данные по производству в размере " + fetchedProduction.length);
+                    setAllProductionData(fetchedProduction);
+                    const production = filterBoardProductions(fetchedProduction);
+                    setProductionData(production);
+                    const fetchedDelays = await ApiService.fetchDelaysData(selectedRange.startDate, selectedRange.endDate);
+                    setDelays(fetchedDelays);
+                }
+            } catch (error: any) {
+                console.error(`Произошла ошибка: ${error.message}`);
+            } finally {
+                setLoading(false);
             }
         }
         fetchData();
@@ -66,6 +79,11 @@ const DashBoard: React.FC<DashBoardProps> = () => {
 
     return (
         <Container fluid className="mt-3 mb-5">
+            <Row className="mt-5">
+                {loading && (
+                    <Preloader />
+                )}
+            </Row>
             <Row lg={12} sm={12} md={12}>
                 <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
                     <Row>

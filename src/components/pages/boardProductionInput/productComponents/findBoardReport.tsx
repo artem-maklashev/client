@@ -11,6 +11,7 @@ import { saveUpdatedReport } from "../SaveUpdatedReport";
 import ApiService from "../../../../service/ApiService";
 import DatePicker from "react-datepicker";
 import { ru } from "date-fns/locale";
+import Preloader from "../../commonElements/preloader";
 
 
 const FindBoardReport: React.FC = () => {
@@ -18,16 +19,20 @@ const FindBoardReport: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [showReportModal, setShowReportModal] = useState<boolean>(false);
     const [newReport, setNewReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const findReport = async () => {
             if (selectedDate) {  // Убедимся, что selectedDate не null
+                setLoading(true);
                 try {
                     const report = await ApiService.fetchReports(selectedDate);
                     setProductions(report);
                 } catch (error) {
                     console.error("Error fetching report:", error);
                     setProductions([]);
+                } finally {
+                    setLoading(false);
                 }
             }
         };
@@ -35,7 +40,7 @@ const FindBoardReport: React.FC = () => {
         findReport();
     }, [selectedDate]);
 
-    
+
 
     const onSave = async (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
         await saveUpdatedReport(report);
@@ -67,13 +72,16 @@ const FindBoardReport: React.FC = () => {
                                 onChange={handleChange}
                                 dateFormat="d.MM.yyyy"
                                 dropdownMode="select"
-                                // closeOnScroll={true}
+                            // closeOnScroll={true}
                             />
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
             <Row>
+                {loading && (
+                    <Preloader />
+                )}
                 <Col className="col-12">
                     <ProductionListTable boardProductions={productions} />
                 </Col>
