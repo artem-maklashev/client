@@ -3,6 +3,7 @@ import Delays from "../../../model/delays/Delays";
 import { Card, Col } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
+import DelaysModal from "./delaysModal";
 
 interface DelaysChartBoardProps {
     delays: Delays[];
@@ -29,6 +30,9 @@ interface CustomLegendProps extends LegendProps {
 const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
     const [data, setData] = useState<Delays[]>(delays);
     const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
+    const [modalDelays, setModalDelays] = useState<Delays[]>([]);
+    const [modalShow, setShowModal] = useState<boolean>(false);
+    const [modalDate, setModalDate] = useState<string>('');
 
     useEffect(() => {
         if (delays) {
@@ -131,6 +135,25 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
     }
 
 
+    const handleClick = (chartData: CombinedData | undefined) => {
+        if (chartData) {
+            const date = chartData.date;
+            setModalDate(date);
+            console.log('Clicked date:', date);
+            const filteredDelays = data.filter((delay) => new Date(delay.delayDate).toISOString().split('T')[0] === date)
+            .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+            setModalDelays(filteredDelays);
+            setShowModal(true);
+        } else {
+            console.log('No data available');
+        }
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    }
+
+
     return (
         <Card className="mt-2 text-center bg-body-primary">
             <Card.Header><h5>Простои</h5></Card.Header>
@@ -144,8 +167,9 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                             top: 20,
                             right: 30,
                             left: 20,
-                            bottom: 5,
+                            bottom: 5,                            
                         }}
+                        onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
                     >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" />
@@ -170,11 +194,15 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                         })}
                         <Line type="monotone" dot={false} dataKey="totalTime" stroke='transparent'
                             label={{ fill: 'blue', fontSize: 12, position: 'top' }}
-                            legendType='none' />
+                            legendType='none' 
+                            />
                     </ComposedChart>
                 </ResponsiveContainer>
                 </Col>
             </Card.Body>
+            <Card.Footer>
+                <DelaysModal date={modalDate} delays={modalDelays} onHide={closeModal} show={modalShow} />
+            </Card.Footer>
         </Card>
     );
 }
