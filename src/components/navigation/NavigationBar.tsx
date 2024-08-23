@@ -36,7 +36,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/boardDefects" onClick={handleNavClose}>Брак</NavDropdown.Item>
                         </NavDropdown>
 
-                        <NavDropdown title="Выпуск ГСП" id="board-production">
+                        <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER') ? false : true}>
                             <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose}>Добавить выпуск</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
                                 getUserRole() === 'ADMIN' ? false : true}>Найти выпуск</NavDropdown.Item > 
