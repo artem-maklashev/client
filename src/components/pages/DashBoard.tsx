@@ -78,7 +78,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const colWidth = 12 / uniqueTradeMarks.length;
 
     return (
-        <Container fluid className="mt-3 mb-5">
+        <Container fluid className="mt-3 mb-5 bg-secondary">
             <Row className="mt-5">
                 {loading && (
                     <Preloader />
