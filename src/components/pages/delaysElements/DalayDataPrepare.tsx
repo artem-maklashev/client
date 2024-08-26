@@ -20,6 +20,7 @@ class DelayDataPrepare {
             this.delaysData.forEach((item) => {
                 const delayType = item.delayType.name;
                 const unitName = item.unitPart.unit.name;
+                const unitPartName = item.unitPart.name;
                 const deltaTime =
                     (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) /
                     (60 * 1000);
@@ -30,7 +31,7 @@ class DelayDataPrepare {
 
                 // Ищем элемент с таким же unit в текущем типе простоя
                 const existingItem = unitData[delayType].find(
-                    (existing) => existing.unitPart.unit.name === unitName
+                    (existing) => existing.unitPart.unit.name === unitName && existing.unitPart.name === unitPartName
                 );
 
                 if (existingItem) {
