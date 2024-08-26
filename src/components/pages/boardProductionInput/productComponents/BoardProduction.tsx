@@ -17,6 +17,8 @@ const BoardProductionPage: React.FC = () => {
     const [showReportModal, setShowReportModal] = useState<boolean>(false);
     const [newReport, setNewReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
 
+      
+
     useEffect(() => {
         setReports(productionList);
     }, [productionList]);

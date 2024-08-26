@@ -33,9 +33,9 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
     item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
   ) => {
     console.log(typeof (item));
-    const selectedItem = new ReportData(item.product, item.productionList, item.productions, item.delays, item.defectsLogs);
-    console.log(selectedItem);
-    setSelectedItem(selectedItem);
+    const selectedItemButton = new ReportData(item.product, item.productionList, item.productions, item.delays, item.defectsLogs);
+    console.log(selectedItemButton);
+    setSelectedItem(selectedItemButton);
     setShowModal(true);
 
   };
@@ -51,30 +51,40 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
       });
       setReportData(updatedList);
       console.log("обновлен список отчетов размером ", updatedList.length);
-  
+
       try {
+        // 1. Сохраняем обновленный отчет и дожидаемся результата
         let savedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> = await saveUpdatedReport(updatedReport);
         console.log(savedReport);
-  
-        if (savedReport) {
-          if (updatedConsumptions && updatedConsumptions.length > 0) {
-            updatedConsumptions.forEach((consumption) => consumption.productionList = savedReport.productionList);
-            try {
-              console.log("сохраняем расход")
-              await saveConsumptions(updatedConsumptions);
-            } catch (consumptionError) {
-              console.error("Ошибка при сохранении расхода:", consumptionError);
-            }
+
+        if (savedReport && updatedConsumptions && updatedConsumptions.length > 0) {
+          // 2. Если отчет сохранен и есть расходные данные, обновляем productionList для каждого consumption
+          updatedConsumptions.forEach((consumption) => consumption.productionList = savedReport.productionList);
+
+          try {
+            // 3. Сохраняем расходные данные после успешного сохранения отчета
+            console.log("Сохраняем расход");
+            await saveConsumptions(updatedConsumptions);
+            console.log("Расходы сохранены успешно");
+          } catch (consumptionError) {
+            // 4. Логируем ошибку, если произошла ошибка при сохранении расхода
+            console.error("Ошибка при сохранении расхода:", consumptionError);
           }
+        } else {
+          console.log("Отчет не был сохранен или нет данных для обновления расхода.");
         }
-  
+
+        // 5. Закрываем модальное окно независимо от результата сохранений
         setShowModal(false);
+
       } catch (error) {
+        // 6. Логируем ошибку, если произошла ошибка при сохранении отчета
         console.error("Ошибка при сохранении отчета:", error);
       }
+
     }
   };
-  
+
 
   const handleRemoveReport = async (
     event: React.MouseEvent<HTMLElement>,
@@ -126,9 +136,9 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                           item.productionList.productionStart
                         ).toLocaleString()}
                       </span>
-                    {/* </td>
+                      {/* </td>
                     <td className="text-nowrap"> */}
-                    {"-"}
+                      {"-"}
                       <span>
                         {new Date(
                           item.productionList.productionFinish
@@ -195,6 +205,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
         reportData={selectedItem}
         onHide={() => {
           setShowModal(false);
+          setSelectedItem(null);
         }}
         onSave={onSave} />
     </Container>
