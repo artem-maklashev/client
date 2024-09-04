@@ -337,6 +337,7 @@ useEffect(() => {
   };
 
   const handleClose = () => {
+    setConsumptions([]);
     onHide();
   };
 

@@ -5,6 +5,7 @@ import DelaysTable from "./delaysElements/DelaysTable";
 import DelaysChart from "./delaysElements/DelaysChart";
 import { api } from "../../service/Api";
 import Preloader from "./commonElements/preloader";
+import ApiService from "../../service/ApiService";
 
 interface DelaysShowProps {
 }
@@ -22,18 +23,21 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
     const fetchDelaysData = useCallback(async () => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({
-                startDate: selectedStartDate,
-                endDate: selectedEndDate
+            // const params = new URLSearchParams({
+            //     startDate: selectedStartDate,
+            //     endDate: selectedEndDate
 
-            });
+            // });
 
-            const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params.toString()}`);
+            // const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params.toString()}`);
 
-            if (!response.data) {
-                throw new Error(`Ошибка при запросе: ${response.status} ${response.statusText}`);
-            }
-            const data: Delays[] = await response.data;
+            // if (!response.data) {
+            //     throw new Error(`Ошибка при запросе: ${response.status} ${response.statusText}`);
+            // }
+            // const data: Delays[] = await response.data;
+            const data: Delays[] = await ApiService.fetchDelaysData(
+                new Date(selectedStartDate), 
+                new Date(selectedEndDate));
             setErrorText(null);
             setDelaysData(data);
         } catch (error: any) {
