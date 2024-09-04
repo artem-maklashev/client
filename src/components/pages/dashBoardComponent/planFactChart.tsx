@@ -183,7 +183,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="planDate" />
                             <YAxis yAxisId="left" />
-                            <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} />
+                            <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} domain={[0, 'dataMax + 5']} />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend formatter={legendFormatter} />
                             <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
