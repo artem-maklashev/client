@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import DayRangeSelector from "./dashBoardComponent/dateRangeSelector";
 import GypsumBoard from "../../model/gypsumBoard/GypsumBoard";
 import Material from "../../model/specification/Material";
+import ConsumptionChart from "./consumptionReportElements/consumptionChart";
 
 interface ConsumptionReportProps {}
 
@@ -134,6 +135,14 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
               </Form.Select>
             </Form.Group>
           </Row>
+        </Col>
+        <Col lg={9} md={6} sm={6} className="mb-2">
+          <ConsumptionChart
+            startDate={selectedRange.startDate ? selectedRange.startDate : now}
+            endDate={selectedRange.endDate ? selectedRange.endDate : now}
+            gypsumBoard={selectedProduct!}
+            material={selectedMaterial!}
+          />
         </Col>
       </Row>
     </Container>

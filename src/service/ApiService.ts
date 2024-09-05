@@ -9,6 +9,7 @@ import ProductionList from "../model/production/ProductionList";
 import MaterialConsumption from "../model/specification/MaterialConsumption";
 import { addDays } from "date-fns";
 import { format, fromZonedTime, toZonedTime } from "date-fns-tz";
+import Material from "../model/specification/Material";
 dayjs.extend(utc);
 
 
@@ -28,8 +29,6 @@ class ApiService {
 
     static async fetchPlan(startDate: Date, endDate: Date): Promise<Plan[]> {
         try {
-           
-
             const params = {
                 // startDate: this.getFormattedDate(startDate),
                 startDate: this.formatDateToISO(startDate),//addDays(startDate, this.plusDays),
@@ -81,6 +80,39 @@ class ApiService {
             console.error(`Произошла ошибка: ${error.message}`);
             throw error;
         }
+    }
+
+    static async fetchBoardProductionByGypsumBoardAndDate(gypsumBoardId: number, startDate: Date, endDate: Date): Promise<BoardProduction[]> {
+        const params = {
+            gypsumBoardId: gypsumBoardId,
+            startDate: this.formatDateToISO(startDate) ,
+            endDate: this.formatDateToISO(endDate)
+        }
+        try {
+            const response = await api.get(`${this.baseUrl}/boardProductionsByGypsumBoard`,  { params });
+            return response.data;
+
+        } catch (error: any) {
+            console.error(`Произошла ошибка при отправке запроса получения выпусков по дате и виду гипсокартона: ${error.message}`);
+            throw error;
+
+        }
+    }
+
+    static async fetchConsumptionsByDateAndMaterial(startDate: Date, endDate: Date, materialId: number) {
+        try {
+            const params = {
+                startDate: this.formatDateToISO(startDate) ,
+                endDate: this.formatDateToISO(endDate),
+                materialId: materialId
+            };
+            const response = await api.get(`${this.baseUrl}/specifications/getConsumptionByDate`, { params });
+            return response.data;
+        } catch (error: any) {
+            console.error(`Произошла ошибка: ${error.message}`);
+            throw error;
+        }
+
     }
 
     static async deleteReport(id: number): Promise<void> {
