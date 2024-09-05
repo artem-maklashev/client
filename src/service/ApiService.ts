@@ -204,6 +204,40 @@ class ApiService {
 
         }
     }
+
+    static async fetchGypsumBoards() {
+        try {
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/gypsumBoard`);
+            return response.data;
+        } catch (error: any){
+            console.error(`Произошла ошибка при получении списка ГСП`);
+        }
+    }
+
+    static async fetchMaterials() {
+        try {
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/materials/getAll`);
+            return response.data;
+        } catch (error: any){
+            console.error(`Произошла ошибка при получении списка материалов`);
+        }
+    }
+
+    static getName(gboard: GypsumBoard){
+        return (
+          gboard.tradeMark.name +
+          " тип " +
+          gboard.boardType.name +
+          " " +
+          gboard.edge.name +
+          "-" +
+          gboard.thickness.value +
+          "-" +
+          gboard.width.value +
+          "-" +
+          gboard.length.value
+        );
+      };
 }
 
 export default ApiService;

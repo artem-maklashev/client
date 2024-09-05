@@ -15,6 +15,7 @@ import DashBoard from './components/pages/DashBoard';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import FindBoardReport from './components/pages/boardProductionInput/productComponents/findBoardReport';
+import ConsumptionReport from './components/pages/ConsumptionReport';
 
 
 
@@ -129,6 +130,7 @@ function App() {
                 <Route path="/boardDefects" element={tokenValid ? <DefectsShow /> : <Navigate to="/login" />} />
                 <Route path="/boardReport" element={tokenValid ? <BoardProductionPage /> : <Navigate to="/login" />} />
                 <Route path="/findReport" element={tokenValid ? <FindBoardReport /> : <Navigate to="/login" />} />
+                <Route path="/consumptionReport" element={tokenValid ? <ConsumptionReport /> : <Navigate to="/login" />} />
                 <Route path="/" element={tokenValid ? <MainPage /> : <Navigate to="/login" />} />
                 {/*<Route path="/" element={<MainPage />} />*/}
                 <Route path="/register" element={<RegistrationPage />} />
