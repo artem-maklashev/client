@@ -51,16 +51,21 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
 
     const fetchData = useCallback(async () => {
         try {
-            const [divisions, delayTypes] = await Promise.all([
-                fetcher.getDivisions(),
-                fetcher.getDelayTypes()
-            ]);
+            // const [divisions, delayTypes] = await Promise.all([
+            //     fetcher.getDivisions(),
+            //     fetcher.getDelayTypes()
+            // ]);
+            const divisions = await fetcher.getDivisions();
+            const delayTypes = await fetcher.getDelayTypes();
             setDivisionList(divisions);
             setDelayTypeList(delayTypes);            
         } catch (error) {
             console.error("Ошибка загрузки данных", error);
         }
     }, [fetcher]);
+
+    //Запрос производств
+    
 
     const fetchProductionAreas = useCallback(async (divisionId: number) => {
         try {
@@ -111,15 +116,16 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
                     setUnit(delay.unitPart.unit);
                     setUnitPart(delay.unitPart);
                     setSelectedDelayType(delay.delayType || delayTypeList[0]);
-                } else {     
+                } else {    
+                    console.log("Первый в списке производств: ", divisionList[0]) 
                     setDivision(divisionList[0]);
                     setSelectedDelayType(delayTypeList[0]);               
                     console.log("delay = null");                  
-                    console.log(division);
-                    if (division) {
-                        await fetchProductionAreas(divisionList[0].id);
+                    // console.log(division);
+                    // if (division) {
+                    //     await fetchProductionAreas(divisionList[0].id);
                         
-                    }
+                    // }
                     // if (productionAreaList.length > 0) {
                     //     await fetchUnits(productionAreaList[0].id);
                     // }
@@ -140,8 +146,16 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
     }, [show]);
 
     useEffect(() => {
+        if (!division) {
+            setDivision(divisionList[0]);
+        }
+    }, [divisionList])
+
+    useEffect(() => {
         const fetchAndSetProductionAreas = async () => {
-            if (division && isDeleayInitial === true) {
+
+            if (division) {
+                console.log(division);
                 console.log("Reciving ProductionArea");
                 try {
                     await fetchProductionAreas(division.id);
@@ -163,7 +177,9 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
             });
         };
         if (isDeleayInitial === true)
+            if (!productionArea) {
             setFirstProductionArea();
+            }
     }, [productionAreaList]);
 
     useEffect(() => {
@@ -193,7 +209,9 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
             });
         };
         if (isDeleayInitial === true)
+            if (!unit) {
             setFirstUnit();
+            }
     }, [unitList]);
 
     useEffect(() => {
