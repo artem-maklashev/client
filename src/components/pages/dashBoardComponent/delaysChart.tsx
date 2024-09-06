@@ -33,6 +33,7 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
     const [modalDelays, setModalDelays] = useState<Delays[]>([]);
     const [modalShow, setShowModal] = useState<boolean>(false);
     const [modalDate, setModalDate] = useState<string>('');
+    const [delayTypeName, setDelayTypeName] = useState<string[]>([]);
 
     useEffect(() => {
         if (delays) {
@@ -84,6 +85,22 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
             setCombinedData(groupedData);
         }
     }, [data]);
+
+    useEffect(() => {
+        if (combinedData) {
+            console.log(JSON.stringify(combinedData));
+            const result = Array.from(
+                new Set(
+                    combinedData.flatMap(item => 
+                    Object.keys(item).filter(key => key !== "date" && key !== "totalTime")
+                  )
+                )
+              );
+            setDelayTypeName(result);
+            console.log("Наименования простоев", JSON.stringify(result));
+        }
+
+    }, [combinedData])
 
     const COLORS = ['#8884d8', '#FF1493', '#282cff', '#370548'];
 
@@ -176,7 +193,8 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                         <YAxis type="number" hide />
                         <Tooltip content={<CustomTooltip />} />
                         <Legend content={<CustomLegend />} />
-                        {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => {
+                        {/* {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => { */}
+                        {combinedData.length > 0 && delayTypeName.map((key, index) => {
                             console.log("Rendering Bar for key:", key);
                             return (
                                 <Bar

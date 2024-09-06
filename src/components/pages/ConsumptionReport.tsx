@@ -19,9 +19,7 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
     endDate: now,
   });
   const [gypsumBoardList, setGypsumBoardList] = useState<GypsumBoard[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(
-    null
-  );
+  const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(null);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
     null
@@ -141,8 +139,8 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
           <ConsumptionChart
             startDate={selectedRange.startDate ? selectedRange.startDate : now}
             endDate={selectedRange.endDate ? selectedRange.endDate : now}
-            gypsumBoard={selectedProduct!}
-            material={selectedMaterial!}
+            gypsumBoard={selectedProduct}
+            material={selectedMaterial}
           />
         </Row>
         </Col>

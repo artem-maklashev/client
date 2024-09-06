@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Card, Col, Modal } from "react-bootstrap";
-import { CartesianGrid, CurveProps, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Card, Col } from "react-bootstrap";
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Plan from "../../../model/gypsumBoard/Plan";
 import BoardProduction from "../../../model/production/BoardProduction";
 import PlanFactModal from "./planFactModal";
