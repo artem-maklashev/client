@@ -137,12 +137,14 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
           </Row>
         </Col>
         <Col lg={9} md={6} sm={6} className="mb-2">
+        <Row>
           <ConsumptionChart
             startDate={selectedRange.startDate ? selectedRange.startDate : now}
             endDate={selectedRange.endDate ? selectedRange.endDate : now}
             gypsumBoard={selectedProduct!}
             material={selectedMaterial!}
           />
+        </Row>
         </Col>
       </Row>
     </Container>

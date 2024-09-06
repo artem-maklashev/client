@@ -4,6 +4,7 @@ import BoardProduction from "../../../model/production/BoardProduction";
 import ApiService from "../../../service/ApiService";
 import MaterialConsumption from "../../../model/specification/MaterialConsumption";
 import Material from "../../../model/specification/Material";
+import { Container } from "react-bootstrap";
 
 interface ConsumptionChartProps {
     startDate: Date;
@@ -31,16 +32,16 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
         if (gypsumBoard) {
             const fetchProduction = async () => {
                 const production = await ApiService.fetchBoardProductionByGypsumBoardAndDate(
-                    gypsumBoard.id,
+                    gypsumBoard,
                     startDate,
                     endDate
                 );
                 setProduction(production);
             }
         
-            if (productions.length === 0) {
+            // if (productions.length === 0) {
                 fetchProduction();
-            }
+            // }
         }
     }, [startDate, endDate, gypsumBoard ]);
 
@@ -55,9 +56,9 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
                 setConsumptions(consumption);
             }
 
-            if (consumptions.length === 0) {
+            // if (consumptions.length === 0) {
                 fetchConsumption();
-            }
+            // }
         }
 
     }, [startDate, endDate, material]);
@@ -69,7 +70,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
         const draftData: { [date: string]: ChartData } = {};
 
         productions.forEach((production) => {
-            const date = new Date(production.productionList.productionDate).toISOString().split("T")[0];
+            const date = new Date(production.productionList.productionDate).toLocaleDateString();
             const consumption = consumptions.find(c => c.productionList.id === production.productionList.id)?.quantity || 0;
             const existingData = draftData[date];
 
@@ -96,19 +97,27 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
     
     
     useEffect(() => {
+        console.log("Data processing...");
         if (productions.length > 0 && consumptions.length > 0) {
             const draftData = processData(productions, consumptions);
-            console.log(Object.keys((draftData).length));
+            // console.log(Object.keys((draftData).length));
+            setData(draftData);
+        } else {
+            console.log("Productions size:", productions.length);
+            console.log("Consumptions.size:", consumptions.length);
         }
     }, [consumptions, productions]);
 
-
+    useEffect(() => {
+        console.log("data size is: ", Object.keys(data).length);
+        console.log(JSON.stringify(data));
+    }, [data])
 
     return (
-        <div>
+        <Container>
             <h1>Consumption Chart</h1>
             <h2>{}</h2>
-        </div>
+        </Container>
     )
 
 }

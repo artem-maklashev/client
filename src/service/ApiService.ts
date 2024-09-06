@@ -82,14 +82,14 @@ class ApiService {
         }
     }
 
-    static async fetchBoardProductionByGypsumBoardAndDate(gypsumBoardId: number, startDate: Date, endDate: Date): Promise<BoardProduction[]> {
-        const params = {
-            gypsumBoardId: gypsumBoardId,
-            startDate: this.formatDateToISO(startDate) ,
-            endDate: this.formatDateToISO(endDate)
-        }
+    static async fetchBoardProductionByGypsumBoardAndDate(gypsumBoard: GypsumBoard, startDate: Date, endDate: Date): Promise<BoardProduction[]> {
+        const requestBody = {
+            gypsumBoard,  // объект GypsumBoard
+            startDate: this.formatDateToISO(startDate),  // форматирование даты в ISO
+            endDate: this.formatDateToISO(endDate)  // форматирование конечной даты
+          }
         try {
-            const response = await api.get(`${this.baseUrl}/boardProductionsByGypsumBoard`,  { params });
+            const response = await api.post(`${this.baseUrl}/boardProductionsByGypsumBoard`,  requestBody);
             return response.data;
 
         } catch (error: any) {
