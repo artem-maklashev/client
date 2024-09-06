@@ -73,7 +73,7 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
           <Row>
             <DayRangeSelector onDatesChange={handleDatesChange} />
           </Row>
-          <Row>
+          {/* <Row>
             <Form.Group>
               <Form.Label style={{ color: "white" }}>Гипсокартон</Form.Label>
               <Form.Select
@@ -103,7 +103,7 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
                 ))}
               </Form.Select>
             </Form.Group>
-          </Row>
+          </Row> */}
           <Row>
             <Form.Group>
               <Form.Label style={{ color: "white" }}>Материал</Form.Label>
@@ -168,12 +168,14 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
         </Col>
         <Col lg={9} md={6} sm={6} className="mb-2">
           <Row>
+            <Col>
             <ConsumptionChart
               startDate={selectedRange.startDate ? selectedRange.startDate : now}
               endDate={selectedRange.endDate ? selectedRange.endDate : now}
-              gypsumBoard={selectedProduct}
-              material={selectedMaterial}
+              gypsumBoards={selectedProducts}
+                material={selectedMaterial}
             />
+            </Col>
           </Row>
         </Col>
       </Row>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import BoardProduction from "../../../model/production/BoardProduction";
 import ApiService from "../../../service/ApiService";
@@ -6,11 +6,12 @@ import MaterialConsumption from "../../../model/specification/MaterialConsumptio
 import Material from "../../../model/specification/Material";
 import { Card, Col } from "react-bootstrap";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import Specification from "../../../model/specification/Specification";
 
 interface ConsumptionChartProps {
     startDate: Date;
     endDate: Date;
-    gypsumBoard: GypsumBoard | null;
+    gypsumBoards: GypsumBoard[];
     material: Material | null;
 }
 
@@ -32,11 +33,12 @@ interface CustomTooltipProps {
     payload?: Array<{ payload: CombinedData }>; 
 }
 
-const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate, gypsumBoard, material }) => {
+const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate, gypsumBoards, material }) => {
     const [productions, setProduction] = useState<BoardProduction[]>([]);
     const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
     const [data, setData] = useState<{ [date: string]: ChartData }>({});
     const [chartData, setChartData] = useState<CombinedData[]>([]);
+    const [specifications, setSpecifications] = useState<Specification[]>([]); //= async () => await ApiService.fetchAllSpecifications();
 
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
@@ -56,10 +58,23 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
     };
 
     useEffect(() => {
-        if (gypsumBoard) {
+        const fetchData = async () => {
+            if (material) {
+                const fetchedData = (await ApiService.fetchAllSpecifications()).filter(s => s.material.id === material.id);
+                setSpecifications(fetchedData);
+                console.log(fetchedData);
+            }
+        }
+        // if (specifications.length === 0 ) {
+            fetchData();
+        // }
+    }, [ material]);
+
+    useEffect(() => {
+        if (gypsumBoards) {
             const fetchProduction = async () => {
                 const production = await ApiService.fetchBoardProductionByGypsumBoardAndDate(
-                    gypsumBoard,
+                    gypsumBoards,
                     startDate,
                     endDate
                 );
@@ -67,7 +82,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
             }
             fetchProduction();
         }
-    }, [startDate, endDate, gypsumBoard]);
+    }, [startDate, endDate, gypsumBoards]);
 
     useEffect(() => {
         if (material) {
@@ -93,8 +108,11 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
             const date = new Date(production.productionList.productionDate).toLocaleDateString();
             const consumption = consumptions.find(c => c.productionList.id === production.productionList.id)?.quantity || 0;
             const existingData = draftData[date];
+            const rate = specifications.find((s) =>
+                s.product.id === production.product.id);
 
             if (existingData) {
+                existingData.rate += rate ? rate.quantity * existingData.productionValue : 0;
                 existingData.productionValue += production.value;
                 existingData.consumption += consumption;
             } else {
@@ -102,7 +120,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
                     productionValue: production.value,
                     consumption,
                     consumptionPerSquare: 0,
-                    rate: 0
+                    rate: rate ? rate.quantity*production.value : 0,
                 };
             }
         });
@@ -110,6 +128,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
         Object.keys(draftData).forEach((date) => {
             const data = draftData[date];
             data.consumptionPerSquare = data.productionValue !== 0 ? data.consumption / data.productionValue : 0;
+            data.rate = data.rate/data.productionValue;
         });
 
         return draftData;
@@ -119,6 +138,8 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
         if (productions.length > 0 && consumptions.length > 0) {
             const draftData = processData(productions, consumptions);
             setData(draftData);
+        } else {
+            setData({});
         }
     }, [consumptions, productions]);
 
@@ -137,7 +158,9 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
     return (
         <Card className="mt-lg-5 text-center bg-body-primary">
             <Card.Header>               
-                <h5>{gypsumBoard === null || gypsumBoard === undefined ? "GypsumBoard is null" : ApiService.getName(gypsumBoard)} расход {material ? material.name : ""} на м²</h5>
+                <h5>
+                    {/* {gypsumBoard === null || gypsumBoard === undefined ? "GypsumBoard is null" : ApiService.getName(gypsumBoard)} */}
+                    расход {material ? material.name : ""} на м²</h5>
             </Card.Header>
             <Card.Body style={{ overflowX: 'auto' }}>
                 <Col className="col-12" style={{ minWidth: '500px', width: '100%', height: '278px' }}>

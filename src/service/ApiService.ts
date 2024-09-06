@@ -82,9 +82,9 @@ class ApiService {
         }
     }
 
-    static async fetchBoardProductionByGypsumBoardAndDate(gypsumBoard: GypsumBoard, startDate: Date, endDate: Date): Promise<BoardProduction[]> {
+    static async fetchBoardProductionByGypsumBoardAndDate(gypsumBoards: GypsumBoard[], startDate: Date, endDate: Date): Promise<BoardProduction[]> {
         const requestBody = {
-            gypsumBoard,  // объект GypsumBoard
+            gypsumBoards,  // объект GypsumBoard
             startDate: this.formatDateToISO(startDate),  // форматирование даты в ISO
             endDate: this.formatDateToISO(endDate)  // форматирование конечной даты
           }
@@ -185,6 +185,20 @@ class ApiService {
             console.error('Ошибка при получении спецификации', error);
             return [];
         }
+    }
+
+    static async fetchAllSpecifications() {
+        try {
+            const response = await api.get(`${this.baseUrl}/specifications/getAllSpecifications`);
+            console.log("Получены все спецификации \n" + JSON.stringify(response.data));
+            return response.data as Specification[];
+
+        } catch (error) {
+            
+            console.error('Ошибка при получении всех спецификаций', error);
+            return [];
+        }
+
     }
 
     static async fetchConsumption(productionList: ProductionList): Promise<MaterialConsumption[]> {
