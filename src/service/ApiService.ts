@@ -269,7 +269,10 @@ class ApiService {
         }
     }
 
-    static getName(gboard: GypsumBoard){
+    static getName(gboard: GypsumBoard) {
+        if (!gboard) {
+            return "";
+        }
         return (
           gboard.tradeMark.name +
           " тип " +

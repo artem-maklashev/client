@@ -5,7 +5,7 @@ import ApiService from "../../../service/ApiService";
 import MaterialConsumption from "../../../model/specification/MaterialConsumption";
 import Material from "../../../model/specification/Material";
 import { Card, Col } from "react-bootstrap";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Specification from "../../../model/specification/Specification";
 
 interface ConsumptionChartProps {
@@ -108,11 +108,11 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
             const date = new Date(production.productionList.productionDate).toLocaleDateString();
             const consumption = consumptions.find(c => c.productionList.id === production.productionList.id)?.quantity || 0;
             const existingData = draftData[date];
-            const rate = specifications.find((s) =>
+            const rate = specifications.find((s) => 
                 s.product.id === production.product.id);
 
             if (existingData) {
-                existingData.rate += rate ? rate.quantity * existingData.productionValue : 0;
+                existingData.rate += rate ? rate.quantity * production.value : 0;
                 existingData.productionValue += production.value;
                 existingData.consumption += consumption;
             } else {
@@ -141,7 +141,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
         } else {
             setData({});
         }
-    }, [consumptions, productions]);
+    }, [consumptions, productions, specifications]);
 
     useEffect(() => {
         const combinedData: CombinedData[] = [];
@@ -155,12 +155,23 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
         setChartData(combinedData);
     }, [data]);
 
+    const legendFormatter = (value: string) => {
+        switch (value) {
+            case 'rate':
+                return 'Норма';
+            case 'consumptionPerSquare':
+                return 'Факт';            
+            default:
+                return value;
+        }
+    };
+
     return (
         <Card className="mt-lg-5 text-center bg-body-primary">
             <Card.Header>               
-                <h5>
+                <h6>
                     {/* {gypsumBoard === null || gypsumBoard === undefined ? "GypsumBoard is null" : ApiService.getName(gypsumBoard)} */}
-                    расход {material ? material.name : ""} на м²</h5>
+                    <p>расход {material ? material.name : ""} на м²</p></h6>
             </Card.Header>
             <Card.Body style={{ overflowX: 'auto' }}>
                 <Col className="col-12" style={{ minWidth: '500px', width: '100%', height: '278px' }}>
@@ -175,12 +186,16 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
                             <XAxis dataKey="date" />
                             <YAxis yAxisId="left" />
                             <Tooltip content={<CustomTooltip />} />
+                            <Legend formatter={legendFormatter} />
                             <Line yAxisId="left" type="monotone" dataKey="consumptionPerSquare" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={3} />
                             <Line yAxisId="left" type="monotone" dataKey="rate" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>
             </Card.Body>
+            <Card.Footer>
+                <p style={{ fontSize: 10 }}>{gypsumBoards.map((board) => ApiService.getName(board) + "    -    ")}</p>
+            </Card.Footer>  
         </Card>
     );
 }
