@@ -10,6 +10,7 @@ import MaterialConsumption from "../model/specification/MaterialConsumption";
 import { addDays } from "date-fns";
 import { format, fromZonedTime, toZonedTime } from "date-fns-tz";
 import Material from "../model/specification/Material";
+import Thickness from "../model/gypsumBoard/Thickness";
 dayjs.extend(utc);
 
 
@@ -112,7 +113,16 @@ class ApiService {
             console.error(`Произошла ошибка: ${error.message}`);
             throw error;
         }
+    }
 
+    static async fetchThicknesses(): Promise<Thickness[]>{
+        try {
+            const responce = await api.get(`${this.baseUrl}/thickness/getAll`);
+            return responce.data;
+        } catch (error: any) {
+            console.error(`Произошла ошибка при получении списка толщин: ${error.message}`);
+            throw error;
+        }
     }
 
     static async deleteReport(id: number): Promise<void> {

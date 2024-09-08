@@ -5,6 +5,7 @@ import DayRangeSelector from "./dashBoardComponent/dateRangeSelector";
 import GypsumBoard from "../../model/gypsumBoard/GypsumBoard";
 import Material from "../../model/specification/Material";
 import ConsumptionChart from "./consumptionReportElements/consumptionChart";
+import Thickness from "../../model/gypsumBoard/Thickness";
 
 interface ConsumptionReportProps { }
 
@@ -23,11 +24,16 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<GypsumBoard[]>([]);
+  const [thicknessList, setThicknessList] = useState<Thickness[]>([]);
+  const [selectedThickness, setSelectedThickness] = useState<Thickness | null>(null);
+  const [filteredGypsumBoardList, setFilteredGypsumBoardList] = useState<GypsumBoard[]>([]);
+
 
   // Загружаем гипсокартон только один раз
   useEffect(() => {
     const fetchGypsumBoards = async () => {
-      const gbs = await ApiService.fetchGypsumBoards();
+      const gbs: GypsumBoard[] = await ApiService.fetchGypsumBoards();
+
       setGypsumBoardList(gbs);
     };
 
@@ -48,6 +54,16 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
     }
   }, [materials]); // Добавляем зависимость от длины массива материалов
 
+  useEffect(() => {
+    const fetchThickness = async () => {
+      const thkns = await ApiService.fetchThicknesses();
+      setThicknessList(thkns);
+    }
+    if (thicknessList.length === 0) {
+      fetchThickness();
+    }
+  }, [thicknessList]);
+
   // Устанавливаем выбранный гипсокартон после загрузки данных
   useEffect(() => {
     if (!selectedProduct && gypsumBoardList.length > 0) {
@@ -62,6 +78,16 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
     }
   }, [materials, selectedMaterial]);
 
+  useEffect(() => {
+    if (selectedThickness) {
+      const filteredGypsumBoards = gypsumBoardList.filter((g) => g.thickness.id === selectedThickness.id);
+      setFilteredGypsumBoardList(filteredGypsumBoards);
+      console.log("Устанавливаем новый список гипсокартона с толщиной", selectedThickness.value);
+    } else {
+      setFilteredGypsumBoardList(gypsumBoardList); // Если толщина не выбрана, показываем весь список
+    }
+  }, [selectedThickness, gypsumBoardList]); // Обновляем filteredGypsumBoardList при изменении толщины или исходного списка
+
   function handleDatesChange(startDate: Date | null, endDate: Date | null): void {
     setSelectedRange({ startDate, endDate });
   }
@@ -73,37 +99,29 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
           <Row>
             <DayRangeSelector onDatesChange={handleDatesChange} />
           </Row>
-          {/* <Row>
+          <Row>
             <Form.Group>
-              <Form.Label style={{ color: "white" }}>Гипсокартон</Form.Label>
+              <Form.Label style={{ color: 'white' }}>Толщина</Form.Label>
               <Form.Select
-                value={
-                  selectedProduct
-                    ? selectedProduct.id.toString()
-                    : gypsumBoardList.length > 0
-                      ? gypsumBoardList[0].id.toString()
-                      : ""
+                value={selectedThickness
+                  ? selectedThickness.id.toString()
+                  : ''
                 }
-                disabled={gypsumBoardList.length === 0}
                 onChange={(e) => {
-                  const selectedProductId = parseInt(e.target.value);
-                  const foundGypsumBoard = gypsumBoardList.find(
-                    (gypsumBoard) => gypsumBoard.id === selectedProductId
+                  const selectedThicknessId = parseInt(e.target.value);
+                  const thickness = thicknessList.find(
+                    (tckns) => tckns.id === selectedThicknessId
                   );
-                  setSelectedProduct(foundGypsumBoard || null);
-                }}
+                  setSelectedThickness(thickness || null);}}
               >
-                {gypsumBoardList.map((gypsumBoard) => (
-                  <option
-                    key={gypsumBoard.id}
-                    value={gypsumBoard.id.toString()}
-                  >
-                    {ApiService.getName(gypsumBoard)}
+                {thicknessList.map((thic) => (
+                  <option key={thic.id} value={thic.id.toString()}>
+                    {thic.value}
                   </option>
                 ))}
               </Form.Select>
             </Form.Group>
-          </Row> */}
+          </Row>
           <Row>
             <Form.Group>
               <Form.Label style={{ color: "white" }}>Материал</Form.Label>
@@ -141,25 +159,25 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
                     ? selectedProducts.map((product) => product.id.toString())
                     : []
                 }
-                disabled={gypsumBoardList.length === 0}
+                disabled={filteredGypsumBoardList.length === 0}
                 multiple
                 onChange={(e) => {
                   const selectedOptions = Array.from(e.target.selectedOptions, (option) =>
                     parseInt(option.value)
                   );
-                  const foundGypsumBoards = gypsumBoardList.filter((gypsumBoard) =>
+                  const foundGypsumBoards = filteredGypsumBoardList.filter((gypsumBoard) =>
                     selectedOptions.includes(gypsumBoard.id)
                   );
                   setSelectedProducts(foundGypsumBoards); // Обновляем массив выбранных элементов
                 }}
                 style={{ height: '500px' }}
               >
-                {gypsumBoardList.map((gypsumBoard) => (
+                {filteredGypsumBoardList.map((gypsumBoard) => (
                   <option key={gypsumBoard.id} value={gypsumBoard.id.toString()}>
                     {ApiService.getName(gypsumBoard)}
                   </option>
                 ))}
-                
+
               </Form.Select>
             </Form.Group>
 
@@ -169,12 +187,12 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
         <Col lg={9} md={6} sm={6} className="mb-2">
           <Row>
             <Col>
-            <ConsumptionChart
-              startDate={selectedRange.startDate ? selectedRange.startDate : now}
-              endDate={selectedRange.endDate ? selectedRange.endDate : now}
-              gypsumBoards={selectedProducts}
+              <ConsumptionChart
+                startDate={selectedRange.startDate ? selectedRange.startDate : now}
+                endDate={selectedRange.endDate ? selectedRange.endDate : now}
+                gypsumBoards={selectedProducts}
                 material={selectedMaterial}
-            />
+              />
             </Col>
           </Row>
         </Col>

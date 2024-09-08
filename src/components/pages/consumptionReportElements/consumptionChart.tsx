@@ -7,12 +7,13 @@ import Material from "../../../model/specification/Material";
 import { Card, Col } from "react-bootstrap";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Specification from "../../../model/specification/Specification";
+import Thickness from "../../../model/gypsumBoard/Thickness";
 
 interface ConsumptionChartProps {
     startDate: Date;
     endDate: Date;
     gypsumBoards: GypsumBoard[];
-    material: Material | null;
+    material: Material | null;    
 }
 
 interface ChartData {
@@ -77,7 +78,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
                     gypsumBoards,
                     startDate,
                     endDate
-                );
+                );                
                 setProduction(production);
             }
             fetchProduction();
