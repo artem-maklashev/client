@@ -5,10 +5,11 @@ import Division from "../../../../model/delays/Division";
 import ProductionArea from "../../../../model/delays/ProductionArea";
 import Unit from "../../../../model/delays/Unit";
 import UnitPart from "../../../../model/delays/UnitPart";
+import DelayType from "../../../../model/delays/DelayType";
 
 
 class FetchDelaysData {
-    async getDivisions() {
+    async getDivisions(): Promise<Division[]> {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/division`);
             console.log("Получены подразделения: " + JSON.stringify(response.data));
@@ -20,7 +21,7 @@ class FetchDelaysData {
     }
     async getProductionArea(id: number) {
         try {
-            const response = await api.get(`${process.env.REACT_APP_API_URL}/productionArea/${id}`);
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/productionArea/${id}`);            
             return response.data as ProductionArea[];
         } catch (error) {
             console.error('Ошибка при получении данных о производственных зонах', error);
@@ -46,9 +47,10 @@ class FetchDelaysData {
             throw error; 
         }
     }
-    async getDelayTypes() {
+    async getDelayTypes(): Promise<DelayType[]> {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/delayType`);
+            console.log("Получены типы простоев: " + JSON.stringify(response.data));
             return response.data;
         }catch (error) {
             console.error('Ошибка при получении данных о детали', error);
