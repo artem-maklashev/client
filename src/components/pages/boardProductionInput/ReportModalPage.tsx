@@ -108,8 +108,6 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       } else {
         console.log("Использование существующего отчета:", reportData);
         setDraftReport(structuredClone(reportData));
-        const cons = await ApiService.fetchConsumption(reportData.productionList);
-        setConsumptions(cons);
       }
     };
 
