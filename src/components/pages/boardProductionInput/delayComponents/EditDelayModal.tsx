@@ -49,23 +49,29 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
     const [isDeleayInitial, setDelayInitial] = useState<boolean>(false);
     const fetcher = useMemo(() => new FetchDelaysData(), []);
 
-    const fetchData = useCallback(async () => {
-        try {
-            // const [divisions, delayTypes] = await Promise.all([
-            //     fetcher.getDivisions(),
-            //     fetcher.getDelayTypes()
-            // ]);
-            const divisions = await fetcher.getDivisions();
-            const delayTypes = await fetcher.getDelayTypes();
-            setDivisionList(divisions);
-            setDelayTypeList(delayTypes);            
-        } catch (error) {
-            console.error("Ошибка загрузки данных", error);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // const [divisions, delayTypes] = await Promise.all([
+                //     fetcher.getDivisions(),
+                //     fetcher.getDelayTypes()
+                // ]);
+                const divisions = await fetcher.getDivisions();
+                const delayTypes = await fetcher.getDelayTypes();
+                setDivisionList(divisions);
+                setDelayTypeList(delayTypes);
+            } catch (error) {
+                console.error("Ошибка загрузки данных", error);
+            }
         }
-    }, [fetcher]);
+        if (show && divisionList.length === 0 && delayTypeList.length === 0) {
+            fetchData();
+        }
+
+    }, [delayTypeList.length, divisionList.length, fetcher, show]);
 
     //Запрос производств
-    
+
 
     const fetchProductionAreas = useCallback(async (divisionId: number) => {
         try {
@@ -94,16 +100,31 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         }
     }, [fetcher]);
 
-    useEffect(() => {
-        if (show) {
-            fetchData();
-        }
-    }, [fetchData, show]);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             // const [divisions, delayTypes] = await Promise.all([
+    //             //     fetcher.getDivisions(),
+    //             //     fetcher.getDelayTypes()
+    //             // ]);
+    //             const divisions = await fetcher.getDivisions();
+    //             const delayTypes = await fetcher.getDelayTypes();
+    //             setDivisionList(divisions);
+    //             setDelayTypeList(delayTypes);            
+    //         } catch (error) {
+    //             console.error("Ошибка загрузки данных", error);
+    //         }
+    //     }
+    //     if (show) {
+    //         fetchData();
+    //     }
+    // }, [fetcher, show]);
 
     useEffect(() => {
+
         const fetchDraftData = async () => {
             try {
-                await fetchData();
+                // await fetchData();
                 if (delay) {
                     await fetchProductionAreas(delay.unitPart.unit.productionArea.division.id);
                     await fetchUnits(delay.unitPart.unit.productionArea.id);
@@ -116,15 +137,15 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
                     setUnit(delay.unitPart.unit);
                     setUnitPart(delay.unitPart);
                     setSelectedDelayType(delay.delayType || delayTypeList[0]);
-                } else {    
-                    console.log("Первый в списке производств: ", divisionList[0]) 
+                } else {
+                    console.log("Первый в списке производств: ", divisionList[0])
                     setDivision(divisionList[0]);
-                    setSelectedDelayType(delayTypeList[0]);               
-                    console.log("delay = null");                  
+                    setSelectedDelayType(delayTypeList[0]);
+                    console.log("delay = null");
                     // console.log(division);
                     // if (division) {
                     //     await fetchProductionAreas(divisionList[0].id);
-                        
+
                     // }
                     // if (productionAreaList.length > 0) {
                     //     await fetchUnits(productionAreaList[0].id);
@@ -141,7 +162,6 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
 
         if (show) {
             fetchDraftData();
-
         }
     }, [show]);
 
@@ -153,9 +173,8 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
 
     useEffect(() => {
         const fetchAndSetProductionAreas = async () => {
-
             if (division) {
-                console.log(division);
+                console.log(division, selectedDelayType);
                 console.log("Reciving ProductionArea");
                 try {
                     await fetchProductionAreas(division.id);
@@ -178,7 +197,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         };
         if (isDeleayInitial === true)
             if (!productionArea) {
-            setFirstProductionArea();
+                setFirstProductionArea();
             }
     }, [productionAreaList]);
 
@@ -210,7 +229,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         };
         if (isDeleayInitial === true)
             if (!unit) {
-            setFirstUnit();
+                setFirstUnit();
             }
     }, [unitList]);
 
@@ -238,18 +257,22 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
         }
     }, [unitPart, unitPartList]);
 
-    useEffect(() => {
-        if (selectedDelayType) {
-            setSelectedDelayType(selectedDelayType);
-        }
-    }, [selectedDelayType])
+    // useEffect(() => {
+    //     if (selectedDelayType) {
+    //         setSelectedDelayType(selectedDelayType);
+    //     }
+    // }, [selectedDelayType])
 
     const handleSave = () => {
         if (delay) {
             delay.startTime = startTime;
             delay.endTime = endTime;
             delay.unitPart = unitPart!;
-            delay.delayType = selectedDelayType!;
+            if (selectedDelayType) {
+                delay.delayType = selectedDelayType;
+            } else {
+                delay.delayType = delayTypeList[0];
+            }
             onSave(delay);
         } else {
             if (unitPart && shift && product) {
