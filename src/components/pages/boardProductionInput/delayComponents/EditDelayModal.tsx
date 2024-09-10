@@ -143,7 +143,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
             if (selectedDelayType && division) {
                 fetchDraftData();
             }
-        }, [delay,division, selectedDelayType]);
+        }, [delay,division, ]);
 
         useEffect(() => {
             if (!division && divisionList.length > 0) {
@@ -244,11 +244,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
             }
         }, [unitPart, unitPartList]);
 
-        useEffect(() => {
-            if (selectedDelayType) {
-                setSelectedDelayType(selectedDelayType);
-            }
-        }, [selectedDelayType])
+        
 
         const handleSave = () => {
             if (delay) {

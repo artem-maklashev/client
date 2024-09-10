@@ -71,7 +71,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
             console.error("Ошибка при сохранении расхода:", consumptionError);
           }
         } else {
-          console.log("Отчет не был сохранен или нет данных для обновления расхода.");
+          console.log("нет данных для обновления расхода.");
         }
 
         // 5. Закрываем модальное окно независимо от результата сохранений
