@@ -6,6 +6,7 @@ import GypsumBoard from "../../model/gypsumBoard/GypsumBoard";
 import Material from "../../model/specification/Material";
 import ConsumptionChart from "./consumptionReportElements/consumptionChart";
 import Thickness from "../../model/gypsumBoard/Thickness";
+import SummaryConsumptionBarChart from "./consumptionReportElements/summaryConsumptionsBar";
 
 interface ConsumptionReportProps { }
 
@@ -191,6 +192,15 @@ const ConsumptionReport: React.FC<ConsumptionReportProps> = () => {
                 startDate={selectedRange.startDate ? selectedRange.startDate : now}
                 endDate={selectedRange.endDate ? selectedRange.endDate : now}
                 gypsumBoards={selectedProducts}
+                material={selectedMaterial}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <SummaryConsumptionBarChart
+                startDate={selectedRange.startDate ? selectedRange.startDate : now}
+                endDate={selectedRange.endDate ? selectedRange.endDate : now}
                 material={selectedMaterial}
               />
             </Col>

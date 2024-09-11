@@ -4,7 +4,7 @@ import BoardProduction from "../../../model/production/BoardProduction";
 import ApiService from "../../../service/ApiService";
 import MaterialConsumption from "../../../model/specification/MaterialConsumption";
 import Material from "../../../model/specification/Material";
-import { Card, Col } from "react-bootstrap";
+import { Card, Col, Container } from "react-bootstrap";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Specification from "../../../model/specification/Specification";
 import Thickness from "../../../model/gypsumBoard/Thickness";
@@ -13,7 +13,7 @@ interface ConsumptionChartProps {
     startDate: Date;
     endDate: Date;
     gypsumBoards: GypsumBoard[];
-    material: Material | null;    
+    material: Material | null;
 }
 
 interface ChartData {
@@ -31,7 +31,7 @@ interface CombinedData {
 
 interface CustomTooltipProps {
     active?: boolean;
-    payload?: Array<{ payload: CombinedData }>; 
+    payload?: Array<{ payload: CombinedData }>;
 }
 
 const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate, gypsumBoards, material }) => {
@@ -67,9 +67,9 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
             }
         }
         // if (specifications.length === 0 ) {
-            fetchData();
+        fetchData();
         // }
-    }, [ material]);
+    }, [material]);
 
     useEffect(() => {
         if (gypsumBoards) {
@@ -78,7 +78,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
                     gypsumBoards,
                     startDate,
                     endDate
-                );                
+                );
                 setProduction(production);
             }
             fetchProduction();
@@ -109,7 +109,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
             const date = new Date(production.productionList.productionDate).toLocaleDateString();
             const consumption = consumptions.find(c => c.productionList.id === production.productionList.id)?.quantity || 0;
             const existingData = draftData[date];
-            const rate = specifications.find((s) => 
+            const rate = specifications.find((s) =>
                 s.product.id === production.product.id);
 
             if (existingData) {
@@ -121,7 +121,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
                     productionValue: production.value,
                     consumption,
                     consumptionPerSquare: 0,
-                    rate: rate ? rate.quantity*production.value : 0,
+                    rate: rate ? rate.quantity * production.value : 0,
                 };
             }
         });
@@ -129,7 +129,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
         Object.keys(draftData).forEach((date) => {
             const data = draftData[date];
             data.consumptionPerSquare = data.productionValue !== 0 ? data.consumption / data.productionValue : 0;
-            data.rate = data.rate/data.productionValue;
+            data.rate = data.rate / data.productionValue;
         });
 
         return draftData;
@@ -161,43 +161,45 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
             case 'rate':
                 return 'Норма';
             case 'consumptionPerSquare':
-                return 'Факт';            
+                return 'Факт';
             default:
                 return value;
         }
     };
 
     return (
-        <Card className="mt-lg-5 text-center bg-body-primary">
-            <Card.Header>               
-                <h6>
-                    {/* {gypsumBoard === null || gypsumBoard === undefined ? "GypsumBoard is null" : ApiService.getName(gypsumBoard)} */}
-                    <p>расход {material ? material.name : ""} на м²</p></h6>
-            </Card.Header>
-            <Card.Body style={{ overflowX: 'auto' }}>
-                <Col className="col-12" style={{ minWidth: '500px', width: '100%', height: '278px' }}>
-                    <ResponsiveContainer>
-                        <LineChart
-                            width={500}
-                            height={300}
-                            data={chartData}
-                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis yAxisId="left" />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend formatter={legendFormatter} />
-                            <Line yAxisId="left" type="monotone" dataKey="consumptionPerSquare" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={3} />
-                            <Line yAxisId="left" type="monotone" dataKey="rate" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </Col>
-            </Card.Body>
-            <Card.Footer>
-                <p style={{ fontSize: 10 }}>{gypsumBoards.map((board) => ApiService.getName(board) + "    -    ")}</p>
-            </Card.Footer>  
-        </Card>
+        <Container>
+            <Card className="mt-lg-5 text-center bg-body-primary">
+                <Card.Header>
+                    <h6>
+                        {/* {gypsumBoard === null || gypsumBoard === undefined ? "GypsumBoard is null" : ApiService.getName(gypsumBoard)} */}
+                        <p>расход {material ? material.name : ""} на м²</p></h6>
+                </Card.Header>
+                <Card.Body style={{ overflowX: 'auto' }}>
+                    <Col className="col-12" style={{ minWidth: '500px', width: '100%', height: '278px' }}>
+                        <ResponsiveContainer>
+                            <LineChart
+                                width={500}
+                                height={300}
+                                data={chartData}
+                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" />
+                                <YAxis yAxisId="left" />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Legend formatter={legendFormatter} />
+                                <Line yAxisId="left" type="monotone" dataKey="consumptionPerSquare" stroke="#8884d8" activeDot={{ r: 8 }} strokeWidth={3} />
+                                <Line yAxisId="left" type="monotone" dataKey="rate" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </Col>
+                </Card.Body>
+                <Card.Footer>
+                    <p style={{ fontSize: 10 }}>{gypsumBoards.map((board) => ApiService.getName(board) + "    -    ")}</p>
+                </Card.Footer>
+            </Card>
+        </Container>
     );
 }
 
