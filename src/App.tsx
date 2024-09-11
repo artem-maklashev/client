@@ -16,7 +16,9 @@ import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import FindBoardReport from './components/pages/boardProductionInput/productComponents/findBoardReport';
 import ConsumptionReport from './components/pages/ConsumptionReport';
-
+import 'primereact/resources/themes/saga-blue/theme.css'; // Замените на любую другую тему
+import 'primereact/resources/primereact.min.css'; // Основные стили PrimeReact
+// import 'primeicons/primeicons.css';
 
 
 
