@@ -56,7 +56,12 @@ const MonthRangeSelector: React.FC<MonthRangeSelectorProps> = ({ onDatesChange }
                             } else {
                                 setDates(null);
                             }
-                            if (dates) onDatesChange(dates[0], dates[1]); // Notify parent component                            
+                            if (dates) {
+                                const startDate = dates[0];
+                                const endDate = dates[1];
+                                const endDateFact = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 1);
+                                onDatesChange(startDate, endDateFact); // Notify parent component                
+                            }            
                         }}
                     selectionMode="range"
                     view="month"

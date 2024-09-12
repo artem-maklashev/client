@@ -119,10 +119,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
 
     const colWidth = 12 / uniqueTradeMarks.length;
 
-    function handleMonthChange(startDate: Date | null, endDate: Date | null): void {
-        if (!endDate && startDate) {
-            endDate = new Date(new Date(startDate).getFullYear(), new Date(startDate).getMonth()+1, 0);
-        }
+    function handleMonthChange(startDate: Date | null, endDate: Date | null): void {        
         if (startDate && endDate) {
         setSelectedMonthRange({startDate, endDate});
         }
