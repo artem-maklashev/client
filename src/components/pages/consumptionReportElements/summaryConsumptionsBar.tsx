@@ -3,7 +3,7 @@ import Material from "../../../model/specification/Material";
 import ApiService from "../../../service/ApiService";
 import MaterialConsumption from "../../../model/specification/MaterialConsumption";
 import { Card, Col, Container } from "react-bootstrap";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface SummaryConsumptionProps {
     startDate: Date;

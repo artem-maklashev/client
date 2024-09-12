@@ -217,10 +217,8 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                     </ComposedChart>
                 </ResponsiveContainer>
                 </Col>
-            </Card.Body>
-            <Card.Footer>
                 <DelaysModal date={modalDate} delays={modalDelays} onHide={closeModal} show={modalShow} />
-            </Card.Footer>
+            </Card.Body>            
         </Card>
     );
 }

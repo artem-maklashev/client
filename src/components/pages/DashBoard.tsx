@@ -29,6 +29,17 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [allProductionData, setAllProductionData] = useState<BoardProduction[]>([]);
     const [delays, setDelays] = useState<Delays[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [selectedMonthRange, setSelectedMonthRange] = useState<{ startDate: Date | null, endDate: Date | null }>({
+        startDate: new Date(now.getFullYear(), now.getMonth(), 1),
+        endDate: new Date(now.getFullYear(), now.getMonth()+1, 0)
+    });
+
+    //Для вкладки по месяцам
+    const [planMonthData, setPlanMonthData] = useState<Plan[]>([]);
+    const [productionMonthData, setProductionMonthData] = useState<BoardProduction[]>([]);
+    const [allProductionMonthData, setAllProductionMonthData] = useState<BoardProduction[]>([]);
+    const [delaysMonth, setDelaysMonth] = useState<Delays[]>([]);
+
 
     function handleDatesChange(startDate: Date | null, endDate: Date | null): void {
         setSelectedRange({ startDate, endDate });
@@ -69,6 +80,36 @@ const DashBoard: React.FC<DashBoardProps> = () => {
         fetchData();
     }, [selectedRange])
 
+    useEffect(() => {
+        setProductionMonthData([]);
+        setPlanMonthData([]);
+        setAllProductionMonthData([]);
+        setDelaysMonth([]);
+        const fetchData = async () => {
+            setLoading(true);
+            if (selectedMonthRange.startDate !== null && selectedMonthRange.endDate !== null) {
+            try {
+                    // console.log(selectedRange.startDate);
+                    const fetchedPlan = await ApiService.fetchPlan(selectedMonthRange.startDate, selectedMonthRange.endDate);
+                    console.log("Получен план в размере " + fetchedPlan.length + " записей");
+                    setPlanMonthData(fetchedPlan);
+                    const fetchedProduction = await ApiService.fetchBoardProduction(selectedMonthRange.startDate, selectedMonthRange.endDate);
+                    console.log("Получены данные по производству в размере " + fetchedProduction.length);
+                    setAllProductionMonthData(fetchedProduction);
+                    const production = filterBoardProductions(fetchedProduction);
+                    setProductionMonthData(production);
+                    const fetchedDelays = await ApiService.fetchDelaysData(selectedMonthRange.startDate, selectedMonthRange.endDate);
+                    setDelaysMonth(fetchedDelays);
+                }
+             catch (error: any) {
+                console.error(`Произошла ошибка: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }}
+        }
+        fetchData();
+    }, [selectedMonthRange])
+
     const uniqueTradeMarks = productionData.reduce((acc, curr) => {
         if (!acc.includes(curr.product.tradeMark.name)) {
             acc.push(curr.product.tradeMark.name);
@@ -77,6 +118,15 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     }, [] as string[]);
 
     const colWidth = 12 / uniqueTradeMarks.length;
+
+    function handleMonthChange(startDate: Date | null, endDate: Date | null): void {
+        if (!endDate && startDate) {
+            endDate = new Date(new Date(startDate).getFullYear(), new Date(startDate).getMonth()+1, 0);
+        }
+        if (startDate && endDate) {
+        setSelectedMonthRange({startDate, endDate});
+        }
+    }
 
     return (
         <Container fluid className="mt-5 mb-5 bg-secondary">
@@ -137,22 +187,19 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                             <Row lg={12} sm={12} md={12}>
                                 <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
                                     <Row>
-                                        <MonthRangeSelector />
+                                        <MonthRangeSelector onDatesChange={handleMonthChange} />
+                                    </Row>                                    
+                                    <Row>
+                                        <Speedometr productionData={allProductionMonthData} />
                                     </Row>
                                     <Row>
-                                        <DayRangeSelector onDatesChange={handleDatesChange} />
+                                        <BatteryChart planData={planMonthData} factData={productionMonthData} />
                                     </Row>
                                     <Row>
-                                        <Speedometr productionData={allProductionData} />
-                                    </Row>
-                                    <Row>
-                                        <BatteryChart planData={planData} factData={productionData} />
-                                    </Row>
-                                    <Row>
-                                        <ShiftDefects shiftProduction={allProductionData} />
+                                        <ShiftDefects shiftProduction={allProductionMonthData} />
                                     </Row>
                                 </Col>
-                                <Col lg={9} sm={12} className="mb-5">
+                                <Col lg={9} sm={12} >
                                     <Row>
                                         <Col >
                                             <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />

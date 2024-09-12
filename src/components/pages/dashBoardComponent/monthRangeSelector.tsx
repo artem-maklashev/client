@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { FormEvent, SyntheticEvent, useEffect, useState } from "react";
 import { Calendar } from 'primereact/calendar';
 import { Card, Col } from "react-bootstrap";
 
@@ -20,48 +20,57 @@ addLocale('ru', {
 });
 
 
-interface MonthRangeSelectorProps {}
+interface MonthRangeSelectorProps {
+    onDatesChange: (startDate: Date | null, endDate: Date | null) => void;
+}
 
-const MonthRangeSelector: React.FC<MonthRangeSelectorProps> = ({}) => {
+const MonthRangeSelector: React.FC<MonthRangeSelectorProps> = ({ onDatesChange }) => {
 
     const [dates, setDates] = useState<Date[] | null>(null);
 
     useEffect(() => {
         if (dates) {
-            console.log(dates[0], '-', dates[1]);
+            const [startDate, endDate] = dates;
+            const endDateFact = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 1);
+            console.log(startDate, '-', endDateFact);
+            
+            
         }
-    });
+    }, [dates]);   
 
     return (
-        <Col className=' d-flex' align-items-center>
-        <Card className="flex justify-content-center">
-                <Card.Title className="text-center">Выберите период </Card.Title>
-                <Card.Body d-flex align-items-center >
+        <Col className=' d-flex col-12 justify-content-center'>
+            <Card className="d-flex justify-content-center">
+                <Card.Header className='text-center'><h5>Выберите период</h5></Card.Header>
+                <Card.Body d-flex flex-column align-items-center>
                     {/* <Col > */}
-                    <Calendar 
-                value={dates}
-                onChange={(e) => {
-                    const selectedDates = e.value as (Date | null)[] | null;
-                    // Убираем null из массива, если есть
-                    if (selectedDates) {
-                        setDates(selectedDates.filter((d): d is Date => d !== null));
-                    } else {
-                        setDates(null);
-                    }
-                }}
-                selectionMode="range"
-                view="month"
-                dateFormat="mm/yy"
-                // yearNavigator
-                // monthNavigator
-                        
-                            hideOnRangeSelection
-                            inline
-                        yearRange="2022:2030"
-locale="ru"/>
-                            {/* </Col> */}
-            </Card.Body>
-        </Card>
+
+                    <Calendar
+                        value={dates}
+                        onChange={
+                            (e) => {
+                            const selectedDates = e.value as (Date | null)[] | null;
+                            // Убираем null из массива, если есть
+                            if (selectedDates) {
+                                setDates(selectedDates.filter((d): d is Date => d !== null));
+                            } else {
+                                setDates(null);
+                            }
+                            if (dates) onDatesChange(dates[0], dates[1]); // Notify parent component                            
+                        }}
+                    selectionMode="range"
+                    view="month"
+                    dateFormat="MM/yy"
+                    // yearNavigator
+                    // monthNavigator                        
+                    hideOnRangeSelection
+                    inline
+                    yearRange="2022:2030"
+                    locale="ru"
+                    style={{ width: '100%' }}/>
+                    {/* </Col> */}
+                </Card.Body>
+            </Card>
         </Col>
     );
 }
