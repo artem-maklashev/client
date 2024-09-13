@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import Plan from '../../../model/gypsumBoard/Plan';
 import BoardProduction from '../../../model/production/BoardProduction';
 import battery from './images/battery_outline_in_a_circle_blhptsyz0g2b.svg'; // Импорт изображения

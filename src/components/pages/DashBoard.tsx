@@ -14,6 +14,8 @@ import DelaysChartBoard from "./dashBoardComponent/delaysChart";
 import ShiftDefects from "./dashBoardComponent/shiftDefects";
 import Preloader from "./commonElements/preloader";
 import MonthRangeSelector from "./dashBoardComponent/monthRangeSelector";
+import PlanFactChartByMonth from "./dashBoardComponent/planFactChartByMonth";
+import DelaysMonthChartBoard from "./dashBoardComponent/delaysMonthChart";
 
 interface DashBoardProps {
 
@@ -31,7 +33,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedMonthRange, setSelectedMonthRange] = useState<{ startDate: Date | null, endDate: Date | null }>({
         startDate: new Date(now.getFullYear(), now.getMonth(), 1),
-        endDate: new Date(now.getFullYear(), now.getMonth()+1, 0)
+        endDate: new Date(now.getFullYear(), now.getMonth() + 1, 0)
     });
 
     //Для вкладки по месяцам
@@ -88,7 +90,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
         const fetchData = async () => {
             setLoading(true);
             if (selectedMonthRange.startDate !== null && selectedMonthRange.endDate !== null) {
-            try {
+                try {
                     // console.log(selectedRange.startDate);
                     const fetchedPlan = await ApiService.fetchPlan(selectedMonthRange.startDate, selectedMonthRange.endDate);
                     console.log("Получен план в размере " + fetchedPlan.length + " записей");
@@ -101,11 +103,12 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                     const fetchedDelays = await ApiService.fetchDelaysData(selectedMonthRange.startDate, selectedMonthRange.endDate);
                     setDelaysMonth(fetchedDelays);
                 }
-             catch (error: any) {
-                console.error(`Произошла ошибка: ${error.message}`);
-            } finally {
-                setLoading(false);
-            }}
+                catch (error: any) {
+                    console.error(`Произошла ошибка: ${error.message}`);
+                } finally {
+                    setLoading(false);
+                }
+            }
         }
         fetchData();
     }, [selectedMonthRange])
@@ -119,60 +122,60 @@ const DashBoard: React.FC<DashBoardProps> = () => {
 
     const colWidth = 12 / uniqueTradeMarks.length;
 
-    function handleMonthChange(startDate: Date | null, endDate: Date | null): void {        
+    function handleMonthChange(startDate: Date | null, endDate: Date | null): void {
         if (startDate && endDate) {
-        setSelectedMonthRange({startDate, endDate});
+            setSelectedMonthRange({ startDate, endDate });
         }
     }
 
     return (
         <Container fluid className="mt-5 mb-5 bg-secondary">
             <Row>
-            <Tabs className="mt-5">
-                <Tab eventKey={1} title="По дням">
-                    <Row className="mt-5">
-                        {loading && (
-                            <Preloader />
-                        )}
-                    </Row>
-                    <Row lg={12} sm={12} md={12}>
-                        <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
-                            <Row>
-                                <DayRangeSelector onDatesChange={handleDatesChange} />
-                            </Row>
-                            <Row>
-                                <Speedometr productionData={allProductionData} />
-                            </Row>
-                            <Row>
-                                <BatteryChart planData={planData} factData={productionData} />
-                            </Row>
-                            <Row>
-                                <ShiftDefects shiftProduction={allProductionData} />
-                            </Row>
-                        </Col>
-                        <Col lg={9} sm={12} className="mb-5">
-                            <Row>
-                                <Col >
-                                    <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
-                                </Col>
-                            </Row>
-                            <Row>
-                                {uniqueTradeMarks.map(tradeMark => {
-                                    const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
-                                    return (
-                                        <Col key={tradeMark} lg={colWidth} sm={12}>
-                                            <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
-                                        </Col>
-                                    );
-                                })}
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <DelaysChartBoard delays={delays} />
-                                </Col>
-                            </Row>
-                        </Col>
-                    </Row> 
+                <Tabs className="mt-5">
+                    <Tab eventKey={1} title="По дням">
+                        <Row className="mt-5">
+                            {loading && (
+                                <Preloader />
+                            )}
+                        </Row>
+                        <Row lg={12} sm={12} md={12}>
+                            <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <Row>
+                                    <DayRangeSelector onDatesChange={handleDatesChange} />
+                                </Row>
+                                <Row>
+                                    <Speedometr productionData={allProductionData} />
+                                </Row>
+                                <Row>
+                                    <BatteryChart planData={planData} factData={productionData} />
+                                </Row>
+                                <Row>
+                                    <ShiftDefects shiftProduction={allProductionData} />
+                                </Row>
+                            </Col>
+                            <Col lg={9} sm={12} className="mb-5">
+                                <Row>
+                                    <Col >
+                                        <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    {uniqueTradeMarks.map(tradeMark => {
+                                        const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
+                                        return (
+                                            <Col key={tradeMark} lg={colWidth} sm={12}>
+                                                <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
+                                            </Col>
+                                        );
+                                    })}
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <DelaysChartBoard delays={delays} />
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
                     </Tab>
                     <Tab eventKey={2} title="По месяцам">
                         <Row>
@@ -184,10 +187,12 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                             <Row lg={12} sm={12} md={12}>
                                 <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
                                     <Row>
-                                        <MonthRangeSelector onDatesChange={handleMonthChange} />
-                                    </Row>                                    
-                                    <Row>
-                                        <Speedometr productionData={allProductionMonthData} />
+                                        <Col className="col-6">
+                                            <MonthRangeSelector onDatesChange={handleMonthChange} />
+                                        </Col>
+                                        <Col className="col-6">
+                                            <Speedometr productionData={allProductionMonthData} />
+                                        </Col>
                                     </Row>
                                     <Row>
                                         <BatteryChart planData={planMonthData} factData={productionMonthData} />
@@ -199,12 +204,12 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                 <Col lg={9} sm={12} >
                                     <Row>
                                         <Col >
-                                            <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
+                                            <PlanFactChartByMonth planData={planMonthData} productionData={productionMonthData} allProductionData={allProductionMonthData} />
                                         </Col>
                                     </Row>
                                     <Row>
                                         {uniqueTradeMarks.map(tradeMark => {
-                                            const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
+                                            const data = productionMonthData.filter(prod => prod.product.tradeMark.name === tradeMark);
                                             return (
                                                 <Col key={tradeMark} lg={colWidth} sm={12}>
                                                     <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
@@ -214,14 +219,14 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                     </Row>
                                     <Row>
                                         <Col>
-                                            <DelaysChartBoard delays={delays} />
+                                            <DelaysMonthChartBoard delays={delaysMonth} />
                                         </Col>
                                     </Row>
                                 </Col>
-                            </Row> 
+                            </Row>
                         </Row>
                     </Tab>
-            </Tabs>
+                </Tabs>
             </Row>
         </Container>
     )

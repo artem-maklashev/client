@@ -67,8 +67,8 @@ const MonthRangeSelector: React.FC<MonthRangeSelectorProps> = ({ onDatesChange }
                     view="month"
                     dateFormat="MM/yy"
                     // yearNavigator
-                    // monthNavigator                        
-                    hideOnRangeSelection
+                    monthNavigator                        
+                    // hideOnRangeSelection
                     inline
                     yearRange="2022:2030"
                     locale="ru"
