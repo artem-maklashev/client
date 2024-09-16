@@ -48,6 +48,22 @@ export const getUserRole = (): string | null => {
         console.error('Failed to decode token:', error);
         return null;
     }
+
+};
+
+export const getUserId = (): string | null => {
+    const token = localStorage.getItem('authToken');
+    if (!token) return null;
+
+    try {
+        // Используйте интерфейс для типизации декодированного токена
+        const decodedToken = jwtDecode<MyJwtPayload>(token);
+        return decodedToken.sub; // Предполагая, что роль пользователя находится в свойстве roles
+    } catch (error) {
+        console.error('Failed to decode token:', error);
+        return null;
+    }
+
 };
 
 
