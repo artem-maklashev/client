@@ -47,6 +47,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                         type="number"
                         value={newValue}
                         onChange={(e) => setNewValue(parseFloat(e.target.value))}
+                        autoFocus
                     />
                 </Form.Group>
             </Modal.Body>

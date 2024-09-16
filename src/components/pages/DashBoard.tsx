@@ -41,7 +41,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [productionMonthData, setProductionMonthData] = useState<BoardProduction[]>([]);
     const [allProductionMonthData, setAllProductionMonthData] = useState<BoardProduction[]>([]);
     const [delaysMonth, setDelaysMonth] = useState<Delays[]>([]);
-
+    const [activeTab, setActiveTab] = useState<string | undefined>('1');
 
     function handleDatesChange(startDate: Date | null, endDate: Date | null): void {
         setSelectedRange({ startDate, endDate });
@@ -111,7 +111,12 @@ const DashBoard: React.FC<DashBoardProps> = () => {
             }
         }
         fetchData();
-    }, [selectedMonthRange])
+    }, [selectedMonthRange]);
+
+   const handleTabSelect = (key: string | null) => {
+        // Приводим ключ к строке или undefined
+        setActiveTab(key ?? undefined);
+    };
 
     const uniqueTradeMarks = productionData.reduce((acc, curr) => {
         if (!acc.includes(curr.product.tradeMark.name)) {
@@ -131,7 +136,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     return (
         <Container fluid className="mt-5 mb-5 bg-secondary">
             <Row>
-                <Tabs className="mt-5">
+                <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mt-5">
                     <Tab eventKey={1} title="По дням">
                         <Row className="mt-5">
                             {loading && (
@@ -177,7 +182,8 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                             </Col>
                         </Row>
                     </Tab>
-                    <Tab eventKey={2} title="По месяцам">
+                    <Tab eventKey={2} title="По месяцам" mountOnEnter unmountOnExit>
+                        {activeTab==='2' && 
                         <Row>
                             <Row className="mt-5">
                                 {loading && (
@@ -224,7 +230,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                     </Row>
                                 </Col>
                             </Row>
-                        </Row>
+                        </Row>}
                     </Tab>
                 </Tabs>
             </Row>

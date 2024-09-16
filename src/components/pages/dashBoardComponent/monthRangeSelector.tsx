@@ -33,10 +33,10 @@ const MonthRangeSelector: React.FC<MonthRangeSelectorProps> = ({ onDatesChange }
             const [startDate, endDate] = dates;
             const endDateFact = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 1);
             console.log(startDate, '-', endDateFact);
-            
-            
+
+
         }
-    }, [dates]);   
+    }, [dates]);
 
     return (
         <Col className=' d-flex col-12 justify-content-center'>
@@ -47,32 +47,34 @@ const MonthRangeSelector: React.FC<MonthRangeSelectorProps> = ({ onDatesChange }
 
                     <Calendar
                         value={dates}
-                        onChange={
-                            (e) => {
+                        onChange={(e) => {
                             const selectedDates = e.value as (Date | null)[] | null;
-                            // Убираем null из массива, если есть
                             if (selectedDates) {
-                                setDates(selectedDates.filter((d): d is Date => d !== null));
+                                // Обновляем состояние на основе новых выбранных дат
+                                const filteredDates = selectedDates.filter((d): d is Date => d !== null);
+                                setDates(filteredDates);
+
+                                // Если есть две даты, передаем их родительскому компоненту
+                                if (filteredDates.length === 2) {
+                                    const startDate = filteredDates[0];
+                                    const endDate = filteredDates[1];
+                                    const endDateFact = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 1);
+                                    onDatesChange(startDate, endDateFact); // Notify parent component
+                                }
                             } else {
-                                setDates(null);
+                                setDates(null); // Очищаем даты, если ничего не выбрано
                             }
-                            if (dates) {
-                                const startDate = dates[0];
-                                const endDate = dates[1];
-                                const endDateFact = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 1);
-                                onDatesChange(startDate, endDateFact); // Notify parent component                
-                            }            
                         }}
-                    selectionMode="range"
-                    view="month"
-                    dateFormat="MM/yy"
-                    // yearNavigator
-                    monthNavigator                        
-                    // hideOnRangeSelection
-                    inline
-                    yearRange="2022:2030"
-                    locale="ru"
-                    style={{ width: '100%' }}/>
+                        selectionMode="range"
+                        view="month"
+                        dateFormat="MM/yy"
+                        monthNavigator
+                        inline
+                        yearRange="2022:2030"
+                        locale="ru"
+                        style={{ width: '100%' }}
+                    />
+
                     {/* </Col> */}
                 </Card.Body>
             </Card>

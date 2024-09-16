@@ -4,6 +4,7 @@ import Plan from '../../../model/gypsumBoard/Plan';
 import BoardProduction from '../../../model/production/BoardProduction';
 import battery from './images/battery_outline_in_a_circle_blhptsyz0g2b.svg'; // Импорт изображения
 import { Card, Col, Table } from 'react-bootstrap';
+import BatteryImage from './batteryImage';
 
 interface BatteryChartProps {
     planData: Plan[];
@@ -29,6 +30,7 @@ const BatteryChart: React.FC<BatteryChartProps> = ({ planData, factData }) => {
     const maxValue = Math.max(plan, fact);
     const batteryBlok = (
         <ResponsiveContainer height={50} width={100} className="align-content center">
+            
                         <BarChart
                             // width={150}
                             // height={150}
@@ -38,11 +40,11 @@ const BatteryChart: React.FC<BatteryChartProps> = ({ planData, factData }) => {
                         >
 
                             <defs>
-                                <pattern id="bgImage" patternUnits="userSpaceOnUse" width="100%" height="100%">
-                                    <image href={battery} x="0" y="0" width="100%" height="100%" />
-                                </pattern>
+                                <BatteryImage />
                             </defs>
                             <rect x={0} y={0} width={'100%'} height={'100%'} fill="url(#bgImage)" />
+                            
+
 
                             {/* <CartesianGrid strokeDasharray="3 3" /> */}
                             <XAxis type="number" hide domain={[0, maxValue]} />
