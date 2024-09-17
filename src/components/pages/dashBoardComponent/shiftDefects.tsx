@@ -75,7 +75,7 @@ const ShiftDefects: React.FC<ShiftDefectProps> = ({ shiftProduction }) => {
                 <Card.Body style={{ width: '100%', height: '300px', marginTop: '1px' }} className='d-flex justify-content-center align-items-center'>
                     <ResponsiveContainer width={'100%'} height={'100%'}>
                         <BarChart
-                            width={500}
+                            width={400}
                             height={300}
                             data={data}
                             margin={{

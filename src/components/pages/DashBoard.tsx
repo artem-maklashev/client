@@ -42,6 +42,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [allProductionMonthData, setAllProductionMonthData] = useState<BoardProduction[]>([]);
     const [delaysMonth, setDelaysMonth] = useState<Delays[]>([]);
     const [activeTab, setActiveTab] = useState<string | undefined>('1');
+    
 
     function handleDatesChange(startDate: Date | null, endDate: Date | null): void {
         setSelectedRange({ startDate, endDate });
@@ -51,6 +52,8 @@ const DashBoard: React.FC<DashBoardProps> = () => {
         const filtered = boardProductions.filter((bp) => bp.category.id === 2 || bp.category.id === 3);
         return filtered;
     }
+
+    
 
     useEffect(() => {
         setProductionData([]);
@@ -176,7 +179,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <DelaysChartBoard delays={delays} />
+                                        <DelaysChartBoard delays={delays}  />
                                     </Col>
                                 </Row>
                             </Col>
