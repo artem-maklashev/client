@@ -6,7 +6,7 @@ import { ValueType, NameType } from "recharts/types/component/DefaultTooltipCont
 import DelaysModal from "./delaysModal";
 
 interface DelaysChartBoardProps {
-    delays: Delays[];
+    delays: Delays[];    
 }
 
 interface CombinedData {
