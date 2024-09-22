@@ -48,7 +48,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     }
 
     function filterBoardProductions(boardProductions: BoardProduction[]): BoardProduction[] {
-        const filtered = boardProductions.filter((bp) => bp.category.id === 2 || bp.category.id === 3);
+        const filtered = boardProductions.filter((bp) => bp.category.id === 2 || bp.category.id === 3 || bp.category.id === 4);
         return filtered;
     }
 
