@@ -261,6 +261,19 @@ class ApiService {
         }
     }
 
+    static async fetchPlanByMonth(period: Date) {
+        try {
+            const params = new URLSearchParams({
+                dateStr: this.formatDateToISO(period)              
+            });
+
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/plan/getByMonth?${params}`);
+            return  response.data;
+        } catch (error: any){
+            console.error(`Произошла ошибка при получении плана за месяц`);
+        }
+    }
+
     static async fetchGypsumBoards() {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/gypsumBoard`);

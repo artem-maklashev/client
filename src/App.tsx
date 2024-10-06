@@ -18,6 +18,7 @@ import FindBoardReport from './components/pages/boardProductionInput/productComp
 import ConsumptionReport from './components/pages/ConsumptionReport';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Замените на любую другую тему
 import 'primereact/resources/primereact.min.css'; // Основные стили PrimeReact
+import PlanPage from './components/pages/planPage';
 // import 'primeicons/primeicons.css';
 
 
@@ -133,6 +134,8 @@ function App() {
                 <Route path="/boardReport" element={tokenValid ? <BoardProductionPage /> : <Navigate to="/login" />} />
                 <Route path="/findReport" element={tokenValid ? <FindBoardReport /> : <Navigate to="/login" />} />
                 <Route path="/consumptionReport" element={tokenValid ? <ConsumptionReport /> : <Navigate to="/login" />} />
+                <Route path="/plan" element={tokenValid ? <PlanPage /> : <Navigate to="/login" />} />
+
                 <Route path="/" element={tokenValid ? <MainPage /> : <Navigate to="/login" />} />
                 {/*<Route path="/" element={<MainPage />} />*/}
                 <Route path="/register" element={<RegistrationPage />} />
