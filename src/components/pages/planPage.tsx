@@ -4,6 +4,7 @@ import PeriodSelector from "./planElements/periodselector";
 import PlanTable from "./planElements/planTable";
 import Plan from "../../model/gypsumBoard/Plan";
 import ApiService from "../../service/ApiService";
+import PlanDataTable from "./planElements/planDataTable";
 
 interface PlanPageProps {
 
@@ -31,6 +32,9 @@ const PlanPage: React.FC<PlanPageProps> = () => {
             </Row>
             <Row>
                 <PlanTable planList={planList} />
+            </Row>
+            <Row>
+                <PlanDataTable planList={planList} />
             </Row>
         </Container>
     );
