@@ -3,6 +3,8 @@ import Plan from "../../../model/gypsumBoard/Plan";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
+import 'primereact/resources/themes/nano/theme.css';
+import { Container } from "react-bootstrap";
 
 interface PlanTableProps {
     planList: Plan[];
@@ -77,14 +79,14 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList }) => {
     const groupedPlans = groupByGypsumBoard(planList);
     const columnTotals = calculateColumnTotals(groupedPlans, headers);
     return (
-        <div>
-            <DataTable value={groupedPlans} scrollable scrollHeight="600px" showGridlines>
+        <Container className="mb-3 mt-3">
+            <DataTable value={groupedPlans} scrollable scrollHeight="600px" showGridlines stripedRows>
                 {/* Колонка с информацией о гипсокартоне */}
                 <Column
                     header="Gypsum Board"
                     body={(rowData) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
                     ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
-                    style={{ minWidth: '300px' }} frozen className="font-bold"
+                    style={{ minWidth: '330px' }} frozen className="font-bold"
 
                 />
 
@@ -93,7 +95,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList }) => {
                     <Column
                         key={date}
                         header={date}
-                        body={(rowData) => rowData.values[date] || null} // Показываем значение по дате или null
+                        body={(rowData) => rowData.values[date] || null} // Показываем значение по дате или null                        
                         footer={columnTotals[date] ?? 0}
                     />
                 ))}
@@ -102,10 +104,10 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList }) => {
                     header="Итого"
                     body={(rowData) => calculateRowTotal(rowData.values)} // Выводим сумму по строке
                     footer={Object.values(columnTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
-                    className="font-bold"
+                    className="font-bold"                    
                 />
             </DataTable>            
-        </div>
+        </Container>
     );
 };
 

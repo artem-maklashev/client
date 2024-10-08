@@ -2,27 +2,65 @@ import React from "react";
 import Plan from "../../../model/gypsumBoard/Plan";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+import 'primereact/resources/themes/saga-blue/theme.css';  // Темы
+import 'primereact/resources/primereact.min.css';          // Основные стили
+import 'primeicons/primeicons.css';                         // Иконки
+import { Container } from "react-bootstrap";
+
+
 
 interface PlanTableProps {
     planList: Plan[];
+    planEditing: (plan: Plan | null) => void;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ planList }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing }) => {
+    const handleEdit = (rowData: Plan) => {
+        console.log('Редактировать:', rowData);
+        planEditing(rowData);
+    };
+
+    const handleDelete = (rowData: Plan) => {
+        console.log('Удалить:', rowData);
+        // Здесь вы можете реализовать логику удаления строки
+    };
+
     return (
-        <div>
-            {/* {planList.map((plan) => (
-                <div key={plan.id}>{plan.gypsumBoard.toString()}</div>
-            ))} */}
-            <DataTable value={planList} scrollable scrollHeight="400px">
-                <Column field="planDate" header="Date" />
+        <Container fluid className="mb-2 ">           
+            <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{width: 800}}>
+                <Column field="planDate" header="Дата" />
                 <Column
-                    header="Gypsum Board"
+                    header="Гипсокартон"
                     body={(rowData) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
-                ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
+                    ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
                 />
-                <Column field="planValue" header="Plan Value" />
+                <Column field="planValue" header="Количество" />
+                
+                {/* Колонка с кнопками для редактирования и удаления */}
+                <Column 
+                    header="Действия"
+                    body={(rowData) => (
+                        <div>
+                            {/* Кнопка редактирования */}
+                            <Button 
+                                icon="pi pi-pencil" 
+                                className="p-button-rounded p-button-info p-button-sm" 
+                                onClick={() => handleEdit(rowData)} 
+                                style={{ marginRight: '8px' }} // Отступ между кнопками
+                            />
+                            {/* Кнопка удаления */}
+                            <Button 
+                                icon="pi pi-trash" 
+                                className="p-button-rounded p-button-danger p-button-sm" 
+                                onClick={() => handleDelete(rowData)} 
+                            />
+                        </div>
+                    )}
+                />
             </DataTable>
-        </div>
+            
+        </Container>
     );
 };
 export default PlanTable;
