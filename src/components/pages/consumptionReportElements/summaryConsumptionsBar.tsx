@@ -47,6 +47,7 @@ const SummaryConsumptionBarChart: React.FC<SummaryConsumptionProps> = ({ startDa
                     data.push({ date: date, totalValue: Number(cons.quantity.toFixed(0)) });
                 }
             });
+            data.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
             setChartData(data);
             console.log(material);
         }
