@@ -6,16 +6,17 @@ import { Button } from "primereact/button";
 import 'primereact/resources/themes/saga-blue/theme.css';  // Темы
 import 'primereact/resources/primereact.min.css';          // Основные стили
 import 'primeicons/primeicons.css';                         // Иконки
-import { Container } from "react-bootstrap";
+import { Col, Container } from "react-bootstrap";
 
 
 
 interface PlanTableProps {
     planList: Plan[];
     planEditing: (plan: Plan | null) => void;
+    planDelete:(plan: Plan) => void;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete }) => {
     const handleEdit = (rowData: Plan) => {
         console.log('Редактировать:', rowData);
         planEditing(rowData);
@@ -23,43 +24,44 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing }) => {
 
     const handleDelete = (rowData: Plan) => {
         console.log('Удалить:', rowData);
-        // Здесь вы можете реализовать логику удаления строки
+        planDelete(rowData);
     };
 
     return (
-        <Container fluid className="mb-2 ">           
-            <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{width: 800}}>
-                <Column field="planDate" header="Дата" />
-                <Column
-                    header="Гипсокартон"
-                    body={(rowData) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
+        <Container fluid className="mb-2 ">
+            <Col className="col-12">
+                <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800 }}>
+                    <Column field="planDate" header="Дата" />
+                    <Column
+                        header="Гипсокартон"
+                        body={(rowData) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
                     ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
-                />
-                <Column field="planValue" header="Количество" />
-                
-                {/* Колонка с кнопками для редактирования и удаления */}
-                <Column 
-                    header="Действия"
-                    body={(rowData) => (
-                        <div>
-                            {/* Кнопка редактирования */}
-                            <Button 
-                                icon="pi pi-pencil" 
-                                className="p-button-rounded p-button-info p-button-sm" 
-                                onClick={() => handleEdit(rowData)} 
-                                style={{ marginRight: '8px' }} // Отступ между кнопками
-                            />
-                            {/* Кнопка удаления */}
-                            <Button 
-                                icon="pi pi-trash" 
-                                className="p-button-rounded p-button-danger p-button-sm" 
-                                onClick={() => handleDelete(rowData)} 
-                            />
-                        </div>
-                    )}
-                />
-            </DataTable>
-            
+                    />
+                    <Column field="planValue" header="Количество" />
+
+                    {/* Колонка с кнопками для редактирования и удаления */}
+                    <Column
+                        header="Действия"
+                        body={(rowData) => (
+                            <div>
+                                {/* Кнопка редактирования */}
+                                <Button
+                                    icon="pi pi-pencil"
+                                    className="p-button-rounded p-button-info p-button-sm"
+                                    onClick={() => handleEdit(rowData)}
+                                    style={{ marginRight: '8px' }} // Отступ между кнопками
+                                />
+                                {/* Кнопка удаления */}
+                                <Button
+                                    icon="pi pi-trash"
+                                    className="p-button-rounded p-button-danger p-button-sm"
+                                    onClick={() => handleDelete(rowData)}
+                                />
+                            </div>
+                        )}
+                    />
+                </DataTable>
+            </Col>
         </Container>
     );
 };

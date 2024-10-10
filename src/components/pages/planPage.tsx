@@ -12,7 +12,8 @@ interface PlanPageProps {
 }
 
 const PlanPage: React.FC<PlanPageProps> = () => {
-    const [period, setPeriod] = useState<Date>(new Date());
+    const now = new Date()
+    const [period, setPeriod] = useState<Date>(new Date(now.getFullYear(), now.getMonth(), 1));
     const [planList, setPlanList] = useState<Plan[]>([]);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -36,32 +37,64 @@ const PlanPage: React.FC<PlanPageProps> = () => {
         setModalShow(true);
     }
 
-    const savePlan = (plan: Plan) => {
-        console.log('In saveplan section');
-        setSelectedPlan(null);
-        setModalShow(false);
+    const savePlan = async (plan: Plan) => {
+
+        try {
+            console.log('In saveplan section', JSON.stringify(plan));
+            console.log(plan);
+
+            // Сбрасываем состояние и закрываем модальное окно
+            setSelectedPlan(null);
+            setModalShow(false);
+
+            // Ожидаем завершения сохранения плана
+            const result = await ApiService.savePlanData(plan);
+            console.log("Результат сохранения плана", result);
+
+            // Очищаем список и заново загружаем данные
+            setPlanList([]);
+            const newPlanList = await ApiService.fetchPlanByMonth(period);
+            setPlanList(newPlanList);
+
+        } catch (error) {
+            console.error("Ошибка при сохранении плана:", error);
+        }
+    };
+
+    const planDelete = async (plan: Plan) => {
+        try {
+            const result = await ApiService.deletePlanData(plan);
+            console.log("Удален план Id:", result);
+            setPlanList([]);
+            const newPlanList = await ApiService.fetchPlanByMonth(period);
+            setPlanList(newPlanList);
+        } catch {
+            console.error("Ошибка при удалении плановых цифр");
+        }
     }
 
     return (
         <Container className="mt-5 mb-5">
             <Row>
-                <PeriodSelector onPeriodChange={onPeriodChange} />
+                <Container className=" mt-3 mb-2">
+                    <Row>
+                        <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
+                        <Col className="col-9">
+                            <PlanTable planList={planList} planEditing={handleEditPlan} planDelete={planDelete} />
+                        </Col>
+                    </Row>
+                    <Row className='justify-content-center'>
+                        <Col xs={1}>
+                            <Button variant="primary" onClick={() => setModalShow(true)} size="sm">Добавить</Button>
+                        </Col>
+                    </Row>
+                </Container>
             </Row>
-            <Container className="mb-2">
-                <Row>
-                    <PlanTable planList={planList} planEditing={handleEditPlan}/>
-                </Row>
-                <Row className='justify-content-center'>
-                    <Col xs={1}>
-                        <Button variant="primary" onClick={() => setModalShow(true)} size="sm">Добавить</Button>
-                    </Col>
-                </Row>
-            </Container>
             <Row >
                 <PlanDataTable planList={planList} />
             </Row>
-            <PlanModal show={modalShow} onClose={handleClose} month={period} plan={selectedPlan} onSave={savePlan}/>
-        </Container>
+            <PlanModal show={modalShow} onClose={handleClose} month={period} plan={selectedPlan} onSave={savePlan} />
+        </Container >
     );
 }
 export default PlanPage;

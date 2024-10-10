@@ -9,6 +9,7 @@ import { Row } from "primereact/row";
 import { InputText } from "primereact/inputtext";
 import Plan from "../../../model/gypsumBoard/Plan";
 import { Button } from "primereact/button";
+import ApiService from "../../../service/ApiService";
 
 addLocale('ru', {
     firstDayOfWeek: 1,
@@ -52,8 +53,9 @@ const PlanModal: React.FC<PlanModalProps> = ({ plan, month, show, onClose, onSav
 
     const handleSave = () => {
         console.log('In handleSave section');
-        if (plan && date && newValue > 0 && gypsumBoard) {
-            const newPlan = new Plan(plan.id || 0, date, gypsumBoard, newValue);
+        if (date && newValue > 0 && gypsumBoard) {
+            const localDate = (ApiService.removeTimeZone(date)); 
+            const newPlan = new Plan(plan?.id || 0, localDate, gypsumBoard, newValue);
             setVisible(false);
             onSave(newPlan);
         }

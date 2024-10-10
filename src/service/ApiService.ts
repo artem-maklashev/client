@@ -47,7 +47,7 @@ class ApiService {
     static async fetchBoardProduction(startDate: Date, endDate: Date): Promise<BoardProduction[]> {
         try {
             const params = {
-                startDate: this.formatDateToISO(startDate) ,
+                startDate: this.formatDateToISO(startDate),
                 endDate: this.formatDateToISO(endDate)
                 // startDate: this.getFormattedDate(startDate),
                 // endDate: this.getFormattedDate(endDate)
@@ -69,8 +69,8 @@ class ApiService {
         console.error("Преобразованная дата начала будет:" + this.formatDateToISO(startDate));
 
         const params = {
-            startDate: this.formatDateToISO(startDate) ,
-                endDate: this.formatDateToISO(now)
+            startDate: this.formatDateToISO(startDate),
+            endDate: this.formatDateToISO(now)
         };
 
         try {
@@ -88,9 +88,9 @@ class ApiService {
             gypsumBoards,  // объект GypsumBoard
             startDate: this.formatDateToISO(startDate),  // форматирование даты в ISO
             endDate: this.formatDateToISO(endDate)  // форматирование конечной даты
-          }
+        }
         try {
-            const response = await api.post(`${this.baseUrl}/boardProductionsByGypsumBoard`,  requestBody);
+            const response = await api.post(`${this.baseUrl}/boardProductionsByGypsumBoard`, requestBody);
             return response.data;
 
         } catch (error: any) {
@@ -103,7 +103,7 @@ class ApiService {
     static async fetchConsumptionsByDateAndMaterial(startDate: Date, endDate: Date, materialId: number) {
         try {
             const params = {
-                startDate: this.formatDateToISO(startDate) ,
+                startDate: this.formatDateToISO(startDate),
                 endDate: this.formatDateToISO(endDate),
                 materialId: materialId
             };
@@ -115,7 +115,7 @@ class ApiService {
         }
     }
 
-    static async fetchThicknesses(): Promise<Thickness[]>{
+    static async fetchThicknesses(): Promise<Thickness[]> {
         try {
             const responce = await api.get(`${this.baseUrl}/thickness/getAll`);
             return responce.data;
@@ -204,7 +204,7 @@ class ApiService {
             return response.data as Specification[];
 
         } catch (error) {
-            
+
             console.error('Ошибка при получении всех спецификаций', error);
             return [];
         }
@@ -248,7 +248,7 @@ class ApiService {
             // selectedEndDate = addDays(selectedEndDate, 1 + this.plusDays);
 
             const params = new URLSearchParams({
-                date: this.formatDateToISO(selectedDate)              
+                date: this.formatDateToISO(selectedDate)
             });
 
             const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductionsByDate?${params}`);
@@ -264,12 +264,12 @@ class ApiService {
     static async fetchPlanByMonth(period: Date) {
         try {
             const params = new URLSearchParams({
-                dateStr: this.formatDateToISO(period)              
+                dateStr: this.formatDateToISO(period)
             });
 
             const response = await api.get(`${process.env.REACT_APP_API_URL}/plan/getByMonth?${params}`);
-            return  response.data;
-        } catch (error: any){
+            return response.data;
+        } catch (error: any) {
             console.error(`Произошла ошибка при получении плана за месяц`);
         }
     }
@@ -278,7 +278,7 @@ class ApiService {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/gypsumBoard`);
             return response.data;
-        } catch (error: any){
+        } catch (error: any) {
             console.error(`Произошла ошибка при получении списка ГСП`);
         }
     }
@@ -287,8 +287,28 @@ class ApiService {
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/materials/getAll`);
             return response.data;
-        } catch (error: any){
+        } catch (error: any) {
             console.error(`Произошла ошибка при получении списка материалов`);
+        }
+    }
+
+    static async savePlanData(plan: Plan) {
+        if (plan) {
+            try {
+                const responce = await api.put(`${process.env.REACT_APP_API_URL}/plan/savePlanData`, plan);
+                return responce.data;
+            } catch (error: any) {
+                console.error(`Произошла ошибка при сохронении данных плана`, error);
+            }
+        }
+    }
+
+    static async deletePlanData(plan: Plan) {
+        try {
+            const response = await api.delete(`${process.env.REACT_APP_API_URL}/plan/deletePlanData/${plan.id}`);
+            console.log('План успешно удалён', response.data);
+        } catch (error: any) {
+            console.error(`Произошла ошибка при удалении данных плана`, error);
         }
     }
 
@@ -297,19 +317,19 @@ class ApiService {
             return "";
         }
         return (
-          gboard.tradeMark.name +
-          " тип " +
-          gboard.boardType.name +
-          " " +
-          gboard.edge.name +
-          "-" +
-          gboard.thickness.value +
-          "-" +
-          gboard.width.value +
-          "-" +
-          gboard.length.value
+            gboard.tradeMark.name +
+            " тип " +
+            gboard.boardType.name +
+            " " +
+            gboard.edge.name +
+            "-" +
+            gboard.thickness.value +
+            "-" +
+            gboard.width.value +
+            "-" +
+            gboard.length.value
         );
-      };
+    };
 }
 
 export default ApiService;

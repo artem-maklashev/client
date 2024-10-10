@@ -1,7 +1,7 @@
 import { addLocale } from "primereact/api";
 import { Calendar } from "primereact/calendar";
 import React, { useEffect, useState } from "react";
-import { Col } from "react-bootstrap";
+import { Card, Col, Container } from "react-bootstrap";
 
 addLocale('ru', {
     firstDayOfWeek: 1,
@@ -19,21 +19,27 @@ addLocale('ru', {
 
 
 interface PeriodSelectorProps {
-    onPeriodChange : (period: Date) => void;
- }
+    period: Date;
+    onPeriodChange: (period: Date) => void;
+}
 
-const PeriodSelector: React.FC<PeriodSelectorProps> = ({onPeriodChange}) => {
-    const [selectedPeriod, setSelectedPeriod] = useState<Date | null>(null);
+const PeriodSelector: React.FC<PeriodSelectorProps> = ({ period, onPeriodChange }) => {
+    const [selectedPeriod, setSelectedPeriod] = useState<Date | null>(period);
     useEffect(() => {
         if (selectedPeriod)
-        onPeriodChange(selectedPeriod);
-    }, [onPeriodChange, selectedPeriod]);    
+            onPeriodChange(selectedPeriod);
+    }, [onPeriodChange, selectedPeriod]);
     return (
-        <Col className="mt-5">
-            <Calendar value={selectedPeriod} onChange={(e) => setSelectedPeriod(e.value || new Date())} view="month" dateFormat="MM yy" 
-            locale="ru"
-                />
-        </Col>
+        <Col className=' d-flex col-3 justify-content-center'>
+            <Card className="d-flex justify-content-center">
+                <Card.Header className='text-center'><h5>Выберите период</h5></Card.Header>
+
+            <Calendar value={selectedPeriod} onChange={(e) => setSelectedPeriod(e.value || new Date())} view="month" dateFormat="MM yy"
+                locale="ru"
+                inline
+            />
+            </Card>
+       </Col>
     );
 };
 
