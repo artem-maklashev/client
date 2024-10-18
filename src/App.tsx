@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import NavigationBar from "./components/navigation/NavigationBar";
 import GypsumBoardShow2 from "./components/pages/GypsumBoardShow2";
 import DelaysShow from "./components/pages/DelaysShow";

@@ -30,6 +30,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                                 // getUserRole() === 'ADMIN' ? false : true}
                                 false}
                                 >Основные показатели</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/plan" onClick={handleNavClose}>План</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>
@@ -41,7 +42,6 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
                                 getUserRole() === 'ADMIN' ? false : true}>Найти выпуск</NavDropdown.Item > 
                             <NavDropdown.Item as={Link} to="/consumptionReport" onClick={handleNavClose}>Справка по расходу материалов</NavDropdown.Item>
-                            <NavDropdown.Item as={Link} to="/plan" onClick={handleNavClose}>План</NavDropdown.Item>
                         </NavDropdown>        
 
 

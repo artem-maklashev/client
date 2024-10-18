@@ -7,6 +7,7 @@ import 'primereact/resources/themes/saga-blue/theme.css';  // Темы
 import 'primereact/resources/primereact.min.css';          // Основные стили
 import 'primeicons/primeicons.css';                         // Иконки
 import { Col, Container } from "react-bootstrap";
+import { getUserRole } from "../../../service/Api";
 
 
 
@@ -50,12 +51,16 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                                     className="p-button-rounded p-button-info p-button-sm"
                                     onClick={() => handleEdit(rowData)}
                                     style={{ marginRight: '8px' }} // Отступ между кнопками
+                                    disabled={
+                                        getUserRole() === 'ADMIN' ? false : true}
                                 />
                                 {/* Кнопка удаления */}
                                 <Button
                                     icon="pi pi-trash"
                                     className="p-button-rounded p-button-danger p-button-sm"
                                     onClick={() => handleDelete(rowData)}
+                                    disabled={
+                                        getUserRole() === 'ADMIN' ? false : true}
                                 />
                             </div>
                         )}
