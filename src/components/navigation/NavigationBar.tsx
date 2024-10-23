@@ -42,7 +42,12 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
                                 getUserRole() === 'ADMIN' ? false : true}>Найти выпуск</NavDropdown.Item > 
                             <NavDropdown.Item as={Link} to="/consumptionReport" onClick={handleNavClose}>Справка по расходу материалов</NavDropdown.Item>
-                        </NavDropdown>        
+                        </NavDropdown> 
+                        <NavDropdown title="Сухие смеси" id="mix-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER') ? false : true} >
+                            <NavDropdown.Item as={Link} to="/mixReport" onClick={handleNavClose}>Отчет</NavDropdown.Item>
+                            <NavDropdown.Divider></NavDropdown.Divider>
+                            <NavDropdown.Item as={Link} to="/mixProduction" onClick={handleNavClose} disabled={getUserRole()==='VIEWER'}>Выпуск смесей</NavDropdown.Item>
+                        </NavDropdown>
 
 
                         {/* <Nav.Link as={Link} to="/boardReport" disabled={false} onClick={handleNavClose}>Выпуск ГСП</Nav.Link> */}
