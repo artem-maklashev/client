@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Col, Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import DayRangeSelector from "../../dashBoardComponent/dateRangeSelector";
+import PlanFact from "./mixPlanFact";
 
 interface ByDayReportProps { }
 
@@ -15,13 +16,14 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
     }
     return (
         <Container fluid className="mt-5 mb-5 bg-secondary">
-            <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
-                <DayRangeSelector onDatesChange={handleRangeChange} />
-            </Col>
-            <Col lg={9} sm={12} className="mb-5">
-                
-            </Col>
-
+            <Row className="mt-5">
+                <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
+                    <DayRangeSelector onDatesChange={handleRangeChange} />
+                </Col>
+                <Col lg={9} sm={12} className="mb-5">
+                    <PlanFact mixProduction={[]} mixPlan={[]} />
+                </Col>
+            </Row>
         </Container>
     );
 }
