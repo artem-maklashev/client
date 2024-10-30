@@ -5,10 +5,13 @@ class MixCategoryProduction {
     id: number;
     production: MixProduction;
     category: MixCategory;
-    constructor(id: number, production: MixProduction, category: MixCategory) {
+    quantity: number;
+
+    constructor(id: number, production: MixProduction, category: MixCategory, quantity: number) {
         this.id = id;
         this.production = production;
         this.category = category;
+        this.quantity = quantity;
     }
 }
 export default MixCategoryProduction;

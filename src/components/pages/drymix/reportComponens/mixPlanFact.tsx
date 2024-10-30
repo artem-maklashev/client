@@ -1,18 +1,18 @@
-import { FC } from "react";
-import Plan from "../../../../model/gypsumBoard/Plan";
+import { FC, useEffect, useState } from "react";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
-import { Card, Col, Container, Tooltip } from "react-bootstrap";
+import { Card, Col,  } from "react-bootstrap";
 import React from "react";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import PlanFactModal from "../../dashBoardComponent/planFactModal";
+import { Tooltip, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { addDays } from "date-fns";
+import MixPlan from "../../../../model/mix/plan";
 
 interface MixPlanFactProps {
     mixProduction: MixCategoryProduction[];
-    mixPlan: Plan[];
+    mixPlan: MixPlan[];
 }
 
 interface PlanFactChartProps {
-    planData: Plan[];
+    planData: MixPlan[];
     productionData: MixCategoryProduction[];
     allProductionData: MixCategoryProduction[];
 }
@@ -26,8 +26,6 @@ interface CombinedData {
     planDate: string;
     planValue: number;
     productionValue: number;
-    totalValue: number;
-    defectPercent: number;
 }
 
 interface LineChartPayload {
@@ -37,10 +35,17 @@ interface LineChartPayload {
 }
 const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
 
+    const [modalPlan, setModalPlan] = React.useState<MixPlan[]>([]);
+    const [modalFact, setModalFact] = useState<MixCategoryProduction[]>([]);
+    const [modalDate, setModalDate] = useState<string>('');
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
+
+
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
             // Убедитесь, что данные корректно обрабатываются
-            const { planDate, planValue, productionValue, defectPercent } = payload[0]?.payload || {};
+            const { planDate, planValue, productionValue } = payload[0]?.payload || {};
             return (
                 <div className="custom-tooltip" style={{ background: 'transparent ' }}>
                     <strong>
@@ -48,7 +53,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                         <p className="label">{`План: ${planValue}`}</p>
                         <p className="intro">{`Факт: ${productionValue.toFixed(0)}`}</p>
                         <p className="desc">{`Отклонение: ${(productionValue - planValue).toFixed(0)}`}</p>
-                        <p className="desc">{`Брак: ${defectPercent} %`}</p>
+                        
                     </strong>
                 </div>
             );
@@ -70,15 +75,54 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
         }
     };
 
+    useEffect(() => {
+        if (mixProduction.length > 0 && mixPlan.length > 0) {
+            const draftCombinedData = mixProduction
+                .filter((prod) => prod.category.id > 1 && prod.category.id < 4)
+                .map((prod: MixCategoryProduction) => {
+                    const plan = mixPlan.find((plan) =>
+                        new Date(plan.planDate).toISOString().split('T')[0] === new Date(prod.production.productionDate).toISOString().split('T')[0]);
+
+                    return {
+                        planDate: plan ? new Date(plan.planDate).toISOString().split('T')[0] : new Date(prod.production.productionDate).toISOString().split('T')[0],
+                        planValue: plan ? plan.value : 0,
+                        productionValue: prod.quantity
+                    };
+                });
+
+            const combinedData: CombinedData[] = [];
+            draftCombinedData.forEach((data) => {
+                const date = data.planDate;
+                const planValue = data.planValue;
+                const productionValue = data.productionValue;
+                const existingEntry = combinedData.find((entry) => entry.planDate === date);
+                if (existingEntry) {
+                    existingEntry.planValue += planValue;
+                    existingEntry.productionValue += productionValue;
+                } else {
+                    combinedData.push({
+                        planDate: date,
+                        planValue: planValue,
+                        productionValue: productionValue
+                    });
+                }
+
+            })
+            setCombinedData(combinedData);
+        }
+    }, [mixProduction, mixPlan]);
+
+
+
     const handleClick = (data: any) => {
         if (data) {
             console.log('Дата:', data.planDate);
             console.log('Плановое значение:', data.planValue);
-            const factData = allProductionData.filter((prod) =>
-                new Date(addDays(prod.productionList.productionDate, 1)).toISOString().split('T')[0] === data.planDate
+            const factData = mixProduction.filter((prod) =>
+                new Date(addDays(prod.production.productionDate, 1)).toISOString().split('T')[0] === data.planDate
                 && prod.category.id > 1
                 && prod.category.id < 4);
-            const plan = planData.filter((plan) =>
+            const plan = mixPlan.filter((plan) =>
                 new Date(plan.planDate).toISOString().split('T')[0] === data.planDate);
             setModalPlan(plan);
             setModalDate(data.planDate);
@@ -117,14 +161,12 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                             <Legend formatter={legendFormatter} />
                             <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
                             <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
-                            <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d" strokeWidth={2} />
+
 
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>
-                <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
             </Card.Body>
-            {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}
         </Card>
     );
 }
