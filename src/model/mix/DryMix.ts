@@ -7,11 +7,13 @@ import DryMixType from "./DryMixType";
 class DryMix extends Product {
     binder: Binder;
     dryMixType: DryMixType;
+    name: string;
 
-    constructor (id: number, ptype: ProductTypes, tradeMark: TradeMark, binder: Binder, dryMixType: DryMixType ) {
+    constructor (id: number, ptype: ProductTypes, tradeMark: TradeMark, binder: Binder, dryMixType: DryMixType, name: string ) {
         super(id, ptype, tradeMark);
         this.binder = binder;
         this.dryMixType = dryMixType;
+        this.name = name;
     }
 }
 export default DryMix;
