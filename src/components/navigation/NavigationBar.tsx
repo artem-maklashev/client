@@ -47,7 +47,8 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/mixReport" onClick={handleNavClose}>Отчет</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/mixProduction" onClick={handleNavClose} disabled={getUserRole()==='VIEWER'}>Выпуск смесей</NavDropdown.Item>
-                        </NavDropdown>
+                            <NavDropdown.Divider></NavDropdown.Divider>
+                            <NavDropdown.Item as={Link} to="/mixPlan" onClick={handleNavClose} disabled={getUserRole()==='VIEWER'}>План</NavDropdown.Item>                        </NavDropdown>
 
 
                         {/* <Nav.Link as={Link} to="/boardReport" disabled={false} onClick={handleNavClose}>Выпуск ГСП</Nav.Link> */}

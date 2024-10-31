@@ -10,7 +10,7 @@ import { Button } from "primereact/button";
 import DryMix from "../../../../model/mix/DryMix";
 
 interface MixPlanTableProps {
-    planData: MixCategoryProduction[];
+    planData: MixPlan[];
     planEditing: (plan: MixPlan | null) => void;
     planDelete: (plan: MixPlan) => void;
 }

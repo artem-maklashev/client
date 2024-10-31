@@ -21,6 +21,7 @@ import 'primereact/resources/primereact.min.css'; // Основные стили
 import PlanPage from './components/pages/planPage';
 import MixReport from './components/pages/drymix/MixReport';
 import MixProduction from './components/pages/drymix/MixProduction';
+import MixPlanPage from './components/pages/drymix/mixPlan';
 // import 'primeicons/primeicons.css';
 
 
@@ -139,6 +140,7 @@ function App() {
                 <Route path="/plan" element={tokenValid ? <PlanPage /> : <Navigate to="/login" />} />
                 <Route path="mixReport" element={tokenValid ? <MixReport /> : <Navigate to="/login" />} />
                 <Route path='/mixProduction' element={tokenValid ? <MixProduction /> : <Navigate to="/login" />} />
+                <Route path="/mixPlan" element={tokenValid ? <MixPlanPage /> : <Navigate to="/login" />} />
                 <Route path="/" element={tokenValid ? <MainPage /> : <Navigate to="/login" />} />
                 {/*<Route path="/" element={<MainPage />} />*/}
                 <Route path="/register" element={<RegistrationPage />} />
