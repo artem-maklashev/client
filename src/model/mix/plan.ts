@@ -2,13 +2,13 @@ import DryMix from "./DryMix";
 
 class MixPlan {
     id: number;
-    mix: DryMix;
+    dryMix: DryMix;
     planDate: Date;
     value: number;
 
     constructor(id: number, planDate: Date, mix: DryMix, value: number) {
        this.id = id;
-       this.mix = mix;
+       this.dryMix = mix;
        this.value = value;
        this.planDate = planDate;
    }

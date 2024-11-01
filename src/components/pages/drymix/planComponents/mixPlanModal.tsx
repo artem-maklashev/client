@@ -93,7 +93,7 @@ const MixPlanModal: React.FC<MixPlanModalProps> = ({ plan, month, show, onClose,
         if (plan) {
             setDate(new Date(plan.planDate));
             setNewValue(plan.value);
-            setMix(plan.mix);
+            setMix(plan.dryMix);
         }
     }, [plan]);
 

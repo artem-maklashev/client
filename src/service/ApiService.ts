@@ -13,6 +13,7 @@ dayjs.extend(utc);
 
 
 class ApiService {
+    
     private static baseUrl = process.env.REACT_APP_API_URL;
     private static plusDays = Number(process.env.REACT_APP_PLUS_DAYS);
 

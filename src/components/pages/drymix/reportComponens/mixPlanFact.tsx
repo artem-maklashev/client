@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
-import { Card, Col,  } from "react-bootstrap";
+import { Card, Col, } from "react-bootstrap";
 import React from "react";
 import { Tooltip, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { addDays } from "date-fns";
@@ -9,12 +9,6 @@ import MixPlan from "../../../../model/mix/plan";
 interface MixPlanFactProps {
     mixProduction: MixCategoryProduction[];
     mixPlan: MixPlan[];
-}
-
-interface PlanFactChartProps {
-    planData: MixPlan[];
-    productionData: MixCategoryProduction[];
-    allProductionData: MixCategoryProduction[];
 }
 
 interface CustomTooltipProps {
@@ -53,7 +47,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                         <p className="label">{`План: ${planValue}`}</p>
                         <p className="intro">{`Факт: ${productionValue.toFixed(0)}`}</p>
                         <p className="desc">{`Отклонение: ${(productionValue - planValue).toFixed(0)}`}</p>
-                        
+
                     </strong>
                 </div>
             );
@@ -75,41 +69,73 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
         }
     };
 
+    function findMinDate(dates: Date[]): Date | null {
+        if (dates.length === 0) return null;
+        return dates.reduce((minDate, date) => {
+            return date < minDate ? date : minDate;
+        }, dates[0]);
+    }
+
+    function findMaxDate(dates: Date[]) {
+        if (dates.length === 0) return null;
+        return dates.reduce((maxDate, date) => {
+            return date > maxDate ? date : maxDate;
+        }, dates[0]);
+    }
+
+
     useEffect(() => {
-        if (mixProduction.length > 0 && mixPlan.length > 0) {
-            const draftCombinedData = mixProduction
-                .filter((prod) => prod.category.id > 1 && prod.category.id < 4)
-                .map((prod: MixCategoryProduction) => {
-                    const plan = mixPlan.find((plan) =>
-                        new Date(plan.planDate).toISOString().split('T')[0] === new Date(prod.production.productionDate).toISOString().split('T')[0]);
+        function generateDateRange(): string[] {
 
-                    return {
-                        planDate: plan ? new Date(plan.planDate).toISOString().split('T')[0] : new Date(prod.production.productionDate).toISOString().split('T')[0],
-                        planValue: plan ? plan.value : 0,
-                        productionValue: prod.quantity
-                    };
-                });
+            const planDates = mixPlan.map((plan) => new Date(plan.planDate));
+            const productionDates = mixProduction.map((prod) => new Date(prod.production.productionDate));
 
-            const combinedData: CombinedData[] = [];
-            draftCombinedData.forEach((data) => {
-                const date = data.planDate;
-                const planValue = data.planValue;
-                const productionValue = data.productionValue;
-                const existingEntry = combinedData.find((entry) => entry.planDate === date);
-                if (existingEntry) {
-                    existingEntry.planValue += planValue;
-                    existingEntry.productionValue += productionValue;
-                } else {
-                    combinedData.push({
-                        planDate: date,
-                        planValue: planValue,
-                        productionValue: productionValue
-                    });
+            const minPlanDate = findMinDate(planDates);
+            const minProdDate = findMinDate(productionDates);
+            const maxPlanDate = findMaxDate(planDates);
+            const maxProdDate = findMaxDate(productionDates);
+
+            const startDate = minPlanDate && minProdDate ? (minPlanDate < minProdDate ? minPlanDate : minProdDate) : minPlanDate || minProdDate;
+            const endDate = maxPlanDate && maxProdDate ? (maxPlanDate > maxProdDate ? maxPlanDate : maxProdDate) : maxPlanDate || maxProdDate;
+
+            console.log(startDate, endDate);           
+
+            console.log("Start date:", startDate, "End date:", endDate); // Логирование для проверки
+
+            const dateArray: string[] = [];
+            if (startDate && endDate) {
+                let currentDate = new Date(startDate);
+                while (currentDate <= endDate) {
+                    dateArray.push(new Date(currentDate).toISOString().split("T")[0]);
+                    currentDate.setDate(currentDate.getDate() + 1);
                 }
-
-            })
-            setCombinedData(combinedData);
+            }
+    
+            return dateArray;
         }
+        const dateRange = generateDateRange();
+        console.log(dateRange);
+
+        const draftCombinedData = dateRange.map((date) => {
+            const plan = mixPlan.filter((plan) =>
+                new Date(plan.planDate).toISOString().split('T')[0] === date
+            );
+
+            const productionForDate = mixProduction
+                .filter((prod) => prod.category.id > 1 && prod.category.id < 4)
+                .filter((prod) => new Date(prod.production.productionDate).toISOString().split('T')[0] === date);
+
+            const totalProductionValue = productionForDate.reduce((acc, prod) => acc + prod.quantity, 0);
+            const totalPlanValue = plan.reduce((acc, plan) => acc + plan.value, 0);
+
+            return {
+                planDate: date,
+                planValue: totalPlanValue,
+                productionValue: totalProductionValue,
+            };
+        });
+        console.log(draftCombinedData);
+        setCombinedData(draftCombinedData);
     }, [mixProduction, mixPlan]);
 
 
