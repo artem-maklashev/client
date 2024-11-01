@@ -7,6 +7,7 @@ import MixPlanTable from "./planComponents/mixPlanTable";
 import MixPlan from "../../../model/mix/plan";
 import MixPlanModal from "./planComponents/mixPlanModal";
 import { table } from "console";
+import MixPlanTableData from "./planComponents/mixPlanTableData";
 
 interface MixPlanProps {}
 
@@ -121,6 +122,13 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
                             Добавить
                         </Button>
                     </Col>
+                </Row>
+                <Row>
+                    {loading ? (
+                        <p>Загрузка данных...</p>
+                    ) : (
+                            <MixPlanTableData planList={planData} />
+                    )}
                 </Row>
             </Container>
             <MixPlanModal
