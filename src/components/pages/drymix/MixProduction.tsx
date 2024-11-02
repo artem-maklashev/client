@@ -1,33 +1,34 @@
 import { FC, useEffect, useState } from "react";
-import MixCategoryProduction from "../../../model/mix/prodution/MixCategoryProduction";
 import MixDelay from "../../../model/mix/delays/MixDelay";
-import { Col, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import MixApiService from "../../../service/MixApiService";
 import React from "react";
-import DayRangeSelector from "../dashBoardComponent/dateRangeSelector";
+import MixProductionsTable from "./productionComponents/productionsTable";
 
-interface MixProductionProps { }
+interface MixProductionProps {}
 
-const MixProduction: FC<MixProductionProps> = () => {   
-
-    const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
+const MixProduction: FC<MixProductionProps> = () => {
+    const [productions, setProductions] = useState<MixProduction[]>([]);
     const [delays, setDelays] = useState<MixDelay[]>([]);
 
     useEffect(() => {
+        const fetchProductions = async () => {
+            try {
+                const response = await MixApiService.getLast10Productions();
+                setProductions(response);
+            } catch (error) {
+                console.error("Error fetching productions:", error);
+            }
+        };
+
         if (productions.length === 0) {
-            getProductions();
-        }       
-       
-    }, []);
+            fetchProductions();
+        }
+    }, [productions.length]);
 
+    return <Container>
+        <MixProductionsTable productions={productions} />
+    </Container>;
+};
 
-
-
-
-
-    return (
-        <Container>
-            
-        </Container>
-    );
-}
 export default MixProduction;

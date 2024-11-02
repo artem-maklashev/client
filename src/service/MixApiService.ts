@@ -107,10 +107,12 @@ class MixApiService {
 
   static async getLast10Plans() {
     try {
-      const response = await api.get(`${this.baseUrl}/plan/getLast10Plans`);
+      const response = await api.get(`${this.baseUrl}/production/getLast10Plans`);
       return response.data;
     } catch (error: any) {
-      console}
+      console.log(`Error in MixApiService.getLast10Plans: ${error.message}`);
+      throw error;
+    }
+  }
 }
-
 export default MixApiService;
