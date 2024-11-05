@@ -97,7 +97,7 @@ class MixApiService {
 
   static async getLast10Productions() {
     try {
-      const response = await api.get(`${this.baseUrl}/getLast10Productions`);
+      const response = await api.get(`${this.baseUrl}/production/getLast10Productions`);
       return response.data;
     } catch (error: any) {
       console.error(`Произошла ошибка: ${error.message}`);

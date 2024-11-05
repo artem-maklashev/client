@@ -8,7 +8,7 @@ import { getUserRole } from "../../../../service/Api";
 import MixProduction from "../../../../model/mix/prodution/MixProduction";
 
 interface MixProductionsTableProps {
-    productions: MixProduction[];
+    productions: MixCategoryProduction[];
 
 }
 

@@ -4,11 +4,12 @@ import { Container } from "react-bootstrap";
 import MixApiService from "../../../service/MixApiService";
 import React from "react";
 import MixProductionsTable from "./productionComponents/productionsTable";
+import MixCategoryProduction from "../../../model/mix/prodution/MixCategoryProduction";
 
 interface MixProductionProps {}
 
 const MixProduction: FC<MixProductionProps> = () => {
-    const [productions, setProductions] = useState<MixProduction[]>([]);
+    const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
     const [delays, setDelays] = useState<MixDelay[]>([]);
 
     useEffect(() => {
