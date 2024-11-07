@@ -23,4 +23,16 @@ export const ShiftList = () => {
         fetchData();
     }, [fetchShiftList]);
     return { shiftList, errorText };
+
+};
+
+export const fetchShiftList = async (): Promise<{ shiftList: Shift[]; errorText: string | null }> => {
+    try {
+        const response = await api.get(`${process.env.REACT_APP_API_URL}/shift`);
+        const data: Shift[] = response.data;
+        return { shiftList: data, errorText: null };
+    } catch (error) {
+        console.error("fetchShiftList failed", error);
+        return { shiftList: [], errorText: "Данные по ProductionList не могут быть загружены. Попробуйте позже." };
+    }
 };

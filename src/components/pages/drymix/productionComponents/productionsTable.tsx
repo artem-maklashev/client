@@ -5,7 +5,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { getUserRole } from "../../../../service/Api";
-import MixProduction from "../../../../model/mix/prodution/MixProduction";
+
 
 interface MixProductionsTableProps {
     productions: MixCategoryProduction[];

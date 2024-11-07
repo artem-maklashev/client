@@ -384,13 +384,7 @@ useEffect(() => {
                   <Stack spacing={3}>
                     <MobileDateTimePicker
                       label="Дата"
-                      value={startDate ? dayjs(startDate) : null}
-                      // onChange={(newValue) => {
-                      //   setStartDate(
-                      //     newValue ? new Date(dayjs.utc(newValue).local().format('YYYY-MM-DDTHH:mm:ss')) : new Date()
-                      //   );                        
-                      // }
-                      // }
+                      value={startDate ? dayjs(startDate) : null}                      
                       onChange={(newValue) => setStartDate(handleDateChange(newValue))}
                       ampm={false}
                       orientation="landscape"

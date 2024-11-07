@@ -6,10 +6,10 @@ import React from "react";
 import MixProductionsTable from "./productionComponents/productionsTable";
 import MixCategoryProduction from "../../../model/mix/prodution/MixCategoryProduction";
 import { Button } from "primereact/button";
-import Product from "../../../model/Product";
 import ProductionModal from "./productionComponents/productionModal";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
 
-interface MixProductionProps {}
+interface MixProductionProps { }
 
 const MixProduction: FC<MixProductionProps> = () => {
     const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
@@ -40,23 +40,29 @@ const MixProduction: FC<MixProductionProps> = () => {
         setShowModal(false);
     }
 
-    return <Container className="mt-5">
-        <Row>
-            <Col className="mt-2">
-                <MixProductionsTable productions={productions} />
-            </Col>
-        </Row>
-        <Row>
-            <Button
-                icon="pi pi-plus"
-                className="p-button-rounded p-button-secoundary p-button-sm"
-                onClick={() => handleAdd()}
-                size="small"
-                label="Добавить"
-            />            
-        </Row>
-        <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={null} />
-    </Container>
+    return (
+        <Container className="mt-5">
+            <Row>
+                <Col className="mt-2">
+                    <MixProductionsTable productions={productions} />
+                </Col>
+            </Row>
+            <Row className="d-flex">
+                <Col className="justify-content-center d-flex">
+                    <Button
+                        icon="pi pi-plus"
+                        // className="p-button-rounded p-button-secondary p-button-sm"
+                        label="Добавить"
+                        severity='secondary'
+                        onClick={() => handleAdd()}
+                        style={{borderRadius: '10px'}}
+                        size="small"
+                    />
+                </Col>
+            </Row>
+            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={null} />
+        </Container>
+    );
 };
 
 export default MixProduction;
