@@ -11,11 +11,11 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 
 interface MixProductionProps { }
 
-const MixProduction: FC<MixProductionProps> = () => {
+const MixProductionPage: FC<MixProductionProps> = () => {
     const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
     const [delays, setDelays] = useState<MixDelay[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [editProduction, setEditProduction] = useState<MixCategoryProduction | null>(null);
+    const [editProduction, setEditProduction] = useState<MixCategoryProduction[] >([]);
 
     useEffect(() => {
         const fetchProductions = async () => {
@@ -60,9 +60,9 @@ const MixProduction: FC<MixProductionProps> = () => {
                     />
                 </Col>
             </Row>
-            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={null} />
+            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={editProduction} />
         </Container>
     );
 };
 
-export default MixProduction;
+export default MixProductionPage;

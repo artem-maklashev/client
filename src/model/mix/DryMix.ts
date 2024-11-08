@@ -9,11 +9,19 @@ class DryMix extends Product {
     dryMixType: DryMixType;
     name: string;
 
-    constructor (id: number, ptype: ProductTypes, tradeMark: TradeMark, binder: Binder, dryMixType: DryMixType, name: string ) {
+    constructor(
+        id: number = -1,
+        ptype: ProductTypes = new ProductTypes(),
+        tradeMark: TradeMark = new TradeMark(),
+        binder: Binder = new Binder(),
+        dryMixType: DryMixType = new DryMixType(),
+        name: string = ""
+    ) {
         super(id, ptype, tradeMark);
         this.binder = binder;
         this.dryMixType = dryMixType;
         this.name = name;
     }
 }
+
 export default DryMix;

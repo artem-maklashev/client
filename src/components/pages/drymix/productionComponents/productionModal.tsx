@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Col, Container, Form, Modal, Row } from "react-bootstrap";
+import { Badge, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -19,12 +19,13 @@ import DateTimeSelector from "../../commonElements/dateTimeSelector";
 import { ShiftList } from "../../boardProductionInput/productComponents/FetchShiftList";
 import ShiftSelector from "../../commonElements/shiftSelector";
 import MixSelector from "../../commonElements/mixSelector";
+import MixCategoriesTable from "./mixCategoryTable";
 dayjs.extend(utc);
 
 interface ProductionModalProps {
     show: boolean;
     handleClose: () => void;
-    editProduction: MixCategoryProduction | null;
+    editProduction: MixCategoryProduction[];
 };
 
 const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, editProduction }) => {
@@ -57,7 +58,7 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
     const changeEndDate = (newValue: Date | null) => {
         setEndDate(newValue);
     };
-    
+
 
     return (
         <Modal show={open} onHide={handleClose} size='lg'>
@@ -79,11 +80,22 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
                         <ShiftSelector handleShiftChange={(shift: Shift) => setShift(shift)} />
                     </Row>
                     <Row>
-                        <MixSelector handleMixChange={(mix: DryMix) => setMix(mix) } />
+                        <MixSelector handleMixChange={(mix: DryMix) => setMix(mix)} />
+                    </Row>
+                    <Row>
+                        <MixCategoriesTable categories={[]} handleEditCategory={function (category: MixCategoryProduction): void {
+                            throw new Error("Function not implemented.");
+                        }} />
+                    </Row>
+                    <Row className="justify-content-center">
+                        <Col className="col-2">
+                            <Button variant='primary'>Сохранить</Button>
+                        </Col>
                     </Row>
                 </Container>
             </Modal.Body>
         </Modal>
+
     )
 
 }

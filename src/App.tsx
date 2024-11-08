@@ -25,7 +25,7 @@ import 'primeicons/primeicons.css';
 
 import PlanPage from './components/pages/planPage';
 import MixReport from './components/pages/drymix/MixReport';
-import MixProduction from './components/pages/drymix/MixProduction';
+import MixProduction from './components/pages/drymix/MixProductionPage';
 import MixPlanPage from './components/pages/drymix/mixPlan';
 
 

@@ -98,7 +98,7 @@ const MainPage: React.FC<MainPageProps> = () => {
     }
 
     return (
-        <Container className="mt-5 " fluid>
+        <Container className="mt-5 mb-5" fluid>
             <Row className="mt-5 justify-content-center text-center">
                 <h2 className="mt-3 mb-3">Показатели за текущий месяц</h2>
                 {loading && (
@@ -191,6 +191,17 @@ const MainPage: React.FC<MainPageProps> = () => {
                             )}
                         </Card.Body>
                     </Card>
+                </Col>
+            </Row>
+            <Row className="justify-content-center mt-3">
+                <Col className="col-6">
+                    <iframe
+                        title="Баста"
+                        src="https://vk.com/video_ext.php?oid=219613407&id=456239359&hd=2&autoplay=0"
+                        width="853"
+                        height="480"
+                        allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
+                    ></iframe>
                 </Col>
             </Row>
         </Container>
