@@ -48,7 +48,7 @@ const MixCategoriesTable: React.FC<MixCategoryTableProps> = ({
         }
     }, [allCategories.length, categories]);
     
-
+    
 
     return (
         <Container fluid className="mt-3">
