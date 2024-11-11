@@ -38,9 +38,10 @@ const RegistrationPage: React.FC = () => {
                 const jsonData = await response.json();
                 console.log(jsonData);
 
-                if (jsonData.success) {
+                if (jsonData) {
                     localStorage.setItem('authToken', jsonData.token);
                     window.location.href = '/profile';
+                    alert('Регистрация успешна, обратитесь к администратору для активации аккаунта')
                 } else {
                     alert(jsonData.message);
                 }
