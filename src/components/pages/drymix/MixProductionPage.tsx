@@ -40,6 +40,24 @@ const MixProductionPage: FC<MixProductionProps> = () => {
         setShowModal(false);
     }
 
+    const saveProductions = async (prod: MixCategoryProduction[]) => {
+        // const responce = await MixApiService.saveMixProductions(productions);  
+        // if (responce.status === 200) {
+            // const responceData: MixCategoryProduction[] = responce.data;
+            
+        // responceData.forEach(production => {
+            prod.forEach(production => {
+
+            if (productions.find(prod => prod.id === production.id)) {
+                    const index = productions.findIndex(production => production.id === production.id);
+                    productions[index] = production;
+                } else {
+                    productions.push(production);
+                }
+            });
+        // }
+    }
+
     return (
         <Container className="mt-5">
             <Row>
@@ -60,7 +78,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                     />
                 </Col>
             </Row>
-            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={editProduction} />
+            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={editProduction} handleSave={(productions: MixCategoryProduction[]) => saveProductions(productions) }  />
         </Container>
     );
 };

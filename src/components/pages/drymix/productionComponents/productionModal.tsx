@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Badge, Button, Col, Container, Modal, Row } from "react-bootstrap";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
 import dayjs from "dayjs";
@@ -15,6 +15,7 @@ import ShiftSelector from "../../commonElements/shiftSelector";
 import MixSelector from "../../commonElements/mixSelector";
 import MixCategoriesTable from "./mixCategoryTable";
 import MixEditCategoryModal from "./mixEditCategoryModal";
+import { Toast } from "primereact/toast";
 
 dayjs.extend(utc);
 
@@ -22,9 +23,10 @@ interface ProductionModalProps {
     show: boolean;
     handleClose: () => void;
     editProduction: MixCategoryProduction[];
+    handleSave: (productions:MixCategoryProduction[]) => void;
 }
 
-const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, editProduction }) => {
+const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, editProduction, handleSave }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
@@ -33,6 +35,8 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
     const [shift, setShift] = useState<Shift | null>(null);
     const [editCategoryModal, setEditCategoryModal] = useState<boolean>(false);
     const [categoryToEdit, setCategoryToEdit] = useState<MixCategoryProduction | null>(null);
+
+    const toast = useRef<Toast>(null);
 
     // Синхронизируем `productions` с `editProduction` только при его изменении
     useEffect(() => {
@@ -82,16 +86,33 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
         setCategoryToEdit(null);
     };
 
-    const handleSave = () => {
-        productions.forEach(p => {
-            if (shift && mix && startDate && endDate) {
+    const showError = () => {
+        if (toast.current) {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Не заполнены все поля',
+                life: 3000
+            });
+        }
+    };
+
+    const productionsSave = () => {
+        if (shift && mix && startDate && endDate) {
+            productions.forEach(p => {
+            
                 p.production.shift = shift;
                 p.production.mix = mix;
                 p.production.productionStart = startDate;
                 p.production.productionFinish = endDate;
-            }
-        });
-        handleClose();
+            
+            });
+            handleSave(productions)
+            handleClose();
+        } else {
+            console.log('Не заполнены все поля')
+            showError();
+        }
     }
 
     return (
@@ -121,7 +142,8 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
                     </Row>
                     <Row className="justify-content-center">
                         <Col className="col-2">
-                            <Button variant='primary' onClick={handleSave}>Сохранить</Button>
+                            <Toast ref={toast} />
+                            <Button variant='primary' onClick={productionsSave}>Сохранить</Button>
                         </Col>
                     </Row>
                 </Container>
