@@ -1,68 +1,56 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
+import { Badge, Button, Col, Container, Modal, Row } from "react-bootstrap";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { Stack } from "@mui/material";
 
-
 import "react-datepicker/dist/react-datepicker.css";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import "dayjs/locale/ru";
 import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import utc from 'dayjs/plugin/utc';
-import ApiService from "../../../../service/ApiService";
 import DryMix from "../../../../model/mix/DryMix";
 import Shift from "../../../../model/Shift";
 import MixCategory from "../../../../model/mix/prodution/MixCategory";
 import DateTimeSelector from "../../commonElements/dateTimeSelector";
-import { ShiftList } from "../../boardProductionInput/productComponents/FetchShiftList";
 import ShiftSelector from "../../commonElements/shiftSelector";
 import MixSelector from "../../commonElements/mixSelector";
 import MixCategoriesTable from "./mixCategoryTable";
 import MixEditCategoryModal from "./mixEditCategoryModal";
-import MixProduction from "../../../../model/mix/prodution/MixProduction";
+
 dayjs.extend(utc);
 
 interface ProductionModalProps {
     show: boolean;
     handleClose: () => void;
     editProduction: MixCategoryProduction[];
-};
+}
 
 const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, editProduction }) => {
-
     const [open, setOpen] = useState<boolean>(false);
-    const [production, setProduction] = useState<MixCategoryProduction[]>([]);
+    const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(new Date());
     const [mix, setMix] = useState<DryMix | null>(null);
     const [shift, setShift] = useState<Shift | null>(null);
-    const [mixCategory, setMixCategory] = useState<MixCategory | null>(null);
-    const [quantity, setQuantity] = useState<number>(0);
-    
+    const [editCategoryModal, setEditCategoryModal] = useState<boolean>(false);
     const [categoryToEdit, setCategoryToEdit] = useState<MixCategoryProduction | null>(null);
-    const [editCategoryModal, setEditCategoryModalModal] = useState<boolean>(false);
 
-
-
+    // Синхронизируем `productions` с `editProduction` только при его изменении
+    useEffect(() => {
+        setProductions(editProduction);
+    }, [editProduction]);
 
     useEffect(() => {
-        if (editProduction.length > 0) {
-            setProduction(editProduction);
-
-        }
         setOpen(show);
-    }, [production, show]);
+    }, [show]);
+    
 
     useEffect(() => {
-        if (production.length > 0) {
-            const prod = production[0];
+        if (productions.length > 0) {
+            const prod = productions[0];
             setShift(prod.production.shift);
             setMix(prod.production.mix);
         }
-    }, []);
-
+    }, [productions]);
 
     const changeStartDate = (newValue: Date | null) => {
         setStartDate(newValue);
@@ -74,22 +62,37 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
 
     const handleEditCategory = (category: MixCategoryProduction) => {
         setCategoryToEdit(category);
-        setEditCategoryModalModal(true);
-    }
+        setEditCategoryModal(true);
+    };
 
     const handleSaveCategory = (newCategory: MixCategoryProduction) => {
-        const exists = production.find(p => p.id === newCategory.id);
-        if (exists) {
-            const index = production.findIndex(p => p.id === newCategory.id);
-            production[index] = newCategory;
-            setProduction([...production]);
-        } else {   
-            production.push(newCategory);
-        }
+        setProductions(prevProductions => {
+            const exists = prevProductions.find(p => p.id === newCategory.id);
+            if (exists) {
+                return prevProductions.map(p => p.id === newCategory.id ? newCategory : p);
+            } else {
+                return [...prevProductions, newCategory];
+            }
+        });
+        closeCategoryModal();
+    };
+
+    const closeCategoryModal = () => {
+        setEditCategoryModal(false);
+        setCategoryToEdit(null);
+    };
+
+    const handleSave = () => {
+        productions.forEach(p => {
+            if (shift && mix && startDate && endDate) {
+                p.production.shift = shift;
+                p.production.mix = mix;
+                p.production.productionStart = startDate;
+                p.production.productionFinish = endDate;
+            }
+        });
+        handleClose();
     }
-
-    
-
 
     return (
         <Modal show={open} onHide={handleClose} size='lg'>
@@ -114,19 +117,18 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
                         <MixSelector handleMixChange={(mix: DryMix) => setMix(mix)} />
                     </Row>
                     <Row>
-                        <MixCategoriesTable categories={[]} handleEditCategory={(category) =>handleEditCategory(category)} />
+                        <MixCategoriesTable categories={productions} handleEditCategory={handleEditCategory} />
                     </Row>
                     <Row className="justify-content-center">
                         <Col className="col-2">
-                            <Button variant='primary'>Сохранить</Button>
+                            <Button variant='primary' onClick={handleSave}>Сохранить</Button>
                         </Col>
                     </Row>
                 </Container>
             </Modal.Body>
-            <MixEditCategoryModal show={editCategoryModal} handleSave={(newCategory: MixCategoryProduction) => handleSaveCategory} category={categoryToEdit} />
+            <MixEditCategoryModal show={editCategoryModal} handleSave={handleSaveCategory} category={categoryToEdit} onHide={closeCategoryModal} />
         </Modal>
+    );
+};
 
-    )
-
-}
 export default ProductionModal;
