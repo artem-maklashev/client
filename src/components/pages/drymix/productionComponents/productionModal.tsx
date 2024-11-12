@@ -16,6 +16,7 @@ import MixSelector from "../../commonElements/mixSelector";
 import MixCategoriesTable from "./mixCategoryTable";
 import MixEditCategoryModal from "./mixEditCategoryModal";
 import { Toast } from "primereact/toast";
+import MixProduction from "../../../../model/mix/prodution/MixProduction";
 
 dayjs.extend(utc);
 
@@ -23,12 +24,17 @@ interface ProductionModalProps {
     show: boolean;
     handleClose: () => void;
     editProduction: MixCategoryProduction[];
-    handleSave: (productions:MixCategoryProduction[]) => void;
+    editProd: MixProduction | null;
+    handleSave: (args: {
+        productions: MixCategoryProduction[];
+        newProduction: MixProduction;
+    }) => void;
 }
 
-const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, editProduction, handleSave }) => {
+const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, editProduction, handleSave, editProd }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
+    const [prod, setProd] = useState<MixProduction | null>(null);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(new Date());
     const [mix, setMix] = useState<DryMix | null>(null);
@@ -44,15 +50,25 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
     }, [editProduction]);
 
     useEffect(() => {
+        if (editProd) {
+            setProd(editProd);
+            setStartDate(editProd.productionStart || null);
+            setEndDate(editProd.productionFinish || null);
+            setShift(editProd.shift);
+            setMix(editProd.mix);
+        }
+    }, [editProd]);
+
+    useEffect(() => {
         setOpen(show);
     }, [show]);
-    
+
 
     useEffect(() => {
         if (productions.length > 0) {
             const prod = productions[0];
-            setShift(prod.production.shift);
-            setMix(prod.production.mix);
+            // setShift(prod.production.shift);
+            // setMix(prod.production.mix);
         }
     }, [productions]);
 
@@ -97,20 +113,28 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
         }
     };
 
+    const showSuccess = () => {
+        if (toast.current) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Success!',                
+                detail: 'Удачно сохранено',
+                life: 3000
+            });
+        }
+    };
+
     const productionsSave = () => {
         if (shift && mix && startDate && endDate) {
+            const newProduction = new MixProduction(-1, startDate, endDate, startDate, shift, mix);
             productions.forEach(p => {
-            
-                p.production.shift = shift;
-                p.production.mix = mix;
-                p.production.productionStart = startDate;
-                p.production.productionFinish = endDate;
-            
+                p.production = newProduction;
             });
-            handleSave(productions)
+            handleSave({ newProduction, productions });
+            showSuccess();
             handleClose();
         } else {
-            console.log('Не заполнены все поля')
+            console.log('Не заполнены все поля', shift, mix, startDate, endDate);
             showError();
         }
     }

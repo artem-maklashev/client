@@ -1,32 +1,35 @@
 import React from "react";
-import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
 import { Col, Container } from "react-bootstrap";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { getUserRole } from "../../../../service/Api";
+import MixProduction from "../../../../model/mix/prodution/MixProduction";
 
 
 interface MixProductionsTableProps {
-    productions: MixCategoryProduction[];
-
+    productions: MixProduction[];
+    onEdit: (rowData: MixProduction) => void;
+    onDelete: (rowData: MixProduction) => void;
 }
 
 export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ productions }) => {
 
-    const [tableData, setTableData] = React.useState<MixCategoryProduction[]>([]);
+    const [tableData, setTableData] = React.useState<MixProduction[]>([]);
+    
 
-    const handleEdit = (rowData: MixCategoryProduction) => {
+    const handleEdit = (rowData: MixProduction[]) => {
         console.log("Edit: ", rowData);
+
     };
 
-    const handleDelete = (rowData: MixCategoryProduction) => {
+    const handleDelete = (rowData: MixProduction) => {
         console.log("Delete: ", rowData);
     };
 
 
     React.useEffect(() => {
-        const productions10 = productions.sort((a, b) => new Date(b.production.productionDate).getTime() - new Date(a.production.productionDate).getTime()).slice(-10);
+        const productions10 = productions.sort((a, b) => new Date(b.productionDate).getTime() - new Date(a.productionDate).getTime()).slice(-10);
         setTableData(productions10);
     }, [productions]);
 
@@ -35,12 +38,12 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
         <Container>
             <Col className="col-12">
             <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800 }}>
-                    <Column field="planDate" header="Дата" />
+                    <Column field="productionDate" header="Дата" body={(rowData) => rowData.productionDate.toLocaleDateString('ru-RU')} />
                     <Column
                         header="Наименование смеси"
-                        body={(rowData: MixCategoryProduction) => `${rowData.production.mix.tradeMark.name} ${rowData.production.mix.dryMixType.name} ${rowData.production.mix.binder.name} ${rowData.production.mix.name}`}
+                        body={(rowData: MixProduction) => `${rowData.mix.tradeMark.name} ${rowData.mix.dryMixType.name} ${rowData.mix.binder.name} ${rowData.mix.name}`}
                     />
-                    <Column field="planValue" header="Количество" />
+                    <Column field="shift.name" header="Смена" />
 
                     {/* Колонка с кнопками для редактирования и удаления */}
                     <Column

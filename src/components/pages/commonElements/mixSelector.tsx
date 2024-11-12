@@ -21,6 +21,8 @@ const MixSelector: React.FC<MixSelectorProps> = ({ handleMixChange }) => {
             try {
                 const data = await MixApiService.MixList();
                 setMixList(data);
+
+                
             } catch (error) {
                 console.error("Error fetching mix list:", error);
             } finally {
@@ -30,6 +32,14 @@ const MixSelector: React.FC<MixSelectorProps> = ({ handleMixChange }) => {
 
         fetchMixes();
     }, []);
+
+    useEffect(() => {
+        if (!selectedProduct && mixList.length > 0) {
+            setSelectedProduct(mixList[0]);
+            handleMixChange(mixList[0]);
+            console.log('Выбрана смесь:', mixList[0]);
+        }
+    }, [handleMixChange, mixList, selectedProduct])
 
     return (
         <Col className="col-lg-7 col-sm-8 bordered mt-2">

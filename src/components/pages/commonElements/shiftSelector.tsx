@@ -17,9 +17,16 @@ const ShiftSelector: React.FC<ShiftSelectorProps> = ({ handleShiftChange }) => {
             const { shiftList, errorText } = await fetchShiftList();
             setShiftList(shiftList);
             setErrorText(errorText);
+
+            if (!selectedShift && shiftList.length > 0) {
+                setSelectedShift(shiftList[0]);
+                handleShiftChange(shiftList[0]); // Передаем начальную смену
+            }
         };
         fetchData();
     }, []);
+
+   
 
     return (
         <Col className="col-lg-2 col-sm-6 bordered mt-2">
