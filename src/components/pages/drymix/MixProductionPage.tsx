@@ -17,7 +17,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
     const [categoryProductions, setCategoryProductions] = useState<MixCategoryProduction[]>([]);
     const [delays, setDelays] = useState<MixDelay[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [editCategories, setEditCategories] = useState<MixCategoryProduction[] >([]);
+    const [editCategories, setEditCategories] = useState<MixCategoryProduction[]>([]);
     const [productions, setProductions] = useState<MixProduction[]>([]);
     const [editprod, setEditprod] = useState<MixProduction | null>(null);
 
@@ -25,8 +25,8 @@ const MixProductionPage: FC<MixProductionProps> = () => {
         const fetchProductions = async () => {
             try {
                 const response = await MixApiService.getLast10Productions();
-                setCategoryProductions(response); 
-                setProductions(getProductions(response));               
+                setCategoryProductions(response);
+                setProductions(getProductions(response));
             } catch (error) {
                 console.error("Error fetching productions:", error);
             }
@@ -41,7 +41,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
         const productions: MixProduction[] = [];
         catProductions.forEach(catProduction => {
             if (!productions.find(prod => prod.id === catProduction.production.id)) {
-                productions.push(catProduction.production); 
+                productions.push(catProduction.production);
             }
         });
         return productions;
@@ -66,31 +66,33 @@ const MixProductionPage: FC<MixProductionProps> = () => {
     }
 
     const saveProductions = async (prod: MixProduction, prods: MixCategoryProduction[]) => {
-        // const responce = await MixApiService.saveMixProductions(productions);  
-        // if (responce.status === 200) {
-            // const responceData: MixCategoryProduction[] = responce.data;
-            
-        // responceData.forEach(production => {
-            // prods.forEach(production => {
+        try {
+            const savedProduction: MixProduction = await MixApiService.saveMixProduction(prod);
+            if (savedProduction.id > 0) {
+                const productionsToSave: MixCategoryProduction[] = prods.map(prod => {
+                    prod.production = savedProduction;
+                    return prod;
+                });
+                try {
+                    const savedProductions: MixCategoryProduction[] = await MixApiService.saveMixProductions(productionsToSave);
+                    setCategoryProductions(prevCategoryProductions => {
+                        const updatedProductions = prevCategoryProductions.map(prod =>
+                            savedProductions.find(newProd => newProd.id === prod.id) || prod
+                        );
+                        const newProductions = prods.filter(
+                            newProd => !prevCategoryProductions.find(prod => prod.id === newProd.id)
+                        );
+                        return [...updatedProductions, ...newProductions];
+                    });
+                } catch (error) {
+                    console.error("Error saving productions:", error);
+                }
+            }
 
-            // if (productions.find(prod => prod.id === production.id)) {
-            //         const index = productions.findIndex(prod => prod.id === production.id);
-            //         prods[index] = production;
-            //     } else {
-            //         prods.push(production);
-            //     }
-            // });
-            setCategoryProductions(prevCategoryProductions => {
-                const updatedProductions = prevCategoryProductions.map(prod =>
-                    prods.find(newProd => newProd.id === prod.id) || prod
-                );
-                const newProductions = prods.filter(
-                    newProd => !prevCategoryProductions.find(prod => prod.id === newProd.id)
-                );
-                return [...updatedProductions, ...newProductions];
-            });
-            
-        // }
+        } catch (error) {
+            console.error("Error saving production:", error);
+        }
+        setEditprod(null);
     }
 
     return (
@@ -99,7 +101,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                 <Col className="mt-2">
                     <MixProductionsTable productions={productions} onEdit={handleEditProduction} onDelete={function (rowData: MixProduction): void {
                         throw new Error("Function not implemented.");
-                    } } />
+                    }} />
                 </Col>
             </Row>
             <Row className="d-flex">
@@ -110,12 +112,12 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                         label="Добавить"
                         severity='secondary'
                         onClick={() => handleAdd()}
-                        style={{borderRadius: '10px'}}
+                        style={{ borderRadius: '10px' }}
                         size="small"
                     />
                 </Col>
             </Row>
-            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={editCategories} handleSave={({ newProduction, productions }) => saveProductions(newProduction, productions)} editProd={editprod}  />
+            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={editCategories} handleSave={({ newProduction, productions }) => saveProductions(newProduction, productions)} editProd={editprod} />
         </Container>
     );
 };

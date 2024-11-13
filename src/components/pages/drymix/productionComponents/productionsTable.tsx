@@ -5,6 +5,7 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { getUserRole } from "../../../../service/Api";
 import MixProduction from "../../../../model/mix/prodution/MixProduction";
+import { on } from "events";
 
 
 interface MixProductionsTableProps {
@@ -13,13 +14,14 @@ interface MixProductionsTableProps {
     onDelete: (rowData: MixProduction) => void;
 }
 
-export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ productions }) => {
+export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ productions, onEdit }) => {
 
     const [tableData, setTableData] = React.useState<MixProduction[]>([]);
     
 
-    const handleEdit = (rowData: MixProduction[]) => {
+    const handleEdit = (rowData: MixProduction) => {
         console.log("Edit: ", rowData);
+        onEdit(rowData);
 
     };
 
@@ -38,7 +40,7 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
         <Container>
             <Col className="col-12">
             <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800 }}>
-                    <Column field="productionDate" header="Дата" body={(rowData) => rowData.productionDate.toLocaleDateString('ru-RU')} />
+                    <Column field="productionDate" header="Дата" body={(rowData) =>new Date(rowData.productionDate).toLocaleDateString('ru-RU')} />
                     <Column
                         header="Наименование смеси"
                         body={(rowData: MixProduction) => `${rowData.mix.tradeMark.name} ${rowData.mix.dryMixType.name} ${rowData.mix.binder.name} ${rowData.mix.name}`}

@@ -1,6 +1,7 @@
 import DryMix from "../model/mix/DryMix";
 import MixPlan from "../model/mix/plan";
 import MixCategoryProduction from "../model/mix/prodution/MixCategoryProduction";
+import MixProduction from "../model/mix/prodution/MixProduction";
 import { api } from "./Api";
 import ApiService from "./ApiService";
 
@@ -131,7 +132,7 @@ class MixApiService {
       const productionsAboveZiro = productions.filter((prod) => prod.quantity !== 0);
       try {
         const responce = await api.put(
-          `${process.env.REACT_APP_API_URL}/production/saveProductions`,
+          `${this.baseUrl}/production/saveProductions`,
           productionsAboveZiro
         );
         return responce.data;
@@ -140,5 +141,18 @@ class MixApiService {
       }
     }
   }
-}
+
+  static async saveMixProduction(production: MixProduction) {
+    try {
+      const response = await api.put(
+        `${this.baseUrl}/production/saveProduction`,
+        production
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error(`Произошла ошибка при сохранении данных производства смеси`, error);
+    }
+  }
+  }
+
 export default MixApiService;
