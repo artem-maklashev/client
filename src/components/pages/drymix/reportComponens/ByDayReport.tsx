@@ -53,7 +53,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                     <DayRangeSelector onDatesChange={handleRangeChange} />
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
-                    <PlanFact mixProduction={[]} mixPlan={mixPlan} />
+                    <PlanFact mixProduction={mixProduction} mixPlan={mixPlan} />
                 </Col>
             </Row>
         </Container>

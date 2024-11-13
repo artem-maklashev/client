@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import MixDelay from "../../../model/mix/delays/MixDelay";
 import { Col, Container, Row } from "react-bootstrap";
 import MixApiService from "../../../service/MixApiService";
@@ -10,6 +10,7 @@ import ProductionModal from "./productionComponents/productionModal";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import { set } from "date-fns";
 import MixProduction from "../../../model/mix/prodution/MixProduction";
+import { Toast } from "primereact/toast";
 
 interface MixProductionProps { }
 
@@ -20,6 +21,41 @@ const MixProductionPage: FC<MixProductionProps> = () => {
     const [editCategories, setEditCategories] = useState<MixCategoryProduction[]>([]);
     const [productions, setProductions] = useState<MixProduction[]>([]);
     const [editprod, setEditprod] = useState<MixProduction | null>(null);
+
+    const toast = useRef<Toast>(null);
+
+    const showSuccessSave = () => {
+        if (toast.current) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Success!',
+                detail: 'Удачно сохранено',
+                life: 3000
+            });
+        }
+    };
+
+    const showSuccessDelete = () => {
+        if (toast.current) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Success!',
+                detail: 'Удачно удалено',
+                life: 3000
+            });
+        }
+    };
+
+    const showError = () => {
+        if (toast.current) {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Операция не выполнена',
+                life: 3000
+            });
+        }
+    };
 
     useEffect(() => {
         const fetchProductions = async () => {
@@ -52,6 +88,8 @@ const MixProductionPage: FC<MixProductionProps> = () => {
     }, [categoryProductions])
 
     const handleAdd = () => {
+        setEditprod(null);
+        setEditCategories([]);
         setShowModal(true);
     }
 
@@ -84,6 +122,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                         );
                         return [...updatedProductions, ...newProductions];
                     });
+                    showSuccessSave();
                 } catch (error) {
                     console.error("Error saving productions:", error);
                 }
@@ -91,17 +130,31 @@ const MixProductionPage: FC<MixProductionProps> = () => {
 
         } catch (error) {
             console.error("Error saving production:", error);
+            showError();
         }
         setEditprod(null);
     }
 
+    const handleDeleteProduction = async (production: MixProduction) => {
+        try {
+            const responce = await MixApiService.deleteMixProduction(production.id);
+            if (responce) {
+                setCategoryProductions(prevCategoryProductions => prevCategoryProductions.filter(prod => prod.production.id !== production.id));
+                setProductions(prevProductions => prevProductions.filter(prod => prod.id !== production.id));
+                showSuccessDelete();
+            }
+        } catch (error) {
+            console.error("Error deleting production:", error);
+            showError();
+        }
+    }
+
     return (
         <Container className="mt-5">
+            <Toast ref={toast} />
             <Row>
                 <Col className="mt-2">
-                    <MixProductionsTable productions={productions} onEdit={handleEditProduction} onDelete={function (rowData: MixProduction): void {
-                        throw new Error("Function not implemented.");
-                    }} />
+                    <MixProductionsTable productions={productions} onEdit={handleEditProduction} onDelete={handleDeleteProduction} />
                 </Col>
             </Row>
             <Row className="d-flex">

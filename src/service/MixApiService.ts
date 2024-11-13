@@ -1,4 +1,3 @@
-import DryMix from "../model/mix/DryMix";
 import MixPlan from "../model/mix/plan";
 import MixCategoryProduction from "../model/mix/prodution/MixCategoryProduction";
 import MixProduction from "../model/mix/prodution/MixProduction";
@@ -82,7 +81,19 @@ class MixApiService {
     }
   }
   static async getProductionByDateBeetvean(startDate: Date, endDate: Date) {
-    return [];
+    try {
+      const params = {
+        startDate: ApiService.formatDateToISO(startDate),
+        endDate: ApiService.formatDateToISO(endDate),
+      };
+      const response = await api.get(`${this.baseUrl}/production/getProductions`, {
+        params,
+      });
+      return response.data;    
+    } catch (error: any) {
+      console.error(`Произошла ошибка при получении выпусков продукции: ${error.message}`);
+      throw error;
+    }
   }
 
   static async getPlanByDateBeetvean(startDate: Date, endDate: Date) {
@@ -129,7 +140,9 @@ class MixApiService {
 
   static async saveMixProductions(productions: MixCategoryProduction[]) {
     if (productions) {
-      const productionsAboveZiro = productions.filter((prod) => prod.quantity !== 0);
+      const productionsAboveZiro = productions.filter(
+        (prod) => prod.quantity !== 0
+      );
       try {
         const responce = await api.put(
           `${this.baseUrl}/production/saveProductions`,
@@ -137,7 +150,10 @@ class MixApiService {
         );
         return responce.data;
       } catch (error: any) {
-        console.error(`Произошла ошибка при сохранении данных выпуска смесей`, error);
+        console.error(
+          `Произошла ошибка при сохранении данных выпуска смесей`,
+          error
+        );
       }
     }
   }
@@ -150,9 +166,27 @@ class MixApiService {
       );
       return response.data;
     } catch (error: any) {
-      console.error(`Произошла ошибка при сохранении данных производства смеси`, error);
+      console.error(
+        `Произошла ошибка при сохранении данных производства смеси`,
+        error
+      );
     }
   }
+
+  static async deleteMixProduction(id: number) {
+    try {
+      const response = await api.delete(
+        `${this.baseUrl}/production/deleteProduction/${id}`
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        `Произошла ошибка при удалении данных производства смеси`,
+        error
+      );
+    }
+
   }
+}
 
 export default MixApiService;
