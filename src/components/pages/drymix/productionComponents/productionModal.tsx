@@ -64,13 +64,7 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
     }, [show]);
 
 
-    useEffect(() => {
-        if (productions.length > 0) {
-            const prod = productions[0];
-            // setShift(prod.production.shift);
-            // setMix(prod.production.mix);
-        }
-    }, [productions]);
+    
 
     const changeStartDate = (newValue: Date | null) => {
         setStartDate(newValue);
@@ -126,7 +120,8 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
 
     const productionsSave = () => {
         if (shift && mix && startDate && endDate) {
-            const newProduction = new MixProduction(-1, startDate, endDate, startDate, shift, mix);
+            const id = editProd?.id || -1;
+            const newProduction = new MixProduction(id, startDate, endDate, startDate, shift, mix);
             productions.forEach(p => {
                 p.production = newProduction;
             });
@@ -156,10 +151,10 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
                         </Col>
                     </Row>
                     <Row>
-                        <ShiftSelector handleShiftChange={(shift: Shift) => setShift(shift)} />
+                        <ShiftSelector shift={shift} handleShiftChange={(shift: Shift) => setShift(shift)} />
                     </Row>
                     <Row>
-                        <MixSelector handleMixChange={(mix: DryMix) => setMix(mix)} />
+                        <MixSelector mix={mix} handleMixChange={(mix: DryMix) => setMix(mix)} />
                     </Row>
                     <Row>
                         <MixCategoriesTable categories={productions} handleEditCategory={handleEditCategory} />

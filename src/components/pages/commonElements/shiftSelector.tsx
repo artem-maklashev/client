@@ -4,29 +4,34 @@ import Shift from "../../../model/Shift";
 import { fetchShiftList } from "../boardProductionInput/productComponents/FetchShiftList";
 
 interface ShiftSelectorProps {
+    shift: Shift | null;
     handleShiftChange: (shift: Shift) => void;
 }
 
-const ShiftSelector: React.FC<ShiftSelectorProps> = ({ handleShiftChange }) => {
-    const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
+const ShiftSelector: React.FC<ShiftSelectorProps> = ({ handleShiftChange, shift }) => {
+    const [selectedShift, setSelectedShift] = useState<Shift | null>(shift);
     const [shiftList, setShiftList] = useState<Shift[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log("Received shift:", shift);
+        
         const fetchData = async () => {
             const { shiftList, errorText } = await fetchShiftList();
             setShiftList(shiftList);
             setErrorText(errorText);
 
-            if (!selectedShift && shiftList.length > 0) {
-                setSelectedShift(shiftList[0]);
-                handleShiftChange(shiftList[0]); // Передаем начальную смену
+            // Если shift не передан, установим первый доступный из списка
+            if (!shift && shiftList.length > 0) {
+                const initialShift = shiftList[0];
+                setSelectedShift(initialShift);
+                handleShiftChange(initialShift); 
+            } else if (shift) {
+                setSelectedShift(shift);
             }
         };
         fetchData();
-    }, []);
-
-   
+    }, [shift, handleShiftChange]); // Зависимость от shift для синхронизации с пропсом
 
     return (
         <Col className="col-lg-2 col-sm-6 bordered mt-2">
@@ -36,7 +41,7 @@ const ShiftSelector: React.FC<ShiftSelectorProps> = ({ handleShiftChange }) => {
                     <p>{errorText}</p>
                 ) : (
                     <Form.Select
-                        value={selectedShift ? selectedShift.name : shiftList[0]?.name || ""}
+                        value={selectedShift ? selectedShift.name : ""}
                         onChange={(e) => {
                             const selectedShiftName = e.target.value;
                             const foundShift = shiftList.find(

@@ -4,10 +4,11 @@ import { Col, Form } from "react-bootstrap";
 import MixApiService from "../../../service/MixApiService";
 
 interface MixSelectorProps {
+    mix: DryMix | null;
     handleMixChange: (mix: DryMix) => void;
 }
 
-const MixSelector: React.FC<MixSelectorProps> = ({ handleMixChange }) => {
+const MixSelector: React.FC<MixSelectorProps> = ({ handleMixChange, mix }) => {
     const [selectedProduct, setSelectedProduct] = useState<DryMix | null>(null);
     const [mixList, setMixList] = useState<DryMix[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +33,12 @@ const MixSelector: React.FC<MixSelectorProps> = ({ handleMixChange }) => {
 
         fetchMixes();
     }, []);
+
+    useEffect(() => {
+        if (mix) {
+            setSelectedProduct(mix);
+        }
+    }, [mix]);
 
     useEffect(() => {
         if (!selectedProduct && mixList.length > 0) {
