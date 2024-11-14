@@ -6,6 +6,7 @@ import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryPr
 import MixPlan from "../../../../model/mix/plan";
 import ApiService from "../../../../service/ApiService";
 import MixApiService from "../../../../service/MixApiService";
+import PlanFactCard from "./planFactCard";
 
 interface ByDayReportProps { }
 
@@ -22,16 +23,16 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
     }
 
     useEffect(() => {
-        const loadData =async () => {
+        const loadData = async () => {
             if (startDate && endDate) {
                 try {
-                const production = await MixApiService.getProductionByDateBeetvean(startDate, endDate);
-                setMixProduction(production);
+                    const production = await MixApiService.getProductionByDateBeetvean(startDate, endDate);
+                    setMixProduction(production);
                 } catch (error: any) {
                     console.error('error in MixApiService.getProductionByDateBeetvean', error.message, error.stack, 'error')
                 }
                 try {
-                    const plan = await MixApiService.getPlanByDateBeetvean(startDate, endDate );
+                    const plan = await MixApiService.getPlanByDateBeetvean(startDate, endDate);
                     setMixPlan(plan);
                 } catch (error: any) {
                     console.error('error in MixApiservice.getPlanByDateBeervean', error.message);
@@ -41,19 +42,26 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                 const now = new Date();
                 setStartDate(new Date(now.getFullYear(), now.getMonth(), 1));
                 setEndDate(now);
-            }  
+            }
         }
         loadData();
     }, [startDate, endDate]);
 
     return (
         <Container fluid className="mt-5 mb-5 bg-secondary">
-            <Row className="mt-5">
+            <Row></Row>
+            <Row className="mt-3">
                 <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
+                <Row>
                     <DayRangeSelector onDatesChange={handleRangeChange} />
+                </Row>
+                <Row>
+                    <PlanFactCard planData={mixPlan} factData={mixProduction} />                </Row>
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
-                    <PlanFact mixProduction={mixProduction} mixPlan={mixPlan} />
+                    <Row>
+                        <PlanFact mixProduction={mixProduction} mixPlan={mixPlan} />
+                    </Row>
                 </Col>
             </Row>
         </Container>

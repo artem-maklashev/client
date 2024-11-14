@@ -18,7 +18,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
 
     const handleNavClose = () => setExpanded(false);
     return (
-        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} >        
+        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} fixed={'top'}>        
             <div className="container-fluid">
                 <NavbarBrand as={Link} to="/">Декоратор</NavbarBrand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />

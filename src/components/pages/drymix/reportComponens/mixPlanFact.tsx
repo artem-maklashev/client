@@ -122,7 +122,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
             );
 
             const productionForDate = mixProduction
-                .filter((prod) => prod.category.id > 1 && prod.category.id < 4)
+                .filter((prod) => prod.category.id === 2)
                 .filter((prod) => new Date(prod.production.productionDate).toISOString().split('T')[0] === date);
 
             const totalProductionValue = productionForDate.reduce((acc, prod) => acc + prod.quantity, 0);
