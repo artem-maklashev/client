@@ -5,6 +5,7 @@ import React from "react";
 import { Tooltip, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { addDays } from "date-fns";
 import MixPlan from "../../../../model/mix/plan";
+import MixPlanFactModal from "./mixPlanFactModal";
 
 interface MixPlanFactProps {
     mixProduction: MixCategoryProduction[];
@@ -38,7 +39,6 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
 
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
-            // Убедитесь, что данные корректно обрабатываются
             const { planDate, planValue, productionValue } = payload[0]?.payload || {};
             return (
                 <div className="custom-tooltip" style={{ background: 'transparent ' }}>
@@ -144,10 +144,10 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
         if (data) {
             console.log('Дата:', data.planDate);
             console.log('Плановое значение:', data.planValue);
+            console.log('Фактическое значение:', data.productionValue);
             const factData = mixProduction.filter((prod) =>
-                new Date(addDays(prod.production.productionDate, 1)).toISOString().split('T')[0] === data.planDate
-                && prod.category.id > 1
-                && prod.category.id < 4);
+                new Date((prod.production.productionDate)).toISOString().split('T')[0] === data.planDate
+                );
             const plan = mixPlan.filter((plan) =>
                 new Date(plan.planDate).toISOString().split('T')[0] === data.planDate);
             setModalPlan(plan);
@@ -158,6 +158,11 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
             console.error('Данные не определены');
         }
     };
+
+    const closeModal = () => {
+        setShowModal(false);
+    }
+
 
     return (
         <Card className="text-center bg-body-primary">
@@ -188,11 +193,11 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                             <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
                             <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
 
-
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>
             </Card.Body>
+            <MixPlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
         </Card>
     );
 }
