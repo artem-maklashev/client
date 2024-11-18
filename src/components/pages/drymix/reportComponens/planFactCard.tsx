@@ -19,7 +19,8 @@ const PlanFactCard: React.FC<PlanFactCardProps> = ({ planData, factData }) => {
     const data = [
         { type: 'План', value: plan },
         { type: 'Факт', value: fact },
-        { type: 'Отклонение', value: plan - fact }
+        { type: 'Отклонение', value: fact - plan },
+        { type: 'Процент отклонения', value: ((fact - plan) / plan * 100).toFixed(2) + '%' }
     ];
 
     return (

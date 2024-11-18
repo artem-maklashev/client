@@ -4,9 +4,9 @@ import DayRangeSelector from "../../dashBoardComponent/dateRangeSelector";
 import PlanFact from "./mixPlanFact";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
 import MixPlan from "../../../../model/mix/plan";
-import ApiService from "../../../../service/ApiService";
 import MixApiService from "../../../../service/MixApiService";
 import PlanFactCard from "./planFactCard";
+import MixPieChart from "./pieChart";
 
 interface ByDayReportProps { }
 
@@ -47,20 +47,87 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
         loadData();
     }, [startDate, endDate]);
 
+    const binderData: () => { name: string, value: number }[] = () => {
+        const result: { name: string, value: number }[] = [];
+        if (mixProduction.length > 0) {
+            mixProduction.forEach(prod => {
+                const existingData = result.find(item => item.name === prod.production.mix.binder.name);
+                if (existingData) {
+                    existingData.value += prod.quantity;
+                } else {
+                    result.push({ name: prod.production.mix.binder.name, value: prod.quantity });
+                }
+            });
+            return result;
+        } else {
+            return [];
+        }
+    }
+
+    const typeData: () => { name: string, value: number }[] = () => {
+        const result: { name: string, value: number }[] = [];
+        if (mixProduction.length > 0) {
+            mixProduction.forEach(prod => {
+                const existingData = result.find(item => item.name === prod.production.mix.dryMixType.name);
+                if (existingData) {
+                    existingData.value += prod.quantity;
+                } else {
+                    result.push({ name: prod.production.mix.dryMixType.name, value: prod.quantity });
+                }
+            });
+            return result;
+        } else {
+            return [];
+        }
+    }
+
+    const tradeMarkData: () => { name: string, value: number }[] = () => {
+        const result: { name: string, value: number }[] = [];
+        if (mixProduction.length > 0) {
+            mixProduction.forEach(prod => {
+                const existingData = result.find(item => item.name === prod.production.mix.tradeMark.name);
+                if (existingData) {
+                    existingData.value += prod.quantity;
+                } else {
+                    result.push({ name: prod.production.mix.tradeMark.name, value: prod.quantity });
+                }
+            });
+            return result;
+        } else {
+            return [];
+        }
+    }
+
+
     return (
         <Container fluid className="mt-5 mb-5 bg-secondary">
             <Row></Row>
             <Row className="mt-3">
                 <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
-                <Row>
-                    <DayRangeSelector onDatesChange={handleRangeChange} />
-                </Row>
-                <Row>
-                    <PlanFactCard planData={mixPlan} factData={mixProduction} />                </Row>
+                    <Row>
+                        <DayRangeSelector onDatesChange={handleRangeChange} />
+                    </Row>
+                    <Row>
+                        <PlanFactCard planData={mixPlan} factData={mixProduction} />
+                    </Row>
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
                     <Row>
-                        <PlanFact mixProduction={mixProduction} mixPlan={mixPlan} />
+                        <Col>
+                            <PlanFact mixProduction={mixProduction} mixPlan={mixPlan} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="col-4">
+                            <MixPieChart data={binderData()} title="Вяжущее" />
+                        </Col>
+                        <Col className="col-4">
+                            <MixPieChart data={typeData()} title='Тип смеси' />
+                        </Col>
+                        <Col className="col-4">
+                            <MixPieChart data={tradeMarkData()} title='Торговая марка' />
+                        </Col>
+
                     </Row>
                 </Col>
             </Row>

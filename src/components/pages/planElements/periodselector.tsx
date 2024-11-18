@@ -2,6 +2,7 @@ import { addLocale } from "primereact/api";
 import { Calendar } from "primereact/calendar";
 import React, { useEffect, useState } from "react";
 import { Card, Col, Container } from "react-bootstrap";
+import '../../../App.css'
 
 addLocale('ru', {
     firstDayOfWeek: 1,
@@ -37,6 +38,8 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ period, onPeriodChange 
             <Calendar value={selectedPeriod} onChange={(e) => setSelectedPeriod(e.value || new Date())} view="month" dateFormat="MM yy"
                 locale="ru"
                 inline
+                style={{fontSize: 13}}
+                className="custom-calendar"
             />
             </Card>
        </Col>

@@ -33,7 +33,7 @@ const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete
     return (
         <Container fluid className="mb-2">
             <Col className="col-12">
-                <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 900 }}>
+                <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 950, fontSize: 13 }}>
                     <Column field="planDate" header="Дата" key="planDate" />
                     <Column
                         header="Наименование смеси"

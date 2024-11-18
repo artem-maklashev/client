@@ -9,7 +9,7 @@ import MixPlanModal from "./planComponents/mixPlanModal";
 import { table } from "console";
 import MixPlanTableData from "./planComponents/mixPlanTableData";
 
-interface MixPlanProps {}
+interface MixPlanProps { }
 
 const MixPlanPage: React.FC<MixPlanProps> = () => {
     const now = new Date();
@@ -46,8 +46,8 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
         setModalShow(true);
     };
 
-  
-    
+
+
 
     const handleDeletePlan = async (plan: MixPlan) => {
         console.log('Удаление плана:', plan);
@@ -65,11 +65,11 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
     const handleSave = async (plan: MixPlan) => {
         console.log('Сохранение плана:', plan);
         setModalShow(false);
-    
+
         try {
             const savedPlan: MixPlan = await MixApiService.upsertMixPlan(plan);
             console.log('Received saved plan:', savedPlan); // Лог полученного плана
-    
+
             // Используйте функциональный вызов для обновления состояния
             setPlanData(prevData => {
                 // Проверяем, существует ли план с таким же ID
@@ -84,14 +84,14 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
                     return [...prevData, savedPlan];
                 }
             });
-    
+
             console.log('План успешно сохранен:', savedPlan);
         } catch (error) {
             console.error('Ошибка при сохранении плана:', error);
             alert('Ошибка при сохранении плана. Повторите попытку.');
         }
     };
-    
+
 
     const handleCloseModal = () => {
         setModalShow(false);
@@ -101,18 +101,18 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
     useEffect(() => {
         console.log('Updated planData:', JSON.stringify(planData));
     }, [planData]);
-    
+
 
     return (
-        <Row>
-            <Container className="mt-5">
-                <Row>
+        <Container className="mt-5">
+            <Row></Row>
+                <Row className="mt-3">
                     <PeriodSelector period={period} onPeriodChange={handlePeriodChange} />
                     <Col className="col-9">
                         {loading ? (
                             <p>Загрузка данных...</p>
                         ) : (
-                           planData.length > 0 && <MixPlanTable planData={planData} planEditing={handleEditPlan} planDelete={handleDeletePlan} />
+                            planData.length > 0 && <MixPlanTable planData={planData} planEditing={handleEditPlan} planDelete={handleDeletePlan} />
                         )}
                     </Col>
                 </Row>
@@ -127,18 +127,17 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
                     {loading ? (
                         <p>Загрузка данных...</p>
                     ) : (
-                            <MixPlanTableData planList={planData} />
+                        <MixPlanTableData planList={planData} />
                     )}
                 </Row>
-            </Container>
-            <MixPlanModal
-                plan={selectedPlan}
-                month={period}
-                show={modalShow}
-                onClose={handleCloseModal}
-                onSave={handleSave}
-            />
-        </Row>
+                <MixPlanModal
+                    plan={selectedPlan}
+                    month={period}
+                    show={modalShow}
+                    onClose={handleCloseModal}
+                    onSave={handleSave}
+                />
+        </Container>
     );
 };
 

@@ -67,3 +67,16 @@
 .tabs-link-active-bg {
   background-color: aquamarine;
 }
+
+
+.custom-calendar {
+  font-size: 13px;
+}
+
+.custom-calendar .p-datepicker-header {
+  font-size: 14px; /* Заголовок календаря */
+}
+
+.custom-calendar .p-datepicker-cell {
+  font-size: 12px; /* Текст ячеек */
+}

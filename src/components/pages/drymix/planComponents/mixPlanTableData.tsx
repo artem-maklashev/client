@@ -72,7 +72,7 @@ const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList}) => {
     
     return (
         <Container className="mb-3 mt-3">
-            <DataTable value={groupedPlans} scrollable scrollHeight="600px" showGridlines stripedRows>
+            <DataTable value={groupedPlans} scrollable scrollHeight="600px" showGridlines stripedRows tableStyle={{fontSize: 13}}>
                 {/* Колонка с информацией о гипсокартоне */}
                 <Column
                     header="Наименование смеси"
