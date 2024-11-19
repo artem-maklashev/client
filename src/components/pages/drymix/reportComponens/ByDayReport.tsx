@@ -118,13 +118,13 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                         </Col>
                     </Row>
                     <Row>
-                        <Col className="col-4">
+                        <Col lg={4} sm={12}>
                             <MixPieChart data={binderData()} title="Вяжущее" />
                         </Col>
-                        <Col className="col-4">
+                        <Col lg={4} sm={12}>
                             <MixPieChart data={typeData()} title='Тип смеси' />
                         </Col>
-                        <Col className="col-4">
+                        <Col lg={4} sm={12}>
                             <MixPieChart data={tradeMarkData()} title='Торговая марка' />
                         </Col>
 

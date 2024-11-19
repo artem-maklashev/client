@@ -31,7 +31,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ period, onPeriodChange 
             onPeriodChange(selectedPeriod);
     }, [onPeriodChange, selectedPeriod]);
     return (
-        <Col className=' d-flex col-3 justify-content-center'>
+        <Col >
             <Card className="d-flex justify-content-center">
                 <Card.Header className='text-center'><h5>Выберите период</h5></Card.Header>
 

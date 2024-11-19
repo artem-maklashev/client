@@ -79,7 +79,7 @@ const PlanPage: React.FC<PlanPageProps> = () => {
                 <Container className=" mt-3 mb-2">
                     <Row>
                         <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
-                        <Col className="col-9">
+                        <Col lg={9} sm={12}>
                             <PlanTable planList={planList} planEditing={handleEditPlan} planDelete={planDelete} />
                         </Col>
                     </Row>

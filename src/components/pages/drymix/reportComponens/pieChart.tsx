@@ -20,7 +20,7 @@ interface PieChartProps {
 
 const MixPieChart: React.FC<PieChartProps> = ({ data, title }) => {
     // Цвета секторов диаграммы
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+    const COLORS = ['#80ADD7', '#0ABDA0', '#D4DCA9', '#BF9D7A', '#A28AEF'];
 
     // Функция для кастомного отображения меток
     const renderCustomizedLabel = ({
@@ -44,11 +44,11 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title }) => {
             <text
                 x={x}
                 y={y}
-                fill='black'
+                fill="black"
                 textAnchor="middle"
                 dominantBaseline="central"
                 fontSize="12px"
-                fontWeight={'bold'}
+                fontWeight="bold"
             >
                 <tspan x={x} dy="-1em">{name}</tspan>
                 <tspan x={x} dy="1.2em">{percentage}</tspan>
@@ -58,19 +58,19 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title }) => {
     };
 
     return (
-        <Card className="mt-2 text-center bg-body-primary">
-            <Card.Header>
-                <h5>{title}</h5>
+        <Card className="mt-4 shadow-sm border-0">
+            <Card.Header className="bg-primary text-white text-center py-2">
+                <h6 className="m-0 text-uppercase">{title}</h6>
             </Card.Header>
-            <Card.Body>
-                <ResponsiveContainer width="100%" height={300}>
+            <Card.Body style={{ height: '300px' }} className="d-flex justify-content-center align-items-center bg-light">
+                <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
                             data={data}
                             cx="50%"
                             cy="50%"
-                            innerRadius={50}
-                            outerRadius={100}
+                            innerRadius={60}
+                            outerRadius={110}
                             fill="#8884d8"
                             dataKey="value"
                             labelLine={false}
@@ -80,8 +80,8 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title }) => {
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip />
-                        {/* <Legend layout="horizontal" verticalAlign="bottom" align="center" /> */}
+                        <Tooltip contentStyle={{ fontSize: '12px', borderRadius: '8px' }} />
+                        <Legend layout="horizontal" verticalAlign="bottom" align="center" iconSize={10} />
                     </PieChart>
                 </ResponsiveContainer>
             </Card.Body>

@@ -165,8 +165,9 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
 
 
     return (
-        <Card className="text-center bg-body-primary">
-            <Card.Header><h5>План-факт производства</h5></Card.Header>
+        <Card className="text-center bg-body-primary shadow-sm border-0">
+            <Card.Header  className="bg-primary text-white text-center py-2">
+                <h6 className="m-0 text-uppercase">План-факт производства</h6></Card.Header>
             <Card.Body style={{ overflowX: 'auto' }}>
                 <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
                     <ResponsiveContainer>

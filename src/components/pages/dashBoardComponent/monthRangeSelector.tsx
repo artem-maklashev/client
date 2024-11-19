@@ -39,8 +39,8 @@ const MonthRangeSelector: React.FC<MonthRangeSelectorProps> = ({ onDatesChange }
     }, [dates]);
 
     return (
-        <Col className=' d-flex col-12 justify-content-center'>
-            <Card className="d-flex justify-content-center">
+        <Col className=' d-flex col-12 justify-content-center border-0'>
+            <Card className="d-flex justify-content-center" border="white">
                 <Card.Header className='text-center'><h5>Выберите период</h5></Card.Header>
                 <Card.Body d-flex flex-column align-items-center>
                     {/* <Col > */}

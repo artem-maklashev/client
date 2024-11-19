@@ -31,7 +31,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
     return (
         <Container fluid className="mb-2 ">
             <Col className="col-12">
-                <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800 }}>
+                <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, fontSize: 13 }}>
                     <Column field="planDate" header="Дата" />
                     <Column
                         header="Гипсокартон"
@@ -50,7 +50,12 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                                     icon="pi pi-pencil"
                                     className="p-button-rounded p-button-info p-button-sm"
                                     onClick={() => handleEdit(rowData)}
-                                    style={{ marginRight: '8px' }} // Отступ между кнопками
+                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
+                                        width: '35px', // Ширина кнопки
+                                        height: '35px', // Высота кнопки
+                                        fontSize: '1.2rem', // Размер текста/иконки
+                                        borderRadius: '25px'  
+                                        }} 
                                     disabled={
                                         getUserRole() === 'ADMIN' ? false : true}
                                 />
@@ -59,6 +64,12 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                                     icon="pi pi-trash"
                                     className="p-button-rounded p-button-danger p-button-sm"
                                     onClick={() => handleDelete(rowData)}
+                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
+                                        width: '35px', // Ширина кнопки
+                                        height: '35px', // Высота кнопки
+                                        fontSize: '1.2rem', // Размер текста/иконки
+                                        borderRadius: '25px'  
+                                        }} 
                                     disabled={
                                         getUserRole() === 'ADMIN' ? false : true}
                                 />

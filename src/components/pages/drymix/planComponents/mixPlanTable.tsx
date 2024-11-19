@@ -53,13 +53,24 @@ const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete
                                     icon="pi pi-pencil"
                                     className="p-button-rounded p-button-info p-button-sm"
                                     onClick={() => handleEdit(rowData)}
-                                    style={{ marginRight: "8px" }}
+                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
+                                        width: '35px', // Ширина кнопки
+                                        height: '35px', // Высота кнопки
+                                        fontSize: '1.2rem', // Размер текста/иконки
+                                        borderRadius: '25px'  
+                                        }} 
                                     disabled={getUserRole() !== "ADMIN"}
                                 />
                                 <Button
                                     icon="pi pi-trash"
                                     className="p-button-rounded p-button-danger p-button-sm"
                                     onClick={() => handleDelete(rowData)}
+                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
+                                        width: '35px', // Ширина кнопки
+                                        height: '35px', // Высота кнопки
+                                        fontSize: '1.2rem', // Размер текста/иконки
+                                        borderRadius: '25px'  
+                                        }} 
                                     disabled={getUserRole() !== "ADMIN"}
                                 />
                             </div>
