@@ -16,9 +16,10 @@ class ChartData {
 interface PieChartProps {
     data: ChartData[];
     title: string;
+    onClick: (name: string) => void;
 }
 
-const MixPieChart: React.FC<PieChartProps> = ({ data, title }) => {
+const MixPieChart: React.FC<PieChartProps> = ({ data, title, onClick }) => {
     // Цвета секторов диаграммы
     const COLORS = ['#80ADD7', '#0ABDA0', '#D4DCA9', '#BF9D7A', '#A28AEF'];
 
@@ -57,6 +58,14 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title }) => {
         );
     };
 
+    const handleClick = (data: any, index: number) => {
+        if (data) {
+            const { name } = data; // Извлекаем `name` из переданных данных
+            // alert(`Выбрано: ${name}`);
+            onClick(name); // Вызываем переданный обработчик
+        }
+    };
+
     return (
         <Card className="mt-4 shadow-sm border-0">
             <Card.Header className="bg-primary text-white text-center py-2">
@@ -75,6 +84,7 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title }) => {
                             dataKey="value"
                             labelLine={false}
                             label={renderCustomizedLabel}
+                            onClick={(_, index) => handleClick(data[index], index)}
                         >
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

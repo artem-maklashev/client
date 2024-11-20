@@ -32,7 +32,7 @@ const PlanFactCard: React.FC<PlanFactCardProps> = ({ planData, factData }) => {
                     <div
                         className="bg-primary text-white text-uppercase" // Bootstrap классы
                         style={{
-                            fontSize: "1.1rem", // Размер шрифта заголовка
+                            fontSize: "1rem", // Размер шрифта заголовка
                             padding: "5px", // Отступы внутри заголовка
                             borderRadius: "5px 5px 0 0", // Скругление верхних углов
                         }}

@@ -10,6 +10,8 @@ import { useFetchProductionData } from "./commonElements/GetProductionData";
 import TypesChart from './gypsumBoardElements/TypesChart';
 import GypsumBoardChart from "./gypsumBoardElements/GypsumBoardChart";
 import { api } from "../../service/Api";
+import DateRangeSelector from './dashBoardComponent/dateRangeSelector';
+import { start } from 'repl';
 
 interface GypsumBoardShowProps {
 }
@@ -55,23 +57,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
         fetchData();
     }, [fetchGypsumBoardData]);
-
-    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setGypsumBoardData([]);
-        const enteredDate = event.target.value;
-
-        if (event.target.id === "startDateInput") {
-            setSelectedStartDate(enteredDate);
-
-            setErrorText(null);
-        } else if (event.target.id === "endDateInput") {
-            setSelectedEndDate(enteredDate);
-            setErrorText(null);
-        } else {
-            setErrorText(`Invalid date format. Please use ${getLocalizedDateFormat()}.`);
-        }
-        fetchGypsumBoardData();
-    };
+    
 
     function getCurrentDate(): string {
         const now = new Date();
@@ -89,63 +75,28 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
         const month = (firstDay.getMonth() + 1).toString().padStart(2, '0');
 
         return `${year}-${month}-01`;
-    }
-
-    const getLocalizedDateFormat = (): string => {
-        const exampleDate = new Date(2023, 0, 1); // January 1, 2023
-        return exampleDate.toLocaleDateString(undefined, {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric',
-        });
-    };
+    }    
 
     useEffect(() => {
         setLoading(false);
     }, []);
 
+    const handlePeriodChange = (startDate: Date | null, endDate: Date | null) => {
+        if (startDate && endDate) {
+        setSelectedStartDate(startDate.toDateString());
+        setSelectedEndDate(endDate.toDateString());
+    }
+    };
+
     return (
         <div className="row mt-5 justify-content-center" style={{ backgroundColor: '#b5b5b5' }}>
             <Container className="container mt-auto">
-                <div className="row mt-5">
-                    <div className="col-md-3 mb-3 mx-auto">
-                        <div className="input-group">
-                            <span className="input-group-text" id="basic-addon1">
-                                Период:
-                            </span>
-                            <input
-                                type="date"
-                                id="startDateInput"
-                                value={selectedStartDate ? selectedStartDate : getFirstDate()}
-                                onChange={handleDateChange}
-                                className="form-control "
-                            />
-                            <input
-                                type="date"
-                                id="endDateInput"
-                                value={selectedEndDate ? selectedEndDate : getCurrentDate()}
-                                onChange={handleDateChange}
-                                className="form-control "
-                            />
-                        </div>
-                    </div>
-                    {/*<div className="row">*/}
-                    {/*    <div className="col-md-3 mb-3 mx-auto">*/}
-                    {/*        <div className="input-group">*/}
-                    {/*            <span className="input-group-text" id="basic-addon1">*/}
-                    {/*                Дата окончания*/}
-                    {/*            </span>*/}
-                    {/*            <input*/}
-                    {/*                type="date"*/}
-                    {/*                id="endDateInput"*/}
-                    {/*                value={selectedEndDate}*/}
-                    {/*                onChange={handleDateChange}*/}
-                    {/*                className="form-control "*/}
-                    {/*            />*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                </div>
+                <Row className='justify-content-center mt-3'>
+                    <Col lg={3} sm={3}>
+                        <DateRangeSelector onDatesChange={handlePeriodChange}
+                        />
+                    </Col>
+                </Row>                
             </Container>
 
             {errorText && <div className="error-message">{errorText}</div>}
@@ -172,12 +123,12 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                                     <Col xs={12} sm={6} md={4} lg={4}>
                                         <Row className="d-flex justify-content-center">
                                             <Col>
-                                            <Card>
-                                                <Card.Header className='text-center'><h3>Кромка</h3></Card.Header>
-                                                <Card.Body style={{ width: "100%", height: `340px` }} >
-                                                    <EdgeChart edgeData={productionData} />
-                                                </Card.Body>
-                                            </Card>
+                                                <Card>
+                                                    <Card.Header className='text-center'><h3>Кромка</h3></Card.Header>
+                                                    <Card.Body style={{ width: "100%", height: `340px` }} >
+                                                        <EdgeChart edgeData={productionData} />
+                                                    </Card.Body>
+                                                </Card>
                                             </Col>
                                         </Row>
                                         <Row className="d-flex justify-content-center">
@@ -206,9 +157,9 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                                 </Row>
                             </Col>
                         </Tab>
-                        <Tab eventKey="opinion" title="В разработке" disabled={true}>
+                        {/* <Tab eventKey="opinion" title="В разработке" disabled={true}>
                             В разработке...
-                        </Tab>
+                        </Tab> */}
                     </Tabs>
                 </Row>
             </Container>

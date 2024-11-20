@@ -174,7 +174,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                         <LineChart
                             title="План-факт производства"
                             width={500}
-                            height={300}
+                            height={200}
                             data={combinedData}
                             margin={{
                                 top: 5,
@@ -186,7 +186,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
 
                         >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="planDate" padding={{ left: 30, right: 30 }} />
+                            <XAxis dataKey="planDate" padding={{ left: 30, right: 30 }} height={20}/>
                             <YAxis yAxisId="left" />
                             <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} domain={[0, 'dataMax + 5']} />
                             <Tooltip content={<CustomTooltip />} />

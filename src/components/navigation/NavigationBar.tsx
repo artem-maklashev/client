@@ -18,18 +18,25 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
 
     const handleNavClose = () => setExpanded(false);
     return (
-        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} fixed={'top'}>        
+        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} fixed={'top'}>
             <div className="container-fluid">
                 <NavbarBrand as={Link} to="/">Декоратор</NavbarBrand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/" onClick={handleNavClose}>Home</Nav.Link>
-                        <NavDropdown title="Гипсокартон" id="board-dropdown">
+                        <NavDropdown title="Гипсокартон" id="board-dropdown" >
+                            <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER') ? false : true}  className="dropend">
+                                <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose} >Добавить выпуск</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
+                                    getUserRole() === 'ADMIN' ? false : true} >Найти выпуск</NavDropdown.Item >
+                                <NavDropdown.Item as={Link} to="/consumptionReport" onClick={handleNavClose} >Справка по расходу материалов</NavDropdown.Item>
+                            </NavDropdown>
+                            <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose} disabled={
                                 // getUserRole() === 'ADMIN' ? false : true}
                                 false}
-                                >Основные показатели</NavDropdown.Item>
+                            style={{color: "#ffd700"}}>Основные показатели</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/plan" onClick={handleNavClose}>План</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
@@ -37,18 +44,18 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/boardDefects" onClick={handleNavClose}>Брак</NavDropdown.Item>
                         </NavDropdown>
 
-                        <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER') ? false : true}>
+                        {/* <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER') ? false : true}>
                             <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose}>Добавить выпуск</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
-                                getUserRole() === 'ADMIN' ? false : true}>Найти выпуск</NavDropdown.Item > 
+                                getUserRole() === 'ADMIN' ? false : true}>Найти выпуск</NavDropdown.Item >
                             <NavDropdown.Item as={Link} to="/consumptionReport" onClick={handleNavClose}>Справка по расходу материалов</NavDropdown.Item>
-                        </NavDropdown> 
-                        <NavDropdown title="Сухие смеси" id="mix-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER') ? false : true} >
-                            <NavDropdown.Item as={Link} to="/mixReport" onClick={handleNavClose}>Отчет</NavDropdown.Item>
+                        </NavDropdown> */}
+                        <NavDropdown title="Сухие смеси" id="mix-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER_MIX') ? false : true} >
+                            <NavDropdown.Item as={Link} to="/mixReport" onClick={handleNavClose} style={{color: "#ffd700"}}>Основные показатели</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
-                            <NavDropdown.Item as={Link} to="/mixProduction" onClick={handleNavClose} disabled={getUserRole()==='VIEWER'}>Выпуск смесей</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/mixProduction" onClick={handleNavClose} disabled={getUserRole() === 'VIEWER'}>Выпуск смесей</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
-                            <NavDropdown.Item as={Link} to="/mixPlan" onClick={handleNavClose} disabled={getUserRole()==='VIEWER'}>План</NavDropdown.Item>                        </NavDropdown>
+                            <NavDropdown.Item as={Link} to="/mixPlan" onClick={handleNavClose} disabled={getUserRole() === 'VIEWER'}>План</NavDropdown.Item>                        </NavDropdown>
 
 
                         {/* <Nav.Link as={Link} to="/boardReport" disabled={false} onClick={handleNavClose}>Выпуск ГСП</Nav.Link> */}

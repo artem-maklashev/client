@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Col, Container, Row, Table } from "react-bootstrap";
 import ReportData from "../../../../model/ReportData";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import ReportModalPage from "../ReportModalPage";
@@ -11,6 +11,7 @@ import Delays from "../../../../model/delays/Delays";
 import { getUserRole } from "../../../../service/Api";
 import ApiService from "../../../../service/ApiService";
 import MaterialConsumption from "../../../../model/specification/MaterialConsumption";
+import { Button } from "primereact/button";
 
 
 interface ProductionListTableProps {
@@ -29,7 +30,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   }, [boardProductions]);
 
   const handleClick = (
-    event: React.MouseEvent<HTMLElement>,
+    // event: React.MouseEvent<HTMLElement>,
     item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
   ) => {
     console.log(typeof (item));
@@ -87,7 +88,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
 
   const handleRemoveReport = async (
-    event: React.MouseEvent<HTMLElement>,
+    // event: React.MouseEvent<HTMLElement>,
     item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
   ) => {
     try {
@@ -119,7 +120,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                 {/* <th className="text-center">Вид продукции</th> */}
                 <th className="text-center">Наименование</th>
                 <th className="text-center">Простои</th>
-                <th className="text-center p-3">Редактир.</th>
+                <th className="text-center ">Действия.</th>
               </tr>
             </thead>
 
@@ -174,24 +175,40 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                         const diffInDays = (end.getTime() - start.getTime()) / (1000 * 60);
                         return acc + diffInDays;
                       }, 0)}
-                    </td>
-                    <td style={{ width: 150 }}>
+                    </td>                   
+                    <td className="text-center">
+                      {/* Кнопка редактирования */}
                       <Button
-                        variant="secondary"
-                        onClick={(evt) => handleClick(evt, item)}
-                      >
-                        <TiEdit />
-                      </Button>
+                        icon="pi pi-pencil"
+                        className="p-button-rounded p-button-info p-button-sm"
+                        onClick={() => handleClick(item)}
+                        style={{
+                          marginRight: '8px',// Отступ между кнопкамиa
+                          width: '35px', // Ширина кнопки
+                          height: '35px', // Высота кнопки
+                          fontSize: '1.2rem', // Размер текста/иконки
+                          borderRadius: '25px'
+                        }}
+                        disabled={
+                          getUserRole() === 'ADMIN' ? false : true}
+                      />
+                      {/* Кнопка удаления */}
+                      <Button
+                        icon="pi pi-trash"
+                        className="p-button-rounded p-button-danger p-button-sm"
+                        onClick={() => handleRemoveReport(item)}
+                        style={{
+                          marginRight: '8px',// Отступ между кнопкамиa
+                          width: '35px', // Ширина кнопки
+                          height: '35px', // Высота кнопки
+                          fontSize: '1.2rem', // Размер текста/иконки
+                          borderRadius: '25px'
+                        }}
+                        disabled={
+                          getUserRole() === 'ADMIN' ? false : true}
+                      />
+                    </td>
 
-                      <Button
-                        variant="secondary"
-                        onClick={(evt) => handleRemoveReport(evt, item)}
-                        style={{ color: "red" }}
-                        disabled={getUserRole() === 'ADMIN' ? false : true}
-                      >
-                        <TiTrash />
-                      </Button>
-                    </td>
                   </tr>
                 )) :
                 <td rowSpan={4}>Нет данных</td>

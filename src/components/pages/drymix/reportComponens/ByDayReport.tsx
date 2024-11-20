@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Modal, Row } from "react-bootstrap";
 import DayRangeSelector from "../../dashBoardComponent/dateRangeSelector";
 import PlanFact from "./mixPlanFact";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
@@ -16,6 +16,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [mixProduction, setMixProduction] = useState<MixCategoryProduction[]>([]);
     const [mixPlan, setMixPlan] = useState<MixPlan[]>([]);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const handleRangeChange = (startDate: Date | null, endDate: Date | null) => {
         setStartDate(startDate);
@@ -98,6 +99,24 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
         }
     }
 
+    const handlePieClick = (name: string) => {
+        if (name.length > 0) {
+            setModalVisible(true);
+            alert(`Выбрано: ${name}`);
+        }
+    
+        return (
+            <Modal show={modalVisible} onHide={() => setModalVisible(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Детализация</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Запрошена информация по: {name}
+                </Modal.Body>
+            </Modal>
+        )
+    }
+
 
     return (
         <Container fluid className="mt-5 mb-5 bg-secondary">
@@ -119,13 +138,13 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                     </Row>
                     <Row>
                         <Col lg={4} sm={12}>
-                            <MixPieChart data={binderData()} title="Вяжущее" />
+                            <MixPieChart data={binderData()} title="Вяжущее" onClick={handlePieClick}  />
                         </Col>
                         <Col lg={4} sm={12}>
-                            <MixPieChart data={typeData()} title='Тип смеси' />
+                            <MixPieChart data={typeData()} title='Тип смеси' onClick={handlePieClick} />
                         </Col>
                         <Col lg={4} sm={12}>
-                            <MixPieChart data={tradeMarkData()} title='Торговая марка' />
+                            <MixPieChart data={tradeMarkData()} title='Торговая марка' onClick={handlePieClick} />
                         </Col>
 
                     </Row>
