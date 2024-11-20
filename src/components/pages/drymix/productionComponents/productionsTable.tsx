@@ -5,7 +5,7 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { getUserRole } from "../../../../service/Api";
 import MixProduction from "../../../../model/mix/prodution/MixProduction";
-import { on } from "events";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
 
 
 interface MixProductionsTableProps {
@@ -39,7 +39,7 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
     return (
         <Container>
             <Col className="col-12">
-            <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800 }}>
+            <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, border: 'true' }}>
                     <Column field="productionDate" header="Дата" body={(rowData) =>new Date(rowData.productionDate).toLocaleDateString('ru-RU')} />
                     <Column
                         header="Наименование смеси"

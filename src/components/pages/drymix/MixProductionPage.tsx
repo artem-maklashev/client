@@ -153,7 +153,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
         <Container className="mt-5">
             <Toast ref={toast} />
             <Row>
-                <Col className="mt-2">
+                <Col className="mt-3">
                     <MixProductionsTable productions={productions} onEdit={handleEditProduction} onDelete={handleDeleteProduction} />
                 </Col>
             </Row>

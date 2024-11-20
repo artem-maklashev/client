@@ -187,6 +187,20 @@ class MixApiService {
     }
 
   }
+
+  static async getDelaysByProduction(production: MixProduction) {
+    try {
+      const response = await api.get(
+        `${this.baseUrl}/production/getDelaysByProduction/${production.id}`
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        `Произошла ошибка при получении задержек по выпуску смеси`,
+        error
+      );
+    }
+  }
 }
 
 export default MixApiService;

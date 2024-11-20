@@ -106,21 +106,21 @@ const MainPage: React.FC<MainPageProps> = () => {
                 )}
                 <Col className="mt-3 col-lg-3 col-sm-6">
                     <Card className="text-center bg-body-primary">
+                        <Card.Header className="mb-2">
+                            <h3>Погода</h3>
+                        </Card.Header>
                         <Card.Body>
-                            <Card.Header className="mb-2">
-                                <h3>Погода</h3>
-                                <WeatherWidget />
-                            </Card.Header>
+                            <WeatherWidget />
                         </Card.Body>
                     </Card>
                 </Col>
 
                 <Col className="mt-3 col-lg-3 col-sm-12">
-                    <Card className="text-center bg-body-secondary">
+                    <Card className="text-center bg-body-secondary p-0">
+                        <Card.Header className="mb-2">
+                            <h3>Производство ГСП</h3>
+                        </Card.Header>
                         <Card.Body>
-                            <Card.Header className="mb-2">
-                                <h3>Производство ГСП</h3>
-                            </Card.Header>
                             <Card.Subtitle>План на текущий месяц</Card.Subtitle>
                             <Card.Text>
                                 <p>{plan} м²</p>
@@ -161,10 +161,10 @@ const MainPage: React.FC<MainPageProps> = () => {
                 </Col>
                 <Col className="mt-3 col-lg-3 col-sm-12">
                     <Card className="text-center bg-body-secondary">
+                        <Card.Header className="mb-2">
+                            <h3>Производство ГВ</h3>
+                        </Card.Header>
                         <Card.Body>
-                            <Card.Header className="mb-2">
-                                <h3>Производство ГВ</h3>
-                            </Card.Header>
                             <Card.Subtitle>План на текущий месяц</Card.Subtitle>
                             <Card.Text>В разработке</Card.Text>
                             <Card.Subtitle>Сегодня в производстве</Card.Subtitle>
