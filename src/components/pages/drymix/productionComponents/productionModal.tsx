@@ -17,6 +17,7 @@ import MixCategoriesTable from "./mixCategoryTable";
 import MixEditCategoryModal from "./mixEditCategoryModal";
 import { Toast } from "primereact/toast";
 import MixProduction from "../../../../model/mix/prodution/MixProduction";
+import MixDelayTable from "./mixDelayTable";
 
 dayjs.extend(utc);
 
@@ -164,6 +165,9 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
                             <Toast ref={toast} />
                             <Button variant='primary' onClick={productionsSave}>Сохранить</Button>
                         </Col>
+                    </Row>
+                    <Row className="mt-3">
+                        <MixDelayTable mixProduction={editProd}  />
                     </Row>
                 </Container>
             </Modal.Body>

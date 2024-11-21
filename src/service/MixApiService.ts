@@ -1,3 +1,4 @@
+import MixDelay from "../model/mix/delays/MixDelay";
 import MixPlan from "../model/mix/plan";
 import MixCategoryProduction from "../model/mix/prodution/MixCategoryProduction";
 import MixProduction from "../model/mix/prodution/MixProduction";
@@ -5,6 +6,7 @@ import { api } from "./Api";
 import ApiService from "./ApiService";
 
 class MixApiService {
+
   private static baseUrl = process.env.REACT_APP_API_URL + "/drymix";
 
   static async getPlan(period: Date) {
@@ -89,7 +91,7 @@ class MixApiService {
       const response = await api.get(`${this.baseUrl}/production/getProductions`, {
         params,
       });
-      return response.data;    
+      return response.data;
     } catch (error: any) {
       console.error(`Произошла ошибка при получении выпусков продукции: ${error.message}`);
       throw error;
@@ -197,6 +199,20 @@ class MixApiService {
     } catch (error: any) {
       console.error(
         `Произошла ошибка при получении задержек по выпуску смеси`,
+        error
+      );
+    }
+  }
+
+  static async deleteDelay(delay: MixDelay) {
+    try {
+      const response = await api.delete(
+        `${this.baseUrl}/production/deleteDelay/${delay.id}`
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        `Произошла ошибка при удалении задержек по выпуску смеси`,
         error
       );
     }
