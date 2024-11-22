@@ -39,7 +39,7 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
     return (
         <Container>
             <Col className="col-12">
-            <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, border: 'true' }}>
+            <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, border: 'true', fontSize: 13 }}>
                     <Column field="productionDate" header="Дата" body={(rowData) =>new Date(rowData.productionDate).toLocaleDateString('ru-RU')} />
                     <Column
                         header="Наименование смеси"
@@ -57,7 +57,13 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
                                     icon="pi pi-pencil"
                                     className="p-button-rounded p-button-info p-button-sm"
                                     onClick={() => handleEdit(rowData)}
-                                    style={{ marginRight: '8px' }} // Отступ между кнопками
+                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
+                                        width: '35px', // Ширина кнопки
+                                        height: '35px', // Высота кнопки
+                                        fontSize: '1.2rem', // Размер текста/иконки
+                                        borderRadius: '25px'  
+                                        }} 
+                                    size="small"
                                     disabled={
                                         getUserRole() === 'ADMIN' ? false : true}
                                 />
@@ -66,6 +72,13 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
                                     icon="pi pi-trash"
                                     className="p-button-rounded p-button-danger p-button-sm"
                                     onClick={() => handleDelete(rowData)}
+                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
+                                        width: '35px', // Ширина кнопки
+                                        height: '35px', // Высота кнопки
+                                        fontSize: '1.2rem', // Размер текста/иконки
+                                        borderRadius: '25px'  
+                                        }} 
+
                                     disabled={
                                         getUserRole() === 'ADMIN' ? false : true}
                                 />

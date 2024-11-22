@@ -67,10 +67,11 @@ const MixCategoriesTable: React.FC<MixCategoryTableProps> = ({
                                 <td>{entry.category.title}</td>
                                 <td>
                                     <Button
-                                        variant="secondary"
-                                        style={{ right: 0 }}
+                                        variant="success"
+                                        style={{ right: 0, borderRadius: '25px'}}
                                         onClick={() => handleEditCategory(entry)}
                                         disabled={entry.category.id === 6}
+                                    
                                     >
                                         <TiEdit />
                                     </Button>{" "}

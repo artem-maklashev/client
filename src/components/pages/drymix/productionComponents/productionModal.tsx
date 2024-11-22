@@ -65,7 +65,7 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
     }, [show]);
 
 
-    
+
 
     const changeStartDate = (newValue: Date | null) => {
         setStartDate(newValue);
@@ -112,7 +112,7 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
         if (toast.current) {
             toast.current.show({
                 severity: 'success',
-                summary: 'Success!',                
+                summary: 'Success!',
                 detail: 'Удачно сохранено',
                 life: 3000
             });
@@ -160,17 +160,19 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
                     <Row>
                         <MixCategoriesTable categories={productions} handleEditCategory={handleEditCategory} />
                     </Row>
-                    <Row className="justify-content-center">
-                        <Col className="col-2">
-                            <Toast ref={toast} />
-                            <Button variant='primary' onClick={productionsSave}>Сохранить</Button>
-                        </Col>
-                    </Row>
                     <Row className="mt-3">
-                        <MixDelayTable mixProduction={editProd}  />
+                        <MixDelayTable mixProduction={editProd} />
                     </Row>
                 </Container>
             </Modal.Body>
+            <Modal.Footer>
+                <Row className="">
+                    <Col className="col-2">
+                        <Toast ref={toast} />
+                        <Button variant='primary' onClick={productionsSave}>Сохранить</Button>
+                    </Col>
+                </Row>
+            </Modal.Footer>
             <MixEditCategoryModal show={editCategoryModal} handleSave={handleSaveCategory} category={categoryToEdit} onHide={closeCategoryModal} />
         </Modal>
     );

@@ -28,37 +28,38 @@ const DayRangeSelector: React.FC<DayRangeSelectorProps> = ({ onDatesChange }) =>
 
 
     return (
-        <Col className="col-12" >
-            <Card className='border-0'>
-                <Card.Header className='bg-primary text-white text-center py-2'>
-                    <h6 className="m-0 text-uppercase">Выберите период</h6>
-                    </Card.Header>
-                <Card.Body d-flex flex-column align-items-center>
-                    <Form className="justify-content-center">
-                        <Form.Group className="text-center">
-                            <Col >
-                                <DatePicker
-                                    locale={ru}
-                                    selected={startDate}
-                                    onChange={handleChange}
-                                    startDate={startDate}
-                                    endDate={endDate}
-                                    selectsRange
-                                    dateFormat="d.MM.yyyy"
-                                    minDate={addDays(new Date(), -60)}
-                                    maxDate={addDays(new Date(), 30)}
-                                    monthsShown={2} // Показывать три месяца одновременно
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                />
-                            </Col>
-                        </Form.Group>
-                    </Form>
+        <Col className="col-12 d-flex justify-content-center">
+    <Card className="border-0" style={{ maxWidth: '500px' }}>
+        <Card.Header className="bg-primary text-white text-center py-2">
+            <h6 className="m-0 text-uppercase">Выберите период</h6>
+        </Card.Header>
+        <Card.Body className="d-flex flex-column align-items-center">
+            <Form className="w-100">
+                <Form.Group className="text-center">
+                    <DatePicker
+                        locale={ru}
+                        selected={startDate}
+                        onChange={handleChange}
+                        startDate={startDate}
+                        endDate={endDate}
+                        selectsRange
+                        dateFormat="d.MM.yyyy"
+                        minDate={addDays(new Date(), -60)}
+                        maxDate={addDays(new Date(), 30)}
+                        monthsShown={2} // Показывать два месяца одновременно
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        className="form-control text-center"
+                        popperPlacement="bottom"
+                        
+                    />
+                </Form.Group>
+            </Form>
+        </Card.Body>
+    </Card>
+</Col>
 
-                </Card.Body>
-            </Card>
-        </Col >
     );
 };
 
