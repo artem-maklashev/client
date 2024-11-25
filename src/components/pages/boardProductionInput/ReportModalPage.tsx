@@ -114,7 +114,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     if (show) {
       initializeReportData();
     }
-  }, [show, reportData, shiftList]);
+  }, [show, reportData, shiftList, gypsumBoardList]);
 
   useEffect(() => {
     if (draftReport) {
