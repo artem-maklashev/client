@@ -100,6 +100,12 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   useEffect(() => {
     const initializeReportData = async () => {
+      //TO-DO необходимо дождаться получения массивов со списками...
+
+
+
+
+      
       if (!reportData) {
         console.log("Создание нового отчета...");
         const emptyReport = await createNewReport(shiftList[0], gypsumBoardList[0]);

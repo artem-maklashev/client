@@ -49,7 +49,7 @@ const DelayTypeSelector: FC<DelayTypeSelectorProps> = ({ type, onChange }) => {
                 itemTemplate={(option) => <span>{option.name}</span>}
                 placeholder="Выберите тип простоя"
                 valueTemplate={(option) => <span>{option ? option.name : 'Выберите тип'}</span>}
-                style={{ width: '40%' }}
+                style={{ width: '100%' }}
             />
         </div>
     );

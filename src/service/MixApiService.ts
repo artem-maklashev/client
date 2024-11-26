@@ -1,4 +1,6 @@
 import MixDelay from "../model/mix/delays/MixDelay";
+import MixProductionArea from "../model/mix/delays/MixproductionArea";
+import MixUnit from "../model/mix/delays/MixUnit";
 import MixPlan from "../model/mix/plan";
 import MixCategoryProduction from "../model/mix/prodution/MixCategoryProduction";
 import MixProduction from "../model/mix/prodution/MixProduction";
@@ -217,6 +219,33 @@ class MixApiService {
       );
     }
   }
+
+  static async getMixProductionArea(): Promise<MixProductionArea[]> {
+    try {
+      const response = await api.get(
+        `${this.baseUrl}/production/delay/getProductionAreas`
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        `Произошла ошибка при получении производственных площадок смесей`,
+        error
+      );
+    }
+    return [];
+  }
+
+  static async getUnits(id: number): Promise<MixUnit[]> {
+    try {
+        const response = await api.get(`${this.baseUrl}/production/delay/getUnits/${id}`);
+        return response.data;
+    } catch (error: any) {
+        console.error(`Произошла ошибка при получении узлов для площадки с ID ${id}`, error);
+    }
+    return [];
+}
+
+
 }
 
 export default MixApiService;

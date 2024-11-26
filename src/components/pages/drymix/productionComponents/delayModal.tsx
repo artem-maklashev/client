@@ -2,12 +2,14 @@ import React, { useMemo } from "react";
 import MixDelay from "../../../../model/mix/delays/MixDelay";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
-
 import DateTimeSelector from "./dateTimeSelection";
-import { Dropdown } from "primereact/dropdown";
 import DelayType from "../../../../model/delays/DelayType";
-import FetchDelaysData from "../../boardProductionInput/delayComponents/FetchDelaysData";
 import DelayTypeSelector from "./delayTypeSelector";
+import AreaSelector from "./productionAreaSelector";
+import MixProductionArea from "../../../../model/mix/delays/MixproductionArea";
+import { Col, Row } from "react-bootstrap";
+import UnitSelector from "./unitSelector";
+import MixUnit from "../../../../model/mix/delays/MixUnit";
 
 interface DelayModalProps {
     show: boolean;
@@ -24,13 +26,27 @@ const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) 
     const [startDate, setStartDate] = React.useState<Date | null>(delay?.delayStart || new Date());
     const [endDate, setEndDate] = React.useState<Date | null>(delay?.delayEnd || new Date());
     const [delayType, setDelayType] = React.useState<DelayType | null>(delay?.delayType || null);
+    const [productionArea, setProductionArea] = React.useState<MixProductionArea | null>(delay?.mixUnitPart.unit.productionArea || null);
+    const [unit, setUnit] = React.useState<MixUnit | null>(delay?.mixUnitPart.unit || null);
 
     React.useEffect(() => {
         setUpdatedDelay(delay);
         setStartDate(delay?.delayStart || null);
         setEndDate(delay?.delayEnd || null);
+        setDelayType(delay?.delayType || null);
+        setUnit(delay?.mixUnitPart.unit || null);
     }, [delay]);
-    
+
+    const handleColse = () => {
+        setUpdatedDelay(null);
+        setStartDate(null);
+        setEndDate(null);
+        setDelayType(null);
+        setProductionArea(null);
+        setUnit(null);
+        onHide();
+    };
+
     const saveDelay = () => {
 
         if (updatedDelay) {
@@ -69,16 +85,24 @@ const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) 
         }
     };
 
+    const handleAreaChange = (area: MixProductionArea) => {
+        setProductionArea(area);
+    };
+
+    const handleUnitChange = (unit: MixUnit) => {
+        setUnit(unit);
+    };
+
     const footerContent = (
         <div>
-            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus />
+            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus size="small" />
         </div>
     );
 
     return (
         <Dialog
             visible={show}
-            onHide={onHide}
+            onHide={handleColse}
             header="Данные о простое"
             footer={footerContent}
             style={{ width: '650px', borderRadius: '8px' }} // округлённые края и заданы размеры
@@ -90,8 +114,20 @@ const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) 
                 <DateTimeSelector date={endDate} label={"Окончание простоя:"} onChange={handleEndDateChange} />
             </div>
 
-            {/* {/* Выпадающий список типа простоя*/}
-            <DelayTypeSelector type={delayType} onChange={handleDelayTypeChange} />
+            <Row>
+                {/* {/* Выпадающий список типа простоя*/}
+                <Col>
+                    <DelayTypeSelector type={delayType} onChange={handleDelayTypeChange} />
+                </Col>
+                <Col>
+                    <AreaSelector area={productionArea} onChange={handleAreaChange} />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <UnitSelector mixUnit={unit} area={productionArea} onChange={handleUnitChange} />
+                </Col>
+            </Row>
         </Dialog>
     );
 };
