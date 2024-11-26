@@ -10,6 +10,8 @@ import MixProductionArea from "../../../../model/mix/delays/MixproductionArea";
 import { Col, Row } from "react-bootstrap";
 import UnitSelector from "./unitSelector";
 import MixUnit from "../../../../model/mix/delays/MixUnit";
+import UnitPartSelector from "./unitPartSelector";
+import MixUnitPart from "../../../../model/mix/delays/MixUnitPart";
 
 interface DelayModalProps {
     show: boolean;
@@ -28,6 +30,7 @@ const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) 
     const [delayType, setDelayType] = React.useState<DelayType | null>(delay?.delayType || null);
     const [productionArea, setProductionArea] = React.useState<MixProductionArea | null>(delay?.mixUnitPart.unit.productionArea || null);
     const [unit, setUnit] = React.useState<MixUnit | null>(delay?.mixUnitPart.unit || null);
+    const [unitPart, setUnitPart] = React.useState<MixUnitPart | null>(delay?.mixUnitPart || null);
 
     React.useEffect(() => {
         setUpdatedDelay(delay);
@@ -35,6 +38,7 @@ const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) 
         setEndDate(delay?.delayEnd || null);
         setDelayType(delay?.delayType || null);
         setUnit(delay?.mixUnitPart.unit || null);
+        setUnitPart(delay?.mixUnitPart || null);
     }, [delay]);
 
     const handleColse = () => {
@@ -93,9 +97,17 @@ const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) 
         setUnit(unit);
     };
 
+    const handleUnitPartChange = (unitPart: MixUnitPart) => {
+        setUnitPart(unitPart);
+    };
+
     const footerContent = (
         <div>
-            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus size="small" />
+            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus size="small"
+                disabled={
+                    startDate === null ||
+                    endDate === null ||
+                    unitPart === null} />
         </div>
     );
 
@@ -126,6 +138,9 @@ const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) 
             <Row>
                 <Col>
                     <UnitSelector mixUnit={unit} area={productionArea} onChange={handleUnitChange} />
+                </Col>
+                <Col>
+                    <UnitPartSelector mixUnit={unit} mixUnitPart={unitPart} onChange={handleUnitPartChange} delayType={delayType} />
                 </Col>
             </Row>
         </Dialog>

@@ -1,6 +1,7 @@
 import MixDelay from "../model/mix/delays/MixDelay";
 import MixProductionArea from "../model/mix/delays/MixproductionArea";
 import MixUnit from "../model/mix/delays/MixUnit";
+import MixUnitPart from "../model/mix/delays/MixUnitPart";
 import MixPlan from "../model/mix/plan";
 import MixCategoryProduction from "../model/mix/prodution/MixCategoryProduction";
 import MixProduction from "../model/mix/prodution/MixProduction";
@@ -244,6 +245,20 @@ class MixApiService {
     }
     return [];
 }
+
+static async getUnitParts(mixUnitId: number, delayTypeId: number): Promise<MixUnitPart[]> {
+  try {
+      const response = await api.get(`${this.baseUrl}/production/delay/getUnitParts/${mixUnitId}/${delayTypeId}`);
+      return response.data;
+  } catch (error: any) {
+      console.error(
+          `Произошла ошибка при получении частей узла для MixUnit с ID ${mixUnitId} и DelayType с ID ${delayTypeId}`,
+          error
+      );
+      return [];
+  }
+}
+
 
 
 }
