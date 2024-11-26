@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import MixDelay from "../../../../model/mix/delays/MixDelay";
+import React, { FC, useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import DateTimeSelector from "./dateTimeSelection";
@@ -12,135 +11,107 @@ import UnitSelector from "./unitSelector";
 import MixUnit from "../../../../model/mix/delays/MixUnit";
 import UnitPartSelector from "./unitPartSelector";
 import MixUnitPart from "../../../../model/mix/delays/MixUnitPart";
+import MixDelay from "../../../../model/mix/delays/MixDelay";
 
 interface DelayModalProps {
     show: boolean;
     delay: MixDelay | null;
-    // shift: Shift | null;
-    // product: DryMix | null;
     onHide: () => void;
     onSave: (updatedDelay: MixDelay) => void;
 }
 
-const DelayModal: React.FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
+const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [delayType, setDelayType] = useState<DelayType | null>(null);
+    const [productionArea, setProductionArea] = useState<MixProductionArea | null>(null);
+    const [unit, setUnit] = useState<MixUnit | null>(null);
+    const [unitPart, setUnitPart] = useState<MixUnitPart | null>(null);
 
-    const [updatedDelay, setUpdatedDelay] = React.useState<MixDelay | null>(delay);
-    const [startDate, setStartDate] = React.useState<Date | null>(delay?.delayStart || new Date());
-    const [endDate, setEndDate] = React.useState<Date | null>(delay?.delayEnd || new Date());
-    const [delayType, setDelayType] = React.useState<DelayType | null>(delay?.delayType || null);
-    const [productionArea, setProductionArea] = React.useState<MixProductionArea | null>(delay?.mixUnitPart.unit.productionArea || null);
-    const [unit, setUnit] = React.useState<MixUnit | null>(delay?.mixUnitPart.unit || null);
-    const [unitPart, setUnitPart] = React.useState<MixUnitPart | null>(delay?.mixUnitPart || null);
-
-    React.useEffect(() => {
-        setUpdatedDelay(delay);
-        setStartDate(delay?.delayStart || null);
-        setEndDate(delay?.delayEnd || null);
-        setDelayType(delay?.delayType || null);
-        setUnit(delay?.mixUnitPart.unit || null);
-        setUnitPart(delay?.mixUnitPart || null);
+    // Инициализация состояния из `delay`
+    useEffect(() => {
+        if (delay) {
+            setStartDate(delay.delayStart || null);
+            setEndDate(delay.delayEnd || null);
+            setDelayType(delay.delayType || null);
+            setProductionArea(delay.mixUnitPart.unit.productionArea || null);
+            setUnit(delay.mixUnitPart.unit || null);
+            setUnitPart(delay.mixUnitPart || null);
+        } else {
+            clearState();
+        }
     }, [delay]);
 
-    const handleColse = () => {
-        setUpdatedDelay(null);
+    // Очистка состояния
+    const clearState = () => {
         setStartDate(null);
         setEndDate(null);
         setDelayType(null);
         setProductionArea(null);
         setUnit(null);
+        setUnitPart(null);
+    };
+
+    // Закрытие модального окна
+    const handleClose = () => {
+        clearState();
         onHide();
     };
 
+    // Сохранение данных
     const saveDelay = () => {
-
-        if (updatedDelay) {
+        if (startDate && endDate && delayType && unitPart) {
+            const updatedDelay: MixDelay = {
+                ...delay!,
+                delayStart: startDate,
+                delayEnd: endDate,
+                delayType,
+                mixUnitPart: unitPart,
+            };
             onSave(updatedDelay);
-        }
-        onHide();
-    };
-
-    const handleEndDateChange = (date: Date) => {
-        setEndDate(date);
-        if (updatedDelay) {
-            setUpdatedDelay({
-                ...updatedDelay,
-                delayEnd: date,
-            });
+            onHide();
         }
     };
 
-    const handleStartDateChange = (date: Date) => {
-        setStartDate(date);
-        if (updatedDelay) {
-            setUpdatedDelay({
-                ...updatedDelay,
-                delayStart: date,
-            });
-        }
-    };
-
-    const handleDelayTypeChange = (type: DelayType) => {
-        setDelayType(type);
-        if (updatedDelay) {
-            setUpdatedDelay({
-                ...updatedDelay,
-                delayType: type,
-            });
-        }
-    };
-
-    const handleAreaChange = (area: MixProductionArea) => {
-        setProductionArea(area);
-    };
-
-    const handleUnitChange = (unit: MixUnit) => {
-        setUnit(unit);
-    };
-
-    const handleUnitPartChange = (unitPart: MixUnitPart) => {
-        setUnitPart(unitPart);
-    };
+    // Проверка для отключения кнопки
+    const isSaveDisabled = !startDate || !endDate || !unitPart || !delayType;
 
     const footerContent = (
         <div>
-            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus size="small"
-                disabled={
-                    startDate === null ||
-                    endDate === null ||
-                    unitPart === null} />
+            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus size="small" disabled={isSaveDisabled} />
         </div>
     );
 
     return (
         <Dialog
             visible={show}
-            onHide={handleColse}
+            onHide={handleClose}
             header="Данные о простое"
             footer={footerContent}
-            style={{ width: '650px', borderRadius: '8px' }} // округлённые края и заданы размеры
-            className="p-fluid" // для растягивания компонентов на 100% внутри контейнера
+            style={{ width: "650px", borderRadius: "8px" }}
+            className="p-fluid"
         >
-            {/* Выбор даты с календарем */}
-            <div style={{ display: 'flex', gap: '1rem' }}>
-                <DateTimeSelector date={startDate} label={"Начало простоя:"} onChange={handleStartDateChange} />
-                <DateTimeSelector date={endDate} label={"Окончание простоя:"} onChange={handleEndDateChange} />
+            {/* Выбор даты */}
+            <div style={{ display: "flex", gap: "1rem" }}>
+                <DateTimeSelector date={startDate} label="Начало простоя:" onChange={setStartDate} />
+                <DateTimeSelector date={endDate} label="Окончание простоя:" onChange={setEndDate} />
             </div>
 
+            {/* Выбор дополнительных данных */}
             <Row>
-                {/* {/* Выпадающий список типа простоя*/}
                 <Col>
-                    <DelayTypeSelector type={delayType} onChange={handleDelayTypeChange} />
+                    <DelayTypeSelector type={delayType} onChange={setDelayType} />
                 </Col>
                 <Col>
-                    <AreaSelector area={productionArea} onChange={handleAreaChange} />
+                    <AreaSelector area={productionArea} onChange={setProductionArea} />
                 </Col>
             </Row>
             <Row>
                 <Col>
-                    <UnitSelector mixUnit={unit} area={productionArea} onChange={handleUnitChange} />
+                    <UnitSelector mixUnit={unit} area={productionArea} onChange={setUnit} />
                 </Col>
                 <Col>
-                    <UnitPartSelector mixUnit={unit} mixUnitPart={unitPart} onChange={handleUnitPartChange} delayType={delayType} />
+                    <UnitPartSelector mixUnit={unit} mixUnitPart={unitPart} onChange={setUnitPart} delayType={delayType} />
                 </Col>
             </Row>
         </Dialog>
