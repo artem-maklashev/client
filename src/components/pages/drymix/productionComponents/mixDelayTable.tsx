@@ -45,6 +45,10 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction }) => {
         console.log(delay);
     }
 
+    const handleSaveDelay = (delay: MixDelay) => {
+        
+    }
+
 
     return (
         <Container>
@@ -121,9 +125,7 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction }) => {
                     setDelayType(null);
                 }
                 }
-                onSave={function (updatedDelay: MixDelay): void {
-                    throw new Error("Function not implemented.");
-                }} />
+                onSave={handleSaveDelay} />
         </Container>
     );
 
