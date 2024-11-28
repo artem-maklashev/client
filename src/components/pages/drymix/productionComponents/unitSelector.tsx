@@ -3,10 +3,12 @@ import { Dropdown } from "primereact/dropdown";
 import MixApiService from "../../../../service/MixApiService";
 import MixUnit from "../../../../model/mix/delays/MixUnit";
 import MixProductionArea from "../../../../model/mix/delays/MixproductionArea";
+import DelayType from "../../../../model/delays/DelayType";
 
 interface UnitSelectorProps {
     mixUnit: MixUnit | null;
     area: MixProductionArea | null;
+    
     onChange: (type: MixUnit) => void;
 }
 
@@ -24,7 +26,7 @@ const UnitSelector: FC<UnitSelectorProps> = ({ mixUnit, onChange, area }) => {
         const fetchData = async () => {
             if (area) {
                 try {
-                    const result = await MixApiService.getUnits(area.id); 
+                    const result = await MixApiService.getUnits(area.id);
                     setUnitOptions(result || []);
                 } catch (error) {
                     console.error("Ошибка загрузки узлов:", error);

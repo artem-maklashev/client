@@ -18,6 +18,7 @@ import MixEditCategoryModal from "./mixEditCategoryModal";
 import { Toast } from "primereact/toast";
 import MixProduction from "../../../../model/mix/prodution/MixProduction";
 import MixDelayTable from "./mixDelayTable";
+import MixDelay from "../../../../model/mix/delays/MixDelay";
 
 dayjs.extend(utc);
 
@@ -29,6 +30,7 @@ interface ProductionModalProps {
     handleSave: (args: {
         productions: MixCategoryProduction[];
         newProduction: MixProduction;
+        delays: MixDelay[];
     }) => void;
 }
 
@@ -42,6 +44,7 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
     const [shift, setShift] = useState<Shift | null>(null);
     const [editCategoryModal, setEditCategoryModal] = useState<boolean>(false);
     const [categoryToEdit, setCategoryToEdit] = useState<MixCategoryProduction | null>(null);
+    const [delays, setDelays] = useState<MixDelay[]>([]);
 
     const toast = useRef<Toast>(null);
 
@@ -121,18 +124,22 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
 
     const productionsSave = () => {
         if (shift && mix && startDate && endDate) {
-            const id = editProd?.id || -1;
+            const id = prod?.id || -1;
             const newProduction = new MixProduction(id, startDate, endDate, startDate, shift, mix);
             productions.forEach(p => {
                 p.production = newProduction;
             });
-            handleSave({ newProduction, productions });
+            handleSave({ newProduction, productions, delays });
             showSuccess();
             handleClose();
         } else {
             console.log('Не заполнены все поля', shift, mix, startDate, endDate);
             showError();
         }
+    }
+
+    const handleProductionDelays = (delays: MixDelay[]) => {
+        setDelays(delays);
     }
 
     return (
@@ -161,7 +168,7 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
                         <MixCategoriesTable categories={productions} handleEditCategory={handleEditCategory} />
                     </Row>
                     <Row className="mt-3">
-                        <MixDelayTable mixProduction={editProd} />
+                        <MixDelayTable mixProduction={prod} productionDelays={handleProductionDelays}/>
                     </Row>
                 </Container>
             </Modal.Body>

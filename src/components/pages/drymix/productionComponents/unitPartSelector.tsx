@@ -61,7 +61,7 @@ const UnitPartSelector: FC<UnitPartSelectorProps> = ({ mixUnit, onChange, mixUni
                 placeholder="Выберите узел"
                 valueTemplate={(option) => <span>{option ? option.name : 'Выберите узел'}</span>}
                 style={{ width: '100%' }}
-                disabled={delayType === null && mixUnit === null}
+                disabled={delayType === null || mixUnit === null}
             />
         </div>
     );

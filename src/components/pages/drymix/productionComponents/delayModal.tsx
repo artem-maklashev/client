@@ -63,12 +63,14 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
         if (startDate && endDate && delayType && unitPart) {
             const updatedDelay: MixDelay = {
                 ...delay!,
+                id: delay?.id || 0,
                 delayStart: startDate,
                 delayEnd: endDate,
                 delayType,
                 mixUnitPart: unitPart,
             };
             onSave(updatedDelay);
+            clearState();
             onHide();
         }
     };
@@ -108,7 +110,7 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
             </Row>
             <Row>
                 <Col>
-                    <UnitSelector mixUnit={unit} area={productionArea} onChange={setUnit} />
+                    <UnitSelector mixUnit={unit} area={productionArea}  onChange={setUnit} />
                 </Col>
                 <Col>
                     <UnitPartSelector mixUnit={unit} mixUnitPart={unitPart} onChange={setUnitPart} delayType={delayType} />

@@ -238,26 +238,42 @@ class MixApiService {
 
   static async getUnits(id: number): Promise<MixUnit[]> {
     try {
-        const response = await api.get(`${this.baseUrl}/production/delay/getUnits/${id}`);
-        return response.data;
+      const response = await api.get(`${this.baseUrl}/production/delay/getUnits/${id}`);
+      return response.data;
     } catch (error: any) {
-        console.error(`Произошла ошибка при получении узлов для площадки с ID ${id}`, error);
+      console.error(`Произошла ошибка при получении узлов для площадки с ID ${id}`, error);
     }
     return [];
-}
+  }
 
-static async getUnitParts(mixUnitId: number, delayTypeId: number): Promise<MixUnitPart[]> {
-  try {
+  static async getUnitParts(mixUnitId: number, delayTypeId: number): Promise<MixUnitPart[]> {
+    try {
       const response = await api.get(`${this.baseUrl}/production/delay/getUnitParts/${mixUnitId}/${delayTypeId}`);
       return response.data;
-  } catch (error: any) {
+    } catch (error: any) {
       console.error(
-          `Произошла ошибка при получении частей узла для MixUnit с ID ${mixUnitId} и DelayType с ID ${delayTypeId}`,
-          error
+        `Произошла ошибка при получении частей узла для MixUnit с ID ${mixUnitId} и DelayType с ID ${delayTypeId}`,
+        error
       );
       return [];
+    }
   }
-}
+
+  static async saveMixDelays(delays: MixDelay[]) {
+    try {
+      const response = await api.put(
+        `${this.baseUrl}/production/delay/saveDelays`,
+        delays
+      );
+      alert('Реализовать в baclend');
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        `Произошла ошибка при сохранении задержек по выпуску смеси`,
+        error
+      );
+    }
+  }
 
 
 

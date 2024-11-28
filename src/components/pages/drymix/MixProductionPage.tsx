@@ -85,7 +85,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
 
     useEffect(() => {
         setProductions(getProductions(categoryProductions));
-    }, [categoryProductions])
+    }, [categoryProductions, delays]);
 
     const handleAdd = () => {
         setEditprod(null);
@@ -103,7 +103,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
         setShowModal(true);
     }
 
-    const saveProductions = async (prod: MixProduction, prods: MixCategoryProduction[]) => {
+    const saveProductions = async (prod: MixProduction, prods: MixCategoryProduction[], delays: MixDelay[]) => {
         try {
             const savedProduction: MixProduction = await MixApiService.saveMixProduction(prod);
             if (savedProduction.id > 0) {
@@ -111,6 +111,19 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                     prod.production = savedProduction;
                     return prod;
                 });
+
+                if (delays.length > 0) {
+                    const delaysToSave: MixDelay[] = delays.map(delay => {
+                        delay.mixProduction = savedProduction;
+                        return delay;
+                    });
+                    try {
+                        const updatedDelays: MixDelay[] = await MixApiService.saveMixDelays(delaysToSave);
+                        setDelays(updatedDelays);
+                    } catch (error) {
+                        console.error("Error saving delays:", error);
+                    }
+                }
                 try {
                     const savedProductions: MixCategoryProduction[] = await MixApiService.saveMixProductions(productionsToSave);
                     setCategoryProductions(prevCategoryProductions => {
@@ -133,6 +146,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
             showError();
         }
         setEditprod(null);
+
     }
 
     const handleDeleteProduction = async (production: MixProduction) => {
@@ -170,7 +184,12 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                     />
                 </Col>
             </Row>
-            <ProductionModal show={showModal} handleClose={handleCloseModal} editProduction={editCategories} handleSave={({ newProduction, productions }) => saveProductions(newProduction, productions)} editProd={editprod} />
+            <ProductionModal
+                show={showModal}
+                handleClose={handleCloseModal}
+                editProduction={editCategories}
+                handleSave={({ newProduction, productions, delays }) => saveProductions(newProduction, productions, delays)}
+                editProd={editprod} />
         </Container>
     );
 };
