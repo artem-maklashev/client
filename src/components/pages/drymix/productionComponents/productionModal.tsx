@@ -138,8 +138,8 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
         }
     }
 
-    const handleProductionDelays = (delays: MixDelay[]) => {
-        setDelays(delays);
+    const handleProductionDelays = (del: MixDelay[]) => {
+        setDelays(del);
     }
 
     return (

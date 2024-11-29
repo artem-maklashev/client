@@ -32,15 +32,23 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
         fetchDelays();
     }, [mixProduction]);
 
-    const handleDelete = async (delay: MixDelay) => {
-        let result = [];
-        if (mixProduction) {
-            result = await MixApiService.deleteDelay(delay);
-        } else {
-            result = delays.filter(d => d.id !== delay.id);
+    React.useEffect(() => {
+        if (delays) {
+            console.log("Обновлен список простоев:", delays);
+            productionDelays(delays);
         }
-        setDelays(result);
-    }
+    }, [delays, productionDelays]);
+    
+
+    const handleDelete = (delay: MixDelay) => {
+        setDelays((prevDelays) => {
+            const updatedDelays = prevDelays.filter((d) => d.id !== delay.id);
+            console.log("После удаления:", updatedDelays); // Отладка
+            return updatedDelays;
+        });
+    };
+    
+    
 
     const handleEdit = (delay: MixDelay) => {
         console.log(delay);
@@ -58,7 +66,7 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
 
     const handleSaveDelay = (delay: MixDelay) => {
         setShowModal(false);
-
+        console.log("Новый простой:", delay);
         // Если `delay.id` отсутствует, назначаем новый уникальный ID
         if (!delay.id) {
             delay.id = setId();
@@ -71,7 +79,6 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
 
         // Очищаем текущую задержку
         setDelay(null);
-        productionDelays(delays)
     };
 
     const timeOptions: Intl.DateTimeFormatOptions = {

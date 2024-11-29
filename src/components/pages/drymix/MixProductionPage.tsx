@@ -104,6 +104,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
     }
 
     const saveProductions = async (prod: MixProduction, prods: MixCategoryProduction[], delays: MixDelay[]) => {
+        console.log("Простои для сохранения:\n",delays);
         try {
             const savedProduction: MixProduction = await MixApiService.saveMixProduction(prod);
             if (savedProduction.id > 0) {
@@ -111,19 +112,19 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                     prod.production = savedProduction;
                     return prod;
                 });
-
-                if (delays.length > 0) {
-                    const delaysToSave: MixDelay[] = delays.map(delay => {
-                        delay.mixProduction = savedProduction;
-                        return delay;
-                    });
+                const delaysToSave = delays.map((delay) => ({
+                    ...delay,
+                    mixProduction: savedProduction,
+                }));
+                
                     try {
-                        const updatedDelays: MixDelay[] = await MixApiService.saveMixDelays(delaysToSave);
+                        const updatedDelays: MixDelay[] = await MixApiService.saveMixDelays(delaysToSave, savedProduction.id);
                         setDelays(updatedDelays);
+                        showSuccessSave();
                     } catch (error) {
                         console.error("Error saving delays:", error);
                     }
-                }
+                
                 try {
                     const savedProductions: MixCategoryProduction[] = await MixApiService.saveMixProductions(productionsToSave);
                     setCategoryProductions(prevCategoryProductions => {
@@ -135,7 +136,6 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                         );
                         return [...updatedProductions, ...newProductions];
                     });
-                    showSuccessSave();
                 } catch (error) {
                     console.error("Error saving productions:", error);
                 }

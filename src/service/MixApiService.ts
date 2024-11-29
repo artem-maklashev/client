@@ -196,7 +196,7 @@ class MixApiService {
   static async getDelaysByProduction(production: MixProduction) {
     try {
       const response = await api.get(
-        `${this.baseUrl}/production/getDelaysByProduction/${production.id}`
+        `${this.baseUrl}/production/delay/getDelaysByProduction/${production.id}`
       );
       return response.data;
     } catch (error: any) {
@@ -210,7 +210,7 @@ class MixApiService {
   static async deleteDelay(delay: MixDelay) {
     try {
       const response = await api.delete(
-        `${this.baseUrl}/production/deleteDelay/${delay.id}`
+        `${this.baseUrl}/production/delay/deleteDelay/${delay.id}`
       );
       return response.data;
     } catch (error: any) {
@@ -259,21 +259,24 @@ class MixApiService {
     }
   }
 
-  static async saveMixDelays(delays: MixDelay[]) {
+  static async saveMixDelays(delays: MixDelay[], productionId: number) {
     try {
-      const response = await api.put(
-        `${this.baseUrl}/production/delay/saveDelays`,
-        delays
-      );
-      alert('Реализовать в baclend');
-      return response.data;
+        const response = await api.put(
+            `${this.baseUrl}/production/delay/saveDelays`,
+            {
+                delays,      // Массив задержек
+                productionId // Идентификатор производства
+            }
+        );        
+        return response.data;
     } catch (error: any) {
-      console.error(
-        `Произошла ошибка при сохранении задержек по выпуску смеси`,
-        error
-      );
+        console.error(
+            `Произошла ошибка при сохранении задержек по выпуску смеси`,
+            error
+        );
     }
-  }
+}
+
 
 
 
