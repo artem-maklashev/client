@@ -15,6 +15,7 @@ interface MixPlanTableProps {
 const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete }) => {
 
     const [tableData, setTableData] = useState<MixPlan[]>([]);
+    const adminRoles = ['ADMIN', 'ADMIN_MIX'];
 
     useEffect(() => {
         setTableData(planData);
@@ -33,7 +34,9 @@ const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete
     return (
         <Container fluid className="mb-2">
             <Col className="col-12">
-                <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 950, fontSize: 13 }}>
+            <div className="card"> {/* Added card container */}
+
+                <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: '100%', fontSize: 14 }} className="p-datatable-sm"> 
                     <Column field="planDate" header="Дата" key="planDate" />
                     <Column
                         header="Наименование смеси"
@@ -48,7 +51,7 @@ const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete
                         header="Действия"
                         key="actions"
                         body={(rowData) => (
-                            <div>
+                            <div className="d-flex justify-content-start">
                                 <Button
                                     icon="pi pi-pencil"
                                     className="p-button-rounded p-button-info p-button-sm"
@@ -59,7 +62,7 @@ const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete
                                         fontSize: '1.2rem', // Размер текста/иконки
                                         borderRadius: '25px'  
                                         }} 
-                                    disabled={getUserRole() !== "ADMIN"}
+                                    disabled={!adminRoles.includes(getUserRole())}
                                 />
                                 <Button
                                     icon="pi pi-trash"
@@ -71,12 +74,13 @@ const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete
                                         fontSize: '1.2rem', // Размер текста/иконки
                                         borderRadius: '25px'  
                                         }} 
-                                    disabled={getUserRole() !== "ADMIN"}
+                                    disabled={!adminRoles.includes(getUserRole())}
                                 />
                             </div>
                         )}
                     />
                 </DataTable>
+                </div>
             </Col>
         </Container>
     );

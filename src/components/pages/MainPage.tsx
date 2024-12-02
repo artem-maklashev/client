@@ -193,7 +193,8 @@ const MainPage: React.FC<MainPageProps> = () => {
                     </Card>
                 </Col>
             </Row>
-            <Row className="justify-content-center mt-3">
+            {/* Пример добавления видео */}
+            {/* <Row className="justify-content-center mt-3">
                 <Col className="col-6">
                     <iframe
                         title="Баста"
@@ -203,7 +204,7 @@ const MainPage: React.FC<MainPageProps> = () => {
                         allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
                     ></iframe>
                 </Col>
-            </Row>
+            </Row> */}
         </Container>
     );
 };

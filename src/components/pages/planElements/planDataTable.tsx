@@ -79,11 +79,13 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList }) => {
     const groupedPlans = groupByGypsumBoard(planList);
     const columnTotals = calculateColumnTotals(groupedPlans, headers);
     return (
-        <Container className="mb-3 mt-3">
-            <DataTable value={groupedPlans} scrollable scrollHeight="600px" showGridlines stripedRows tableStyle={{fontSize: 13}}>
+        <div className="card mt-2">
+            <DataTable value={groupedPlans} scrollable scrollHeight="600px" showGridlines stripedRows tableStyle={{fontSize: 14}}
+            className="p-datatable-sm" // Added PrimeReact style class for smaller table
+            dataKey="gupsumboard.id" >
                 {/* Колонка с информацией о гипсокартоне */}
                 <Column
-                    header="Gypsum Board"
+                    header="Гипсокартон"
                     body={(rowData) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
                     ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
                     style={{ minWidth: '330px' }} frozen className="font-bold"
@@ -104,10 +106,11 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList }) => {
                     header="Итого"
                     body={(rowData) => calculateRowTotal(rowData.values)} // Выводим сумму по строке
                     footer={Object.values(columnTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
-                    className="font-bold"                    
+                    className="font-bold"
+                                        
                 />
             </DataTable>            
-        </Container>
+        </div>
     );
 };
 

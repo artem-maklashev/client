@@ -31,7 +31,8 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
     return (
         <Container fluid className="mb-2 ">
             <Col className="col-12">
-                <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, fontSize: 13 }}>
+            <div className="card">
+                <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{ width: '100%', fontSize: 14 }} className="p-datatable-sm">
                     <Column field="planDate" header="Дата" />
                     <Column
                         header="Гипсокартон"
@@ -44,7 +45,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                     <Column
                         header="Действия"
                         body={(rowData) => (
-                            <div>
+                            <div className="d-flex justify-content-start">
                                 {/* Кнопка редактирования */}
                                 <Button
                                     icon="pi pi-pencil"
@@ -77,6 +78,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                         )}
                     />
                 </DataTable>
+                </div>
             </Col>
         </Container>
     );

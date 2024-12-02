@@ -170,7 +170,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                 <h6 className="m-0 text-uppercase">План-факт производства</h6></Card.Header>
             <Card.Body style={{ overflowX: 'auto' }}>
                 <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
-                    <ResponsiveContainer>
+                    <ResponsiveContainer style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '8px' }}>
                         <LineChart
                             title="План-факт производства"
                             width={500}
@@ -183,6 +183,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                                 bottom: 5,
                             }}
                             onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
+                            
 
                         >
                             <CartesianGrid strokeDasharray="3 3" />

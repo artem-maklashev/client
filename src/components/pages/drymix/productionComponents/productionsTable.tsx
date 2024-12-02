@@ -14,10 +14,10 @@ interface MixProductionsTableProps {
     onDelete: (rowData: MixProduction) => void;
 }
 
-export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ productions, onEdit }) => {
+export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ productions, onEdit, onDelete }) => {
 
     const [tableData, setTableData] = React.useState<MixProduction[]>([]);
-    
+
 
     const handleEdit = (rowData: MixProduction) => {
         console.log("Edit: ", rowData);
@@ -27,6 +27,7 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
 
     const handleDelete = (rowData: MixProduction) => {
         console.log("Delete: ", rowData);
+        onDelete(rowData);
     };
 
 
@@ -39,53 +40,57 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
     return (
         <Container>
             <Col className="col-12">
-            <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, border: 'true', fontSize: 13 }}>
-                    <Column field="productionDate" header="Дата" body={(rowData) =>new Date(rowData.productionDate).toLocaleDateString('ru-RU')} />
-                    <Column
-                        header="Наименование смеси"
-                        body={(rowData: MixProduction) => `${rowData.mix.tradeMark.name} ${rowData.mix.dryMixType.name} ${rowData.mix.binder.name} ${rowData.mix.name}`}
-                    />
-                    <Column field="shift.name" header="Смена" />
+                <div className="card">
+                    <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, border: 'true', fontSize: 13 }}>
+                        <Column field="productionDate" header="Дата" body={(rowData) => new Date(rowData.productionDate).toLocaleDateString('ru-RU')} />
+                        <Column
+                            header="Наименование смеси"
+                            body={(rowData: MixProduction) => `${rowData.mix.tradeMark.name} ${rowData.mix.dryMixType.name} ${rowData.mix.binder.name} ${rowData.mix.name}`}
+                        />
+                        <Column field="shift.name" header="Смена" />
 
-                    {/* Колонка с кнопками для редактирования и удаления */}
-                    <Column
-                        header="Действия"
-                        body={(rowData) => (
-                            <div>
-                                {/* Кнопка редактирования */}
-                                <Button
-                                    icon="pi pi-pencil"
-                                    className="p-button-rounded p-button-info p-button-sm"
-                                    onClick={() => handleEdit(rowData)}
-                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
-                                        width: '35px', // Ширина кнопки
-                                        height: '35px', // Высота кнопки
-                                        fontSize: '1.2rem', // Размер текста/иконки
-                                        borderRadius: '25px'  
-                                        }} 
-                                    size="small"
-                                    disabled={
-                                        getUserRole() === 'ADMIN' ? false : true}
-                                />
-                                {/* Кнопка удаления */}
-                                <Button
-                                    icon="pi pi-trash"
-                                    className="p-button-rounded p-button-danger p-button-sm"
-                                    onClick={() => handleDelete(rowData)}
-                                    style={{ marginRight: '8px',// Отступ между кнопкамиa
-                                        width: '35px', // Ширина кнопки
-                                        height: '35px', // Высота кнопки
-                                        fontSize: '1.2rem', // Размер текста/иконки
-                                        borderRadius: '25px'  
-                                        }} 
+                        {/* Колонка с кнопками для редактирования и удаления */}
+                        <Column
+                            header="Действия"
+                            body={(rowData) => (
+                                <div className="d-flex justify-content-start">
+                                    {/* Кнопка редактирования */}
+                                    <Button
+                                        icon="pi pi-pencil"
+                                        className="p-button-rounded p-button-info p-button-sm"
+                                        onClick={() => handleEdit(rowData)}
+                                        style={{
+                                            marginRight: '8px',// Отступ между кнопкамиa
+                                            width: '35px', // Ширина кнопки
+                                            height: '35px', // Высота кнопки
+                                            fontSize: '1.2rem', // Размер текста/иконки
+                                            borderRadius: '25px'
+                                        }}
+                                        size="small"
+                                        disabled={
+                                            getUserRole() === 'ADMIN' ? false : true}
+                                    />
+                                    {/* Кнопка удаления */}
+                                    <Button
+                                        icon="pi pi-trash"
+                                        className="p-button-rounded p-button-danger p-button-sm"
+                                        onClick={() => handleDelete(rowData)}
+                                        style={{
+                                            marginRight: '8px',// Отступ между кнопкамиa
+                                            width: '35px', // Ширина кнопки
+                                            height: '35px', // Высота кнопки
+                                            fontSize: '1.2rem', // Размер текста/иконки
+                                            borderRadius: '25px'
+                                        }}
 
-                                    disabled={
-                                        getUserRole() === 'ADMIN' ? false : true}
-                                />
-                            </div>
-                        )}
-                    />
-                </DataTable>
+                                        disabled={
+                                            getUserRole() === 'ADMIN' ? false : true}
+                                    />
+                                </div>
+                            )}
+                        />
+                    </DataTable>
+                </div>
             </Col>
         </Container>
 

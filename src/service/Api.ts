@@ -36,9 +36,9 @@ interface MyJwtPayload {
     exp: number;
 }
 
-export const getUserRole = (): string | null => {
+export const getUserRole = (): string  => {
     const token = localStorage.getItem('authToken');
-    if (!token) return null;
+    if (!token) return '';
 
     try {
         // Используйте интерфейс для типизации декодированного токена
@@ -46,7 +46,7 @@ export const getUserRole = (): string | null => {
         return decodedToken.roles; // Предполагая, что роль пользователя находится в свойстве roles
     } catch (error) {
         console.error('Failed to decode token:', error);
-        return null;
+        return '';
     }
 
 };

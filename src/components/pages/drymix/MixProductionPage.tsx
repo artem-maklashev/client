@@ -172,7 +172,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                 </Col>
             </Row>
             <Row className="d-flex">
-                <Col className="justify-content-center d-flex">
+                <Col className="justify-content-center d-flex my-2">
                     <Button
                         icon="pi pi-plus"
                         // className="p-button-rounded p-button-secondary p-button-sm"

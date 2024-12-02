@@ -70,6 +70,7 @@ const MixPlanModal: React.FC<MixPlanModalProps> = ({ plan, month, show, onClose,
             const newPlan = new MixPlan(plan?.id || 0, localDate, mix, newValue);
             setVisible(false);
             onSave(newPlan);
+            handleHide();
         }
     };
 
