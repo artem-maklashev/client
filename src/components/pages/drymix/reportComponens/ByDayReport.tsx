@@ -7,6 +7,9 @@ import MixPlan from "../../../../model/mix/plan";
 import MixApiService from "../../../../service/MixApiService";
 import PlanFactCard from "./planFactCard";
 import MixPieChart from "./pieChart";
+import MixDelayChart from "./DelaysChart";
+import MixDelay from "../../../../model/mix/delays/MixDelay";
+import { set } from "date-fns";
 
 interface ByDayReportProps { }
 
@@ -17,6 +20,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
     const [mixProduction, setMixProduction] = useState<MixCategoryProduction[]>([]);
     const [mixPlan, setMixPlan] = useState<MixPlan[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [delaysData,setDelaysData] = useState<MixDelay[]>([]);
 
     const handleRangeChange = (startDate: Date | null, endDate: Date | null) => {
         setStartDate(startDate);
@@ -37,6 +41,12 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                     setMixPlan(plan);
                 } catch (error: any) {
                     console.error('error in MixApiservice.getPlanByDateBeervean', error.message);
+                }
+                try {
+                    const delays = await MixApiService.getDelaysByDateBeetvean(startDate, endDate);
+                    setDelaysData(delays);
+                } catch (error: any) {
+                    console.error('error in MixApiService.getDelaysByDateBeetvean', error.message);
                 }
             } else {
                 console.log('startDate or endDate is null');
@@ -104,7 +114,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
             setModalVisible(true);
             alert(`Выбрано: ${name}`);
         }
-    
+
         return (
             <Modal show={modalVisible} onHide={() => setModalVisible(false)}>
                 <Modal.Header closeButton>
@@ -138,7 +148,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                     </Row>
                     <Row>
                         <Col lg={4} sm={12}>
-                            <MixPieChart data={binderData()} title="Вяжущее" onClick={handlePieClick}  />
+                            <MixPieChart data={binderData()} title="Вяжущее" onClick={handlePieClick} />
                         </Col>
                         <Col lg={4} sm={12}>
                             <MixPieChart data={typeData()} title='Тип смеси' onClick={handlePieClick} />
@@ -146,7 +156,9 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                         <Col lg={4} sm={12}>
                             <MixPieChart data={tradeMarkData()} title='Торговая марка' onClick={handlePieClick} />
                         </Col>
-
+                    </Row>
+                    <Row>
+                        <MixDelayChart delays={delaysData} />
                     </Row>
                 </Col>
             </Row>

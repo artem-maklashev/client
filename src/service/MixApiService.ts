@@ -9,7 +9,6 @@ import { api } from "./Api";
 import ApiService from "./ApiService";
 
 class MixApiService {
-
   private static baseUrl = process.env.REACT_APP_API_URL + "/drymix";
 
   static async getPlan(period: Date) {
@@ -277,6 +276,21 @@ class MixApiService {
     }
 }
 
+static async getDelaysByDateBeetvean(startDate: Date, endDate: Date) {
+  try {
+    const params = {
+      startDate: ApiService.formatDateToISO(startDate), //addDays(startDate, this.plusDays),
+      endDate: ApiService.formatDateToISO(endDate), //addDays(endDate, this.plusDays)
+    };
+    const response = await api.get(`${this.baseUrl}/production/delay/getDelaysByDateBetween`, {
+      params,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`Произошла ошибка: ${error.message}`);
+    throw error;
+  }
+}
 
 
 

@@ -33,7 +33,7 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
         if (delay) {
             setStartDate(delay.delayStart || null);
             setEndDate(delay.delayEnd || null);
-            setDelayType(delay.delayType || null);
+            setDelayType(delay.mixUnitPart.delayType || null);
             setProductionArea(delay.mixUnitPart.unit.productionArea || null);
             setUnit(delay.mixUnitPart.unit || null);
             setUnitPart(delay.mixUnitPart || null);
@@ -65,8 +65,7 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
                 ...delay!,
                 id: delay?.id || 0,
                 delayStart: startDate,
-                delayEnd: endDate,
-                delayType,
+                delayEnd: endDate,                
                 mixUnitPart: unitPart,
             };
             onSave(updatedDelay);
