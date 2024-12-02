@@ -12,6 +12,8 @@ import MixUnit from "../../../../model/mix/delays/MixUnit";
 import UnitPartSelector from "./unitPartSelector";
 import MixUnitPart from "../../../../model/mix/delays/MixUnitPart";
 import MixDelay from "../../../../model/mix/delays/MixDelay";
+import dayjs from "dayjs";
+import ApiService from "../../../../service/ApiService";
 
 interface DelayModalProps {
     show: boolean;
@@ -31,6 +33,7 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
     // Инициализация состояния из `delay`
     useEffect(() => {
         if (delay) {
+            console.log(delay);
             setStartDate(delay.delayStart || null);
             setEndDate(delay.delayEnd || null);
             setDelayType(delay.mixUnitPart.delayType || null);
@@ -64,8 +67,8 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
             const updatedDelay: MixDelay = {
                 ...delay!,
                 id: delay?.id || 0,
-                delayStart: startDate,
-                delayEnd: endDate,                
+                delayStart: ApiService.removeTimeZone(startDate),
+                delayEnd: ApiService.removeTimeZone(endDate),                
                 mixUnitPart: unitPart,
             };
             onSave(updatedDelay);
@@ -94,8 +97,8 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
         >
             {/* Выбор даты */}
             <div style={{ display: "flex", gap: "1rem" }}>
-                <DateTimeSelector date={startDate} label="Начало простоя:" onChange={setStartDate} />
-                <DateTimeSelector date={endDate} label="Окончание простоя:" onChange={setEndDate} />
+                <DateTimeSelector date={dayjs(startDate).toDate()} label="Начало простоя:" onChange={setStartDate} />
+                <DateTimeSelector date={endDate ? new Date(endDate) : null} label="Окончание простоя:" onChange={setEndDate} />
             </div>
 
             {/* Выбор дополнительных данных */}

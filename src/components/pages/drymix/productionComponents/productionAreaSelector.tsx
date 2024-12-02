@@ -26,9 +26,9 @@ const AreaSelector: FC<AreaSelectorProps> = ({ area, onChange }) => {
                 setAreaOptions(result);
             }
         };
-        if (!area)
+        // if (!area)
             fetchData();
-    }, [area]);
+    }, []);
 
     // Вызов `onChange` при изменении `delayType`
     useEffect(() => {
@@ -40,7 +40,7 @@ const AreaSelector: FC<AreaSelectorProps> = ({ area, onChange }) => {
     return (
         <div className="p-field" style={{ marginBottom: '1.5rem' }}>
             <label htmlFor="productionArea" className="p-d-block" style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                Производственная прлощадка:
+                Производственная площадка:
             </label>
             <Dropdown
                 id="productionArea"

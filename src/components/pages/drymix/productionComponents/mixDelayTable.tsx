@@ -20,7 +20,6 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
     const [delays, setDelays] = useState<MixDelay[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [delay, setDelay] = useState<MixDelay | null>(null);
-    const [delayType, setDelayType] = useState<DelayType | null>(null);
 
     useEffect(() => {
         const fetchDelays = async () => {
@@ -144,7 +143,7 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
             <Row className="text-center">
                 <div className="p-d-flex p-jc-end">
                     <Button
-                        label="Добавить"
+                        label=" Добавить простой  "
                         icon="pi pi-plus"
                         size="small"
                         className="p-button-rounded p-button-info"
@@ -167,7 +166,6 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
                 onHide={() => {
                     setDelay(null);
                     setShowModal(false);
-                    setDelayType(null);
                 }
                 }
                 onSave={handleSaveDelay} />

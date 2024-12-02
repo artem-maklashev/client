@@ -104,7 +104,7 @@ const MixProductionPage: FC<MixProductionProps> = () => {
     }
 
     const saveProductions = async (prod: MixProduction, prods: MixCategoryProduction[], delays: MixDelay[]) => {
-        console.log("Простои для сохранения:\n",delays);
+        console.log("Простои для сохранения:\n", delays);
         try {
             const savedProduction: MixProduction = await MixApiService.saveMixProduction(prod);
             if (savedProduction.id > 0) {
@@ -116,15 +116,15 @@ const MixProductionPage: FC<MixProductionProps> = () => {
                     ...delay,
                     mixProduction: savedProduction,
                 }));
-                
-                    try {
-                        const updatedDelays: MixDelay[] = await MixApiService.saveMixDelays(delaysToSave, savedProduction.id);
-                        setDelays(updatedDelays);
-                        showSuccessSave();
-                    } catch (error) {
-                        console.error("Error saving delays:", error);
-                    }
-                
+
+                try {
+                    const updatedDelays: MixDelay[] = await MixApiService.saveMixDelays(delaysToSave, savedProduction.id);
+                    setDelays(updatedDelays);
+                    showSuccessSave();
+                } catch (error) {
+                    console.error("Error saving delays:", error);
+                }
+
                 try {
                     const savedProductions: MixCategoryProduction[] = await MixApiService.saveMixProductions(productionsToSave);
                     setCategoryProductions(prevCategoryProductions => {
@@ -168,6 +168,9 @@ const MixProductionPage: FC<MixProductionProps> = () => {
             <Toast ref={toast} />
             <Row>
                 <Col className="mt-3">
+                    <h4 className="text-center mt-3">
+                        <span className="badge bg-secondary">Последние 10 выпусков сухих смесей</span>
+                    </h4>
                     <MixProductionsTable productions={productions} onEdit={handleEditProduction} onDelete={handleDeleteProduction} />
                 </Col>
             </Row>
