@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Spinner } from "react-bootstrap";
 import PeriodSelector from "../planElements/periodselector";
-import MixCategoryProduction from "../../../model/mix/prodution/MixCategoryProduction";
 import MixApiService from "../../../service/MixApiService";
 import MixPlanTable from "./planComponents/mixPlanTable";
 import MixPlan from "../../../model/mix/plan";
 import MixPlanModal from "./planComponents/mixPlanModal";
-import { table } from "console";
 import MixPlanTableData from "./planComponents/mixPlanTableData";
 
 interface MixPlanProps { }

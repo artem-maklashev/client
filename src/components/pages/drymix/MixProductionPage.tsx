@@ -104,7 +104,6 @@ const MixProductionPage: FC<MixProductionProps> = () => {
     }
 
     const saveProductions = async (prod: MixProduction, prods: MixCategoryProduction[], delays: MixDelay[]) => {
-        console.log("Простои для сохранения:\n", delays);
         try {
             const savedProduction: MixProduction = await MixApiService.saveMixProduction(prod);
             if (savedProduction.id > 0) {
@@ -146,7 +145,6 @@ const MixProductionPage: FC<MixProductionProps> = () => {
             showError();
         }
         setEditprod(null);
-
     }
 
     const handleDeleteProduction = async (production: MixProduction) => {

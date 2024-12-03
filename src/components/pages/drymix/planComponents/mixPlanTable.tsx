@@ -15,7 +15,7 @@ interface MixPlanTableProps {
 const MixPlanTable: FC<MixPlanTableProps> = ({ planData, planEditing, planDelete }) => {
 
     const [tableData, setTableData] = useState<MixPlan[]>([]);
-    const adminRoles = ['ADMIN', 'ADMIN_MIX'];
+    const adminRoles = ['ADMIN', 'MIX_ADMIN'];
 
     useEffect(() => {
         setTableData(planData);

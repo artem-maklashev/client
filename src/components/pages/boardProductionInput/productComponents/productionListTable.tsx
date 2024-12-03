@@ -21,6 +21,9 @@ interface ProductionListTableProps {
 const ProductionListTable: React.FC<ProductionListTableProps> = ({
   boardProductions,
 }) => {
+
+  const adminRoles = ['ADMIN', 'GB_ADMIN'];
+
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] | null>(null);
@@ -43,6 +46,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   const onSave = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>, updatedConsumptions: MaterialConsumption[]) => {
     console.log("Сохраняемый отчет (время начала): " + updatedReport.productionList.productionStart);
+    
     if (reportData) {
       const updatedList = reportData.map((item) => {
         if (item.productionList.id === updatedReport.productionList.id) {
@@ -189,8 +193,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                           fontSize: '1.2rem', // Размер текста/иконки
                           borderRadius: '25px'
                         }}
-                        disabled={
-                          getUserRole() === 'ADMIN' ? false : true}
+                        // disabled={
+                        //   getUserRole() === 'ADMIN' ? false : true}
                       />
                       {/* Кнопка удаления */}
                       <Button
@@ -205,7 +209,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                           borderRadius: '25px'
                         }}
                         disabled={
-                          getUserRole() === 'ADMIN' ? false : true}
+                          (adminRoles.includes(getUserRole())) ? false : true}
                       />
                     </td>
 

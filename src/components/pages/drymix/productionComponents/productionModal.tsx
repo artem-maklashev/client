@@ -131,12 +131,22 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
             });
             handleSave({ newProduction, productions, delays });
             showSuccess();
+            clearState();
             handleClose();
         } else {
             console.log('Не заполнены все поля', shift, mix, startDate, endDate);
             showError();
         }
     }
+
+    const clearState = () => {
+        setProductions([]);
+        setProd(null);
+        setStartDate(null);
+        setEndDate(null);
+        setShift(null);
+        setMix(null);
+    };
 
     const handleProductionDelays = (del: MixDelay[]) => {
         setDelays(del);

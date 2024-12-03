@@ -9,6 +9,8 @@ interface NavigationBarProps {
 }
 
 function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
+    const gypsumBoardUsers = ['ADMIN', 'GB_ADMIN', 'USER'];
+    const mixUsers = ['ADMIN', 'MIX_ADMIN', 'USER_MIX', 'VIEWER'];
     const handleLogout = () => {
         // localStorage.removeItem('authToken'); // Удаление токена при выходе
         // alert("Вы вышли из системы");
@@ -26,7 +28,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/" onClick={handleNavClose}>Home</Nav.Link>
                         <NavDropdown title="Гипсокартон" id="board-dropdown" >
-                            <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER') ? false : true}  className="dropend">
+                            <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(gypsumBoardUsers.includes(getUserRole())) ? false : true}  className="dropend">
                                 <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose} >Добавить выпуск</NavDropdown.Item>
                                 <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
                                     getUserRole() === 'ADMIN' ? false : true} >Найти выпуск</NavDropdown.Item >
@@ -50,7 +52,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                                 getUserRole() === 'ADMIN' ? false : true}>Найти выпуск</NavDropdown.Item >
                             <NavDropdown.Item as={Link} to="/consumptionReport" onClick={handleNavClose}>Справка по расходу материалов</NavDropdown.Item>
                         </NavDropdown> */}
-                        <NavDropdown title="Сухие смеси" id="mix-production" disabled={(getUserRole() === 'ADMIN' || getUserRole() === 'USER_MIX') ? false : true} >
+                        <NavDropdown title="Сухие смеси" id="mix-production" disabled={(mixUsers.includes(getUserRole())) ? false : true} >
                             <NavDropdown.Item as={Link} to="/mixReport" onClick={handleNavClose} style={{color: "#ffd700"}}>Основные показатели</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/mixProduction" onClick={handleNavClose} disabled={getUserRole() === 'VIEWER'}>Выпуск смесей</NavDropdown.Item>
