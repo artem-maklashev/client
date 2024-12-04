@@ -105,47 +105,28 @@ const MixProductionPage: FC<MixProductionProps> = () => {
 
     const saveProductions = async (prod: MixProduction, prods: MixCategoryProduction[], delays: MixDelay[]) => {
         try {
-            const savedProduction: MixProduction = await MixApiService.saveMixProduction(prod);
+            const savedProduction = await MixApiService.saveMixProduction(prod);
             if (savedProduction.id > 0) {
-                const productionsToSave: MixCategoryProduction[] = prods.map(prod => {
-                    prod.production = savedProduction;
-                    return prod;
-                });
-                const delaysToSave = delays.map((delay) => ({
-                    ...delay,
-                    mixProduction: savedProduction,
-                }));
-
-                try {
-                    const updatedDelays: MixDelay[] = await MixApiService.saveMixDelays(delaysToSave, savedProduction.id);
-                    setDelays(updatedDelays);
-                    showSuccessSave();
-                } catch (error) {
-                    console.error("Error saving delays:", error);
-                }
-
-                try {
-                    const savedProductions: MixCategoryProduction[] = await MixApiService.saveMixProductions(productionsToSave);
-                    setCategoryProductions(prevCategoryProductions => {
-                        const updatedProductions = prevCategoryProductions.map(prod =>
-                            savedProductions.find(newProd => newProd.id === prod.id) || prod
-                        );
-                        const newProductions = prods.filter(
-                            newProd => !prevCategoryProductions.find(prod => prod.id === newProd.id)
-                        );
-                        return [...updatedProductions, ...newProductions];
-                    });
-                } catch (error) {
-                    console.error("Error saving productions:", error);
-                }
+                const productionsToSave = prods.map(p => ({ ...p, production: savedProduction }));
+                const delaysToSave = delays.map(d => ({ ...d, mixProduction: savedProduction }));
+    
+                const [updatedDelays, savedProductions] = await Promise.all([
+                    MixApiService.saveMixDelays(delaysToSave, savedProduction.id),
+                    MixApiService.saveMixProductions(productionsToSave)
+                ]);
+    
+                setDelays(updatedDelays);
+                setCategoryProductions(prev => [...prev, ...savedProductions]);
+                showSuccessSave();
             }
-
         } catch (error) {
             console.error("Error saving production:", error);
             showError();
+        } finally {
+            setEditprod(null);
         }
-        setEditprod(null);
-    }
+    };
+    
 
     const handleDeleteProduction = async (production: MixProduction) => {
         try {
