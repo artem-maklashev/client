@@ -16,6 +16,7 @@ import Preloader from "./commonElements/preloader";
 import MonthRangeSelector from "./dashBoardComponent/monthRangeSelector";
 import PlanFactChartByMonth from "./dashBoardComponent/planFactChartByMonth";
 import DelaysMonthChartBoard from "./dashBoardComponent/delaysMonthChart";
+import ProductivityChart from "./dashBoardComponent/productivityChart";
 
 interface DashBoardProps {
 
@@ -167,6 +168,8 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                         <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
                                     </Col>
                                 </Row>
+                                <Row>
+                                    <ProductivityChart productions={allProductionData} delays={delays} />                              </Row>
                                 <Row>
                                     {uniqueTradeMarks.map(tradeMark => {
                                         const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
