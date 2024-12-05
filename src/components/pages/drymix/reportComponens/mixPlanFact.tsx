@@ -155,7 +155,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
             console.log('Плановое значение:', data.planValue);
             console.log('Фактическое значение:', data.productionValue);
             const factData = mixProduction.filter((prod) =>
-                new Date((prod.production.productionDate)).toISOString().split('T')[0] === data.planDate
+                new Date((prod.production.productionDate)).toLocaleDateString() === new Date(data.planDate).toLocaleDateString()
                 );
             const plan = mixPlan.filter((plan) =>
                 new Date(plan.planDate).toISOString().split('T')[0] === data.planDate);
