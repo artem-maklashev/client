@@ -18,6 +18,9 @@ interface PlanTableProps {
 }
 
 const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete }) => {
+
+    const userRole = ['ADMIN', 'GB_ADMIN'];
+
     const handleEdit = (rowData: Plan) => {
         console.log('Редактировать:', rowData);
         planEditing(rowData);
@@ -58,7 +61,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                                         borderRadius: '25px'  
                                         }} 
                                     disabled={
-                                        getUserRole() === 'ADMIN' ? false : true}
+                                        userRole.includes(getUserRole()) ? false : true}
                                 />
                                 {/* Кнопка удаления */}
                                 <Button
@@ -72,7 +75,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                                         borderRadius: '25px'  
                                         }} 
                                     disabled={
-                                        getUserRole() === 'ADMIN' ? false : true}
+                                        userRole.includes(getUserRole()) ? false : true}
                                 />
                             </div>
                         )}

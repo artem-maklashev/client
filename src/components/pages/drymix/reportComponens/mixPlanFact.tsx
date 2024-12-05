@@ -152,7 +152,8 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                 new Date(plan.planDate).toISOString().split('T')[0] === data.planDate);
             setModalPlan(plan);
             setModalDate(data.planDate);
-            setModalFact(factData);
+            setModalFact(factData.filter((prod) => prod.category.id === 2));
+            
             setShowModal(true);
         } else {
             console.error('Данные не определены');

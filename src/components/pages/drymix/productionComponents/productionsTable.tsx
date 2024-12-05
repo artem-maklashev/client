@@ -17,7 +17,8 @@ interface MixProductionsTableProps {
 export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ productions, onEdit, onDelete }) => {
 
     const [tableData, setTableData] = React.useState<MixProduction[]>([]);
-
+    const editRoles = ['ADMIN', 'MIX_ADMIN', 'MIX_USER'];
+    const deleteRoles = ['ADMIN', 'MIX_ADMIN'];
 
     const handleEdit = (rowData: MixProduction) => {
         console.log("Edit: ", rowData);
@@ -67,8 +68,7 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
                                             borderRadius: '25px'
                                         }}
                                         size="small"
-                                        disabled={
-                                            getUserRole() === 'ADMIN' ? false : true}
+                                        disabled={editRoles.includes(getUserRole()) ? false : true}
                                     />
                                     {/* Кнопка удаления */}
                                     <Button
@@ -83,8 +83,7 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
                                             borderRadius: '25px'
                                         }}
 
-                                        disabled={
-                                            getUserRole() === 'ADMIN' ? false : true}
+                                        disabled={deleteRoles.includes(getUserRole()) ? false : true}
                                     />
                                 </div>
                             )}

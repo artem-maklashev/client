@@ -22,9 +22,9 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({ date, label, handle
     // const [title, setTitle] = useState<string>("");   
     const [newDate, setNewtDate] = useState<Date | null>(date);
 
-    // useEffect(() => {
-    //     setNewtDate(date);
-    // }, [date]);
+    useEffect(() => {
+        setNewtDate(date);
+    }, [date]);
 
     useEffect(() => {
         handleChange(newDate);

@@ -2,14 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Badge, Button, Col, Container, Modal, Row } from "react-bootstrap";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
 import dayjs from "dayjs";
-import { Stack } from "@mui/material";
 
 import "react-datepicker/dist/react-datepicker.css";
-import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import utc from 'dayjs/plugin/utc';
 import DryMix from "../../../../model/mix/DryMix";
 import Shift from "../../../../model/Shift";
-import MixCategory from "../../../../model/mix/prodution/MixCategory";
 import DateTimeSelector from "../../commonElements/dateTimeSelector";
 import ShiftSelector from "../../commonElements/shiftSelector";
 import MixSelector from "../../commonElements/mixSelector";
@@ -35,7 +32,7 @@ interface ProductionModalProps {
 }
 
 const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, editProduction, handleSave, editProd }) => {
-    const [open, setOpen] = useState<boolean>(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
     const [prod, setProd] = useState<MixProduction | null>(null);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
@@ -48,7 +45,6 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
 
     const toast = useRef<Toast>(null);
 
-    // Синхронизируем `productions` с `editProduction` только при его изменении
     useEffect(() => {
         setProductions(editProduction);
     }, [editProduction]);
@@ -56,88 +52,12 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
     useEffect(() => {
         if (editProd) {
             setProd(editProd);
-            setStartDate(editProd.productionStart || null);
-            setEndDate(editProd.productionFinish || null);
+            setStartDate(editProd.productionStart);
+            setEndDate(editProd.productionFinish);
             setShift(editProd.shift);
             setMix(editProd.mix);
         }
     }, [editProd]);
-
-    useEffect(() => {
-        setOpen(show);
-    }, [show]);
-
-
-
-
-    const changeStartDate = (newValue: Date | null) => {
-        setStartDate(newValue);
-    };
-
-    const changeEndDate = (newValue: Date | null) => {
-        setEndDate(newValue);
-    };
-
-    const handleEditCategory = (category: MixCategoryProduction) => {
-        setCategoryToEdit(category);
-        setEditCategoryModal(true);
-    };
-
-    const handleSaveCategory = (newCategory: MixCategoryProduction) => {
-        setProductions(prevProductions => {
-            const exists = prevProductions.find(p => p.id === newCategory.id);
-            if (exists) {
-                return prevProductions.map(p => p.id === newCategory.id ? newCategory : p);
-            } else {
-                return [...prevProductions, newCategory];
-            }
-        });
-        closeCategoryModal();
-    };
-
-    const closeCategoryModal = () => {
-        setEditCategoryModal(false);
-        setCategoryToEdit(null);
-    };
-
-    const showError = () => {
-        if (toast.current) {
-            toast.current.show({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Не заполнены все поля',
-                life: 3000
-            });
-        }
-    };
-
-    const showSuccess = () => {
-        if (toast.current) {
-            toast.current.show({
-                severity: 'success',
-                summary: 'Success!',
-                detail: 'Удачно сохранено',
-                life: 3000
-            });
-        }
-    };
-
-    const productionsSave = () => {
-        if (shift && mix && startDate && endDate) {
-            const id = prod?.id || -1;
-            const newProduction = new MixProduction(id, startDate, endDate, startDate, shift, mix);
-            productions.forEach(p => {
-                p.production = newProduction;
-            });
-            handleSave({ newProduction, productions, delays });
-            showSuccess();
-            clearState();
-            handleClose();
-        } else {
-            console.log('Не заполнены все поля', shift, mix, startDate, endDate);
-            showError();
-        }
-    }
 
     const clearState = () => {
         setProductions([]);
@@ -146,51 +66,136 @@ const ProductionModal: React.FC<ProductionModalProps> = ({ show, handleClose, ed
         setEndDate(null);
         setShift(null);
         setMix(null);
+        setDelays([]);
+    };
+
+    const showError = () => {
+        toast.current?.show({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Не заполнены все поля',
+            life: 3000,
+        });
+    };
+
+    const showSuccess = () => {
+        toast.current?.show({
+            severity: 'success',
+            summary: 'Успех',
+            detail: 'Данные сохранены',
+            life: 3000,
+        });
+    };
+
+    const productionsSave = async () => {
+        if (shift && mix && startDate && endDate) {
+            const id = prod?.id || -1;
+            const newProduction = new MixProduction(id, startDate, endDate, startDate, shift, mix);
+
+            productions.forEach((p) => {
+                p.production = newProduction;
+            });
+
+            try {
+                setIsSaving(true); // Показываем спиннер
+                await handleSave({ newProduction, productions, delays });
+                showSuccess();
+                clearState();
+                handleClose();
+            } catch (error) {
+                console.error("Ошибка сохранения:", error);
+                showError();
+            } finally {
+                setIsSaving(false); // Скрываем спиннер
+            }
+        } else {
+            console.error('Не заполнены все поля:', { shift, mix, startDate, endDate });
+            showError();
+        }
     };
 
     const handleProductionDelays = (del: MixDelay[]) => {
         setDelays(del);
-    }
+    };
 
     return (
-        <Modal show={open} onHide={handleClose} size='lg'>
+        <Modal show={show} onHide={handleClose} size="lg">
             <Modal.Header closeButton>
                 <Modal.Title>Ввод данных</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>
                     <Row>
-                        <DateTimeSelector date={startDate} label={"Начальная дата"} handleChange={changeStartDate} />
-                        <DateTimeSelector date={endDate} label={"Конечная дата"} handleChange={changeEndDate} />
+                        <DateTimeSelector
+                            date={startDate}
+                            label={"Начальная дата"}
+                            handleChange={setStartDate}
+                        />
+                        <DateTimeSelector
+                            date={endDate}
+                            label={"Конечная дата"}
+                            handleChange={setEndDate}
+                        />
                         <Col className="col-2">
-                            <Badge pill bg='secondary'>
+                            <Badge pill bg="secondary">
                                 Длительность: {dayjs(endDate).diff(dayjs(startDate), 'minutes')} минут
                             </Badge>
                         </Col>
                     </Row>
                     <Row>
-                        <ShiftSelector shift={shift} handleShiftChange={(shift: Shift) => setShift(shift)} />
+                        <ShiftSelector shift={shift} handleShiftChange={setShift} />
                     </Row>
                     <Row>
-                        <MixSelector mix={mix} handleMixChange={(mix: DryMix) => setMix(mix)} />
+                        <MixSelector mix={mix} handleMixChange={setMix} />
                     </Row>
                     <Row>
-                        <MixCategoriesTable categories={productions} handleEditCategory={handleEditCategory} />
+                        <MixCategoriesTable
+                            categories={productions}
+                            handleEditCategory={(category) => {
+                                setCategoryToEdit(category);
+                                setEditCategoryModal(true);
+                            }}
+                        />
                     </Row>
                     <Row className="mt-3">
-                        <MixDelayTable mixProduction={prod} productionDelays={handleProductionDelays}/>
+                        <MixDelayTable
+                            mixProduction={prod}
+                            productionDelays={handleProductionDelays}
+                        />
                     </Row>
                 </Container>
             </Modal.Body>
             <Modal.Footer>
-                <Row className="">
-                    <Col className="col-2">
-                        <Toast ref={toast} />
-                        <Button variant='primary' onClick={productionsSave}>Сохранить</Button>
-                    </Col>
-                </Row>
+                <Toast ref={toast} />
+                {isSaving ? (
+                    <Button variant="primary" disabled>
+                        Сохранение...
+                    </Button>
+                ) : (
+                    <Button variant="primary" onClick={productionsSave}>
+                        Сохранить
+                    </Button>
+                )}
             </Modal.Footer>
-            <MixEditCategoryModal show={editCategoryModal} handleSave={handleSaveCategory} category={categoryToEdit} onHide={closeCategoryModal} />
+            <MixEditCategoryModal
+                show={editCategoryModal}
+                handleSave={(newCategory) => {
+                    setProductions((prev) => {
+                        const exists = prev.find((p) => p.id === newCategory.id);
+                        if (exists) {
+                            return prev.map((p) => (p.id === newCategory.id ? newCategory : p));
+                        }
+                        return [...prev, newCategory];
+                    });
+                    setEditCategoryModal(false);
+                    setCategoryToEdit(null);
+                }}
+                category={categoryToEdit}
+                onHide={() => {
+                    setEditCategoryModal(false);
+                    setCategoryToEdit(null);
+                }}
+            />
         </Modal>
     );
 };

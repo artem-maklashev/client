@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import DateTimeSelector from "./dateTimeSelection";
@@ -14,6 +14,7 @@ import MixUnitPart from "../../../../model/mix/delays/MixUnitPart";
 import MixDelay from "../../../../model/mix/delays/MixDelay";
 import dayjs from "dayjs";
 import ApiService from "../../../../service/ApiService";
+import { set } from "date-fns";
 
 interface DelayModalProps {
     show: boolean;
@@ -29,6 +30,7 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
     const [productionArea, setProductionArea] = useState<MixProductionArea | null>(null);
     const [unit, setUnit] = useState<MixUnit | null>(null);
     const [unitPart, setUnitPart] = useState<MixUnitPart | null>(null);
+    const [saveDisabled, setSaveDisabled] = useState<boolean>(true);
 
     // Инициализация состояния из `delay`
     useEffect(() => {
@@ -67,8 +69,8 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
             const updatedDelay: MixDelay = {
                 ...delay!,
                 id: delay?.id || 0,
-                delayStart: ApiService.removeTimeZone(startDate),
-                delayEnd: ApiService.removeTimeZone(endDate),                
+                delayStart: ApiService.removeTimeZone(new Date(startDate)),
+                delayEnd: ApiService.removeTimeZone(new Date(endDate)),
                 mixUnitPart: unitPart,
             };
             onSave(updatedDelay);
@@ -78,18 +80,34 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
     };
 
     // Проверка для отключения кнопки
-    const isSaveDisabled = !startDate || !endDate || !unitPart || !delayType;
+    useEffect(() => {
+        if (startDate && endDate && delayType && unitPart) {
+            setSaveDisabled(false);
+        } else {
+            setSaveDisabled(true);
+        }
+    }, [startDate, endDate, delayType, unitPart]);
 
     const footerContent = (
         <div>
-            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus size="small" disabled={isSaveDisabled} />
+            <Button label="Ok" icon="pi pi-check" onClick={saveDelay} autoFocus size="small" disabled={saveDisabled} />
         </div>
     );
+
+    const handleProductionAreaChange = useCallback((productionArea: MixProductionArea | null) => {
+        setProductionArea(productionArea);
+        // setUnit(null);
+    }, []);
+
+    const handleUnitChange = useCallback((unit: MixUnit | null) => {
+        setUnit(unit);
+        // setUnitPart(null);
+    }, []);
 
     return (
         <Dialog
             visible={show}
-            onHide={handleClose}
+            onHide={() => { clearState(); handleClose(); }}
             header="Данные о простое"
             footer={footerContent}
             style={{ width: "650px", borderRadius: "8px" }}
@@ -97,27 +115,46 @@ const DelayModal: FC<DelayModalProps> = ({ show, delay, onHide, onSave }) => {
         >
             {/* Выбор даты */}
             <div style={{ display: "flex", gap: "1rem" }}>
-                <DateTimeSelector date={dayjs(startDate).toDate()} label="Начало простоя:" onChange={setStartDate} />
+                <DateTimeSelector date={startDate ? new Date(startDate) : null} label="Начало простоя:" onChange={setStartDate} />
                 <DateTimeSelector date={endDate ? new Date(endDate) : null} label="Окончание простоя:" onChange={setEndDate} />
             </div>
 
             {/* Выбор дополнительных данных */}
             <Row>
                 <Col>
-                    <DelayTypeSelector type={delayType} onChange={setDelayType} />
+                    <DelayTypeSelector
+                        type={delayType}
+                        onChange={(dt) => {
+                            setDelayType(dt);
+                            console.log('После изменения типа простоя - деталь:', unitPart);
+                        }}
+                    />
                 </Col>
                 <Col>
-                    <AreaSelector area={productionArea} onChange={setProductionArea} />
+                    <AreaSelector
+                        area={productionArea}
+                        onChange={handleProductionAreaChange}
+                    />
                 </Col>
             </Row>
             <Row>
                 <Col>
-                    <UnitSelector mixUnit={unit} area={productionArea}  onChange={setUnit} />
+                    <UnitSelector
+                        mixUnit={unit}
+                        area={productionArea}
+                        onChange={handleUnitChange}
+                    />
                 </Col>
                 <Col>
-                    <UnitPartSelector mixUnit={unit} mixUnitPart={unitPart} onChange={setUnitPart} delayType={delayType} />
+                    <UnitPartSelector
+                        mixUnit={unit}
+                        mixUnitPart={unitPart}
+                        onChange={setUnitPart}
+                        delayType={delayType}
+                    />
                 </Col>
             </Row>
+
         </Dialog>
     );
 };

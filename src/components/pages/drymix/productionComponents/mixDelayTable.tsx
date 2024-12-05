@@ -21,6 +21,9 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
     const [showModal, setShowModal] = useState(false);
     const [delay, setDelay] = useState<MixDelay | null>(null);
 
+    const editRoles = ['ADMIN', 'MIX_ADMIN', 'MIX_USER'];
+    const deleteRoles = ['ADMIN', 'MIX_ADMIN'];
+
     useEffect(() => {
         const fetchDelays = async () => {
             if (mixProduction) {
@@ -120,7 +123,7 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
                                         fontSize: '0.8rem',
                                         borderRadius: '50%',
                                     }}
-                                    disabled={getUserRole() !== "ADMIN"}
+                                    disabled={editRoles.includes(getUserRole()) ? false : true }
                                 />
                                 <Button
                                     icon="pi pi-trash"
@@ -132,7 +135,7 @@ const MixDelayTable: React.FC<MixDelayTableProps> = ({ mixProduction, production
                                         fontSize: '0.8rem',
                                         borderRadius: '50%',
                                     }}
-                                    disabled={getUserRole() !== "ADMIN"}
+                                    disabled={deleteRoles.includes(getUserRole()) ? false : true }
                                 />
                             </div>
                         )}

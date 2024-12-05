@@ -22,19 +22,19 @@ interface LineChartPayload {
     };
 }
 
-interface CombinedData { 
+interface CombinedData {
     date: string;
     value: number;
     time: number;
     productivity: number;
 }
 
-const ProductivityChart: React.FC<ProductivityChartProps> = ({productions, delays}) => {
-    
+const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, delays }) => {
+
     const [productionData, setProductionData] = useState<BoardProduction[]>([]);
     const [delaysData, setDelaysData] = useState<Delays[]>([]);
     const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
-    
+
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
             // Убедитесь, что данные корректно обрабатываются
@@ -70,52 +70,53 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({productions, delay
                 return value;
         }
     };
-    
+
     useEffect(() => {
         setProductionData(productions.filter(p => p.category.id === 1));
     }, [productions]);
-    
-    useEffect(() => { 
+
+    useEffect(() => {
         setDelaysData(delays);
     }, [delays]);
 
-    const getCombinedData = () => {
-        const data: CombinedData[] = [];
 
-        productionData.map((item) => {
-            const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0]);
-            const thickness = Number(item.product.thickness.value.replace(",","."));
-            console.log('Толщина', thickness);
-            const normalizedValue =  thickness * item.value / 12.5;
-            if (existingData) {
-                existingData.value += normalizedValue;
-            } else {
-                data.push({
-                    date: ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0],
-                    value: normalizedValue,
-                    time: 0,
-                    productivity: 0,
-                });
-            }
-        });
-        delaysData.map((item) => {
-            const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.delayDate).split('T')[0]);
-            if (existingData) {
-                existingData.time += (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60);
-            } else {
-                data.push({
-                    date: ApiService.formatDateToISO(item.delayDate).split('T')[0],
-                    value: 0,
-                    time: (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60),
-                    productivity: 0,
-                });
-            }
-        });
-        data.forEach((item) => {(item.productivity = item.value /(1440- item.time)) });
-        return data;
-    }
 
     useEffect(() => {
+        const getCombinedData = () => {
+            const data: CombinedData[] = [];
+
+            productionData.map((item) => {
+                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0]);
+                const thickness = Number(item.product.thickness.value.replace(",", "."));
+                console.log('Толщина', thickness);
+                const normalizedValue = thickness * item.value / 12.5;
+                if (existingData) {
+                    existingData.value += normalizedValue;
+                } else {
+                    data.push({
+                        date: ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0],
+                        value: normalizedValue,
+                        time: 0,
+                        productivity: 0,
+                    });
+                }
+            });
+            delaysData.map((item) => {
+                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.delayDate).split('T')[0]);
+                if (existingData) {
+                    existingData.time += (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60);
+                } else {
+                    data.push({
+                        date: ApiService.formatDateToISO(item.delayDate).split('T')[0],
+                        value: 0,
+                        time: (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60),
+                        productivity: 0,
+                    });
+                }
+            });
+            data.forEach((item) => { (item.productivity = item.value / (1440 - item.time)) });
+            return data;
+        }
         if (productionData) {
             setCombinedData(getCombinedData());
         }
@@ -124,37 +125,63 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({productions, delay
 
     return (
         <Container>
-            <Card title="Производительность при толщине 12,5 мм" className="mb-3 text-center" style={{ width: '100%' , fontSize: 13}}>
-                <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
+            <Card
+                title={<h5 style={{ fontSize: '14px', fontWeight: 'bold', color: '#4a4a4a' }}>Производительность приведенная к толщине 12.5 мм, м²/мин</h5>}
+                className="mb-2 mt-2 text-center shadow-sm"
+                style={{ width: '100%', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9' }}
+            >
+                <Col
+                    className="col-12"
+                    style={{ minWidth: '500px', width: '100%', height: '250px', padding: '10px' }}
+                >
                     <ResponsiveContainer>
                         <LineChart
-                            title="Производительность линии"
-                            width={500}
-                            height={300}
                             data={combinedData}
                             margin={{
-                                top: 5,
-                                right: 30,
+                                top: 20,
+                                right: 20,
                                 left: 20,
-                                bottom: 5,
+                                bottom: 20,
                             }}
-                            // onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
-
                         >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" padding={{ left: 30, right: 30 }} />
-                            <YAxis yAxisId="left" />
-                            {/* <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} domain={[0, 'dataMax + 5']} /> */}
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend formatter={legendFormatter} />
-                            <Line yAxisId="left" type="monotone" dataKey="productivity" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
-                            {/* <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} /> */}
-                            {/* <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d" strokeWidth={2} /> */}
-
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                            <XAxis
+                                dataKey="date"
+                                padding={{ left: 20, right: 20 }}
+                                tick={{ fontSize: 12, fill: '#555' }}
+                                axisLine={{ stroke: '#888' }}
+                                tickLine={{ stroke: '#888' }}
+                            />
+                            <YAxis
+                                yAxisId="left"
+                                tick={{ fontSize: 12, fill: '#555' }}
+                                axisLine={{ stroke: '#888' }}
+                                tickLine={{ stroke: '#888' }}
+                            />
+                            <Tooltip
+                                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd', borderRadius: '5px', fontSize: '12px' }}
+                                itemStyle={{ color: '#555' }}
+                                content={<CustomTooltip />}
+                            />
+                            <Legend
+                                formatter={(value) => {
+                                    const formattedValue = legendFormatter(value);
+                                    return <span style={{ color: '#555', fontSize: '12px' }}>{formattedValue}</span>;
+                                }}
+                            />
+                            <Line
+                                yAxisId="left"
+                                type="monotone"
+                                dataKey="productivity"
+                                stroke="#4a90e2"
+                                activeDot={{ r: 8, fill: '#4a90e2' }}
+                                strokeWidth={3}
+                            />
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>
             </Card>
+
         </Container>
     )
 }

@@ -172,7 +172,7 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
 
 
     return (
-        <Card className="mt-2 text-center bg-body-primary">
+        <Card className="mt-2 text-center bg-body-primary shadow-sm">
             <Card.Header><h5>Простои</h5></Card.Header>
             <Card.Body style={{ overflowX: 'auto' }}>
                 <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>

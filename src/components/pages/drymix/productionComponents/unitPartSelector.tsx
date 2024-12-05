@@ -2,7 +2,6 @@ import React, { FC, useEffect,  useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import MixApiService from "../../../../service/MixApiService";
 import MixUnit from "../../../../model/mix/delays/MixUnit";
-import MixProductionArea from "../../../../model/mix/delays/MixproductionArea";
 import MixUnitPart from "../../../../model/mix/delays/MixUnitPart";
 import DelayType from "../../../../model/delays/DelayType";
 
@@ -10,7 +9,7 @@ interface UnitPartSelectorProps {
     delayType: DelayType | null;
     mixUnit: MixUnit | null;
     mixUnitPart: MixUnitPart | null;    
-    onChange: (type: MixUnitPart) => void;
+    onChange: (type: MixUnitPart | null) => void;
 }
 
 const UnitPartSelector: FC<UnitPartSelectorProps> = ({ mixUnit, onChange, mixUnitPart, delayType }) => {
@@ -42,10 +41,17 @@ const UnitPartSelector: FC<UnitPartSelectorProps> = ({ mixUnit, onChange, mixUni
 
     // Вызов `onChange` при изменении `delayType`
     useEffect(() => {
-        if (unitPart) {
+        // if (unitPart) {
             onChange(unitPart);
-        }
+        // }
     }, [unitPart, onChange]);
+
+    useEffect(() => {
+        if (unitPartOptions.length === 0) {
+            setUnitPart(null);
+        }
+    }, [unitPartOptions]);
+ 
 
     return (
         <div className="p-field" style={{ marginBottom: '1.5rem' }}>
