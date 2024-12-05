@@ -1,12 +1,12 @@
 import { CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis, Tooltip, Bar, ComposedChart, Line, LegendProps, TooltipProps } from "recharts";
 import Delays from "../../../model/delays/Delays";
-import { Card, Col } from "react-bootstrap";
+import { Card, Col, Container } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 import DelaysModal from "./delaysModal";
 
 interface DelaysChartBoardProps {
-    delays: Delays[];    
+    delays: Delays[];
 }
 
 interface CombinedData {
@@ -91,11 +91,11 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
             console.log(JSON.stringify(combinedData));
             const result = Array.from(
                 new Set(
-                    combinedData.flatMap(item => 
-                    Object.keys(item).filter(key => key !== "date" && key !== "totalTime")
-                  )
+                    combinedData.flatMap(item =>
+                        Object.keys(item).filter(key => key !== "date" && key !== "totalTime")
+                    )
                 )
-              );
+            );
             setDelayTypeName(result);
             console.log("Наименования простоев", JSON.stringify(result));
         }
@@ -158,7 +158,7 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
             setModalDate(date);
             console.log('Clicked date:', date);
             const filteredDelays = data.filter((delay) => new Date(delay.delayDate).toISOString().split('T')[0] === date)
-            .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+                .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
             setModalDelays(filteredDelays);
             setShowModal(true);
         } else {
@@ -172,54 +172,57 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
 
 
     return (
-        <Card className="mt-2 text-center bg-body-primary shadow-sm">
-            <Card.Header><h5>Простои</h5></Card.Header>
-            <Card.Body style={{ overflowX: 'auto' }}>
-                <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart
-                        data={combinedData}
-                        layout="horizontal"
-                        margin={{
-                            top: 20,
-                            right: 30,
-                            left: 20,
-                            bottom: 5,                            
-                        }}
-                        onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis type="number" hide />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend content={<CustomLegend />} />
-                        {/* {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => { */}
-                        {combinedData.length > 0 && delayTypeName.map((key, index) => {
-                            console.log("Rendering Bar for key:", key);
-                            return (
-                                <Bar
-                                    key={key}
-                                    dataKey={key}
-                                    stackId="a"
-                                    fill={COLORS[index % COLORS.length] || '#E6399B'}
-                                    legendType='circle'
+    
 
-                                >
+            <Card className="mt-2 text-center bg-body-primary shadow-sm border-0">
+                <Card.Header className=" text-center py-2"><h5 className="m-0 ">Простои</h5></Card.Header>
+                <Card.Body style={{ overflowX: 'auto' }} >
+                    <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <ComposedChart
+                                data={combinedData}
+                                layout="horizontal"
+                                margin={{
+                                    top: 20,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 5,
+                                }}
+                                onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" />
+                                <YAxis type="number" hide />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Legend content={<CustomLegend />} />
+                                {/* {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => { */}
+                                {combinedData.length > 0 && delayTypeName.map((key, index) => {
+                                    console.log("Rendering Bar for key:", key);
+                                    return (
+                                        <Bar
+                                            key={key}
+                                            dataKey={key}
+                                            stackId="a"
+                                            fill={COLORS[index % COLORS.length] || '#E6399B'}
+                                            legendType='circle'
+
+                                        >
 
 
-                                </Bar>
-                            )
-                        })}
-                        <Line type="monotone" dot={false} dataKey="totalTime" stroke='transparent'
-                            label={{ fill: 'blue', fontSize: 12, position: 'top' }}
-                            legendType='none' 
-                            />
-                    </ComposedChart>
-                </ResponsiveContainer>
-                </Col>
-                <DelaysModal date={modalDate} delays={modalDelays} onHide={closeModal} show={modalShow} />
-            </Card.Body>            
-        </Card>
+                                        </Bar>
+                                    )
+                                })}
+                                <Line type="monotone" dot={false} dataKey="totalTime" stroke='transparent'
+                                    label={{ fill: 'blue', fontSize: 12, position: 'top' }}
+                                    legendType='none'
+                                />
+                            </ComposedChart>
+                        </ResponsiveContainer>
+                    </Col>
+                    <DelaysModal date={modalDate} delays={modalDelays} onHide={closeModal} show={modalShow} />
+                </Card.Body>
+            </Card>
+       
     );
 }
 

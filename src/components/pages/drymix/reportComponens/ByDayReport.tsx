@@ -20,7 +20,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
     const [mixProduction, setMixProduction] = useState<MixCategoryProduction[]>([]);
     const [mixPlan, setMixPlan] = useState<MixPlan[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [delaysData,setDelaysData] = useState<MixDelay[]>([]);
+    const [delaysData, setDelaysData] = useState<MixDelay[]>([]);
 
     const handleRangeChange = (startDate: Date | null, endDate: Date | null) => {
         setStartDate(startDate);
@@ -158,7 +158,9 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                         </Col>
                     </Row>
                     <Row>
-                        <MixDelayChart delays={delaysData} />
+                        <Col>
+                            <MixDelayChart delays={delaysData} />
+                        </Col>
                     </Row>
                 </Col>
             </Row>

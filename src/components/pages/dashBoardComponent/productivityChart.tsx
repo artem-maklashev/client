@@ -128,8 +128,8 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
             <Card
                 title={<h5 style={{ fontSize: '14px', fontWeight: 'bold', color: '#4a4a4a' }}>Производительность приведенная к толщине 12.5 мм, м²/мин</h5>}
                 className="mb-2 mt-2 text-center shadow-sm"
-                style={{ width: '100%', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9' }}
-            >
+                style={{ width: '100%', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9', overflowX: 'auto' }}
+            > 
                 <Col
                     className="col-12"
                     style={{ minWidth: '500px', width: '100%', height: '250px', padding: '10px' }}

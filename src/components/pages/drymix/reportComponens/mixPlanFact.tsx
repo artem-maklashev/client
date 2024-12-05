@@ -6,6 +6,7 @@ import { Tooltip, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, X
 import { addDays } from "date-fns";
 import MixPlan from "../../../../model/mix/plan";
 import MixPlanFactModal from "./mixPlanFactModal";
+import { start } from "repl";
 
 interface MixPlanFactProps {
     mixProduction: MixCategoryProduction[];
@@ -20,14 +21,9 @@ interface CustomTooltipProps {
 interface CombinedData {
     planDate: string;
     planValue: number;
-    productionValue: number;
-}
+    productionValue: number;}
 
-interface LineChartPayload {
-    payload: {
-        [key: string]: string | number; // Замените any на конкретные типы данных, если они известны
-    };
-}
+
 const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
 
     const [modalPlan, setModalPlan] = React.useState<MixPlan[]>([]);
@@ -113,26 +109,39 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
     
             return dateArray;
         }
+
         const dateRange = generateDateRange();
         console.log(dateRange);
 
         const draftCombinedData = dateRange.map((date) => {
-            const plan = mixPlan.filter((plan) =>
-                new Date(plan.planDate).toISOString().split('T')[0] === date
-            );
-
-            const productionForDate = mixProduction
-                .filter((prod) => prod.category.id === 2)
-                .filter((prod) => new Date(prod.production.productionDate).toISOString().split('T')[0] === date);
-
-            const totalProductionValue = productionForDate.reduce((acc, prod) => acc + prod.quantity, 0);
-            const totalPlanValue = plan.reduce((acc, plan) => acc + plan.value, 0);
-
+            const plan = mixPlan.filter((plan) => {
+                const planDate = new Date(plan.planDate);
+                return planDate.toLocaleDateString() === new Date(date).toLocaleDateString();
+            });
+        
+            const productionForDate = mixProduction.filter((prod) => {
+                const productionDate = new Date(prod.production.productionDate);
+                return (
+                    productionDate.toLocaleDateString() === new Date(date).toLocaleDateString() &&
+                    prod.category.id === 2
+                );
+            });
+        
+            console.log('Filtered production', productionForDate);
+        
+            const totalProductionValue = productionForDate
+                ? productionForDate.reduce((acc, prod) => acc + prod.quantity, 0)
+                : 0;
+            const totalPlanValue = plan
+                ? plan.reduce((acc, plan) => acc + plan.value, 0)
+                : 0;
+        
             return {
                 planDate: date,
                 planValue: totalPlanValue,
                 productionValue: totalProductionValue,
-            };
+            };      
+        
         });
         console.log(draftCombinedData);
         setCombinedData(draftCombinedData);
