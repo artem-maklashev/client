@@ -10,6 +10,7 @@ import MixPieChart from "./pieChart";
 import MixDelayChart from "./DelaysChart";
 import MixDelay from "../../../../model/mix/delays/MixDelay";
 import { set } from "date-fns";
+import MixPlanFactTable from "./mixPlanFactTable";
 
 interface ByDayReportProps { }
 
@@ -138,7 +139,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                     </Row>
                     <Row>
                         <PlanFactCard planData={mixPlan} factData={mixProduction} />
-                    </Row>
+                    </Row>                    
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
                     <Row>

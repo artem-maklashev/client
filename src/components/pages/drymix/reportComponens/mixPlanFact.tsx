@@ -3,10 +3,8 @@ import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryPr
 import { Card, Col, } from "react-bootstrap";
 import React from "react";
 import { Tooltip, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { addDays } from "date-fns";
 import MixPlan from "../../../../model/mix/plan";
 import MixPlanFactModal from "./mixPlanFactModal";
-import { start } from "repl";
 
 interface MixPlanFactProps {
     mixProduction: MixCategoryProduction[];
@@ -84,29 +82,34 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
         function generateDateRange(): string[] {
 
             const planDates = mixPlan.map((plan) => new Date(plan.planDate));
+            // console.log("Даты из плана",mixPlan.map(p => new Date(p.planDate).toISOString()));
             const productionDates = mixProduction.map((prod) => new Date(prod.production.productionDate));
 
             const minPlanDate = findMinDate(planDates);
             const minProdDate = findMinDate(productionDates);
             const maxPlanDate = findMaxDate(planDates);
+            console.log("Максмальная дата по плану:", maxPlanDate);
             const maxProdDate = findMaxDate(productionDates);
+            console.log("Максмальная дата по факту:", maxProdDate);
 
             const startDate = minPlanDate && minProdDate ? (minPlanDate < minProdDate ? minPlanDate : minProdDate) : minPlanDate || minProdDate;
             const endDate = maxPlanDate && maxProdDate ? (maxPlanDate > maxProdDate ? maxPlanDate : maxProdDate) : maxPlanDate || maxProdDate;
-
-            console.log(startDate, endDate);           
 
             console.log("Start date:", startDate, "End date:", endDate); // Логирование для проверки
 
             const dateArray: string[] = [];
             if (startDate && endDate) {
                 let currentDate = new Date(startDate);
-                while (currentDate <= endDate) {
+            
+                while (currentDate.toISOString().split("T")[0] <= new Date(endDate).toISOString().split("T")[0]) {
+                    console.log("Добавляю дату для графика:", new Date(currentDate).toISOString().split("T")[0]);
                     dateArray.push(new Date(currentDate).toISOString().split("T")[0]);
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
             }
-    
+            
+            
+            console.log("Даты для графика", dateArray);
             return dateArray;
         }
 
@@ -177,7 +180,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
     return (
         <Card className="text-center bg-body-primary shadow-sm border-0">
             <Card.Header  className="bg-primary text-white text-center py-2">
-                <h6 className="m-0 text-uppercase">План-факт производства</h6></Card.Header>
+                <h6 className="m-0 text-uppercase">План-факт производства по дням</h6></Card.Header>
             <Card.Body style={{ overflowX: 'auto' }}>
                 <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
                     <ResponsiveContainer style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '8px' }}>

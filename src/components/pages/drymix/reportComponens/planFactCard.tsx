@@ -5,6 +5,8 @@ import { Card } from "primereact/card";
 import { Col } from "react-bootstrap";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import MixPlanFactTable from "./mixPlanFactTable";
+import { Divider } from "primereact/divider";
 
 interface PlanFactCardProps {
     planData: MixPlan[];
@@ -48,9 +50,16 @@ const PlanFactCard: React.FC<PlanFactCardProps> = ({ planData, factData }) => {
                         columnResizeMode="fit"
                     >
                         <Column field="type" header=" " />
-                        <Column field="value" header="Значение" />
+                        <Column field="value" header="Значение" body={(rowData) => {
+                    return (
+                        <span style={{ color: rowData.value < 0 ? 'red' : 'inherit' }}>
+                            {rowData.value}
+                        </span>
+                    );
+                }} />
                     </DataTable>
-                
+                    <Divider className="mt-3 mb-2" />
+                <MixPlanFactTable planData={planData} productionsData={factData} />
             </Card>
         </Col>
     );
