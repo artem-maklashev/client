@@ -29,7 +29,7 @@ const PlanFactCard: React.FC<PlanFactCardProps> = ({ planData, factData }) => {
     return (
         <Col className="mt-2">
             <Card
-                className="text-center shadow-sm border-0 p-card"
+                className="text-center shadow-sm border-0 "
                 header={
                     <div
                         className="bg-primary text-white text-uppercase" // Bootstrap классы

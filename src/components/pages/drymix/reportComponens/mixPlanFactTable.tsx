@@ -3,10 +3,12 @@ import MixPlan from "../../../../model/mix/plan";
 import MixCategoryProduction from "../../../../model/mix/prodution/MixCategoryProduction";
 import React from "react";
 import DryMix from "../../../../model/mix/DryMix";
-import { Col } from "react-bootstrap";
-import { Card } from "primereact/card";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+
 
 interface MixPlanFactTableProps {
     planData: MixPlan[];
@@ -78,7 +80,10 @@ const MixPlanFactTable: React.FC<MixPlanFactTableProps> = ({ planData, productio
             columnResizeMode="fit"
             scrollable
             scrollHeight="500px"
+            style={{fontSize: 12}}
         >
+            
+
             <Column field="title" header="Наименование" />
             <Column
                 field="planValue"

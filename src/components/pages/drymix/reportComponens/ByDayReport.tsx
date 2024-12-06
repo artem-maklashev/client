@@ -138,13 +138,13 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                         <DayRangeSelector onDatesChange={handleRangeChange} />
                     </Row>
                     <Row>
-                        <PlanFactCard planData={mixPlan} factData={mixProduction} />
+                        <PlanFactCard planData={mixPlan} factData={mixProduction.filter(p => p.category.id === 2)} />
                     </Row>                    
                 </Col>
                 <Col lg={9} sm={12} className="mb-5">
                     <Row>
                         <Col>
-                            <PlanFact mixProduction={mixProduction} mixPlan={mixPlan} />
+                            <PlanFact mixProduction={mixProduction.filter(p => p.category.id === 2)} mixPlan={mixPlan} />
                         </Col>
                     </Row>
                     <Row>
