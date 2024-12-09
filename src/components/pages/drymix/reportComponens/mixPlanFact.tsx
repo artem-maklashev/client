@@ -102,7 +102,7 @@ const PlanFact: FC<MixPlanFactProps> = ({ mixProduction, mixPlan }) => {
                 let currentDate = new Date(startDate);
             
                 while (currentDate.toISOString().split("T")[0] <= new Date(endDate).toISOString().split("T")[0]) {
-                    console.log("Добавляю дату для графика:", new Date(currentDate).toISOString().split("T")[0]);
+                    console.log("Добавляю дату для графика:", new Date(currentDate).toLocaleDateString());
                     dateArray.push(new Date(currentDate).toISOString().split("T")[0]);
                     currentDate.setDate(currentDate.getDate() + 1);
                 }

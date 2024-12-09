@@ -12,7 +12,7 @@ import Thickness from "../model/gypsumBoard/Thickness";
 dayjs.extend(utc);
 
 
-class ApiService {
+class ApiService {   
     
     private static baseUrl = process.env.REACT_APP_API_URL;
     private static plusDays = Number(process.env.REACT_APP_PLUS_DAYS);
@@ -329,6 +329,15 @@ class ApiService {
             gboard.length.value
         );
     };
+
+    static async getConsumptionsByProductions(productions: ProductionList[]) {
+        try {
+            const response = await api.post(`${process.env.REACT_APP_API_URL}/specifications/getConsumptionByProductions`, productions);
+            return response.data;
+        } catch (error: any) {
+            console.error(`Произошла ошибка при получении расхода материалов`, error);
+        }
+      }
 }
 
 export default ApiService;

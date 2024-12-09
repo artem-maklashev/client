@@ -12,6 +12,7 @@ import { getUserRole } from "../../../../service/Api";
 import ApiService from "../../../../service/ApiService";
 import MaterialConsumption from "../../../../model/specification/MaterialConsumption";
 import { Button } from "primereact/button";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 
 interface ProductionListTableProps {
@@ -27,6 +28,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] | null>(null);
+  const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     setReportData(boardProductions);
@@ -46,7 +49,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
 
   const onSave = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>, updatedConsumptions: MaterialConsumption[]) => {
     console.log("Сохраняемый отчет (время начала): " + updatedReport.productionList.productionStart);
-    
+
     if (reportData) {
       const updatedList = reportData.map((item) => {
         if (item.productionList.id === updatedReport.productionList.id) {
@@ -109,6 +112,26 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
     }
   }
 
+  useEffect(() => {
+    const fetchComsumptions = async (reports: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]) => {
+      const productions = reports.map((report) => report.productionList);
+      setLoading(true);
+      try {
+        const consumptionsForReport = await ApiService.getConsumptionsByProductions(productions);
+        setConsumptions(consumptionsForReport);
+      } catch (error) {
+        console.error("Error fetching consumptions:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (reportData) {
+
+      fetchComsumptions(reportData);
+    }
+  }, [reportData]);
+
   return (
     <Container fluid className="mt-5">
       <Row>
@@ -124,6 +147,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                 {/* <th className="text-center">Вид продукции</th> */}
                 <th className="text-center">Наименование</th>
                 <th className="text-center">Простои</th>
+                <th className="text-center">Материалы</th>
                 <th className="text-center ">Действия.</th>
               </tr>
             </thead>
@@ -179,7 +203,18 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                         const diffInDays = (end.getTime() - start.getTime()) / (1000 * 60);
                         return acc + diffInDays;
                       }, 0)}
-                    </td>                   
+                    </td>
+                    <td className="text-center">
+
+                      { isLoading ? ( <ProgressSpinner style={{ width: "25px", height: "25px" }} />) :
+                      consumptions
+                        .filter(c => c.productionList.id === item.productionList.id)
+                        .reduce((acc, consumption) => acc + consumption.quantity, 0) === 0 ? (
+                        <i className="pi pi-minus" style={{ color: "gray" }}></i>
+                      ) : (
+                        <i className="pi pi-check" style={{ color: "green" }}></i>
+                      )}
+                    </td>
                     <td className="text-center">
                       {/* Кнопка редактирования */}
                       <Button
@@ -193,8 +228,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                           fontSize: '1.2rem', // Размер текста/иконки
                           borderRadius: '25px'
                         }}
-                        // disabled={
-                        //   getUserRole() === 'ADMIN' ? false : true}
+                      // disabled={
+                      //   getUserRole() === 'ADMIN' ? false : true}
                       />
                       {/* Кнопка удаления */}
                       <Button

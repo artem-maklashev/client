@@ -64,7 +64,8 @@ const MixDelayChart: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                         return; // Пропустить некорректный элемент
                     }
     
-                    const dateStr = new Date(item.mixProduction.productionDate).toISOString().split('T')[0];
+                    const dateStr = new Date(item.mixProduction.productionDate).toLocaleDateString();
+                    console.log('Обрабатываю дату простоя:', dateStr);
                     const existingEntry = groupedData.find((entry) => entry.date === dateStr);
     
                     if (existingEntry) {

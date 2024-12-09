@@ -22,6 +22,7 @@ const FindBoardReport: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
+        setProductions([]);
         const findReport = async () => {
             if (selectedDate) {  // Убедимся, что selectedDate не null
                 setLoading(true);

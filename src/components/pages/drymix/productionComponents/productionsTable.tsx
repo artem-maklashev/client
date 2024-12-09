@@ -42,7 +42,7 @@ export const MixProductionsTable: React.FC<MixProductionsTableProps> = ({ produc
         <Container>
             <Col className="col-12">
                 <div className="card">
-                    <DataTable value={tableData} scrollable scrollHeight="400px" size="small" tableStyle={{ width: 800, border: 'true', fontSize: 13 }}>
+                    <DataTable value={tableData} scrollable scrollHeight="600px" size="small" tableStyle={{ width: 800, border: 'true', fontSize: 13 }}>
                         <Column field="productionDate" header="Дата" body={(rowData) => new Date(rowData.productionDate).toLocaleDateString('ru-RU')} />
                         <Column
                             header="Наименование смеси"

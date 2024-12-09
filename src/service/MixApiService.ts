@@ -9,6 +9,7 @@ import { api } from "./Api";
 import ApiService from "./ApiService";
 
 class MixApiService {
+
   private static baseUrl = process.env.REACT_APP_API_URL + "/drymix";
 
   static async getPlan(period: Date) {
@@ -260,37 +261,46 @@ class MixApiService {
 
   static async saveMixDelays(delays: MixDelay[], productionId: number) {
     try {
-        const response = await api.put(
-            `${this.baseUrl}/production/delay/saveDelays`,
-            {
-                delays,      // Массив задержек
-                productionId // Идентификатор производства
-            }
-        );        
-        return response.data;
+      const response = await api.put(
+        `${this.baseUrl}/production/delay/saveDelays`,
+        {
+          delays,      // Массив задержек
+          productionId // Идентификатор производства
+        }
+      );
+      return response.data;
     } catch (error: any) {
-        console.error(
-            `Произошла ошибка при сохранении задержек по выпуску смеси`,
-            error
-        );
+      console.error(
+        `Произошла ошибка при сохранении задержек по выпуску смеси`,
+        error
+      );
     }
-}
-
-static async getDelaysByDateBeetvean(startDate: Date, endDate: Date) {
-  try {
-    const params = {
-      startDate: ApiService.formatDateToISO(startDate), //addDays(startDate, this.plusDays),
-      endDate: ApiService.formatDateToISO(endDate), //addDays(endDate, this.plusDays)
-    };
-    const response = await api.get(`${this.baseUrl}/production/delay/getDelaysByDateBetween`, {
-      params,
-    });
-    return response.data;
-  } catch (error: any) {
-    console.error(`Произошла ошибка: ${error.message}`);
-    throw error;
   }
-}
+
+  static async getDelaysByDateBeetvean(startDate: Date, endDate: Date) {
+    try {
+      const params = {
+        startDate: ApiService.formatDateToISO(startDate), //addDays(startDate, this.plusDays),
+        endDate: ApiService.formatDateToISO(endDate), //addDays(endDate, this.plusDays)
+      };
+      const response = await api.get(`${this.baseUrl}/production/delay/getDelaysByDateBetween`, {
+        params,
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error(`Произошла ошибка: ${error.message}`);
+      throw error;
+    }
+  }
+
+  static async getCategoriesByProductions(productions: MixProduction[]) {
+    try {
+      const responce = await api.post(`${this.baseUrl}/production/getCategoriesByProductions`, productions);
+      return responce.data;
+    } catch (error: any) {
+      console.error(`Произошла ошибка при получении категорий по выпускам смесей`, error);
+    }
+  }
 
 
 

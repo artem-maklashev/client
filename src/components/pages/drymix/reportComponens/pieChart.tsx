@@ -51,8 +51,7 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title, onClick }) => {
                 fontSize="12px"
                 fontWeight="bold"
             >
-                <tspan x={x} dy="-1em">{name}</tspan>
-                <tspan x={x} dy="1.2em">{percentage}</tspan>
+                <tspan x={x} dy="-1em">{name} - {percentage}</tspan>                
                 <tspan x={x} dy="1.2em">{value}</tspan>
             </text>
         );
