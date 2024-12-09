@@ -84,3 +84,17 @@
     /* Измените цвет текста на желаемый */
 }
 
+/* styles.css */
+.custom-datatable .p-datatable-thead > tr > th,
+.custom-datatable .p-datatable-tbody > tr > td {
+    border: 1px solid #3498db; /* Цвет сетки */
+}
+
+.custom-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #f9f9f9df; /* Цвет фона для чётных строк */
+}
+
+.custom-datatable .p-datatable-tbody > tr:nth-child(odd) {
+    background-color: #ffffff; /* Цвет фона для нечётных строк */
+}
+

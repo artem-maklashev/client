@@ -6,6 +6,7 @@ import Plan from "../../model/gypsumBoard/Plan";
 import ApiService from "../../service/ApiService";
 import PlanDataTable from "./planElements/planDataTable";
 import PlanModal from "./planElements/planModal";
+import BoardProduction from "../../model/production/BoardProduction";
 
 interface PlanPageProps {
 
@@ -17,6 +18,7 @@ const PlanPage: React.FC<PlanPageProps> = () => {
     const [planList, setPlanList] = useState<Plan[]>([]);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+    const [productions, setProductions] = useState<BoardProduction[]>([]);
 
     function onPeriodChange(period: Date): void {
         setPeriod(period);
@@ -25,6 +27,7 @@ const PlanPage: React.FC<PlanPageProps> = () => {
     useEffect(() => {
         setPlanList([]);
         ApiService.fetchPlanByMonth(period).then(setPlanList);
+        ApiService.fetchProductionsByMonth(period).then(setProductions);
     }, [period]);
 
     const handleClose = () => {
@@ -91,7 +94,7 @@ const PlanPage: React.FC<PlanPageProps> = () => {
                 </Container>
             </Row>
             <Row >
-                <PlanDataTable planList={planList} />
+                <PlanDataTable planList={planList} productions={productions}/>
             </Row>
             <PlanModal show={modalShow} onClose={handleClose} month={period} plan={selectedPlan} onSave={savePlan} />
         </Container >
