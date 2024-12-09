@@ -30,6 +30,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] | null>(null);
   const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
   const [isLoading, setLoading] = useState(false);
+  const [updateConsumption, setUpdateConsumption] = useState(false);
 
   useEffect(() => {
     setReportData(boardProductions);
@@ -74,6 +75,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
             console.log("Сохраняем расход");
             await saveConsumptions(updatedConsumptions);
             console.log("Расходы сохранены успешно");
+            setUpdateConsumption(true);
           } catch (consumptionError) {
             // 4. Логируем ошибку, если произошла ошибка при сохранении расхода
             console.error("Ошибка при сохранении расхода:", consumptionError);
@@ -123,13 +125,18 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
         console.error("Error fetching consumptions:", error);
       } finally {
         setLoading(false);
+        setUpdateConsumption(false);
       }
     }
 
-    if (reportData) {
+    if (reportData && updateConsumption) {
 
       fetchComsumptions(reportData);
     }
+  }, [reportData, updateConsumption]);
+
+  useEffect(() => {
+    setUpdateConsumption(true);
   }, [reportData]);
 
   return (
