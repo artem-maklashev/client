@@ -151,13 +151,14 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
     return (
 
         <div className="card mt-2 mb-3">
+            
             <DataTable
                 value={formattedData}
                 scrollable
                 scrollHeight="600px"
                 showGridlines
                 stripedRows={false} // Отключаем чередование строк, чтобы настроить вручную
-                tableStyle={{ fontSize: 14 }}
+                tableStyle={{ fontSize: 12 }}
                 className="custom-datatable"
                 dataKey="gupsumboard.id"
             >
@@ -173,7 +174,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                         )
                     }}
                     frozen
-                    style={{ minWidth: '330px' }}
+                    style={{ minWidth: '330px',  }}
                     headerStyle={{ textAlign: 'left' }}
                 />
 
@@ -184,21 +185,24 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                         key={date}
                         header={date}
                         body={(rowData) => (
-                            <div style={{ textAlign: 'center' }}>
-                                {(
+                            <div style={{ textAlign: 'center', padding: '1' }}>                                
                                     <div style={{ color: 'blue', fontWeight: 'bold' }}>
                                         {rowData.planValue[date] ?? ''}
                                     </div>
-                                )}
-                                {(
+                               
                                     <div style={{ 
                                         color: !rowData.planValue[date] ?  'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '10px' }}>
                                         {rowData.factValue[date] ?? ''}
-                                    </div>
-                                )}
+                                    </div>                                
                             </div>
                         )}
-                        footer={columnTotals[date] ?? 0} // Итоги по столбцу
+                        footer={
+                            <div className="text-center font-bold">
+
+                                {columnTotals[date] ?? 0}
+                            </div>
+                            
+                        } // Итоги по столбцу
                     />
                 ))}
 

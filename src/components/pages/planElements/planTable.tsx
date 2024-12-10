@@ -8,6 +8,7 @@ import 'primereact/resources/primereact.min.css';          // Основные �
 import 'primeicons/primeicons.css';                         // Иконки
 import { Col, Container } from "react-bootstrap";
 import { getUserRole } from "../../../service/Api";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 
 
@@ -30,6 +31,15 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
         console.log('Удалить:', rowData);
         planDelete(rowData);
     };
+
+    if (planList.length === 0) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+                <ProgressSpinner />
+            </div>
+        );
+    }
+
 
     return (
         <Container fluid className="mb-2 ">
