@@ -5,6 +5,7 @@ import { Column } from "primereact/column";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import 'primereact/resources/themes/nano/theme.css';
 import BoardProduction from "../../../model/production/BoardProduction";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 interface PlanTableProps {
     planList: Plan[];
@@ -60,11 +61,12 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
 
     // Расчёт итога для каждой строки
-    const calculateRowTotal = (values: { [date: string]: number | null }): number => {
-        return Object.values(values).reduce((total: number, value: number | null) => {
-            return total + (value ?? 0); // Если значение null, то прибавляем 0
+    const calculateRowTotal = (planValues: { [date: string]: number | null }): number => {
+        return Object.values(planValues).reduce((total: number, planValue: number | null) => {
+            return total + (planValue ?? 0); // Суммируем только плановые значения, пропуская null
         }, 0);
     };
+
 
     // Расчёт итога для каждого столбца (для каждой даты)
     const calculateColumnTotals = (groupedPlans: GypsumBoardPlan[], headers: string[]): { [date: string]: number } => {
@@ -120,13 +122,8 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
             formattedData.push(
                 {
                     gypsumBoard: plan.gypsumBoard,
-                    type: 'План',
-                    values: plan.values,
-                },
-                {
-                    gypsumBoard: plan.gypsumBoard,
-                    type: 'Факт',
-                    values: production ? production.values : {}, // Если нет данных по факту, оставляем пустой объект
+                    planValue: plan.values,
+                    factValue: production ? production.values : {},
                 }
             );
         });
@@ -142,9 +139,18 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
     const groupedProd = groupedProductions(productions);
     const formattedData = formatGroupedData(groupedPlans, groupedProd);
 
+    if (!formattedData.length) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+                <ProgressSpinner />
+            </div>
+        );
+    }
+
 
     return (
-        <div className="card mt-2">
+
+        <div className="card mt-2 mb-3">
             <DataTable
                 value={formattedData}
                 scrollable
@@ -159,22 +165,14 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 <Column
                     header="Гипсокартон"
                     body={(rowData) => {
-                        // Условие для отображения разных стилей для План и Факт
-                        if (rowData.type === 'План') {
-                            return (
-                                <div style={{ color: 'blue', fontWeight: 'bold' }}>
-                                    {`${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
+                        return (
+                            <div style={{ color: 'blue', fontWeight: 'bold' }}>
+                                {`${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
                     ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
-                                </div>
-                            );
-                        } else {
-                            return (
-                                <div style={{ color: 'green', fontStyle: 'italic', textAlign: 'right' }}>
-                                    Факт
-                                </div>
-                            );
-                        }
+                            </div>
+                        )
                     }}
+                    frozen
                     style={{ minWidth: '330px' }}
                     headerStyle={{ textAlign: 'left' }}
                 />
@@ -187,14 +185,15 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                         header={date}
                         body={(rowData) => (
                             <div style={{ textAlign: 'center' }}>
-                                {rowData.type === 'План' && (
+                                {(
                                     <div style={{ color: 'blue', fontWeight: 'bold' }}>
-                                        {rowData.values[date] ?? ''}
+                                        {rowData.planValue[date] ?? ''}
                                     </div>
                                 )}
-                                {rowData.type === 'Факт' && (
-                                    <div style={{ color: 'green', fontSize: '10px' }}>
-                                        {rowData.values[date] ?? ''}
+                                {(
+                                    <div style={{ 
+                                        color: !rowData.planValue[date] ?  'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '10px' }}>
+                                        {rowData.factValue[date] ?? ''}
                                     </div>
                                 )}
                             </div>
@@ -206,10 +205,10 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 {/* Колонка с итогом по строке */}
                 <Column
                     header="Итого"
-                    body={(rowData) => calculateRowTotal(rowData.values)} // Выводим сумму по строке
+                    body={(rowData) => calculateRowTotal(rowData.planValue)} // Выводим сумму по строке
                     footer={Object.values(columnTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
                     className="font-bold"
-                />
+                    bodyStyle={{ fontWeight: 'bold' }} />
             </DataTable>
 
         </div>
