@@ -27,6 +27,7 @@ import PlanPage from './components/pages/planPage';
 import MixReport from './components/pages/drymix/MixReport';
 import MixProduction from './components/pages/drymix/MixProductionPage';
 import MixPlanPage from './components/pages/drymix/mixPlan';
+import Tree from './components/pages/tree';
 
 
 
@@ -132,6 +133,7 @@ function App() {
     return (
         // <Router>
         <div>
+            <Tree />
             <NavigationBar tokenValid={tokenValid} onLogout={handleLogout} />
             <Routes>                
                 <Route path="/dashBoard" element={tokenValid ? <DashBoard /> : <Navigate to="/login" />} />

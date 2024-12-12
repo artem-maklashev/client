@@ -1,0 +1,2012 @@
+.tree-container {
+  height: 330px;
+  width: 250px;
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.star {
+  display: inline-block;
+  border-radius: 0;
+  border-color: #f7b93f transparent transparent transparent;
+  border-style: solid;
+  border-top-width: 7.69230769px;
+  border-right-width: 10px;
+  border-left-width: 10px;
+  height: 0;
+  width: 0;
+  background: transparent;
+  z-index: 100;
+  -webkit-animation: pulsate-star 1.4s ease-in-out infinite alternate-reverse;
+  animation: pulsate-star 1.4s ease-in-out infinite alternate-reverse;
+}
+
+.star:before, .star:after {
+  border-color: #f7b93f transparent transparent transparent;
+  border-style: solid;
+  border-top-width: 7.69230769px;
+  border-right-width: 10px;
+  border-left-width: 10px;
+  border-bottom: 0;
+  content: '';
+  display: block;
+  height: 0;
+  left: -10px;
+  position: absolute;
+  top: -7.69230769px;
+  width: 0;
+}
+
+.star:before {
+  -webkit-transform: translate(15.5555555%, -15.5555555%) rotate(72deg) translateY(50%);
+  transform: translate(15.5555555%, -15.5555555%) rotate(72deg) translateY(50%);
+}
+
+.star:after {
+  -webkit-transform: translate(-15.5555555%, -15.5555555%) rotate(-72deg) translateY(50%);
+  transform: translate(-15.5555555%, -15.5555555%) rotate(-72deg) translateY(50%);
+}
+
+.spiral-container {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spiral {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+.spiral.one {
+  -webkit-animation: rotate-tree 6s infinite linear both;
+  animation: rotate-tree 6s infinite linear both;
+  -webkit-animation-delay: -1.7s;
+  animation-delay: -1.7s;
+}
+
+.spiral.one .light {
+  background: #fcfbe9;
+}
+
+.spiral.two {
+  -webkit-animation: rotate-tree 7s infinite linear both;
+  animation: rotate-tree 7s infinite linear both;
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
+}
+
+.spiral.two .light {
+  background: #e8a41d;
+}
+
+.spiral.three {
+  -webkit-animation: rotate-tree 8s infinite linear both;
+  animation: rotate-tree 8s infinite linear both;
+  -webkit-animation-delay: -0.1s;
+  animation-delay: -0.1s;
+}
+
+.spiral.three .light {
+  background: #f5e393;
+}
+
+.spiral>.light-wrapper {
+  border-radius: 50%;
+  position: absolute;
+  display: block;
+  width: 5px;
+  height: 5px;
+  left: 50%;
+  top: 50%;
+  margin: -2.5px 0 0 -2.5px;
+}
+
+.spiral .stabilise {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.spiral .light {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  opacity: 1;
+  -webkit-animation-name: pulsate;
+  animation-name: pulsate;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate-reverse;
+  animation-direction: alternate-reverse;
+}
+
+.spiral.one .light-wrapper.light-wrapper-1 {
+  -webkit-transform: translate3d(0px, 0.08333333px, 0.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(0deg);
+  transform: translate3d(0px, 0.08333333px, 0.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(0deg);
+  width: 0.23255814px;
+  height: 0.23255814px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-1 .light {
+  -webkit-animation-duration: 0.49762552s;
+  animation-duration: 0.49762552s;
+  -webkit-animation-delay: 0.46008087s;
+  animation-delay: 0.46008087s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-2 {
+  -webkit-transform: translate3d(0.05788273px, 0.32826925px, 0.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-10deg);
+  transform: translate3d(0.05788273px, 0.32826925px, 0.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-10deg);
+  width: 0.46511628px;
+  height: 0.46511628px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-2 .light {
+  -webkit-animation-duration: 0.80604633s;
+  animation-duration: 0.80604633s;
+  -webkit-animation-delay: 0.45691083s;
+  animation-delay: 0.45691083s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-3 {
+  -webkit-transform: translate3d(0.25651511px, 0.70476947px, 1.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-20deg);
+  transform: translate3d(0.25651511px, 0.70476947px, 1.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-20deg);
+  width: 0.69767442px;
+  height: 0.69767442px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-3 .light {
+  -webkit-animation-duration: 0.7843933s;
+  animation-duration: 0.7843933s;
+  -webkit-animation-delay: 0.97923336s;
+  animation-delay: 0.97923336s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-4 {
+  -webkit-transform: translate3d(0.66666667px, 1.15470054px, 2.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-30deg);
+  transform: translate3d(0.66666667px, 1.15470054px, 2.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-30deg);
+  width: 0.93023256px;
+  height: 0.93023256px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-4 .light {
+  -webkit-animation-duration: 0.7969272s;
+  animation-duration: 0.7969272s;
+  -webkit-animation-delay: 0.99170054s;
+  animation-delay: 0.99170054s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-5 {
+  -webkit-transform: translate3d(1.33914085px, 1.59592592px, 3.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-40deg);
+  transform: translate3d(1.33914085px, 1.59592592px, 3.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-40deg);
+  width: 1.1627907px;
+  height: 1.1627907px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-5 .light {
+  -webkit-animation-duration: 0.86007312s;
+  animation-duration: 0.86007312s;
+  -webkit-animation-delay: 0.38724271s;
+  animation-delay: 0.38724271s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-6 {
+  -webkit-transform: translate3d(2.29813333px, 1.92836283px, 5.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-50deg);
+  transform: translate3d(2.29813333px, 1.92836283px, 5.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-50deg);
+  width: 1.39534884px;
+  height: 1.39534884px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-6 .light {
+  -webkit-animation-duration: 1.26730517s;
+  animation-duration: 1.26730517s;
+  -webkit-animation-delay: 0.89028468s;
+  animation-delay: 0.89028468s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-7 {
+  -webkit-transform: translate3d(3.5362704px, 2.04166667px, 7px) rotateX(90deg) rotateZ(0deg) rotateY(-60deg);
+  transform: translate3d(3.5362704px, 2.04166667px, 7px) rotateX(90deg) rotateZ(0deg) rotateY(-60deg);
+  width: 1.62790698px;
+  height: 1.62790698px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-7 .light {
+  -webkit-animation-duration: 0.98018128s;
+  animation-duration: 0.98018128s;
+  -webkit-animation-delay: 0.89909534s;
+  animation-delay: 0.89909534s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-8 {
+  -webkit-transform: translate3d(5.01169398px, 1.82410743px, 9.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-70deg);
+  transform: translate3d(5.01169398px, 1.82410743px, 9.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-70deg);
+  width: 1.86046512px;
+  height: 1.86046512px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-8 .light {
+  -webkit-animation-duration: 0.84501126s;
+  animation-duration: 0.84501126s;
+  -webkit-animation-delay: 0.75625734s;
+  animation-delay: 0.75625734s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-9 {
+  -webkit-transform: translate3d(6.64745233px, 1.1721252px, 11.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-80deg);
+  transform: translate3d(6.64745233px, 1.1721252px, 11.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-80deg);
+  width: 2.09302326px;
+  height: 2.09302326px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-9 .light {
+  -webkit-animation-duration: 1.28080404s;
+  animation-duration: 1.28080404s;
+  -webkit-animation-delay: 1.05489935s;
+  animation-delay: 1.05489935s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-10 {
+  -webkit-transform: translate3d(8.33333333px, 0px, 14.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-90deg);
+  transform: translate3d(8.33333333px, 0px, 14.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-90deg);
+  width: 2.3255814px;
+  height: 2.3255814px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-10 .light {
+  -webkit-animation-duration: 1.17390681s;
+  animation-duration: 1.17390681s;
+  -webkit-animation-delay: 0.82814253s;
+  animation-delay: 0.82814253s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-11 {
+  -webkit-transform: translate3d(9.93014484px, -1.75095246px, 17.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-100deg);
+  transform: translate3d(9.93014484px, -1.75095246px, 17.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-100deg);
+  width: 2.55813953px;
+  height: 2.55813953px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-11 .light {
+  -webkit-animation-duration: 0.33676696s;
+  animation-duration: 0.33676696s;
+  -webkit-animation-delay: 1.17994889s;
+  animation-delay: 1.17994889s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-12 {
+  -webkit-transform: translate3d(11.27631145px, -4.10424172px, 20.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-110deg);
+  transform: translate3d(11.27631145px, -4.10424172px, 20.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-110deg);
+  width: 2.79069767px;
+  height: 2.79069767px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-12 .light {
+  -webkit-animation-duration: 0.87266002s;
+  animation-duration: 0.87266002s;
+  -webkit-animation-delay: 0.36037987s;
+  animation-delay: 0.36037987s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-13 {
+  -webkit-transform: translate3d(12.19652444px, -7.04166667px, 24.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-120deg);
+  transform: translate3d(12.19652444px, -7.04166667px, 24.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-120deg);
+  width: 3.02325581px;
+  height: 3.02325581px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-13 .light {
+  -webkit-animation-duration: 0.68600165s;
+  animation-duration: 0.68600165s;
+  -webkit-animation-delay: 1.0084662s;
+  animation-delay: 1.0084662s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-14 {
+  -webkit-transform: translate3d(12.51205924px, -10.49886429px, 28px) rotateX(90deg) rotateZ(0deg) rotateY(-130deg);
+  transform: translate3d(12.51205924px, -10.49886429px, 28px) rotateX(90deg) rotateZ(0deg) rotateY(-130deg);
+  width: 3.25581395px;
+  height: 3.25581395px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-14 .light {
+  -webkit-animation-duration: 0.84449351s;
+  animation-duration: 0.84449351s;
+  -webkit-animation-delay: 0.45938932s;
+  animation-delay: 0.45938932s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-15 {
+  -webkit-transform: translate3d(12.05226768px, -14.36333331px, 32.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-140deg);
+  transform: translate3d(12.05226768px, -14.36333331px, 32.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-140deg);
+  width: 3.48837209px;
+  height: 3.48837209px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-15 .light {
+  -webkit-animation-duration: 0.37991102s;
+  animation-duration: 0.37991102s;
+  -webkit-animation-delay: 1.10928348s;
+  animation-delay: 1.10928348s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-16 {
+  -webkit-transform: translate3d(10.66666667px, -18.47520861px, 36.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-150deg);
+  transform: translate3d(10.66666667px, -18.47520861px, 36.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-150deg);
+  width: 3.72093023px;
+  height: 3.72093023px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-16 .light {
+  -webkit-animation-duration: 0.36310577s;
+  animation-duration: 0.36310577s;
+  -webkit-animation-delay: 1.00976315s;
+  animation-delay: 1.00976315s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-17 {
+  -webkit-transform: translate3d(8.23698512px, -22.63093062px, 41.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-160deg);
+  transform: translate3d(8.23698512px, -22.63093062px, 41.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-160deg);
+  width: 3.95348837px;
+  height: 3.95348837px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-17 .light {
+  -webkit-animation-duration: 0.30750769s;
+  animation-duration: 0.30750769s;
+  -webkit-animation-delay: 0.87969288s;
+  animation-delay: 0.87969288s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-18 {
+  -webkit-transform: translate3d(4.6885008px, -26.58980933px, 46.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-170deg);
+  transform: translate3d(4.6885008px, -26.58980933px, 46.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-170deg);
+  width: 4.18604651px;
+  height: 4.18604651px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-18 .light {
+  -webkit-animation-duration: 1.05472009s;
+  animation-duration: 1.05472009s;
+  -webkit-animation-delay: 0.8232432s;
+  animation-delay: 0.8232432s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-19 {
+  -webkit-transform: translate3d(0px, -30.08333333px, 51.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-180deg);
+  transform: translate3d(0px, -30.08333333px, 51.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-180deg);
+  width: 4.41860465px;
+  height: 4.41860465px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-19 .light {
+  -webkit-animation-duration: 1.19711726s;
+  animation-duration: 1.19711726s;
+  -webkit-animation-delay: 0.40380888s;
+  animation-delay: 0.40380888s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-20 {
+  -webkit-transform: translate3d(-5.78827259px, -32.8269251px, 57.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-190deg);
+  transform: translate3d(-5.78827259px, -32.8269251px, 57.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-190deg);
+  width: 4.65116279px;
+  height: 4.65116279px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-20 .light {
+  -webkit-animation-duration: 0.98047767s;
+  animation-duration: 0.98047767s;
+  -webkit-animation-delay: 1.22330105s;
+  animation-delay: 1.22330105s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-21 {
+  -webkit-transform: translate3d(-12.56924027px, -34.53370381px, 63px) rotateX(90deg) rotateZ(0deg) rotateY(-200deg);
+  transform: translate3d(-12.56924027px, -34.53370381px, 63px) rotateX(90deg) rotateZ(0deg) rotateY(-200deg);
+  width: 4.88372093px;
+  height: 4.88372093px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-21 .light {
+  -webkit-animation-duration: 1.21719331s;
+  animation-duration: 1.21719331s;
+  -webkit-animation-delay: 0.42971907s;
+  animation-delay: 0.42971907s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-22 {
+  -webkit-transform: translate3d(-20.16666667px, -34.92969129px, 69.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-210deg);
+  transform: translate3d(-20.16666667px, -34.92969129px, 69.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-210deg);
+  width: 5.11627907px;
+  height: 5.11627907px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-22 .light {
+  -webkit-animation-duration: 0.75584831s;
+  animation-duration: 0.75584831s;
+  -webkit-animation-delay: 1.21749264s;
+  animation-delay: 1.21749264s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-23 {
+  -webkit-transform: translate3d(-28.33622046px, -33.76979253px, 75.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-220deg);
+  transform: translate3d(-28.33622046px, -33.76979253px, 75.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-220deg);
+  width: 5.34883721px;
+  height: 5.34883721px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-23 .light {
+  -webkit-animation-duration: 1.03987086s;
+  animation-duration: 1.03987086s;
+  -webkit-animation-delay: 1.16126511s;
+  animation-delay: 1.16126511s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-24 {
+  -webkit-transform: translate3d(-36.77013327px, -30.85380526px, 82.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-230deg);
+  transform: translate3d(-36.77013327px, -30.85380526px, 82.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-230deg);
+  width: 5.58139535px;
+  height: 5.58139535px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-24 .light {
+  -webkit-animation-duration: 1.12010798s;
+  animation-duration: 1.12010798s;
+  -webkit-animation-delay: 0.81442003s;
+  animation-delay: 0.81442003s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-25 {
+  -webkit-transform: translate3d(-45.10548978px, -26.04166667px, 89.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-240deg);
+  transform: translate3d(-45.10548978px, -26.04166667px, 89.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-240deg);
+  width: 5.81395349px;
+  height: 5.81395349px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-25 .light {
+  -webkit-animation-duration: 0.61113809s;
+  animation-duration: 0.61113809s;
+  -webkit-animation-delay: 0.98429615s;
+  animation-delay: 0.98429615s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-26 {
+  -webkit-transform: translate3d(-52.93601764px, -19.26713474px, 96.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-250deg);
+  transform: translate3d(-52.93601764px, -19.26713474px, 96.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-250deg);
+  width: 6.04651163px;
+  height: 6.04651163px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-26 .light {
+  -webkit-animation-duration: 0.62979511s;
+  animation-duration: 0.62979511s;
+  -webkit-animation-delay: 0.53252332s;
+  animation-delay: 0.53252332s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-27 {
+  -webkit-transform: translate3d(-59.827071px, -10.54912679px, 104.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-260deg);
+  transform: translate3d(-59.827071px, -10.54912679px, 104.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-260deg);
+  width: 6.27906977px;
+  height: 6.27906977px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-27 .light {
+  -webkit-animation-duration: 0.8986159s;
+  animation-duration: 0.8986159s;
+  -webkit-animation-delay: 1.27351076s;
+  animation-delay: 1.27351076s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-28 {
+  -webkit-transform: translate3d(-65.33333333px, 0px, 112px) rotateX(90deg) rotateZ(0deg) rotateY(-270deg);
+  transform: translate3d(-65.33333333px, 0px, 112px) rotateX(90deg) rotateZ(0deg) rotateY(-270deg);
+  width: 6.51162791px;
+  height: 6.51162791px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-28 .light {
+  -webkit-animation-duration: 0.79455595s;
+  animation-duration: 0.79455595s;
+  -webkit-animation-delay: 1.23149679s;
+  animation-delay: 1.23149679s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-29 {
+  -webkit-transform: translate3d(-69.01861002px, 12.16984312px, 120.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-280deg);
+  transform: translate3d(-69.01861002px, 12.16984312px, 120.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-280deg);
+  width: 6.74418605px;
+  height: 6.74418605px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-29 .light {
+  -webkit-animation-duration: 0.95422371s;
+  animation-duration: 0.95422371s;
+  -webkit-animation-delay: 1.09581501s;
+  animation-delay: 1.09581501s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-30 {
+  -webkit-transform: translate3d(-70.47694656px, 25.65151075px, 128.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-290deg);
+  transform: translate3d(-70.47694656px, 25.65151075px, 128.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-290deg);
+  width: 6.97674419px;
+  height: 6.97674419px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-30 .light {
+  -webkit-animation-duration: 0.46492391s;
+  animation-duration: 0.46492391s;
+  -webkit-animation-delay: 0.82560046s;
+  animation-delay: 0.82560046s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-31 {
+  -webkit-transform: translate3d(-69.35420109px, 40.04166667px, 137.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-300deg);
+  transform: translate3d(-69.35420109px, 40.04166667px, 137.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-300deg);
+  width: 7.20930233px;
+  height: 7.20930233px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-31 .light {
+  -webkit-animation-duration: 0.60525691s;
+  animation-duration: 0.60525691s;
+  -webkit-animation-delay: 1.24011277s;
+  animation-delay: 1.24011277s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-32 {
+  -webkit-transform: translate3d(-65.36912581px, 54.85120936px, 146.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-310deg);
+  transform: translate3d(-65.36912581px, 54.85120936px, 146.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-310deg);
+  width: 7.44186047px;
+  height: 7.44186047px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-32 .light {
+  -webkit-animation-duration: 1.01987299s;
+  animation-duration: 1.01987299s;
+  -webkit-animation-delay: 0.47544121s;
+  animation-delay: 0.47544121s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-33 {
+  -webkit-transform: translate3d(-58.33297558px, 69.51853321px, 155.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-320deg);
+  transform: translate3d(-58.33297558px, 69.51853321px, 155.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-320deg);
+  width: 7.6744186px;
+  height: 7.6744186px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-33 .light {
+  -webkit-animation-duration: 0.43142307s;
+  animation-duration: 0.43142307s;
+  -webkit-animation-delay: 0.74590684s;
+  animation-delay: 0.74590684s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-34 {
+  -webkit-transform: translate3d(-48.16666667px, 83.4271139px, 165.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-330deg);
+  transform: translate3d(-48.16666667px, 83.4271139px, 165.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-330deg);
+  width: 7.90697674px;
+  height: 7.90697674px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-34 .light {
+  -webkit-animation-duration: 0.89821898s;
+  animation-duration: 0.89821898s;
+  -webkit-animation-delay: 1.15413807s;
+  animation-delay: 1.15413807s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-35 {
+  -webkit-transform: translate3d(-34.9145563px, 95.92695504px, 175px) rotateX(90deg) rotateZ(0deg) rotateY(-340deg);
+  transform: translate3d(-34.9145563px, 95.92695504px, 175px) rotateX(90deg) rotateZ(0deg) rotateY(-340deg);
+  width: 8.13953488px;
+  height: 8.13953488px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-35 .light {
+  -webkit-animation-duration: 1.03945253s;
+  animation-duration: 1.03945253s;
+  -webkit-animation-delay: 0.55036504s;
+  animation-delay: 0.55036504s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-36 {
+  -webkit-transform: translate3d(-18.75400319px, 106.35923733px, 185.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-350deg);
+  transform: translate3d(-18.75400319px, 106.35923733px, 185.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-350deg);
+  width: 8.37209302px;
+  height: 8.37209302px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-36 .light {
+  -webkit-animation-duration: 0.82804567s;
+  animation-duration: 0.82804567s;
+  -webkit-animation-delay: 1.09075438s;
+  animation-delay: 1.09075438s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-37 {
+  -webkit-transform: translate3d(0px, 114.08333333px, 195.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-360deg);
+  transform: translate3d(0px, 114.08333333px, 195.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-360deg);
+  width: 8.60465116px;
+  height: 8.60465116px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-37 .light {
+  -webkit-animation-duration: 1.09090023s;
+  animation-duration: 1.09090023s;
+  -webkit-animation-delay: 1.17267374s;
+  animation-delay: 1.17267374s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-38 {
+  -webkit-transform: translate3d(20.89566405px, 118.50519961px, 206.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-370deg);
+  transform: translate3d(20.89566405px, 118.50519961px, 206.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-370deg);
+  width: 8.8372093px;
+  height: 8.8372093px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-38 .light {
+  -webkit-animation-duration: 1.15766495s;
+  animation-duration: 1.15766495s;
+  -webkit-animation-delay: 0.79051842s;
+  animation-delay: 0.79051842s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-39 {
+  -webkit-transform: translate3d(43.35105317px, 119.10603968px, 217.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-380deg);
+  transform: translate3d(43.35105317px, 119.10603968px, 217.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-380deg);
+  width: 9.06976744px;
+  height: 9.06976744px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-39 .light {
+  -webkit-animation-duration: 0.87001478s;
+  animation-duration: 0.87001478s;
+  -webkit-animation-delay: 0.63230846s;
+  animation-delay: 0.63230846s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-40 {
+  -webkit-transform: translate3d(66.66666667px, 115.47005384px, 228.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-390deg);
+  transform: translate3d(66.66666667px, 115.47005384px, 228.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-390deg);
+  width: 9.30232558px;
+  height: 9.30232558px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-40 .light {
+  -webkit-animation-duration: 0.78134014s;
+  animation-duration: 0.78134014s;
+  -webkit-animation-delay: 1.00764215s;
+  animation-delay: 1.00764215s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-41 {
+  -webkit-transform: translate3d(90.04383099px, 107.31005907px, 240.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-400deg);
+  transform: translate3d(90.04383099px, 107.31005907px, 240.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-400deg);
+  width: 9.53488372px;
+  height: 9.53488372px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-41 .light {
+  -webkit-animation-duration: 0.56817473s;
+  animation-duration: 0.56817473s;
+  -webkit-animation-delay: 0.58378156s;
+  animation-delay: 0.58378156s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-42 {
+  -webkit-transform: translate3d(112.60853314px, 94.48977862px, 252px) rotateX(90deg) rotateZ(0deg) rotateY(-410deg);
+  transform: translate3d(112.60853314px, 94.48977862px, 252px) rotateX(90deg) rotateZ(0deg) rotateY(-410deg);
+  width: 9.76744186px;
+  height: 9.76744186px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-42 .light {
+  -webkit-animation-duration: 0.81051172s;
+  animation-duration: 0.81051172s;
+  -webkit-animation-delay: 0.71340009s;
+  animation-delay: 0.71340009s;
+}
+
+.spiral.one .light-wrapper.light-wrapper-43 {
+  -webkit-transform: translate3d(133.44008097px, 77.04166667px, 264.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-420deg);
+  transform: translate3d(133.44008097px, 77.04166667px, 264.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-420deg);
+  width: 10px;
+  height: 10px;
+}
+
+.spiral.one .light-wrapper.light-wrapper-43 .light {
+  -webkit-animation-duration: 0.40981324s;
+  animation-duration: 0.40981324s;
+  -webkit-animation-delay: 1.06043431s;
+  animation-delay: 1.06043431s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-1 {
+  -webkit-transform: translate3d(0px, 0.08333333px, 0.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(0deg);
+  transform: translate3d(0px, 0.08333333px, 0.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(0deg);
+  width: 0.34883721px;
+  height: 0.34883721px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-1 .light {
+  -webkit-animation-duration: 0.51785398s;
+  animation-duration: 0.51785398s;
+  -webkit-animation-delay: 1.16667469s;
+  animation-delay: 1.16667469s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-2 {
+  -webkit-transform: translate3d(0.05788273px, 0.32826925px, 0.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-10deg);
+  transform: translate3d(0.05788273px, 0.32826925px, 0.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-10deg);
+  width: 0.69767442px;
+  height: 0.69767442px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-2 .light {
+  -webkit-animation-duration: 1.07610516s;
+  animation-duration: 1.07610516s;
+  -webkit-animation-delay: 0.3433053s;
+  animation-delay: 0.3433053s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-3 {
+  -webkit-transform: translate3d(0.25651511px, 0.70476947px, 1.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-20deg);
+  transform: translate3d(0.25651511px, 0.70476947px, 1.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-20deg);
+  width: 1.04651163px;
+  height: 1.04651163px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-3 .light {
+  -webkit-animation-duration: 0.45587291s;
+  animation-duration: 0.45587291s;
+  -webkit-animation-delay: 0.78815908s;
+  animation-delay: 0.78815908s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-4 {
+  -webkit-transform: translate3d(0.66666667px, 1.15470054px, 2.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-30deg);
+  transform: translate3d(0.66666667px, 1.15470054px, 2.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-30deg);
+  width: 1.39534884px;
+  height: 1.39534884px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-4 .light {
+  -webkit-animation-duration: 0.62187543s;
+  animation-duration: 0.62187543s;
+  -webkit-animation-delay: 0.79127526s;
+  animation-delay: 0.79127526s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-5 {
+  -webkit-transform: translate3d(1.33914085px, 1.59592592px, 3.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-40deg);
+  transform: translate3d(1.33914085px, 1.59592592px, 3.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-40deg);
+  width: 1.74418605px;
+  height: 1.74418605px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-5 .light {
+  -webkit-animation-duration: 1.29564553s;
+  animation-duration: 1.29564553s;
+  -webkit-animation-delay: 0.82283001s;
+  animation-delay: 0.82283001s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-6 {
+  -webkit-transform: translate3d(2.29813333px, 1.92836283px, 5.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-50deg);
+  transform: translate3d(2.29813333px, 1.92836283px, 5.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-50deg);
+  width: 2.09302326px;
+  height: 2.09302326px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-6 .light {
+  -webkit-animation-duration: 0.3050573s;
+  animation-duration: 0.3050573s;
+  -webkit-animation-delay: 0.57420212s;
+  animation-delay: 0.57420212s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-7 {
+  -webkit-transform: translate3d(3.5362704px, 2.04166667px, 7px) rotateX(90deg) rotateZ(0deg) rotateY(-60deg);
+  transform: translate3d(3.5362704px, 2.04166667px, 7px) rotateX(90deg) rotateZ(0deg) rotateY(-60deg);
+  width: 2.44186047px;
+  height: 2.44186047px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-7 .light {
+  -webkit-animation-duration: 0.50090997s;
+  animation-duration: 0.50090997s;
+  -webkit-animation-delay: 0.56461009s;
+  animation-delay: 0.56461009s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-8 {
+  -webkit-transform: translate3d(5.01169398px, 1.82410743px, 9.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-70deg);
+  transform: translate3d(5.01169398px, 1.82410743px, 9.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-70deg);
+  width: 2.79069767px;
+  height: 2.79069767px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-8 .light {
+  -webkit-animation-duration: 0.37001623s;
+  animation-duration: 0.37001623s;
+  -webkit-animation-delay: 0.61814367s;
+  animation-delay: 0.61814367s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-9 {
+  -webkit-transform: translate3d(6.64745233px, 1.1721252px, 11.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-80deg);
+  transform: translate3d(6.64745233px, 1.1721252px, 11.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-80deg);
+  width: 3.13953488px;
+  height: 3.13953488px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-9 .light {
+  -webkit-animation-duration: 0.73138563s;
+  animation-duration: 0.73138563s;
+  -webkit-animation-delay: 0.3548166s;
+  animation-delay: 0.3548166s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-10 {
+  -webkit-transform: translate3d(8.33333333px, 0px, 14.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-90deg);
+  transform: translate3d(8.33333333px, 0px, 14.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-90deg);
+  width: 3.48837209px;
+  height: 3.48837209px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-10 .light {
+  -webkit-animation-duration: 1.17623673s;
+  animation-duration: 1.17623673s;
+  -webkit-animation-delay: 0.84815258s;
+  animation-delay: 0.84815258s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-11 {
+  -webkit-transform: translate3d(9.93014484px, -1.75095246px, 17.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-100deg);
+  transform: translate3d(9.93014484px, -1.75095246px, 17.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-100deg);
+  width: 3.8372093px;
+  height: 3.8372093px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-11 .light {
+  -webkit-animation-duration: 0.93145236s;
+  animation-duration: 0.93145236s;
+  -webkit-animation-delay: 0.3057757s;
+  animation-delay: 0.3057757s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-12 {
+  -webkit-transform: translate3d(11.27631145px, -4.10424172px, 20.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-110deg);
+  transform: translate3d(11.27631145px, -4.10424172px, 20.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-110deg);
+  width: 4.18604651px;
+  height: 4.18604651px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-12 .light {
+  -webkit-animation-duration: 0.60440272s;
+  animation-duration: 0.60440272s;
+  -webkit-animation-delay: 0.7082697s;
+  animation-delay: 0.7082697s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-13 {
+  -webkit-transform: translate3d(12.19652444px, -7.04166667px, 24.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-120deg);
+  transform: translate3d(12.19652444px, -7.04166667px, 24.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-120deg);
+  width: 4.53488372px;
+  height: 4.53488372px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-13 .light {
+  -webkit-animation-duration: 1.14797563s;
+  animation-duration: 1.14797563s;
+  -webkit-animation-delay: 1.28152989s;
+  animation-delay: 1.28152989s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-14 {
+  -webkit-transform: translate3d(12.51205924px, -10.49886429px, 28px) rotateX(90deg) rotateZ(0deg) rotateY(-130deg);
+  transform: translate3d(12.51205924px, -10.49886429px, 28px) rotateX(90deg) rotateZ(0deg) rotateY(-130deg);
+  width: 4.88372093px;
+  height: 4.88372093px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-14 .light {
+  -webkit-animation-duration: 1.18665352s;
+  animation-duration: 1.18665352s;
+  -webkit-animation-delay: 0.65734037s;
+  animation-delay: 0.65734037s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-15 {
+  -webkit-transform: translate3d(12.05226768px, -14.36333331px, 32.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-140deg);
+  transform: translate3d(12.05226768px, -14.36333331px, 32.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-140deg);
+  width: 5.23255814px;
+  height: 5.23255814px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-15 .light {
+  -webkit-animation-duration: 0.69564802s;
+  animation-duration: 0.69564802s;
+  -webkit-animation-delay: 0.89933692s;
+  animation-delay: 0.89933692s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-16 {
+  -webkit-transform: translate3d(10.66666667px, -18.47520861px, 36.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-150deg);
+  transform: translate3d(10.66666667px, -18.47520861px, 36.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-150deg);
+  width: 5.58139535px;
+  height: 5.58139535px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-16 .light {
+  -webkit-animation-duration: 1.02645527s;
+  animation-duration: 1.02645527s;
+  -webkit-animation-delay: 1.28308937s;
+  animation-delay: 1.28308937s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-17 {
+  -webkit-transform: translate3d(8.23698512px, -22.63093062px, 41.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-160deg);
+  transform: translate3d(8.23698512px, -22.63093062px, 41.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-160deg);
+  width: 5.93023256px;
+  height: 5.93023256px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-17 .light {
+  -webkit-animation-duration: 0.42609343s;
+  animation-duration: 0.42609343s;
+  -webkit-animation-delay: 0.81511701s;
+  animation-delay: 0.81511701s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-18 {
+  -webkit-transform: translate3d(4.6885008px, -26.58980933px, 46.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-170deg);
+  transform: translate3d(4.6885008px, -26.58980933px, 46.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-170deg);
+  width: 6.27906977px;
+  height: 6.27906977px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-18 .light {
+  -webkit-animation-duration: 0.68401309s;
+  animation-duration: 0.68401309s;
+  -webkit-animation-delay: 1.11805251s;
+  animation-delay: 1.11805251s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-19 {
+  -webkit-transform: translate3d(0px, -30.08333333px, 51.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-180deg);
+  transform: translate3d(0px, -30.08333333px, 51.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-180deg);
+  width: 6.62790698px;
+  height: 6.62790698px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-19 .light {
+  -webkit-animation-duration: 0.69899543s;
+  animation-duration: 0.69899543s;
+  -webkit-animation-delay: 1.28799981s;
+  animation-delay: 1.28799981s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-20 {
+  -webkit-transform: translate3d(-5.78827259px, -32.8269251px, 57.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-190deg);
+  transform: translate3d(-5.78827259px, -32.8269251px, 57.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-190deg);
+  width: 6.97674419px;
+  height: 6.97674419px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-20 .light {
+  -webkit-animation-duration: 1.06474333s;
+  animation-duration: 1.06474333s;
+  -webkit-animation-delay: 0.73095869s;
+  animation-delay: 0.73095869s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-21 {
+  -webkit-transform: translate3d(-12.56924027px, -34.53370381px, 63px) rotateX(90deg) rotateZ(0deg) rotateY(-200deg);
+  transform: translate3d(-12.56924027px, -34.53370381px, 63px) rotateX(90deg) rotateZ(0deg) rotateY(-200deg);
+  width: 7.3255814px;
+  height: 7.3255814px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-21 .light {
+  -webkit-animation-duration: 0.43307491s;
+  animation-duration: 0.43307491s;
+  -webkit-animation-delay: 0.84675315s;
+  animation-delay: 0.84675315s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-22 {
+  -webkit-transform: translate3d(-20.16666667px, -34.92969129px, 69.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-210deg);
+  transform: translate3d(-20.16666667px, -34.92969129px, 69.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-210deg);
+  width: 7.6744186px;
+  height: 7.6744186px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-22 .light {
+  -webkit-animation-duration: 0.36815174s;
+  animation-duration: 0.36815174s;
+  -webkit-animation-delay: 1.18987766s;
+  animation-delay: 1.18987766s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-23 {
+  -webkit-transform: translate3d(-28.33622046px, -33.76979253px, 75.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-220deg);
+  transform: translate3d(-28.33622046px, -33.76979253px, 75.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-220deg);
+  width: 8.02325581px;
+  height: 8.02325581px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-23 .light {
+  -webkit-animation-duration: 1.11033509s;
+  animation-duration: 1.11033509s;
+  -webkit-animation-delay: 0.86040382s;
+  animation-delay: 0.86040382s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-24 {
+  -webkit-transform: translate3d(-36.77013327px, -30.85380526px, 82.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-230deg);
+  transform: translate3d(-36.77013327px, -30.85380526px, 82.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-230deg);
+  width: 8.37209302px;
+  height: 8.37209302px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-24 .light {
+  -webkit-animation-duration: 0.69254554s;
+  animation-duration: 0.69254554s;
+  -webkit-animation-delay: 0.73490714s;
+  animation-delay: 0.73490714s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-25 {
+  -webkit-transform: translate3d(-45.10548978px, -26.04166667px, 89.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-240deg);
+  transform: translate3d(-45.10548978px, -26.04166667px, 89.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-240deg);
+  width: 8.72093023px;
+  height: 8.72093023px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-25 .light {
+  -webkit-animation-duration: 0.84877619s;
+  animation-duration: 0.84877619s;
+  -webkit-animation-delay: 0.73631682s;
+  animation-delay: 0.73631682s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-26 {
+  -webkit-transform: translate3d(-52.93601764px, -19.26713474px, 96.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-250deg);
+  transform: translate3d(-52.93601764px, -19.26713474px, 96.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-250deg);
+  width: 9.06976744px;
+  height: 9.06976744px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-26 .light {
+  -webkit-animation-duration: 0.71352242s;
+  animation-duration: 0.71352242s;
+  -webkit-animation-delay: 1.09594436s;
+  animation-delay: 1.09594436s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-27 {
+  -webkit-transform: translate3d(-59.827071px, -10.54912679px, 104.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-260deg);
+  transform: translate3d(-59.827071px, -10.54912679px, 104.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-260deg);
+  width: 9.41860465px;
+  height: 9.41860465px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-27 .light {
+  -webkit-animation-duration: 0.60278713s;
+  animation-duration: 0.60278713s;
+  -webkit-animation-delay: 0.67182673s;
+  animation-delay: 0.67182673s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-28 {
+  -webkit-transform: translate3d(-65.33333333px, 0px, 112px) rotateX(90deg) rotateZ(0deg) rotateY(-270deg);
+  transform: translate3d(-65.33333333px, 0px, 112px) rotateX(90deg) rotateZ(0deg) rotateY(-270deg);
+  width: 9.76744186px;
+  height: 9.76744186px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-28 .light {
+  -webkit-animation-duration: 0.95842378s;
+  animation-duration: 0.95842378s;
+  -webkit-animation-delay: 0.6737768s;
+  animation-delay: 0.6737768s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-29 {
+  -webkit-transform: translate3d(-69.01861002px, 12.16984312px, 120.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-280deg);
+  transform: translate3d(-69.01861002px, 12.16984312px, 120.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-280deg);
+  width: 10.11627907px;
+  height: 10.11627907px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-29 .light {
+  -webkit-animation-duration: 1.25794942s;
+  animation-duration: 1.25794942s;
+  -webkit-animation-delay: 1.16996404s;
+  animation-delay: 1.16996404s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-30 {
+  -webkit-transform: translate3d(-70.47694656px, 25.65151075px, 128.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-290deg);
+  transform: translate3d(-70.47694656px, 25.65151075px, 128.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-290deg);
+  width: 10.46511628px;
+  height: 10.46511628px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-30 .light {
+  -webkit-animation-duration: 0.48884264s;
+  animation-duration: 0.48884264s;
+  -webkit-animation-delay: 0.89569902s;
+  animation-delay: 0.89569902s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-31 {
+  -webkit-transform: translate3d(-69.35420109px, 40.04166667px, 137.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-300deg);
+  transform: translate3d(-69.35420109px, 40.04166667px, 137.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-300deg);
+  width: 10.81395349px;
+  height: 10.81395349px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-31 .light {
+  -webkit-animation-duration: 1.09057544s;
+  animation-duration: 1.09057544s;
+  -webkit-animation-delay: 0.49792973s;
+  animation-delay: 0.49792973s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-32 {
+  -webkit-transform: translate3d(-65.36912581px, 54.85120936px, 146.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-310deg);
+  transform: translate3d(-65.36912581px, 54.85120936px, 146.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-310deg);
+  width: 11.1627907px;
+  height: 11.1627907px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-32 .light {
+  -webkit-animation-duration: 0.47554502s;
+  animation-duration: 0.47554502s;
+  -webkit-animation-delay: 1.26064941s;
+  animation-delay: 1.26064941s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-33 {
+  -webkit-transform: translate3d(-58.33297558px, 69.51853321px, 155.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-320deg);
+  transform: translate3d(-58.33297558px, 69.51853321px, 155.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-320deg);
+  width: 11.51162791px;
+  height: 11.51162791px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-33 .light {
+  -webkit-animation-duration: 1.15545852s;
+  animation-duration: 1.15545852s;
+  -webkit-animation-delay: 0.37148486s;
+  animation-delay: 0.37148486s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-34 {
+  -webkit-transform: translate3d(-48.16666667px, 83.4271139px, 165.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-330deg);
+  transform: translate3d(-48.16666667px, 83.4271139px, 165.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-330deg);
+  width: 11.86046512px;
+  height: 11.86046512px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-34 .light {
+  -webkit-animation-duration: 0.63449274s;
+  animation-duration: 0.63449274s;
+  -webkit-animation-delay: 1.1922535s;
+  animation-delay: 1.1922535s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-35 {
+  -webkit-transform: translate3d(-34.9145563px, 95.92695504px, 175px) rotateX(90deg) rotateZ(0deg) rotateY(-340deg);
+  transform: translate3d(-34.9145563px, 95.92695504px, 175px) rotateX(90deg) rotateZ(0deg) rotateY(-340deg);
+  width: 12.20930233px;
+  height: 12.20930233px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-35 .light {
+  -webkit-animation-duration: 0.97532941s;
+  animation-duration: 0.97532941s;
+  -webkit-animation-delay: 0.44304973s;
+  animation-delay: 0.44304973s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-36 {
+  -webkit-transform: translate3d(-18.75400319px, 106.35923733px, 185.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-350deg);
+  transform: translate3d(-18.75400319px, 106.35923733px, 185.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-350deg);
+  width: 12.55813953px;
+  height: 12.55813953px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-36 .light {
+  -webkit-animation-duration: 0.48168889s;
+  animation-duration: 0.48168889s;
+  -webkit-animation-delay: 1.29449379s;
+  animation-delay: 1.29449379s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-37 {
+  -webkit-transform: translate3d(0px, 114.08333333px, 195.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-360deg);
+  transform: translate3d(0px, 114.08333333px, 195.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-360deg);
+  width: 12.90697674px;
+  height: 12.90697674px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-37 .light {
+  -webkit-animation-duration: 0.54900747s;
+  animation-duration: 0.54900747s;
+  -webkit-animation-delay: 0.83951756s;
+  animation-delay: 0.83951756s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-38 {
+  -webkit-transform: translate3d(20.89566405px, 118.50519961px, 206.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-370deg);
+  transform: translate3d(20.89566405px, 118.50519961px, 206.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-370deg);
+  width: 13.25581395px;
+  height: 13.25581395px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-38 .light {
+  -webkit-animation-duration: 0.79689853s;
+  animation-duration: 0.79689853s;
+  -webkit-animation-delay: 0.40430302s;
+  animation-delay: 0.40430302s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-39 {
+  -webkit-transform: translate3d(43.35105317px, 119.10603968px, 217.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-380deg);
+  transform: translate3d(43.35105317px, 119.10603968px, 217.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-380deg);
+  width: 13.60465116px;
+  height: 13.60465116px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-39 .light {
+  -webkit-animation-duration: 0.95798244s;
+  animation-duration: 0.95798244s;
+  -webkit-animation-delay: 0.73264084s;
+  animation-delay: 0.73264084s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-40 {
+  -webkit-transform: translate3d(66.66666667px, 115.47005384px, 228.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-390deg);
+  transform: translate3d(66.66666667px, 115.47005384px, 228.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-390deg);
+  width: 13.95348837px;
+  height: 13.95348837px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-40 .light {
+  -webkit-animation-duration: 0.61508844s;
+  animation-duration: 0.61508844s;
+  -webkit-animation-delay: 1.24067432s;
+  animation-delay: 1.24067432s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-41 {
+  -webkit-transform: translate3d(90.04383099px, 107.31005907px, 240.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-400deg);
+  transform: translate3d(90.04383099px, 107.31005907px, 240.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-400deg);
+  width: 14.30232558px;
+  height: 14.30232558px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-41 .light {
+  -webkit-animation-duration: 0.44418614s;
+  animation-duration: 0.44418614s;
+  -webkit-animation-delay: 1.06285334s;
+  animation-delay: 1.06285334s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-42 {
+  -webkit-transform: translate3d(112.60853314px, 94.48977862px, 252px) rotateX(90deg) rotateZ(0deg) rotateY(-410deg);
+  transform: translate3d(112.60853314px, 94.48977862px, 252px) rotateX(90deg) rotateZ(0deg) rotateY(-410deg);
+  width: 14.65116279px;
+  height: 14.65116279px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-42 .light {
+  -webkit-animation-duration: 0.48981487s;
+  animation-duration: 0.48981487s;
+  -webkit-animation-delay: 0.5200635s;
+  animation-delay: 0.5200635s;
+}
+
+.spiral.two .light-wrapper.light-wrapper-43 {
+  -webkit-transform: translate3d(133.44008097px, 77.04166667px, 264.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-420deg);
+  transform: translate3d(133.44008097px, 77.04166667px, 264.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-420deg);
+  width: 15px;
+  height: 15px;
+}
+
+.spiral.two .light-wrapper.light-wrapper-43 .light {
+  -webkit-animation-duration: 0.44161549s;
+  animation-duration: 0.44161549s;
+  -webkit-animation-delay: 0.50505159s;
+  animation-delay: 0.50505159s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-1 {
+  -webkit-transform: translate3d(0px, 0.08333333px, 0.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(0deg);
+  transform: translate3d(0px, 0.08333333px, 0.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(0deg);
+  width: 0.23255814px;
+  height: 0.23255814px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-1 .light {
+  -webkit-animation-duration: 0.83566486s;
+  animation-duration: 0.83566486s;
+  -webkit-animation-delay: 0.4856017s;
+  animation-delay: 0.4856017s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-2 {
+  -webkit-transform: translate3d(0.05788273px, 0.32826925px, 0.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-10deg);
+  transform: translate3d(0.05788273px, 0.32826925px, 0.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-10deg);
+  width: 0.46511628px;
+  height: 0.46511628px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-2 .light {
+  -webkit-animation-duration: 0.71043125s;
+  animation-duration: 0.71043125s;
+  -webkit-animation-delay: 0.6010716s;
+  animation-delay: 0.6010716s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-3 {
+  -webkit-transform: translate3d(0.25651511px, 0.70476947px, 1.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-20deg);
+  transform: translate3d(0.25651511px, 0.70476947px, 1.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-20deg);
+  width: 0.69767442px;
+  height: 0.69767442px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-3 .light {
+  -webkit-animation-duration: 0.38415889s;
+  animation-duration: 0.38415889s;
+  -webkit-animation-delay: 0.82092322s;
+  animation-delay: 0.82092322s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-4 {
+  -webkit-transform: translate3d(0.66666667px, 1.15470054px, 2.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-30deg);
+  transform: translate3d(0.66666667px, 1.15470054px, 2.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-30deg);
+  width: 0.93023256px;
+  height: 0.93023256px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-4 .light {
+  -webkit-animation-duration: 0.72079478s;
+  animation-duration: 0.72079478s;
+  -webkit-animation-delay: 0.32080268s;
+  animation-delay: 0.32080268s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-5 {
+  -webkit-transform: translate3d(1.33914085px, 1.59592592px, 3.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-40deg);
+  transform: translate3d(1.33914085px, 1.59592592px, 3.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-40deg);
+  width: 1.1627907px;
+  height: 1.1627907px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-5 .light {
+  -webkit-animation-duration: 0.43605443s;
+  animation-duration: 0.43605443s;
+  -webkit-animation-delay: 0.40576399s;
+  animation-delay: 0.40576399s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-6 {
+  -webkit-transform: translate3d(2.29813333px, 1.92836283px, 5.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-50deg);
+  transform: translate3d(2.29813333px, 1.92836283px, 5.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-50deg);
+  width: 1.39534884px;
+  height: 1.39534884px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-6 .light {
+  -webkit-animation-duration: 0.98001276s;
+  animation-duration: 0.98001276s;
+  -webkit-animation-delay: 1.05235612s;
+  animation-delay: 1.05235612s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-7 {
+  -webkit-transform: translate3d(3.5362704px, 2.04166667px, 7px) rotateX(90deg) rotateZ(0deg) rotateY(-60deg);
+  transform: translate3d(3.5362704px, 2.04166667px, 7px) rotateX(90deg) rotateZ(0deg) rotateY(-60deg);
+  width: 1.62790698px;
+  height: 1.62790698px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-7 .light {
+  -webkit-animation-duration: 0.48035975s;
+  animation-duration: 0.48035975s;
+  -webkit-animation-delay: 1.27525551s;
+  animation-delay: 1.27525551s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-8 {
+  -webkit-transform: translate3d(5.01169398px, 1.82410743px, 9.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-70deg);
+  transform: translate3d(5.01169398px, 1.82410743px, 9.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-70deg);
+  width: 1.86046512px;
+  height: 1.86046512px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-8 .light {
+  -webkit-animation-duration: 1.10868455s;
+  animation-duration: 1.10868455s;
+  -webkit-animation-delay: 0.67820484s;
+  animation-delay: 0.67820484s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-9 {
+  -webkit-transform: translate3d(6.64745233px, 1.1721252px, 11.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-80deg);
+  transform: translate3d(6.64745233px, 1.1721252px, 11.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-80deg);
+  width: 2.09302326px;
+  height: 2.09302326px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-9 .light {
+  -webkit-animation-duration: 0.96413073s;
+  animation-duration: 0.96413073s;
+  -webkit-animation-delay: 0.45214893s;
+  animation-delay: 0.45214893s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-10 {
+  -webkit-transform: translate3d(8.33333333px, 0px, 14.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-90deg);
+  transform: translate3d(8.33333333px, 0px, 14.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-90deg);
+  width: 2.3255814px;
+  height: 2.3255814px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-10 .light {
+  -webkit-animation-duration: 0.62127406s;
+  animation-duration: 0.62127406s;
+  -webkit-animation-delay: 0.97729159s;
+  animation-delay: 0.97729159s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-11 {
+  -webkit-transform: translate3d(9.93014484px, -1.75095246px, 17.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-100deg);
+  transform: translate3d(9.93014484px, -1.75095246px, 17.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-100deg);
+  width: 2.55813953px;
+  height: 2.55813953px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-11 .light {
+  -webkit-animation-duration: 0.52856555s;
+  animation-duration: 0.52856555s;
+  -webkit-animation-delay: 0.38012271s;
+  animation-delay: 0.38012271s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-12 {
+  -webkit-transform: translate3d(11.27631145px, -4.10424172px, 20.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-110deg);
+  transform: translate3d(11.27631145px, -4.10424172px, 20.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-110deg);
+  width: 2.79069767px;
+  height: 2.79069767px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-12 .light {
+  -webkit-animation-duration: 0.56219603s;
+  animation-duration: 0.56219603s;
+  -webkit-animation-delay: 0.84408715s;
+  animation-delay: 0.84408715s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-13 {
+  -webkit-transform: translate3d(12.19652444px, -7.04166667px, 24.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-120deg);
+  transform: translate3d(12.19652444px, -7.04166667px, 24.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-120deg);
+  width: 3.02325581px;
+  height: 3.02325581px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-13 .light {
+  -webkit-animation-duration: 0.36225594s;
+  animation-duration: 0.36225594s;
+  -webkit-animation-delay: 1.00272931s;
+  animation-delay: 1.00272931s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-14 {
+  -webkit-transform: translate3d(12.51205924px, -10.49886429px, 28px) rotateX(90deg) rotateZ(0deg) rotateY(-130deg);
+  transform: translate3d(12.51205924px, -10.49886429px, 28px) rotateX(90deg) rotateZ(0deg) rotateY(-130deg);
+  width: 3.25581395px;
+  height: 3.25581395px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-14 .light {
+  -webkit-animation-duration: 1.12640966s;
+  animation-duration: 1.12640966s;
+  -webkit-animation-delay: 0.52550199s;
+  animation-delay: 0.52550199s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-15 {
+  -webkit-transform: translate3d(12.05226768px, -14.36333331px, 32.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-140deg);
+  transform: translate3d(12.05226768px, -14.36333331px, 32.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-140deg);
+  width: 3.48837209px;
+  height: 3.48837209px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-15 .light {
+  -webkit-animation-duration: 0.935278s;
+  animation-duration: 0.935278s;
+  -webkit-animation-delay: 0.42787769s;
+  animation-delay: 0.42787769s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-16 {
+  -webkit-transform: translate3d(10.66666667px, -18.47520861px, 36.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-150deg);
+  transform: translate3d(10.66666667px, -18.47520861px, 36.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-150deg);
+  width: 3.72093023px;
+  height: 3.72093023px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-16 .light {
+  -webkit-animation-duration: 0.48277356s;
+  animation-duration: 0.48277356s;
+  -webkit-animation-delay: 0.85019752s;
+  animation-delay: 0.85019752s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-17 {
+  -webkit-transform: translate3d(8.23698512px, -22.63093062px, 41.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-160deg);
+  transform: translate3d(8.23698512px, -22.63093062px, 41.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-160deg);
+  width: 3.95348837px;
+  height: 3.95348837px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-17 .light {
+  -webkit-animation-duration: 0.8780797s;
+  animation-duration: 0.8780797s;
+  -webkit-animation-delay: 1.19272417s;
+  animation-delay: 1.19272417s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-18 {
+  -webkit-transform: translate3d(4.6885008px, -26.58980933px, 46.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-170deg);
+  transform: translate3d(4.6885008px, -26.58980933px, 46.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-170deg);
+  width: 4.18604651px;
+  height: 4.18604651px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-18 .light {
+  -webkit-animation-duration: 0.97351088s;
+  animation-duration: 0.97351088s;
+  -webkit-animation-delay: 0.87998469s;
+  animation-delay: 0.87998469s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-19 {
+  -webkit-transform: translate3d(0px, -30.08333333px, 51.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-180deg);
+  transform: translate3d(0px, -30.08333333px, 51.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-180deg);
+  width: 4.41860465px;
+  height: 4.41860465px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-19 .light {
+  -webkit-animation-duration: 1.01329588s;
+  animation-duration: 1.01329588s;
+  -webkit-animation-delay: 1.03384025s;
+  animation-delay: 1.03384025s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-20 {
+  -webkit-transform: translate3d(-5.78827259px, -32.8269251px, 57.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-190deg);
+  transform: translate3d(-5.78827259px, -32.8269251px, 57.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-190deg);
+  width: 4.65116279px;
+  height: 4.65116279px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-20 .light {
+  -webkit-animation-duration: 0.54789461s;
+  animation-duration: 0.54789461s;
+  -webkit-animation-delay: 0.88411789s;
+  animation-delay: 0.88411789s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-21 {
+  -webkit-transform: translate3d(-12.56924027px, -34.53370381px, 63px) rotateX(90deg) rotateZ(0deg) rotateY(-200deg);
+  transform: translate3d(-12.56924027px, -34.53370381px, 63px) rotateX(90deg) rotateZ(0deg) rotateY(-200deg);
+  width: 4.88372093px;
+  height: 4.88372093px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-21 .light {
+  -webkit-animation-duration: 0.51459591s;
+  animation-duration: 0.51459591s;
+  -webkit-animation-delay: 0.47124998s;
+  animation-delay: 0.47124998s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-22 {
+  -webkit-transform: translate3d(-20.16666667px, -34.92969129px, 69.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-210deg);
+  transform: translate3d(-20.16666667px, -34.92969129px, 69.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-210deg);
+  width: 5.11627907px;
+  height: 5.11627907px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-22 .light {
+  -webkit-animation-duration: 0.4629517s;
+  animation-duration: 0.4629517s;
+  -webkit-animation-delay: 0.52594305s;
+  animation-delay: 0.52594305s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-23 {
+  -webkit-transform: translate3d(-28.33622046px, -33.76979253px, 75.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-220deg);
+  transform: translate3d(-28.33622046px, -33.76979253px, 75.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-220deg);
+  width: 5.34883721px;
+  height: 5.34883721px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-23 .light {
+  -webkit-animation-duration: 1.24087529s;
+  animation-duration: 1.24087529s;
+  -webkit-animation-delay: 1.27014928s;
+  animation-delay: 1.27014928s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-24 {
+  -webkit-transform: translate3d(-36.77013327px, -30.85380526px, 82.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-230deg);
+  transform: translate3d(-36.77013327px, -30.85380526px, 82.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-230deg);
+  width: 5.58139535px;
+  height: 5.58139535px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-24 .light {
+  -webkit-animation-duration: 1.26830412s;
+  animation-duration: 1.26830412s;
+  -webkit-animation-delay: 0.7677789s;
+  animation-delay: 0.7677789s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-25 {
+  -webkit-transform: translate3d(-45.10548978px, -26.04166667px, 89.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-240deg);
+  transform: translate3d(-45.10548978px, -26.04166667px, 89.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-240deg);
+  width: 5.81395349px;
+  height: 5.81395349px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-25 .light {
+  -webkit-animation-duration: 0.57505607s;
+  animation-duration: 0.57505607s;
+  -webkit-animation-delay: 0.7538177s;
+  animation-delay: 0.7538177s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-26 {
+  -webkit-transform: translate3d(-52.93601764px, -19.26713474px, 96.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-250deg);
+  transform: translate3d(-52.93601764px, -19.26713474px, 96.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-250deg);
+  width: 6.04651163px;
+  height: 6.04651163px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-26 .light {
+  -webkit-animation-duration: 0.91114276s;
+  animation-duration: 0.91114276s;
+  -webkit-animation-delay: 1.19684835s;
+  animation-delay: 1.19684835s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-27 {
+  -webkit-transform: translate3d(-59.827071px, -10.54912679px, 104.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-260deg);
+  transform: translate3d(-59.827071px, -10.54912679px, 104.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-260deg);
+  width: 6.27906977px;
+  height: 6.27906977px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-27 .light {
+  -webkit-animation-duration: 1.25056459s;
+  animation-duration: 1.25056459s;
+  -webkit-animation-delay: 1.10863788s;
+  animation-delay: 1.10863788s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-28 {
+  -webkit-transform: translate3d(-65.33333333px, 0px, 112px) rotateX(90deg) rotateZ(0deg) rotateY(-270deg);
+  transform: translate3d(-65.33333333px, 0px, 112px) rotateX(90deg) rotateZ(0deg) rotateY(-270deg);
+  width: 6.51162791px;
+  height: 6.51162791px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-28 .light {
+  -webkit-animation-duration: 0.9260526s;
+  animation-duration: 0.9260526s;
+  -webkit-animation-delay: 0.79790995s;
+  animation-delay: 0.79790995s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-29 {
+  -webkit-transform: translate3d(-69.01861002px, 12.16984312px, 120.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-280deg);
+  transform: translate3d(-69.01861002px, 12.16984312px, 120.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-280deg);
+  width: 6.74418605px;
+  height: 6.74418605px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-29 .light {
+  -webkit-animation-duration: 0.8152789s;
+  animation-duration: 0.8152789s;
+  -webkit-animation-delay: 0.75659309s;
+  animation-delay: 0.75659309s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-30 {
+  -webkit-transform: translate3d(-70.47694656px, 25.65151075px, 128.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-290deg);
+  transform: translate3d(-70.47694656px, 25.65151075px, 128.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-290deg);
+  width: 6.97674419px;
+  height: 6.97674419px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-30 .light {
+  -webkit-animation-duration: 0.89006535s;
+  animation-duration: 0.89006535s;
+  -webkit-animation-delay: 1.04531782s;
+  animation-delay: 1.04531782s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-31 {
+  -webkit-transform: translate3d(-69.35420109px, 40.04166667px, 137.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-300deg);
+  transform: translate3d(-69.35420109px, 40.04166667px, 137.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-300deg);
+  width: 7.20930233px;
+  height: 7.20930233px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-31 .light {
+  -webkit-animation-duration: 1.11243805s;
+  animation-duration: 1.11243805s;
+  -webkit-animation-delay: 0.54746165s;
+  animation-delay: 0.54746165s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-32 {
+  -webkit-transform: translate3d(-65.36912581px, 54.85120936px, 146.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-310deg);
+  transform: translate3d(-65.36912581px, 54.85120936px, 146.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-310deg);
+  width: 7.44186047px;
+  height: 7.44186047px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-32 .light {
+  -webkit-animation-duration: 1.2368001s;
+  animation-duration: 1.2368001s;
+  -webkit-animation-delay: 0.94088112s;
+  animation-delay: 0.94088112s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-33 {
+  -webkit-transform: translate3d(-58.33297558px, 69.51853321px, 155.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-320deg);
+  transform: translate3d(-58.33297558px, 69.51853321px, 155.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-320deg);
+  width: 7.6744186px;
+  height: 7.6744186px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-33 .light {
+  -webkit-animation-duration: 0.50548106s;
+  animation-duration: 0.50548106s;
+  -webkit-animation-delay: 1.02047682s;
+  animation-delay: 1.02047682s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-34 {
+  -webkit-transform: translate3d(-48.16666667px, 83.4271139px, 165.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-330deg);
+  transform: translate3d(-48.16666667px, 83.4271139px, 165.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-330deg);
+  width: 7.90697674px;
+  height: 7.90697674px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-34 .light {
+  -webkit-animation-duration: 0.74924174s;
+  animation-duration: 0.74924174s;
+  -webkit-animation-delay: 1.10723617s;
+  animation-delay: 1.10723617s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-35 {
+  -webkit-transform: translate3d(-34.9145563px, 95.92695504px, 175px) rotateX(90deg) rotateZ(0deg) rotateY(-340deg);
+  transform: translate3d(-34.9145563px, 95.92695504px, 175px) rotateX(90deg) rotateZ(0deg) rotateY(-340deg);
+  width: 8.13953488px;
+  height: 8.13953488px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-35 .light {
+  -webkit-animation-duration: 0.41784987s;
+  animation-duration: 0.41784987s;
+  -webkit-animation-delay: 1.04167722s;
+  animation-delay: 1.04167722s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-36 {
+  -webkit-transform: translate3d(-18.75400319px, 106.35923733px, 185.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-350deg);
+  transform: translate3d(-18.75400319px, 106.35923733px, 185.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-350deg);
+  width: 8.37209302px;
+  height: 8.37209302px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-36 .light {
+  -webkit-animation-duration: 1.22389847s;
+  animation-duration: 1.22389847s;
+  -webkit-animation-delay: 1.17378307s;
+  animation-delay: 1.17378307s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-37 {
+  -webkit-transform: translate3d(0px, 114.08333333px, 195.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-360deg);
+  transform: translate3d(0px, 114.08333333px, 195.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-360deg);
+  width: 8.60465116px;
+  height: 8.60465116px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-37 .light {
+  -webkit-animation-duration: 0.88961881s;
+  animation-duration: 0.88961881s;
+  -webkit-animation-delay: 1.13795384s;
+  animation-delay: 1.13795384s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-38 {
+  -webkit-transform: translate3d(20.89566405px, 118.50519961px, 206.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-370deg);
+  transform: translate3d(20.89566405px, 118.50519961px, 206.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-370deg);
+  width: 8.8372093px;
+  height: 8.8372093px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-38 .light {
+  -webkit-animation-duration: 0.47068838s;
+  animation-duration: 0.47068838s;
+  -webkit-animation-delay: 0.90835575s;
+  animation-delay: 0.90835575s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-39 {
+  -webkit-transform: translate3d(43.35105317px, 119.10603968px, 217.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-380deg);
+  transform: translate3d(43.35105317px, 119.10603968px, 217.28571429px) rotateX(90deg) rotateZ(0deg) rotateY(-380deg);
+  width: 9.06976744px;
+  height: 9.06976744px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-39 .light {
+  -webkit-animation-duration: 0.45399682s;
+  animation-duration: 0.45399682s;
+  -webkit-animation-delay: 0.88902694s;
+  animation-delay: 0.88902694s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-40 {
+  -webkit-transform: translate3d(66.66666667px, 115.47005384px, 228.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-390deg);
+  transform: translate3d(66.66666667px, 115.47005384px, 228.57142857px) rotateX(90deg) rotateZ(0deg) rotateY(-390deg);
+  width: 9.30232558px;
+  height: 9.30232558px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-40 .light {
+  -webkit-animation-duration: 0.63720028s;
+  animation-duration: 0.63720028s;
+  -webkit-animation-delay: 0.93240479s;
+  animation-delay: 0.93240479s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-41 {
+  -webkit-transform: translate3d(90.04383099px, 107.31005907px, 240.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-400deg);
+  transform: translate3d(90.04383099px, 107.31005907px, 240.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-400deg);
+  width: 9.53488372px;
+  height: 9.53488372px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-41 .light {
+  -webkit-animation-duration: 1.21917441s;
+  animation-duration: 1.21917441s;
+  -webkit-animation-delay: 1.163174s;
+  animation-delay: 1.163174s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-42 {
+  -webkit-transform: translate3d(112.60853314px, 94.48977862px, 252px) rotateX(90deg) rotateZ(0deg) rotateY(-410deg);
+  transform: translate3d(112.60853314px, 94.48977862px, 252px) rotateX(90deg) rotateZ(0deg) rotateY(-410deg);
+  width: 9.76744186px;
+  height: 9.76744186px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-42 .light {
+  -webkit-animation-duration: 0.55178071s;
+  animation-duration: 0.55178071s;
+  -webkit-animation-delay: 0.8107842s;
+  animation-delay: 0.8107842s;
+}
+
+.spiral.three .light-wrapper.light-wrapper-43 {
+  -webkit-transform: translate3d(133.44008097px, 77.04166667px, 264.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-420deg);
+  transform: translate3d(133.44008097px, 77.04166667px, 264.14285714px) rotateX(90deg) rotateZ(0deg) rotateY(-420deg);
+  width: 10px;
+  height: 10px;
+}
+
+.spiral.three .light-wrapper.light-wrapper-43 .light {
+  -webkit-animation-duration: 0.40847685s;
+  animation-duration: 0.40847685s;
+  -webkit-animation-delay: 0.37387173s;
+  animation-delay: 0.37387173s;
+}
+
+@-webkit-keyframes pulsate {
+  0% {
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    opacity: .4;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulsate {
+  0% {
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    opacity: .4;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+
+@-webkit-keyframes pulsate-star {
+  0% {
+    -webkit-transform: scale(0.94);
+    transform: scale(0.94);
+    opacity: .8;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulsate-star {
+  0% {
+    -webkit-transform: scale(0.94);
+    transform: scale(0.94);
+    opacity: .8;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes rotate-tree {
+  0% {
+    -webkit-transform: rotateX(-90deg) rotateZ(0deg) rotateY(0deg);
+    transform: rotateX(-90deg) rotateZ(0deg) rotateY(0deg);
+  }
+  100% {
+    -webkit-transform: rotateX(-90deg) rotateZ(360deg) rotateY(0deg);
+    transform: rotateX(-90deg) rotateZ(360deg) rotateY(0deg);
+  }
+}
+
+@keyframes rotate-tree {
+  0% {
+    -webkit-transform: rotateX(-90deg) rotateZ(0deg) rotateY(0deg);
+    transform: rotateX(-90deg) rotateZ(0deg) rotateY(0deg);
+  }
+  100% {
+    -webkit-transform: rotateX(-90deg) rotateZ(360deg) rotateY(0deg);
+    transform: rotateX(-90deg) rotateZ(360deg) rotateY(0deg);
+  }
+}

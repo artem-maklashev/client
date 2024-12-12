@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css?family=Nothing+You+Could+Do');
+@itemsize: 5px;
+
+.tree-container {
+  width: 400px;
+  height: 330px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+.star {
+	@dimensions: 10px;
+  @color: #f7b93f;
+	@divider: 1.3;
+	border-radius: 0;
+	border-color: @color transparent transparent transparent;
+	border-style: solid;
+	border-top-width: @dimensions / @divider;
+	border-right-width: @dimensions;
+	border-left-width: @dimensions;
+	height: 0;
+	width: 0;
+	background: transparent;
+	z-index: 100;
+	animation: pulsate-star 1.4s ease-in-out infinite alternate-reverse;
+
+	&:before,
+	&:after {
+		border-color: @color transparent transparent transparent;
+		border-style: solid;
+		border-top-width: @dimensions / @divider;
+		border-right-width: @dimensions;
+		border-left-width: @dimensions;
+    border-bottom: 0;
+		content: '';
+		display: block;
+		height: 0;
+		left: -@dimensions;
+		position: absolute;
+		top: -@dimensions / @divider;
+		width: 0;
+	}
+
+	&:before {
+		transform: translate(15.5555555%, -15.5555555%) rotate(360deg/5) translateY(50%);
+	}
+
+	&:after {
+		transform: translate(-15.5555555%, -15.5555555%) rotate(-360deg/5) translateY(50%);
+	}
+}
+
+.spiral-container {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.spiral {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	transform-style: preserve-3d;
+
+	&.one {
+		animation: rotate-tree 6s infinite linear both;
+		animation-delay: -1.7s;
+
+		.light {
+			background: #fcfbe9;
+		}
+	}
+
+	&.two {
+		animation: rotate-tree 7s infinite linear both;
+		animation-delay: -1s;
+
+		.light {
+			background: #e8a41d;
+		}
+	}
+
+	&.three {
+		animation: rotate-tree 8s infinite linear both;
+		animation-delay: -0.1s;
+
+		.light {
+			background: #f5e393;
+		}
+	}
+
+	> .light-wrapper {
+		border-radius: 50%;
+		position: absolute;
+		display: block;
+		width: @itemsize;
+		height: @itemsize;
+		left: 50%;
+		top: 50%;
+		margin: -@itemsize/2 0 0 -@itemsize/2;
+	}
+
+	.stabilise {
+		position: absolute;
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.light {
+		position: absolute;
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		top: 0;
+		left: 0;
+		border-radius: 50%;
+		opacity: 1;
+		animation-name: pulsate;
+		animation-timing-function: ease-in-out;
+		animation-iteration-count: infinite;
+		animation-direction: alternate-reverse;
+	}
+}
+
+.makespiral( @className: ~".spiral"; @itemNo:3; @degrees:0; @elNo: 1; @size: 5px; @delayOffset: 0 ) when ( @elNo <= @itemNo ) {
+	@spacing: 10;
+	@currDeg: unit(@degrees,deg);
+	@correctionDeg: unit(-@degrees,deg);
+	@y: unit(cos(@currDeg) * @elNo * @elNo / 12, px);
+	@x: unit(sin(@currDeg) * @elNo * @elNo / 12, px);
+	@z: unit(@elNo * @elNo / 7, px);
+	@duration: unit(`Math.random() * 1 + 0.3 `,s);
+	@randNo: `Math.random()`;
+
+	@{className} {
+		.light-wrapper.light-wrapper-@{elNo} {
+			transform: translate3d( @x, @y, @z ) rotateX(90deg) rotateZ(0deg) rotateY(@correctionDeg);
+			width: (@size * (@elNo / @itemNo) * 5);
+			height: (@size * (@elNo / @itemNo) * 5);
+
+			.light {
+				animation-duration: @duration;
+				animation-delay: @duration;
+			}
+		}
+	}
+
+	.makespiral(@className; @itemNo; @degrees + @spacing; @elNo + 1; @size; @delayOffset);
+}
+
+.makespiral(@className: ~".spiral.one"; @itemNo: 43; @size: 2px);
+.makespiral(@className: ~".spiral.two"; @itemNo: 43; @size: 3px; @delayOffset: 1);
+.makespiral(@className: ~".spiral.three"; @itemNo: 43; @size: 2px; @delayOffset: .5);
+
+@keyframes pulsate {
+  0% {
+    transform: scale(.5);
+    opacity: .4;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulsate-star {
+  0% {
+    transform: scale(.94);
+    opacity: .8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes rotate-tree {
+	0% {
+		transform: rotateX(-90deg) rotateZ(0deg) rotateY(0deg);
+	}
+	100% {
+		transform: rotateX(-90deg) rotateZ(360deg) rotateY(0deg);
+	}
+}
