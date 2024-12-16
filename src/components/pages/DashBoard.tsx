@@ -43,7 +43,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [allProductionMonthData, setAllProductionMonthData] = useState<BoardProduction[]>([]);
     const [delaysMonth, setDelaysMonth] = useState<Delays[]>([]);
     const [activeTab, setActiveTab] = useState<string | undefined>('1');
-    
+
 
     function handleDatesChange(startDate: Date | null, endDate: Date | null): void {
         setSelectedRange({ startDate, endDate });
@@ -54,7 +54,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
         return filtered;
     }
 
-    
+
 
     useEffect(() => {
         setProductionData([]);
@@ -117,7 +117,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
         fetchData();
     }, [selectedMonthRange]);
 
-   const handleTabSelect = (key: string | null) => {
+    const handleTabSelect = (key: string | null) => {
         // Приводим ключ к строке или undefined
         setActiveTab(key ?? undefined);
     };
@@ -182,61 +182,64 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <DelaysChartBoard delays={delays}  />
+                                        <DelaysChartBoard delays={delays} />
                                     </Col>
                                 </Row>
                             </Col>
                         </Row>
                     </Tab>
                     <Tab eventKey={2} title="По месяцам" mountOnEnter unmountOnExit>
-                        {activeTab==='2' && 
-                        <Row>
-                            <Row className="mt-5">
-                                {loading && (
-                                    <Preloader />
-                                )}
-                            </Row>
-                            <Row lg={12} sm={12} md={12}>
-                                <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
-                                    <Row>
-                                        <Col className="col-6">
-                                            <MonthRangeSelector onDatesChange={handleMonthChange} />
-                                        </Col>
-                                        <Col className="col-6">
-                                            <Speedometr productionData={allProductionMonthData} />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <BatteryChart planData={planMonthData} factData={productionMonthData} />
-                                    </Row>
-                                    <Row>
-                                        <ShiftDefects shiftProduction={allProductionMonthData} />
-                                    </Row>
-                                </Col>
-                                <Col lg={9} sm={12} >
-                                    <Row>
-                                        <Col >
-                                            <PlanFactChartByMonth planData={planMonthData} productionData={productionMonthData} allProductionData={allProductionMonthData} />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        {uniqueTradeMarks.map(tradeMark => {
-                                            const data = productionMonthData.filter(prod => prod.product.tradeMark.name === tradeMark);
-                                            return (
-                                                <Col key={tradeMark} lg={colWidth} sm={12}>
-                                                    <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
-                                                </Col>
-                                            );
-                                        })}
-                                    </Row>
-                                    <Row>
-                                        <Col>
-                                            <DelaysMonthChartBoard delays={delaysMonth} />
-                                        </Col>
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </Row>}
+                        {activeTab === '2' &&
+                            <Row>
+                                <Row className="mt-5">
+                                    {loading && (
+                                        <Preloader />
+                                    )}
+                                </Row>
+                                <Row lg={12} sm={12} md={12}>
+                                    <Col className="col-lg-3 col-md-12 col-sm-12 mb-2">
+                                        <Row>
+                                            <Col className="col-6">
+                                                <MonthRangeSelector onDatesChange={handleMonthChange} />
+                                            </Col>
+                                            <Col className="col-6">
+                                                <Speedometr productionData={allProductionMonthData} />
+                                            </Col>
+                                        </Row>
+                                        <Row >
+                                            <Col className="col-lg-12 col-sm-6">
+                                                <BatteryChart planData={planMonthData} factData={productionMonthData} />
+                                            </Col>
+                                        
+                                            <Col className="col-lg-12 col-sm-6">
+                                                <ShiftDefects shiftProduction={allProductionMonthData} />
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                    <Col lg={9} sm={12} >
+                                        <Row>
+                                            <Col >
+                                                <PlanFactChartByMonth planData={planMonthData} productionData={productionMonthData} allProductionData={allProductionMonthData} />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            {uniqueTradeMarks.map(tradeMark => {
+                                                const data = productionMonthData.filter(prod => prod.product.tradeMark.name === tradeMark);
+                                                return (
+                                                    <Col key={tradeMark} lg={colWidth} sm={12}>
+                                                        <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
+                                                    </Col>
+                                                );
+                                            })}
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <DelaysMonthChartBoard delays={delaysMonth} />
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </Row>}
                     </Tab>
                 </Tabs>
             </Row>

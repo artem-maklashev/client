@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from "react";
 import Plan from "../../model/gypsumBoard/Plan";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import ApiService from "../../service/ApiService";
 import BoardProduction from "../../model/production/BoardProduction";
 import WeatherWidget from "./WeatherWidget";
 import Preloader from "./commonElements/preloader";
+import MyCard from "../../service/library/MyCard";
 
 interface MainPageProps { }
 
@@ -93,8 +94,8 @@ const MainPage: React.FC<MainPageProps> = () => {
     function getDeviation(): string {
         const deviation = value - toTodayPlan;
         return deviation > 0
-            ? `Опережение на ${deviation.toFixed(0)} м²`
-            : `Отставание ${Math.abs(deviation).toFixed(0)} м²`;
+            ? `опережение на ${deviation.toFixed(0)} м²`
+            : `отставание ${Math.abs(deviation).toFixed(0)} м²`;
     }
 
     return (
@@ -104,18 +105,54 @@ const MainPage: React.FC<MainPageProps> = () => {
                 {loading && (
                     <Preloader />
                 )}
-                <Col className="mt-3 col-lg-3 col-sm-6">
-                    <Card className="text-center bg-body-primary">
-                        <Card.Header className="mb-2">
-                            <h3>Погода</h3>
-                        </Card.Header>
-                        <Card.Body>
-                            <WeatherWidget />
-                        </Card.Body>
-                    </Card>
+                <Col className="mt-3 col-lg-2 col-sm-6">                    
+                    <MyCard value={<WeatherWidget />} />
                 </Col>
 
-                <Col className="mt-3 col-lg-3 col-sm-12">
+                <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
+                    <MyCard label='Производство ГСП' value={
+                        <div className="mt-5">
+                            <MyCard label={"План на текущий месяц"} value={plan ? (plan + " м²") : <Spinner />} />
+                            <MyCard label="Изготовлено" value={value ? (value.toFixed(0) + " м²") : <Spinner />} />
+                            <MyCard label="Отклонение" value={(value && toTodayPlan) ? getDeviation() : <Spinner />} valueColor={(value - toTodayPlan) < 0 ? '#ff3333 ' : '#B3E5B3'} />
+                            <MyCard label="Процент брака" value={defectPercentResult ? defectPercentResult.toFixed(2) + " %" : <Spinner />} valueColor={(defectPercentResult) > 3 ? '#FF7F7F ' : '#2E8B57'} />
+                            <MyCard label="Процент брака" value={
+                                todayPlan.length > 0 ? (
+                                    <table className="table table-sm mt-1 table-striped table-bordered">
+                                        <thead className="table-dark">
+                                            <tr>
+                                                <th>Гипсокартон</th>
+                                                <th>Количество</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {todayPlan.map((board) => (
+                                                <tr key={board.gypsumBoard.id}>
+                                                    <td>
+                                                        {board.gypsumBoard.tradeMark.name} тип{" "}
+                                                        {board.gypsumBoard.boardType.name}-{board.gypsumBoard.edge.name}{" "}
+                                                        {board.gypsumBoard.thickness.value}-
+                                                        {board.gypsumBoard.width.value}-
+                                                        {board.gypsumBoard.length.value}
+                                                    </td>
+                                                    <td>{board.planValue} м²</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <p style={{ fontSize: 12 }}>На сегодня производство не запланировано.</p>
+                                )
+                            } />
+                        </div>
+
+                    }
+                        labelFontSize="14px"
+                        labelAlign="center"
+                        labelPosition={{ top: '-5px', left: '50px' }}
+                    />
+
+                    {/* <Row className="mt-3"></Row>
                     <Card className="text-center bg-body-secondary p-0">
                         <Card.Header className="mb-2">
                             <h3>Производство ГСП</h3>
@@ -157,7 +194,7 @@ const MainPage: React.FC<MainPageProps> = () => {
                                 <p>На сегодня производство не запланировано.</p>
                             )}
                         </Card.Body>
-                    </Card>
+                    </Card> */}
                 </Col>
                 <Col className="mt-3 col-lg-3 col-sm-12">
                     <Card className="text-center bg-body-secondary">

@@ -1,100 +1,181 @@
 .tab-content {
-    background-color: #e3e3e3; /* Цвет фона для содержимого вкладок */
-    padding: 15px;
+  background-color: #e3e3e3; /* Цвет фона для содержимого вкладок */
+  padding: 15px;
 }
 
 .nav-tabs .nav-item .nav-link.active {
-    background-color: #4190b9; /* Цвет активной вкладки */
-    color: #ffffff; /* Цвет текста активной вкладки */
+  background-color: #4190b9; /* Цвет активной вкладки */
+  color: #ffffff; /* Цвет текста активной вкладки */
 }
 
 .nav-tabs .nav-item .nav-link {
-    color: #ffffff; /* Цвет текста неактивной вкладки */
-    border-color: #414141;
-    background-color: #616161;
+  color: #ffffff; /* Цвет текста неактивной вкладки */
+  border-color: #414141;
+  background-color: #616161;
 }
 
 .nav-tabs .nav-item .nav-link.disabled {
-    color: #aeaeae; /* Цвет текста активной вкладки */
+  color: #aeaeae; /* Цвет текста активной вкладки */
 }
 
 .preloader-wrapper {
-    height :100px;
-    width:100px;
-    position:relative;
-    margin:150px auto;
+  height: 100px;
+  width: 100px;
+  position: relative;
+  margin: 150px auto;
 }
 .preloader {
-    position:absolute;
-    height:60px;
-    width:60px;
-    left:0; top:0; right:0; bottom:0;
-    margin:auto;
-    background:red;
-    opacity:0.6;
-    animation:  rotate 2s infinite;
-    transform: scale(0.8);
+  position: absolute;
+  height: 60px;
+  width: 60px;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  background: red;
+  opacity: 0.6;
+  animation: rotate 2s infinite;
+  transform: scale(0.8);
 }
 .preloader:before,
 .preloader:after {
-    content:'';
-    height:100%;
-    width:100%;
-    position:absolute;
-    left:0;
-    right:0;
-    background:red;
-    opacity:0;
+  content: "";
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: red;
+  opacity: 0;
 }
-.preloader:before {animation:  rotate_ease 2s infinite;}
-.preloader:after {animation: rotate_ease2 2s infinite;}
+.preloader:before {
+  animation: rotate_ease 2s infinite;
+}
+.preloader:after {
+  animation: rotate_ease2 2s infinite;
+}
 .preloader,
 .preloader:before,
 .preloader:after {
-    -webkit-transition: all 500ms cubic-bezier(0.420, 0.000, 0.580, 1.000);
-    -moz-transition: all 500ms cubic-bezier(0.420, 0.000, 0.580, 1.000);
-    -o-transition: all 500ms cubic-bezier(0.420, 0.000, 0.580, 1.000);
-    transition: all 500ms cubic-bezier(0.420, 0.000, 0.580, 1.000); /* ease-in-out */
-    -webkit-transition-timing-function: cubic-bezier(0.420, 0.000, 0.580, 1.000);
-    -moz-transition-timing-function: cubic-bezier(0.420, 0.000, 0.580, 1.000);
-    -o-transition-timing-function: cubic-bezier(0.420, 0.000, 0.580, 1.000);
-    transition-timing-function: cubic-bezier(0.420, 0.000, 0.580, 1.000); /* ease-in-out */
+  -webkit-transition: all 500ms cubic-bezier(0.42, 0, 0.58, 1);
+  -moz-transition: all 500ms cubic-bezier(0.42, 0, 0.58, 1);
+  -o-transition: all 500ms cubic-bezier(0.42, 0, 0.58, 1);
+  transition: all 500ms cubic-bezier(0.42, 0, 0.58, 1); /* ease-in-out */
+  -webkit-transition-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  -moz-transition-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  -o-transition-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  transition-timing-function: cubic-bezier(0.42, 0, 0.58, 1); /* ease-in-out */
 }
 @keyframes rotate {
-    0%   { transform:rotate(0) scale(0.8) }
-    50% { transform:rotate(360deg) scale(1)}
-    100% { transform:rotate(360deg) scale(0.8) }
+  0% {
+    transform: rotate(0) scale(0.8);
+  }
+  50% {
+    transform: rotate(360deg) scale(1);
+  }
+  100% {
+    transform: rotate(360deg) scale(0.8);
+  }
 }
 @keyframes rotate_ease {
-    0%   { transform:rotate(0); opacity: 0}
-    50% {  transform:rotate(-20deg); opacity:0.5}
-    90% { transform:rotate(0); opacity:0 }
+  0% {
+    transform: rotate(0);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(-20deg);
+    opacity: 0.5;
+  }
+  90% {
+    transform: rotate(0);
+    opacity: 0;
+  }
 }
 @keyframes rotate_ease2 {
-    0%   { transform:rotate(0); opacity: 0}
-    40% {  transform:rotate(-40deg); opacity:0.2}
-    80% {  transform:rotate(-10deg); opacity:0.1}
-    90% { transform:rotate(0); opacity:0 }
+  0% {
+    transform: rotate(0);
+    opacity: 0;
+  }
+  40% {
+    transform: rotate(-40deg);
+    opacity: 0.2;
+  }
+  80% {
+    transform: rotate(-10deg);
+    opacity: 0.1;
+  }
+  90% {
+    transform: rotate(0);
+    opacity: 0;
+  }
 }
 
 .custom-modal-header {
-    background-color: blue;
-    /* Измените цвет фона на желаемый */
-    color: white;
-    /* Измените цвет текста на желаемый */
+  background-color: blue;
+  /* Измените цвет фона на желаемый */
+  color: white;
+  /* Измените цвет текста на желаемый */
 }
 
 /* styles.css */
 .custom-datatable .p-datatable-thead > tr > th,
 .custom-datatable .p-datatable-tbody > tr > td {
-    border: 1px solid #88b4d1; /* Цвет сетки */
+  border: 1px solid #88b4d1; /* Цвет сетки */
 }
 
 .custom-datatable .p-datatable-tbody > tr:nth-child(even) {
-    background-color: #f9f9f9; /* Цвет фона для чётных строк */
+  background-color: #f9f9f9; /* Цвет фона для чётных строк */
 }
 
 .custom-datatable .p-datatable-tbody > tr:nth-child(odd) {
-    background-color: #ffffff; /* Цвет фона для нечётных строк */
+  background-color: #ffffff; /* Цвет фона для нечётных строк */
 }
 
+/* Моя карточка */
+.myCard {
+  position: relative; /* Для позиционирования метки */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12px 10px 8px;
+  border-radius: 8px; /* Скруглённые углы */
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  width: auto; /* Ширина подстраивается под контент */
+  max-width: 400px; /* Максимальная ширина, если нужно ограничить */
+
+
+  /* Градиентный фон и тень */
+  background: linear-gradient(
+    to bottom right,
+    #f5f5f5,
+    #e0e0e0
+  ); /* Серый градиент */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.myCard:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Увеличенная тень при наведении */
+}
+
+.myCard__label {
+  position: absolute;
+  top: -10px; /* Сдвиг метки вверх */
+  left: 10px;
+  background: white; /* Белый фон для перекрытия границы */
+  border: 1px solid #ccc; /* Тонкая серая рамка */
+  border-radius: 12px; /* Скруглённые углы */
+  padding: 0 5px;
+  font-size: 12px;
+  color: #555; /* Серый цвет метки */
+  font-weight: 600;
+}
+
+.myCard__value {
+  color: #333; /* Цвет текста */
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}

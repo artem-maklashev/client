@@ -133,7 +133,7 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
         <Container fluid className="mt-5 mb-5 bg-secondary">
             <Row></Row>
             <Row className="mt-3">
-                <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
+                <Col className="col-lg-3 col-md-12 col-sm-12 mb-2">
                     <Row>
                         <DayRangeSelector onDatesChange={handleRangeChange} />
                     </Row>
@@ -148,13 +148,13 @@ const ByDayReport: React.FC<ByDayReportProps> = () => {
                         </Col>
                     </Row>
                     <Row>
-                        <Col lg={4} sm={12}>
+                        <Col lg={4} sm={6}>
                             <MixPieChart data={binderData()} title="Вяжущее" onClick={handlePieClick} />
                         </Col>
-                        <Col lg={4} sm={12}>
+                        <Col lg={4} sm={6}>
                             <MixPieChart data={typeData()} title='Тип смеси' onClick={handlePieClick} />
                         </Col>
-                        <Col lg={4} sm={12}>
+                        <Col lg={4} sm={6}>
                             <MixPieChart data={tradeMarkData()} title='Торговая марка' onClick={handlePieClick} />
                         </Col>
                     </Row>

@@ -1,6 +1,6 @@
 .tree-container {
-  height: 330px;
-  width: 250px;
+  height: 150px;
+  width: 95px;
   margin: 0 auto;
   padding: 0;
   overflow: hidden;
@@ -10,7 +10,7 @@
 .star {
   display: inline-block;
   border-radius: 0;
-  border-color: #f7b93f transparent transparent transparent;
+  border-color: #f13636 transparent transparent transparent;
   border-style: solid;
   border-top-width: 7.69230769px;
   border-right-width: 10px;
@@ -24,7 +24,7 @@
 }
 
 .star:before, .star:after {
-  border-color: #f7b93f transparent transparent transparent;
+  border-color: #f74b3f transparent transparent transparent;
   border-style: solid;
   border-top-width: 7.69230769px;
   border-right-width: 10px;
@@ -82,7 +82,7 @@
 }
 
 .spiral.two .light {
-  background: #e8a41d;
+  background: #0bae08;
 }
 
 .spiral.three {

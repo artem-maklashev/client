@@ -11,7 +11,7 @@ const Tree: React.FC<TreeProps> = () => {
     return (
         <div className="tree-container" style={{
             position: 'fixed',
-            bottom: '10px', // Отступ от нижнего края
+            bottom: '60px', // Отступ от нижнего края
             right: '10px', // Отступ от правого края
             zIndex: 9999, // Ёлка поверх остальных элементов
             pointerEvents: 'none', // Ёлка не мешает взаимодействию
