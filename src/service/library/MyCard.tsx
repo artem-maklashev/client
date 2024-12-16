@@ -26,13 +26,20 @@ const MyCard: React.FC<CardProps> = ({
 }) => {
   return (
     <div
-      className="myCard mt-2 mb-2"
+      className="myCard mt-2 mb-3"
       onClick={onClick}
       style={{
         cursor: onClick ? "pointer" : "default",
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: labelAlign === 'left' ? 'flex-start' : labelAlign === 'center' ? 'center' : 'flex-end',
+        justifyContent: 'center',
+        position: 'relative', // Для правильного позиционирования label
+        padding: '20px 10px 10px', // Обеспечиваем отступы для карточки
+        width: '100%', // Ширина карточки должна быть 100% от родителя
+        background: 'linear-gradient(to bottom right, #f5f5f5, #e0e0e0)',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px', // Скругленные углы
+
       }}
     >
       {/* Условие, чтобы label отображался только если он есть */}
@@ -53,6 +60,11 @@ const MyCard: React.FC<CardProps> = ({
             padding: '0 5px',
             fontWeight: '600',
             color: '#555',
+            zIndex: 10, // Чтобы метка была поверх других элементов
+            whiteSpace: 'nowrap', // Запрещает перенос строки и обрезание
+            maxWidth: '90%', // Устанавливаем максимальную ширину метки в 90% от контейнера
+            overflow: 'hidden', // Прячет переполнение
+            textOverflow: 'ellipsis', // Добавляет многоточие, если текст не помещается
           }}
         >
           {label}
@@ -60,7 +72,11 @@ const MyCard: React.FC<CardProps> = ({
       )}
       <div
         className="myCard__value"
-        style={{ color: valueColor }}
+        style={{
+          color: valueColor,
+          marginTop: '5px', // Добавляем отступ сверху для контента, если есть метка
+          textAlign: 'center', // Центрируем значение
+        }}
       >
         {value} {/* Отображаем любой React-элемент */}
       </div>

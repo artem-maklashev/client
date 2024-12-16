@@ -138,13 +138,14 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center; /* Центрируем содержимое по горизонтали */
   padding: 12px 10px 8px;
   border-radius: 8px; /* Скруглённые углы */
   font-family: Arial, sans-serif;
   font-size: 16px;
   width: auto; /* Ширина подстраивается под контент */
-  max-width: 400px; /* Максимальная ширина, если нужно ограничить */
-
+  /* max-width: 400px; Максимальная ширина, если нужно ограничить */
+  
 
   /* Градиентный фон и тень */
   background: linear-gradient(
@@ -162,7 +163,7 @@
 
 .myCard__label {
   position: absolute;
-  top: -10px; /* Сдвиг метки вверх */
+  top: -15px; /* Немного снижаем метку, чтобы не прижималась к верхнему краю */
   left: 10px;
   background: white; /* Белый фон для перекрытия границы */
   border: 1px solid #ccc; /* Тонкая серая рамка */
@@ -171,6 +172,7 @@
   font-size: 12px;
   color: #555; /* Серый цвет метки */
   font-weight: 600;
+  z-index: 10; /* Обеспечиваем видимость метки поверх других элементов */
 }
 
 .myCard__value {
@@ -178,4 +180,5 @@
   font-weight: bold;
   margin-top: 8px;
   text-align: center;
+  
 }

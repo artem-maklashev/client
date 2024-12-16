@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Col } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Plan from "../../../model/gypsumBoard/Plan";
 import BoardProduction from "../../../model/production/BoardProduction";
@@ -8,6 +8,7 @@ import Delays from "../../../model/delays/Delays";
 import { addDays } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import ApiService from "../../../service/ApiService";
+import MyCard from "../../../service/library/MyCard";
 
 interface PlanFactChartProps {
     planData: Plan[];
@@ -68,7 +69,7 @@ const PlanFactChartByMonth: React.FC<PlanFactChartProps> = ({ planData, producti
 
     const combinedData: CombinedData[] = planData.reduce((acc: CombinedData[], plan: Plan) => {
         // Преобразуем planDate в строку формата YYYY-MM-DD для сравнения
-        const planDateStr = new Date(plan.planDate).toISOString().split('T')[0].substring(0, 7);    
+        const planDateStr = new Date(plan.planDate).toISOString().split('T')[0].substring(0, 7);
 
         // Ищем в аккумуляторе запись с данной датой
         const existingEntry = acc.find(entry => entry.planDate.substring(0, 7) === planDateStr);
@@ -104,7 +105,7 @@ const PlanFactChartByMonth: React.FC<PlanFactChartProps> = ({ planData, producti
         const totalValues = allProductionData
             .filter((prod) => {
                 const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
-                                // const prodDate = new Date(prod.productionList.productionDate);
+                // const prodDate = new Date(prod.productionList.productionDate);
                 // prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
                 const prodDateStr = prodDate.split('T')[0].substring(0, 7);
                 return prodDateStr === entry.planDate.substring(0, 7) && prod.category.id === 1;
@@ -159,15 +160,19 @@ const PlanFactChartByMonth: React.FC<PlanFactChartProps> = ({ planData, producti
 
     return (
 
-        <Card className="text-center bg-body-primary">
-            <Card.Header><h5>План-факт производства</h5></Card.Header>
-            <Card.Body style={{ overflowX: 'auto' }}>
-                <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
+        // <Card className="text-center bg-body-primary">
+        //     <Card.Header><h5>План-факт производства</h5></Card.Header>
+        //     <Card.Body style={{ overflowX: 'auto' }}>
+        // <Col className="col-12 d-flex align-items-center" >
+        <div style={{overflow: 'auto'}}>
+
+            <MyCard label='План-факт производства' value={
+                <Col className="col-12 " style={{ minWidth: '350px', width: '100%', height: '278px', }}>
                     <ResponsiveContainer>
                         <LineChart
                             title="План-факт производства"
-                            width={500}
-                            height={300}
+                            // width={550}
+                            // height={300}
                             data={combinedData}
                             margin={{
                                 top: 5,
@@ -191,10 +196,16 @@ const PlanFactChartByMonth: React.FC<PlanFactChartProps> = ({ planData, producti
                         </LineChart>
                     </ResponsiveContainer>
                 </Col>
-                <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
-            </Card.Body>
-            {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}            
-        </Card>
+            }
+                labelFontSize="14px"
+            />
+        
+        <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
+        </div>
+            
+
+
+        // </Col >
 
     );
 };
