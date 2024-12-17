@@ -141,11 +141,11 @@
   align-items: center; /* Центрируем содержимое по горизонтали */
   padding: 12px 10px 8px;
   border-radius: 8px; /* Скруглённые углы */
-  border-color: #616161;
-  font-family: Arial, sans-serif;
+  border: 1px solid #cfcfcf;
+  font-family: Helvetica Neue, Arial, sans-serif;
   font-size: 16px;
   width: 100%; /* Ширина подстраивается под контент */
-  min-width: 300px;
+  min-width: 200px;
   /* max-width: 400px; Максимальная ширина, если нужно ограничить */
   
 
@@ -153,7 +153,7 @@
   background: linear-gradient(
     to bottom right,
     #f5f5f5,
-    #e0e0e0
+    #ccccccec
   ); /* Серый градиент */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
   transition: box-shadow 0.3s ease-in-out;
@@ -183,4 +183,15 @@
   margin-top: 8px;
   text-align: center;
   
+}
+
+.transparent-table {
+  background-color: rgba(255, 255, 255, 0.5) !important; /* Установка прозрачного фона */
+  border-radius: 8px !important; /* Скругление углов */
+  border: 1px solid #ccc !important; /* Для задания рамки */
+}
+
+.transparent-table td, .transparent-table th {
+  background-color: rgba(255, 255, 255, 0.2) !important; /* Прозрачность ячеек */
+  border: 1px solid rgba(255, 255, 255, 0.5) !important; /* Прозрачные границы ячеек */
 }

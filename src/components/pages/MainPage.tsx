@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from "react";
 import Plan from "../../model/gypsumBoard/Plan";
-import { Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import { Badge, Col, Container, Row, Spinner } from "react-bootstrap";
 import ApiService from "../../service/ApiService";
 import BoardProduction from "../../model/production/BoardProduction";
 import WeatherWidget from "./WeatherWidget";
 import Preloader from "./commonElements/preloader";
 import MyCard from "../../service/library/MyCard";
 import MixMainPageCard from "./drymix/mixMainPageCard";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 
 interface MainPageProps { }
 
@@ -103,10 +105,14 @@ const MainPage: React.FC<MainPageProps> = () => {
         <div style={{ backgroundColor: '#7fc7ff', minHeight: '100vh', width: '100%' }}>
             <Container className="mt-5 mb-5" fluid style={{ backgroundColor: '#7fc7ff' }}>
                 <Row className="mt-5 justify-content-center text-center">
-                    <h2 className="mt-3 mb-3">Показатели за текущий месяц</h2>
-                    {loading && (
+                    
+                        <h2 className="mt-2 mb-2 text-center">
+                            Показатели за текущий месяц                            
+                        </h2>
+                    
+                    {/* {loading && (
                         <Preloader />
-                    )}
+                    )} */}
                     <Col className="mt-3 col-lg-2 col-sm-6">
                         <MyCard value={<WeatherWidget />} />
                     </Col>
@@ -120,32 +126,25 @@ const MainPage: React.FC<MainPageProps> = () => {
                                 <MyCard label="Процент брака" value={defectPercentResult ? defectPercentResult.toFixed(2) + " %" : <Spinner />} valueColor={(defectPercentResult) > 3 ? '#FF7F7F ' : '#2E8B57'} />
                                 <MyCard label="Запланированное производство" value={
                                     todayPlan.length > 0 ? (
-                                        <table className="table table-sm mt-1 table-striped table-bordered">
-                                            <thead className="table-dark">
-                                                <tr>
-                                                    <th>Гипсокартон</th>
-                                                    <th>Количество</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {todayPlan.map((board) => (
-                                                    <tr key={board.gypsumBoard.id}>
-                                                        <td>
-                                                            {board.gypsumBoard.tradeMark.name} тип{" "}
-                                                            {board.gypsumBoard.boardType.name}-{board.gypsumBoard.edge.name}{" "}
-                                                            {board.gypsumBoard.thickness.value}-
-                                                            {board.gypsumBoard.width.value}-
-                                                            {board.gypsumBoard.length.value}
-                                                        </td>
-                                                        <td>{board.planValue} м²</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                        <DataTable
+                                            value={todayPlan}
+                                            tableStyle={{ fontSize: '12px' }}
+                                            stripedRows
+                                        >
+                                            <Column
+                                                header='Наименование ГСП'
+                                                body={(rowData: Plan) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name} ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
+                                            />
+                                            <Column
+                                                header='Кол-во'
+                                                body={(rowData: Plan) => rowData.planValue}
+                                            />
+                                        </DataTable>
                                     ) : (
-                                        <p style={{ fontSize: 12 }}>На сегодня производство не запланировано.</p>
-                                    )
-                                } />
+                                        <div>Нет плана на сегодня</div>
+                                    )}
+                                />
+
                             </div>
 
                         }

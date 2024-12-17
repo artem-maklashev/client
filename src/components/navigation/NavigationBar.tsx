@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Nav, Navbar, NavbarBrand, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getUserRole } from "../../service/Api";
+import logo from "./logo-new.svg"
+import gypsumBoardIcon from "../../images/dekorator-gsp-a-pk.svg"
 
 interface NavigationBarProps {
     tokenValid?: boolean; // Пропс для проверки валидности токена
@@ -22,13 +24,23 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
     return (
         <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} fixed={'top'}>
             <div className="container-fluid">
-                <NavbarBrand as={Link} to="/">Декоратор</NavbarBrand>
+                <NavbarBrand as={Link} to="/">
+                    <img
+                        src={logo}
+                        width="100"
+                        height="30"
+                        className="d-inline-block align-center"
+                        alt="Декоратор"
+                        loading="lazy"
+                    />
+                </NavbarBrand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/" onClick={handleNavClose}>Home</Nav.Link>
-                        <NavDropdown title="Гипсокартон" id="board-dropdown" >
-                            <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(gypsumBoardUsers.includes(getUserRole())) ? false : true}  className="dropend">
+                        <NavDropdown 
+                        title="Гипсокартон" id="board-dropdown"  >
+                            <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(gypsumBoardUsers.includes(getUserRole())) ? false : true} className="dropend">
                                 <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose} >Добавить выпуск</NavDropdown.Item>
                                 <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
                                     getUserRole() === 'ADMIN' ? false : true} >Найти выпуск</NavDropdown.Item >
@@ -38,7 +50,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose} disabled={
                                 // getUserRole() === 'ADMIN' ? false : true}
                                 false}
-                            style={{color: "#ffd700"}}>Основные показатели</NavDropdown.Item>
+                                style={{ color: "#ffd700" }}>Основные показатели</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/plan" onClick={handleNavClose}>План</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
@@ -53,7 +65,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                             <NavDropdown.Item as={Link} to="/consumptionReport" onClick={handleNavClose}>Справка по расходу материалов</NavDropdown.Item>
                         </NavDropdown> */}
                         <NavDropdown title="Сухие смеси" id="mix-production" disabled={(mixUsers.includes(getUserRole())) ? false : true} >
-                            <NavDropdown.Item as={Link} to="/mixReport" onClick={handleNavClose} style={{color: "#ffd700"}}>Основные показатели</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/mixReport" onClick={handleNavClose} style={{ color: "#ffd700" }}>Основные показатели</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/mixProduction" onClick={handleNavClose} disabled={getUserRole() === 'VIEWER'}>Выпуск смесей</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
