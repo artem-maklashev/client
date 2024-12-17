@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Nav, Navbar, NavbarBrand, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getUserRole } from "../../service/Api";
-import logo from "./logo-new.svg"
-import gypsumBoardIcon from "../../images/dekorator-gsp-a-pk.svg"
+import logo from "./cgristmas-logo.svg"
 
 interface NavigationBarProps {
     tokenValid?: boolean; // Пропс для проверки валидности токена
@@ -27,7 +26,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                 <NavbarBrand as={Link} to="/">
                     <img
                         src={logo}
-                        width="100"
+                        width="150"
                         height="30"
                         className="d-inline-block align-center"
                         alt="Декоратор"
@@ -37,7 +36,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/" onClick={handleNavClose}>Home</Nav.Link>
+                        {/* <Nav.Link as={Link} to="/" onClick={handleNavClose}>Home</Nav.Link> */}
                         <NavDropdown 
                         title="Гипсокартон" id="board-dropdown"  >
                             <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(gypsumBoardUsers.includes(getUserRole())) ? false : true} className="dropend">
