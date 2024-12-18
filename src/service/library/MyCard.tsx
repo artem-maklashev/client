@@ -34,7 +34,7 @@ const MyCard: React.FC<CardProps> = ({
         flexDirection: 'column',
         justifyContent: 'center',
         position: 'relative', // Для правильного позиционирования label
-        padding: '20px 10px 10px', // Обеспечиваем отступы для карточки
+        padding: '10px 10px 10px', // Обеспечиваем отступы для карточки
         width: '100%', // Ширина карточки должна быть 100% от родителя
         background: 'linear-gradient(to bottom right, #f5f5f5, #e0e0e0)',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -42,7 +42,9 @@ const MyCard: React.FC<CardProps> = ({
 
       }}
     >
+
       {/* Условие, чтобы label отображался только если он есть */}
+      {/* <div className="icon"></div> */}
       {label && (
         <div
           className="myCard__label"
@@ -54,13 +56,13 @@ const MyCard: React.FC<CardProps> = ({
             left: labelPosition.left, // Используем значение left
             right: labelPosition.right, // Используем значение right, если нужно
             bottom: labelPosition.bottom, // Используем значение bottom, если нужно
-            background: 'white',
-            border: '1px solid #ccc',
-            borderRadius: '12px',
-            padding: '0 5px',
-            fontWeight: '600',
-            color: '#555',
-            zIndex: 10, // Чтобы метка была поверх других элементов
+            // background: 'white',
+            // border: '1px solid #ccc',
+            // borderRadius: '12px',
+            // padding: '0 5px',
+            // fontWeight: '600',
+            // color: '#555',
+            // zIndex: 10, // Чтобы метка была поверх других элементов
             whiteSpace: 'nowrap', // Запрещает перенос строки и обрезание
             maxWidth: '90%', // Устанавливаем максимальную ширину метки в 90% от контейнера
             overflow: 'hidden', // Прячет переполнение
@@ -68,13 +70,14 @@ const MyCard: React.FC<CardProps> = ({
           }}
         >
           {label}
+          <div className="icon"></div>
         </div>
       )}
       <div
         className="myCard__value"
         style={{
           color: valueColor,
-          marginTop: '5px', // Добавляем отступ сверху для контента, если есть метка
+          // marginTop: '5px', // Добавляем отступ сверху для контента, если есть метка
           textAlign: 'center', // Центрируем значение
         }}
       >

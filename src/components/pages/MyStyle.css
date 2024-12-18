@@ -147,7 +147,7 @@
   width: 100%; /* Ширина подстраивается под контент */
   min-width: 200px;
   /* max-width: 400px; Максимальная ширина, если нужно ограничить */
-  
+  overflow: visible;
 
   /* Градиентный фон и тень */
   background: linear-gradient(
@@ -165,25 +165,59 @@
 
 .myCard__label {
   position: absolute;
-  top: -15px; /* Немного снижаем метку, чтобы не прижималась к верхнему краю */
+  top: -15px; /* Немного снижаем метку */
   left: 10px;
-  background: white; /* Белый фон для перекрытия границы */
-  border: 1px solid #ccc; /* Тонкая серая рамка */
-  border-radius: 12px; /* Скруглённые углы */
-  padding: 0 5px;
-  font-size: 12px;
-  color: #555; /* Серый цвет метки */
-  font-weight: 600;
-  z-index: 10; /* Обеспечиваем видимость метки поверх других элементов */
+  background: linear-gradient(135deg, rgb(142, 142, 142), rgb(92, 92, 92)); /* Плавный градиент для объема */
+  border: 1px solid rgba(69, 68, 68, 0.8); /* Полупрозрачная рамка */
+  border-radius: 8px; /* Скругленные углы */
+  padding: 5px 30px 5px 5px; /* Добавляем отступ справа */
+  font-size: 14px; /* Читаемый размер текста */
+  color: #f0f0f0; /* Светлый текст */
+  font-weight: 700; /* Жирный текст */
+  z-index: 10; /* Обеспечиваем видимость метки */
+  text-align: center; /* Центровка текста */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease; /* Плавный переход для hover-анимации */
+}
+
+.myCard__label:hover {
+  transform: scale(1.05); /* Легкое увеличение при наведении */
+  box-shadow: 
+    0px 3px 6px rgba(0, 0, 0, 0.6), /* Более выраженная тень */
+    inset 0px -1px 3px rgba(255, 255, 255, 0.4); /* Более четкая внутренняя тень */
+  background: linear-gradient(135deg, rgb(162, 162, 162), rgb(102, 102, 102)); /* Усиление контраста градиента */
 }
 
 .myCard__value {
-  color: #333; /* Цвет текста */
-  font-weight: bold;
-  margin-top: 8px;
-  text-align: center;
+  font-family: 'Roboto', 'Arial', sans-serif; /* Современный и читаемый шрифт */
+  font-weight: 600; /* Полужирный для акцента */
+  font-size: 20px; /* Оптимальный размер для ключевых данных */
+  color: inherit; /* Позволяет задавать цвет отдельно через inline-стиль */
+  margin-top: 6px;
+  text-align: center; /* Центровка текста */
+  letter-spacing: 0.5px; /* Легкая разреженность для читаемости */
+  transition: all 0.2s ease; /* Плавный переход для hover-эффекта */
   
+  cursor: default; /* Убирает нежелательные указатели мыши */
 }
+
+/* Иконка над меткой */
+.myCard .icon {
+  position: absolute;
+  top: 0px; /*Смещение иконки выше метки*/
+  left: 93%; /* Центрирование по горизонтали относительно карточки */
+  transform: translateX(-50%); /* Центрирование */
+  width: 20px; /* Ширина иконки */
+  height: 20px; /* Высота иконки */
+  background: url('../../images/christmas-ball.png') center / cover no-repeat;
+  z-index: 15; /* Обеспечиваем, что иконка будет выше метки */
+}
+
+
+
+
 
 .transparent-table {
   background-color: rgba(255, 255, 255, 0.5) !important; /* Установка прозрачного фона */

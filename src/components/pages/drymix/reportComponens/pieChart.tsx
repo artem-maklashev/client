@@ -21,8 +21,12 @@ interface PieChartProps {
 
 const MixPieChart: React.FC<PieChartProps> = ({ data, title, onClick }) => {
     // Цвета секторов диаграммы
-    const COLORS = ['#80ADD7', '#0ABDA0', '#D4DCA9', '#BF9D7A', '#A28AEF'];
-
+    const COLORS = [
+        '#80ADD7', '#0ABDA0', '#D4DCA9', '#BF9D7A', '#A28AEF', // существующие цвета
+        '#F7B7A3', '#E8E5E1', '#7BB3B7', '#D9B3D3', '#8F5D7A', // новые добавленные цвета
+        '#F4A261', '#264653', '#F2E1C1', '#A1C6EA', '#E5B5D0',
+        '#F8E16C', '#D8B1A3', '#B3C6C4', '#F3F4F7', '#6B8B6F'
+    ];
     // Функция для кастомного отображения меток
     const renderCustomizedLabel = ({
         cx,
@@ -51,8 +55,8 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title, onClick }) => {
                 fontSize="12px"
                 fontWeight="bold"
             >
-                <tspan x={x} dy="-1em">{name} - {percentage}</tspan>                
-                <tspan x={x} dy="1.2em">{value}</tspan>
+                {/* <tspan x={x} dy="-1em">{name} - {percentage}</tspan>                 */}
+                <tspan x={x} dy="0em">{percentage} - {value}</tspan>
             </text>
         );
     };
@@ -70,7 +74,7 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title, onClick }) => {
             <Card.Header className="bg-primary text-white text-center py-2">
                 <h6 className="m-0 text-uppercase">{title}</h6>
             </Card.Header>
-            <Card.Body style={{ height: '300px' }} className="d-flex justify-content-center align-items-center bg-light">
+            <Card.Body style={{ height: '400px' }} className="d-flex justify-content-center align-items-center bg-light">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
@@ -78,7 +82,7 @@ const MixPieChart: React.FC<PieChartProps> = ({ data, title, onClick }) => {
                             cx="50%"
                             cy="50%"
                             innerRadius={60}
-                            outerRadius={110}
+                            outerRadius={150}
                             fill="#8884d8"
                             dataKey="value"
                             labelLine={false}
