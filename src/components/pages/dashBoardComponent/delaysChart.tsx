@@ -1,4 +1,4 @@
-import { CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis, Tooltip, Bar, ComposedChart, Line, LegendProps, TooltipProps } from "recharts";
+import { CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis, Tooltip, Bar, ComposedChart, Line, LegendProps, TooltipProps, RectangleProps } from "recharts";
 import Delays from "../../../model/delays/Delays";
 import { Card, Col, Container } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
@@ -24,6 +24,10 @@ interface CustomLegendPayload {
 interface CustomLegendProps extends LegendProps {
     payload?: CustomLegendPayload[]; // payload может быть undefined
 }
+
+type RoundedBarProps = RectangleProps & {
+    radius?: number;
+};
 
 
 
@@ -151,6 +155,32 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
         );
     }
 
+    const RoundedBar: React.FC<RoundedBarProps> = (props) => {
+        const { x, y, width, height, fill, radius = 6 } = props;
+    
+        // Проверка на валидность координат
+        if (x === undefined || y === undefined || width === undefined || height === undefined) {
+            console.error("Invalid props for RoundedBar:", { x, y, width, height });
+            return null;
+        }
+    
+        // Убедиться, что радиус не превышает половину высоты
+        const adjustedRadius = Math.min(radius, height / 2);
+    
+        return (
+            <path
+                d={`M${x},${y + height} 
+                   L${x},${y + adjustedRadius} 
+                   Q${x},${y} ${x + adjustedRadius},${y} 
+                   L${x + width - adjustedRadius},${y} 
+                   Q${x + width},${y} ${x + width},${y + adjustedRadius} 
+                   L${x + width},${y + height} 
+                   Z`}
+                fill={fill}
+            />
+        );
+    };
+
 
     const handleClick = (chartData: CombinedData | undefined) => {
         if (chartData) {
@@ -172,57 +202,60 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
 
 
     return (
-    
 
-            <Card className="mt-2 text-center bg-body-primary shadow-sm border-0">
-                <Card.Header className=" text-center py-2"><h5 className="m-0 ">Простои</h5></Card.Header>
-                <Card.Body style={{ overflowX: 'auto' }} >
-                    <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart
-                                data={combinedData}
-                                layout="horizontal"
-                                margin={{
-                                    top: 20,
-                                    right: 30,
-                                    left: 20,
-                                    bottom: 5,
-                                }}
-                                onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
-                                <YAxis type="number" hide />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Legend content={<CustomLegend />} />
-                                {/* {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => { */}
-                                {combinedData.length > 0 && delayTypeName.map((key, index) => {
+
+        <Card className="mt-2 text-center shadow-sm border-0" style={{ backgroundColor: '#f9f9f9' }}>
+            <Card.Header className=" text-center py-2"><h5 className="m-0 ">Простои</h5></Card.Header>
+            <Card.Body style={{ overflowX: 'auto' }} >
+                <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                            data={combinedData}
+                            layout="horizontal"
+                            margin={{
+                                top: 20,
+                                right: 30,
+                                left: 20,
+                                bottom: 5,
+                            }}
+                            onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date"
+                                tick={{ fontSize: 12, fill: '#555' }}
+                                axisLine={{ stroke: '#888' }}
+                                tickLine={{ stroke: '#888' }} />
+                            <YAxis type="number" hide />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Legend content={<CustomLegend />} />
+                            {/* {combinedData.length > 0 && Object.keys(combinedData[0]).filter(key => key !== 'date' && key !== 'totalTime').map((key, index) => { */}
+                            {combinedData.length > 0 &&
+                                delayTypeName.map((key, index) => {
                                     console.log("Rendering Bar for key:", key);
+                                    const isLastBar = index === delayTypeName.length - 1; // Проверяем, последний ли это элемент
                                     return (
                                         <Bar
                                             key={key}
                                             dataKey={key}
                                             stackId="a"
                                             fill={COLORS[index % COLORS.length] || '#E6399B'}
-                                            legendType='circle'
-
-                                        >
-
-
-                                        </Bar>
-                                    )
+                                            legendType="circle"
+                                            shape={<RoundedBar radius={isLastBar ? 8 : 0} />}
+                                        />
+                                    );
                                 })}
-                                <Line type="monotone" dot={false} dataKey="totalTime" stroke='transparent'
-                                    label={{ fill: 'blue', fontSize: 12, position: 'top' }}
-                                    legendType='none'
-                                />
-                            </ComposedChart>
-                        </ResponsiveContainer>
-                    </Col>
-                    <DelaysModal date={modalDate} delays={modalDelays} onHide={closeModal} show={modalShow} />
-                </Card.Body>
-            </Card>
-       
+
+                            <Line type="monotone" dot={false} dataKey="totalTime" stroke='transparent'
+                                label={{ fill: 'blue', fontSize: 12, position: 'top' }}
+                                legendType='none'
+                            />
+                        </ComposedChart>
+                    </ResponsiveContainer>
+                </Col>
+                <DelaysModal date={modalDate} delays={modalDelays} onHide={closeModal} show={modalShow} />
+            </Card.Body>
+        </Card>
+
     );
 }
 

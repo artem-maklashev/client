@@ -160,52 +160,57 @@ const PlanFactChartByMonth: React.FC<PlanFactChartProps> = ({ planData, producti
 
     return (
 
-        // <Card className="text-center bg-body-primary">
-        //     <Card.Header><h5>План-факт производства</h5></Card.Header>
-        //     <Card.Body style={{ overflowX: 'auto' }}>
-        // <Col className="col-12 d-flex align-items-center" >
-        <div style={{overflow: 'auto'}}>
+        <Card className="text-center " style={{backgroundColor: '#f9f9f9'}}>
+            <Card.Header><h5>План-факт производства</h5></Card.Header>
+            <Card.Body style={{ overflowX: 'auto' }}>
+                {/* <Col className="col-12 d-flex align-items-center" > */}
+                <div style={{ overflow: 'auto' }}>
+                    {/* //     <MyCard label='План-факт производства' value={ */}
+                    <Col className="col-12 " style={{ minWidth: '530px', width: '100%', height: '278px', }}>
+                        <ResponsiveContainer>
+                            <LineChart
+                                title="План-факт производства"
+                                width={550}
+                                height={300}
+                                data={combinedData}
+                                margin={{
+                                    top: 5,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 5,
+                                }}
+                                onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
 
-            <MyCard label='План-факт производства' value={
-                <Col className="col-12 " style={{ minWidth: '350px', width: '100%', height: '278px', }}>
-                    <ResponsiveContainer>
-                        <LineChart
-                            title="План-факт производства"
-                            // width={550}
-                            // height={300}
-                            data={combinedData}
-                            margin={{
-                                top: 5,
-                                right: 30,
-                                left: 20,
-                                bottom: 5,
-                            }}
-                            onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="planDate"
+                                    tick={{ fontSize: 12, fill: '#555' }}
+                                    axisLine={{ stroke: '#888' }}
+                                    tickLine={{ stroke: '#888' }} />
+                                <YAxis yAxisId="left"
+                                    tick={{ fontSize: 12, fill: '#555' }}
+                                    axisLine={{ stroke: '#888' }}
+                                    tickLine={{ stroke: '#888' }} />
+                                <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} domain={[0, 'dataMax + 5']}
+                                    tick={{ fontSize: 12, fill: '#555' }}
+                                    axisLine={{ stroke: '#888' }}
+                                    tickLine={{ stroke: '#888' }} />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Legend formatter={legendFormatter} />
+                                <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
+                                <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
+                                <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d" strokeWidth={2} />
 
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="planDate" />
-                            <YAxis yAxisId="left" />
-                            <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} domain={[0, 'dataMax + 5']} />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend formatter={legendFormatter} />
-                            <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
-                            <Line yAxisId="left" type="monotone" dataKey="productionValue" stroke="#FF1493" activeDot={{ r: 8 }} strokeWidth={3} />
-                            <Line yAxisId="right" type="step" dataKey="defectPercent" stroke="#82ca9d" strokeWidth={2} />
-
-                        </LineChart>
-                    </ResponsiveContainer>
-                </Col>
-            }
-                labelFontSize="14px"
-            />
-        
-        <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
-        </div>
-            
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </Col>
 
 
-        // </Col >
+                    <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
+                </div>
+                {/* </Col > */}
+            </Card.Body>
+        </Card>
 
     );
 };

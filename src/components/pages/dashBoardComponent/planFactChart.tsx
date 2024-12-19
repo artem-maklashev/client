@@ -106,7 +106,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
         const totalValues = allProductionData
             .filter((prod) => {
                 const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
-                                // const prodDate = new Date(prod.productionList.productionDate);
+                // const prodDate = new Date(prod.productionList.productionDate);
                 // prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
                 const prodDateStr = prodDate.split('T')[0];
                 return prodDateStr === entry.planDate && prod.category.id === 1;
@@ -163,7 +163,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
 
         <Card className="text-center bg-body-primary shadow-sm">
             <Card.Header><h5>План-факт производства</h5></Card.Header>
-            <Card.Body style={{ overflowX: 'auto' }}>
+            <Card.Body style={{ overflowX: 'auto', backgroundColor: '#f9f9f9' }}>
                 <Col className="col-12 " style={{ minWidth: '500px', width: '100%', height: '278px' }}>
                     <ResponsiveContainer>
                         <LineChart
@@ -180,10 +180,19 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                             onClick={(data) => handleClick(data?.activePayload?.[0]?.payload)}
 
                         >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="planDate" padding={{ left: 30, right: 30 }} />
-                            <YAxis yAxisId="left" />
-                            <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} domain={[0, 'dataMax + 5']} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                            <XAxis dataKey="planDate" padding={{ left: 30, right: 30 }}
+                                tick={{ fontSize: 12, fill: '#555' }}
+                                axisLine={{ stroke: '#888' }}
+                                tickLine={{ stroke: '#888' }} />
+                            <YAxis yAxisId="left"
+                                tick={{ fontSize: 12, fill: '#555' }}
+                                axisLine={{ stroke: '#888' }}
+                                tickLine={{ stroke: '#888' }} />
+                            <YAxis yAxisId="right" orientation="right" label={{ value: '%', position: 'right' }} domain={[0, 'dataMax + 5']}
+                                tick={{ fontSize: 12, fill: '#555' }}
+                                axisLine={{ stroke: '#888' }}
+                                tickLine={{ stroke: '#888' }} />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend formatter={legendFormatter} />
                             <Line yAxisId="left" type="monotone" dataKey="planValue" stroke="#8884d8" activeDot={{ r: 8, }} strokeWidth={3} />
@@ -195,7 +204,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
                 </Col>
                 <PlanFactModal show={showModal} plan={modalPlan} fact={modalFact} delays={[]} onHide={closeModal} date={modalDate} />
             </Card.Body>
-            {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}            
+            {/* <Card.Footer>План на месяц: {planData.reduce((acc, plan) => acc + plan.planValue,0)} м²</Card.Footer> */}
         </Card>
 
     );

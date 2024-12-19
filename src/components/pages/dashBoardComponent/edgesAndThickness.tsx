@@ -93,11 +93,11 @@ const EdgesAndThikness: React.FC<EdgesAndThiknessProps> = ({ allProductionData, 
 
     const CustomLegend: React.FC<CustomLegendProps> = ({ payload = [] }) => {
         return (
-            <div style={{ fontSize: '12px', textAlign: 'center', marginBottom: '5px'}}>
+            <div style={{ fontSize: '12px', textAlign: 'center', marginBottom: '5px' }}>
                 {payload.length > 0 ? (
                     payload.map(entry => (
                         // <div key={entry.value} style={{ marginBottom: '5px' }}>
-                            <span style={{ color: entry.color }}>{entry.value} {" "}</span>
+                        <span style={{ color: entry.color }}>{entry.value} {" "}</span>
                         // </div>
                     ))
                 ) : (
@@ -108,7 +108,7 @@ const EdgesAndThikness: React.FC<EdgesAndThiknessProps> = ({ allProductionData, 
     }
 
     return (
-        <Card className="mt-2 text-center bg-body-primary">
+        <Card className="mt-2 text-center" style={{ backgroundColor: '#f9f9f9' }}>
             <Card.Header><h5>Кромка и толщина. {tradeMark}</h5></Card.Header>
             <Card.Body style={{ width: '100%', height: '200px', marginTop: '1px' }} className='d-flex justify-content-center align-items-center'>
                 <ResponsiveContainer width="100%" height="100%" >
@@ -123,19 +123,25 @@ const EdgesAndThikness: React.FC<EdgesAndThiknessProps> = ({ allProductionData, 
                             left: 20,
                             bottom: 5,
                         }}
-                        maxBarSize={50}                        
+                        maxBarSize={50}
                     >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <YAxis dataKey="edgeName" type='category' />
-                        <XAxis type="number" />
+                        <YAxis dataKey="edgeName" type='category'
+                            tick={{ fontSize: 12, fill: '#555' }}
+                            axisLine={{ stroke: '#888' }}
+                            tickLine={{ stroke: '#888' }} />
+                        <XAxis type="number"
+                            tick={{ fontSize: 12, fill: '#555' }}
+                            axisLine={{ stroke: '#888' }}
+                            tickLine={{ stroke: '#888' }} />
                         <Tooltip />
                         <Legend align='right' verticalAlign='top'
                             content={<CustomLegend />} />
-                            {
-                                uniqueThicknesses.map((thickness, index) => (
-                                    <Bar key={thickness} dataKey={thickness} stackId="a" name={`${thickness} mm`} fill={COLORS[index % COLORS.length]} />
-                                ))
-                            }
+                        {
+                            uniqueThicknesses.map((thickness, index) => (
+                                <Bar key={thickness} dataKey={thickness} stackId="a" name={`${thickness} mm`} fill={COLORS[index % COLORS.length]} />
+                            ))
+                        }
                     </BarChart>
                 </ResponsiveContainer>
             </Card.Body>
