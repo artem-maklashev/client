@@ -109,12 +109,13 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
                     data.push({
                         date: ApiService.formatDateToISO(item.delayDate).split('T')[0],
                         value: 0,
-                        time: (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60),
+                        time: (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60) ,
                         productivity: 0,
                     });
                 }
             });
-            data.forEach((item) => { (item.productivity = item.value / (1440 - item.time)) });
+            data.forEach((item) => { item.value ? (item.productivity = item.value / (1440 - item.time)) : item.productivity=0});
+            data.sort((a,b) => (new Date(a.date).getTime() - new Date(b.date).getTime()));
             return data;
         }
         if (productionData) {

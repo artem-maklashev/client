@@ -233,6 +233,28 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                                 delayTypeName.map((key, index) => {
                                     console.log("Rendering Bar for key:", key);
                                     const isLastBar = index === delayTypeName.length - 1; // Проверяем, последний ли это элемент
+                                    // const isTopBar = combinedData.some(
+                                    //     (item) => item[key] !== undefined &&
+                                    //         item[key] === Math.max(
+                                    //             ...Object.keys(item)
+                                    //                 .filter(k => k !== 'date' && k !== 'totalTime')
+                                    //                 .map(k => Number(item[k] || 0)) // Приведение к числу
+                                    //         )
+                                    // );
+                                    // const isTopBar = combinedData.some((item) => {
+                                    //     // Собираем список всех ключей, кроме служебных
+                                    //     const keys = Object.keys(item).filter(k => k !== 'date' && k !== 'totalTime');
+                                        
+                                    //     // Находим последний ключ по порядку
+                                    //     const lastKey = keys[keys.length - 1];
+                                    //     // Сравниваем текущий ключ (key) с найденным lastKey
+                                    //     return lastKey === key;
+                                    // });
+                                    // const isLastBar = combinedData.filter(k => k !== 'date' && k !== 'totalTime')[combinedData.length - 1][key] !== undefined;
+
+                                    
+                                    
+                                    
                                     return (
                                         <Bar
                                             key={key}
@@ -240,7 +262,7 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
                                             stackId="a"
                                             fill={COLORS[index % COLORS.length] || '#E6399B'}
                                             legendType="circle"
-                                            shape={<RoundedBar radius={isLastBar ? 8 : 0} />}
+                                            // shape={<RoundedBar radius={isLastBar ? 8 : 0} />}
                                         />
                                     );
                                 })}
