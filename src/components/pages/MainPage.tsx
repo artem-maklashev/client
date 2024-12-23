@@ -17,9 +17,9 @@ return (
                 <h2 className="mt-2 mb-2 text-center">
                     Показатели за текущий месяц
                 </h2>                
-                <Col className="mt-3 col-lg-2 col-sm-6">
+                {/* <Col className="mt-3 col-lg-2 col-sm-6">
                     <MyCard value={<WeatherWidget />} />
-                </Col>
+                </Col> */}
 
                 <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
                     <BoardMainPageCard />
