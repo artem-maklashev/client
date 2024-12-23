@@ -1,164 +1,35 @@
-import React, { useCallback, useState } from "react";
-import Plan from "../../model/gypsumBoard/Plan";
-import { Badge, Col, Container, Row, Spinner } from "react-bootstrap";
-import ApiService from "../../service/ApiService";
-import BoardProduction from "../../model/production/BoardProduction";
+import React, {  } from "react";
+import { Col, Container, Row } from "react-bootstrap";
 import WeatherWidget from "./WeatherWidget";
-import Preloader from "./commonElements/preloader";
 import MyCard from "../../service/library/MyCard";
 import MixMainPageCard from "./drymix/mixMainPageCard";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import BoardMainPageCard from "./gypsumBoardElements/boardsMainPageCard";
 
 interface MainPageProps { }
 
-const MainPage: React.FC<MainPageProps> = () => {
-    const [boardPlanData, setBoardPlanData] = useState<Plan[]>([]);
-    const [errorText, setErrorText] = useState<string | null>(null);
-    const [boardProductionData, setBoardProductionData] = useState<BoardProduction[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+const MainPage: React.FC<MainPageProps> = () => {    
 
-    const fetchPlan = useCallback(async () => {
-        setLoading(true);
-        try {
-            const data = await ApiService.fetchTodayPlan();
-            setErrorText(null);
-            setBoardPlanData(data);
-        } catch (error: any) {
-            setErrorText(error.message);
-            setBoardPlanData([]);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+return (
+    <div style={{ backgroundColor: '#7fc7ff', minHeight: '100vh', width: '100%' }}>
+        <Container className="mt-5 mb-5" fluid style={{ backgroundColor: '#7fc7ff' }}>
+            <Row className="mt-5 justify-content-center text-center">
 
-    const fetchBoardProduction = useCallback(async () => {
-        setLoading(true);
-        try {
-            const data = await ApiService.fetchTodayBoardProduction();
-            setErrorText(null);
-            setBoardProductionData(data);
-        } catch (error: any) {
-            setErrorText(error.message);
-            setBoardProductionData([]);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+                <h2 className="mt-2 mb-2 text-center">
+                    Показатели за текущий месяц
+                </h2>                
+                <Col className="mt-3 col-lg-2 col-sm-6">
+                    <MyCard value={<WeatherWidget />} />
+                </Col>
 
-    React.useEffect(() => {
-
-        const fetchData = async () => {
-            await fetchPlan();
-            await fetchBoardProduction();
-        };
-
-        fetchData();
-    }, [fetchPlan, fetchBoardProduction]);
-
-    const plan = boardPlanData.reduce((acc, plan) => acc + plan.planValue, 0);
-
-    const sortedBoardProduction = boardProductionData.filter(
-        (board) => board.category.id < 5
-    );
-    const todayPlan = boardPlanData.filter(
-        (plan) => new Date(plan.planDate).toDateString() === new Date(getCurrentDate()).toDateString()
-    );
-
-    const toTodayPlan = boardPlanData
-        .filter((plan) => new Date(plan.planDate) < new Date(getCurrentDate()))
-        .reduce((acc, plan) => acc + plan.planValue, 0);
-
-    const { total, value } = sortedBoardProduction.reduce(
-        (acc, board) => {
-            const isCategory1 = board.category.id === 1;
-            if (isCategory1) {
-                acc.total += board.value;
-            } else {
-                acc.value += board.value;
-            }
-            return acc;
-        },
-        { total: 0, value: 0 }
-    );
-
-    const defectPercentResult =
-        total === 0 ? 0 : ((total - value) / total) * 100;
-
-    function getCurrentDate(): string {
-        const now = new Date();
-        const year = now.getUTCFullYear();
-        const month = (now.getUTCMonth() + 1).toString().padStart(2, "0");
-        const day = now.getUTCDate().toString().padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
-    }
-
-    function getDeviation(): string {
-        const deviation = value - toTodayPlan;
-        return deviation > 0
-            ? `опережение на ${deviation.toFixed(0)} м²`
-            : `отставание ${Math.abs(deviation).toFixed(0)} м²`;
-    }
-
-    return (
-        <div style={{ backgroundColor: '#7fc7ff', minHeight: '100vh', width: '100%' }}>
-            <Container className="mt-5 mb-5" fluid style={{ backgroundColor: '#7fc7ff' }}>
-                <Row className="mt-5 justify-content-center text-center">
-                    
-                        <h2 className="mt-2 mb-2 text-center">
-                            Показатели за текущий месяц                            
-                        </h2>
-                    
-                    {/* {loading && (
-                        <Preloader />
-                    )} */}
-                    <Col className="mt-3 col-lg-2 col-sm-6">
-                        <MyCard value={<WeatherWidget />} />
-                    </Col>
-
-                    <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
-                        <MyCard label='Производство ГСП' value={
-                            <div className="mt-5">
-                                <MyCard label={"План на текущий месяц"} value={plan ? (plan + " м²") : <Spinner />} />
-                                <MyCard label="Изготовлено" value={value ? (value.toFixed(0) + " м²") : <Spinner />} />
-                                <MyCard label="Отклонение" value={(value && toTodayPlan) ? getDeviation() : <Spinner />} valueColor={(value - toTodayPlan) < 0 ? '#ff3333 ' : '#B3E5B3'} />
-                                <MyCard label="Процент брака" value={defectPercentResult ? defectPercentResult.toFixed(2) + " %" : <Spinner />} valueColor={(defectPercentResult) > 3 ? '#FF7F7F ' : '#2E8B57'} />
-                                <MyCard label="Запланированное производство" value={
-                                    todayPlan.length > 0 ? (
-                                        <DataTable
-                                            value={todayPlan}
-                                            tableStyle={{ fontSize: '12px' }}
-                                            stripedRows
-                                        >
-                                            <Column
-                                                header='Наименование ГСП'
-                                                body={(rowData: Plan) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name} ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
-                                            />
-                                            <Column
-                                                header='Кол-во'
-                                                body={(rowData: Plan) => rowData.planValue}
-                                            />
-                                        </DataTable>
-                                    ) : (
-                                        <div>Нет плана на сегодня</div>
-                                    )}
-                                />
-
-                            </div>
-
-                        }
-                            labelFontSize="14px"
-                            labelAlign="center"
-                            labelPosition={{ top: '-5px', left: '50px' }}
-                        />
-                    </Col>
-                    <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
-                        <MixMainPageCard />
-                    </Col>
-                </Row>
-                {/* Пример добавления видео */}
-                {/* <Row className="justify-content-center mt-3">
+                <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
+                    <BoardMainPageCard />
+                </Col>
+                <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
+                    <MixMainPageCard />
+                </Col>
+            </Row>
+            {/* Пример добавления видео */}
+            {/* <Row className="justify-content-center mt-3">
                 <Col className="col-6">
                     <iframe
                         title="Баста"
@@ -169,9 +40,9 @@ const MainPage: React.FC<MainPageProps> = () => {
                     ></iframe>
                 </Col>
             </Row> */}
-            </Container>
-        </div>
-    );
+        </Container>
+    </div>
+);
 };
 
 export default MainPage;

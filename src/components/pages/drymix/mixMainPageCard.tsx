@@ -41,8 +41,8 @@ const MixMainPageCard: React.FC<MixCardProps> = () => {
         const fetchFact = async () => {
             setLoadingFact(true);
             try {
-                const response = await MixApiService.getProductionByDateBeetvean(firstDay, lastDay);
-                setFact(response);
+                const response: MixCategoryProduction[] = await MixApiService.getProductionByDateBeetvean(firstDay, lastDay);
+                setFact(response.filter(item => item.category.id === 2));
             } catch (error) {
                 console.error("Error fetching fact data:", error);
             } finally {
@@ -93,6 +93,7 @@ const MixMainPageCard: React.FC<MixCardProps> = () => {
                         value={todayPlan}
                         tableStyle={{ fontSize: '12px' }}
                         stripedRows
+                        emptyMessage="Нет данных на сегодня"
                     >
                         <Column
                             header="Наименование смеси"
