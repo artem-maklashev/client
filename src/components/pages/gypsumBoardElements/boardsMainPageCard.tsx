@@ -104,13 +104,13 @@ const BoardMainPageCard: React.FC<BoardCardProps> = () => {
 
     const items = (
         <Col className="mt-5 col-12">
-            <MyCard label={"План на текущий месяц"} value={loadingPlan ? <Spinner animation="border" size="sm" /> : `${planSum.toFixed(0)} м²`} />
-            <MyCard label="Изготовлено" value={loadingFact ? <Spinner animation="border" size="sm" /> : `${factSum.toFixed(0)} м²`} />
+            <MyCard label={"План на текущий месяц"} value={loadingPlan ? <Spinner animation="border" size="sm" /> : `${planSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} м²`} />
+            <MyCard label="Изготовлено" value={loadingFact ? <Spinner animation="border" size="sm" /> : `${factSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} м²`} />
             <MyCard label="Отклонение"
                 value={
                     loadingPlan || loadingFact
                         ? <Spinner animation="border" size="sm" />
-                        : `${deviation < 0 ? 'отставание' : 'опережение на'} ${Math.abs(deviation).toFixed(0)} м²`
+                        : `${deviation < 0 ? 'отставание' : 'опережение на'} ${Math.abs(deviation).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} м²`
                 }
                 valueColor={deviation < 0 ? "#ff3333" : "#2E8B57"} />
             <MyCard label="Процент брака" value={defectPercentResult ? defectPercentResult.toFixed(2) + " %" : <Spinner />} valueColor={(defectPercentResult) > 3 ? '#FF7F7F ' : '#2E8B57'} />

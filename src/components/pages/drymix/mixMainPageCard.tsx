@@ -55,7 +55,15 @@ const MixMainPageCard: React.FC<MixCardProps> = () => {
 
     const planSum = plan.reduce((sum, item) => sum + item.value, 0);
     const factSum = fact.reduce((sum, item) => sum + item.quantity, 0);
-    const deviation = factSum - planSum;
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const filteredPlanSum = plan
+        .filter(item => new Date(item.planDate).getTime() < startOfToday.getTime())
+        .reduce((sum, item) => sum + item.value, 0);
+
+    const deviation = factSum - filteredPlanSum;
 
     const getPlanDate = (date: Date) => {
         return date.toLocaleDateString("ru-RU", {
@@ -71,18 +79,18 @@ const MixMainPageCard: React.FC<MixCardProps> = () => {
         <Col className="mt-5 col-12">
             <MyCard
                 label="План на текущий месяц"
-                value={loadingPlan ? <Spinner animation="border" size="sm" /> : `${planSum.toFixed(0)} кг`}
+                value={loadingPlan ? <Spinner animation="border" size="sm" /> : `${planSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} кг`}
             />
             <MyCard
                 label="Изготовлено"
-                value={loadingFact ? <Spinner animation="border" size="sm" /> : `${factSum.toFixed(0)} кг`}
+                value={loadingFact ? <Spinner animation="border" size="sm" /> : `${factSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} кг`}
             />
             <MyCard
                 label="Отклонение"
                 value={
                     loadingPlan || loadingFact
                         ? <Spinner animation="border" size="sm" />
-                        : `${deviation < 0 ? 'отставание' : 'опережение на'} ${Math.abs(deviation).toFixed(0)} кг`
+                        : `${deviation < 0 ? 'отставание' : 'опережение на'} ${Math.abs(deviation).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} кг`
                 }
                 valueColor={deviation < 0 ? "#ff3333" : "#B3E5B3"}
             />
