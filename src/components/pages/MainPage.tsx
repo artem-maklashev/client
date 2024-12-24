@@ -12,7 +12,7 @@ const MainPage: React.FC<MainPageProps> = () => {
 return (
     <div style={{ backgroundColor: '#7fc7ff', minHeight: '100vh', width: '100%' }}>
         <Container className="mt-5 mb-5" fluid style={{ backgroundColor: '#7fc7ff' }}>
-            <Row className="mt-5 justify-content-center text-center">
+            <Row className="mt-5 mb-5 justify-content-center text-center">
 
                 <h2 className="mt-2 mb-2 text-center">
                     Показатели за текущий месяц
@@ -24,7 +24,7 @@ return (
                 <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
                     <BoardMainPageCard />
                 </Col>
-                <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
+                <Col className="mt-3 col-lg-3 col-sm-12  align-items-center">
                     <MixMainPageCard />
                 </Col>
             </Row>

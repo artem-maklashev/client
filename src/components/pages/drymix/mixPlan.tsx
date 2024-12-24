@@ -6,6 +6,7 @@ import MixPlanTable from "./planComponents/mixPlanTable";
 import MixPlan from "../../../model/mix/plan";
 import MixPlanModal from "./planComponents/mixPlanModal";
 import MixPlanTableData from "./planComponents/mixPlanTableData";
+import MixCategoryProduction from "../../../model/mix/prodution/MixCategoryProduction";
 
 interface MixPlanProps { }
 
@@ -17,6 +18,7 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
     const [selectedPlan, setSelectedPlan] = useState<MixPlan | null>(null);
     const [loading, setLoading] = useState(false);  // индикатор загрузки
     const [saving, setSaving] = useState(false); // New state for saving status
+    const [productions, setProductions] = useState<MixCategoryProduction[]>([]);
 
 
     const handlePeriodChange = (newPeriod: Date) => {
@@ -29,6 +31,7 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
             setLoading(true);
             try {
                 const plan = await MixApiService.getPlan(period);
+                MixApiService.getProductionByDateBeetvean(period, new Date(period.getFullYear(), period.getMonth() + 1, 0)).then(result => setProductions(result))
                 setPlanData(plan);
             } catch (error) {
                 console.error('Ошибка при загрузке данных плана:', error);
@@ -107,47 +110,51 @@ const MixPlanPage: React.FC<MixPlanProps> = () => {
 
 
     return (
-        <Container className="mt-5">
-            <Row></Row>
-            <Row className="mt-3">
-                <PeriodSelector period={period} onPeriodChange={handlePeriodChange} />
-                <Col className="col-9">
-                    {loading ? (
-                        <p>Загрузка данных...</p>
-                    ) : (
-                        planData.length > 0 && <MixPlanTable planData={planData} planEditing={handleEditPlan} planDelete={handleDeletePlan} />
-                    )}
-                </Col>
-            </Row>
-            <Row className="justify-content-center">
-                <Col xs={1}>
-                    <Button variant="primary" onClick={() => setModalShow(true)} size="sm">
-                        Добавить
-                    </Button>
-                </Col>
-            </Row>
+        <Container d-flex className="mt-5 mb-5">
             <Row>
-                {loading ? (
-                    <p>Загрузка данных...</p>
-                ) : (
-                    <MixPlanTableData planList={planData} />
-                )}
-                {saving && ( // Saving indicator during save operation
-                    <div className="text-center mt-3">
-                        <Spinner animation="border" role="status">
-                            <span className="visually-hidden">Сохранение...</span>
-                        </Spinner>
-                    </div>
-                )}
+                <Container className=" mt-3 mb-2">
 
+                    <Row className="mt-3">
+                        <PeriodSelector period={period} onPeriodChange={handlePeriodChange} />
+                        <Col className="col-9">
+                            {loading ? (
+                                <p>Загрузка данных...</p>
+                            ) : (
+                                planData.length > 0 && <MixPlanTable planData={planData} planEditing={handleEditPlan} planDelete={handleDeletePlan} />
+                            )}
+                        </Col>
+                    </Row>
+                    <Row className="justify-content-center">
+                        <Col xs={1}>
+                            <Button variant="primary" onClick={() => setModalShow(true)} size="sm">
+                                Добавить
+                            </Button>
+                        </Col>
+                    </Row>
+                    <Row className="mb-3">
+                        {loading ? (
+                            <p>Загрузка данных...</p>
+                        ) : (
+                            <MixPlanTableData planList={planData} productions={productions}  />
+                        )}
+                        {saving && ( // Saving indicator during save operation
+                            <div className="text-center mt-3">
+                                <Spinner animation="border" role="status">
+                                    <span className="visually-hidden">Сохранение...</span>
+                                </Spinner>
+                            </div>
+                        )}
+
+                    </Row>
+                    <MixPlanModal
+                        plan={selectedPlan}
+                        month={period}
+                        show={modalShow}
+                        onClose={handleCloseModal}
+                        onSave={handleSave}
+                    />
+                </Container>
             </Row>
-            <MixPlanModal
-                plan={selectedPlan}
-                month={period}
-                show={modalShow}
-                onClose={handleCloseModal}
-                onSave={handleSave}
-            />
         </Container>
     );
 };

@@ -3,9 +3,12 @@ import MixPlan from '../../../../model/mix/plan';
 import DryMix from '../../../../model/mix/DryMix';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import MixCategoryProduction from '../../../../model/mix/prodution/MixCategoryProduction';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 interface MixPlanTableDataProps {
     planList: MixPlan[];
+    productions: MixCategoryProduction[];
 }
 
 interface MixPlanStructure {
@@ -13,7 +16,19 @@ interface MixPlanStructure {
     values: { [date: string]: number | null };
 }
 
-const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList }) => {
+interface ProductionData {
+    mix: DryMix;
+    values: { [date: string]: number | null };
+}
+
+interface FormattedData {
+    mix: DryMix; // Информация о смеси
+    planValue: { [date: string]: number | null }; // Плановые значения по датам
+    factValue: { [date: string]: number | null }; // Фактические значения по датам
+}
+
+
+const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList, productions }) => {
     const generateHeaders = (planData: MixPlan[]) => {
         const headersData: string[] = [];
         planData.forEach((plan) => {
@@ -57,14 +72,73 @@ const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList }) => {
         return columnsTotals;
     };
 
+
+
+    const groupedProductions = (prod: MixCategoryProduction[]) => {
+        const groupedData: { [gypsumBoardId: string]: ProductionData } = {}; // Используем Record для более строгого типа
+
+        prod.forEach((p) => {
+            const date = new Date(p.production.productionDate).toLocaleDateString();
+            const mixId = p.production.mix.id;
+
+            // Убедимся, что объект для текущего гипсокартона инициализирован
+            if (!groupedData[mixId]) {
+                groupedData[mixId] = {
+                    mix: p.production.mix,
+                    values: {}, // Инициализируем пустой объект для значений
+                };
+            }
+
+            const pValue = Number(p.quantity.toFixed(0));
+            // Добавляем значение по дате для текущего гипсокартона
+            if (groupedData[mixId].values[date] === null) {
+                groupedData[mixId].values[date] = pValue;
+            } else {
+                groupedData[mixId].values[date] = (groupedData[mixId].values[date] ?? 0) + pValue;
+            }
+        });
+
+        return Object.values(groupedData);
+    };
+
+    const formatGroupedData = (groupedPlans: MixPlanStructure[], groupedProductions: ProductionData[])=> {
+        const formattedData: FormattedData[] = [];
+
+        groupedPlans.forEach((plan) => {
+            const production = groupedProductions.find(
+                (prod) => prod.mix.id === plan.mix.id
+            );
+
+            formattedData.push(
+                {
+                    mix: plan.mix,
+                    planValue: plan.values ?? {},
+                    factValue: production ? production.values : {},
+                }
+            );
+        });
+
+        return formattedData;
+    };
+
     const headers = generateHeaders(planList);
     const groupedPlans = groupByMix(planList);
     const columnTotals = calculateColumnsTotal(groupedPlans, headers);
+    const groupedProd = groupedProductions(productions);
+    const formattedData = formatGroupedData(groupedPlans, groupedProd);
+
+    if (!formattedData.length) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+                <ProgressSpinner />
+            </div>
+        );
+    }
 
     return (
-        <div className="card mt-2"> {/* Added card container */}
+        <div className="card mt-2 mb-3"> {/* Added card container */}
             <DataTable
-                value={groupedPlans}
+                value={formattedData}
                 scrollable
                 scrollHeight="600px"
                 showGridlines
@@ -75,7 +149,7 @@ const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList }) => {
             >
                 <Column
                     header="Наименование смеси"
-                    body={(rowData: MixPlanStructure) =>
+                    body={(rowData) =>
                         `${rowData.mix.tradeMark.name} ${rowData.mix.dryMixType.name} ${rowData.mix.binder.name} ${rowData.mix.name}`
                     }
                     style={{ minWidth: '330px' }}
@@ -87,15 +161,30 @@ const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList }) => {
                     <Column
                         key={date}
                         header={date}
-                        body={(rowData) => rowData.values[date] || null}
-                        footer={columnTotals[date] ?? 0}
+                        body={(rowData) => 
+                        <div style={{ textAlign: 'center', padding: '1' }}>
+                            <div style={{ color: 'blue', fontWeight: 'bold' }}>
+                                {rowData.planValue[date] ?? ''}
+                            </div>
+
+                            <div style={{
+                                color: !rowData.planValue[date] ? 'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '10px'
+                            }}>
+                                {rowData.factValue[date] ?? ''}
+                            </div>
+                        </div>}
+                        footer={
+                            <div className="text-center font-bold">
+                                {columnTotals[date] ?? 0}
+                            </div>
+                        }
                         style={{ textAlign: 'right' }} // Align numbers to the right
                     />
                 ))}
 
                 <Column
                     header="Итого"
-                    body={(rowData) => calculateRowTotal(rowData.values)}
+                    body={(rowData) => calculateRowTotal(rowData.planValue)}
                     footer={Object.values(columnTotals).reduce((total, value) => total + value, 0)}
                     className="font-bold"
                     style={{ textAlign: 'right', }} // Align totals to the right

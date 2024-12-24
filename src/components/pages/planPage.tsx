@@ -77,7 +77,7 @@ const PlanPage: React.FC<PlanPageProps> = () => {
     }
 
     return (
-        <Container className="mt-5 mb-5">
+        <Container d-flex className="mt-5 mb-5">
             <Row>
                 <Container className=" mt-3 mb-2">
                     <Row>
@@ -93,7 +93,7 @@ const PlanPage: React.FC<PlanPageProps> = () => {
                     </Row>
                 </Container>
             </Row>
-            <Row >
+            <Row className="mb-3">
                 <PlanDataTable planList={planList} productions={productions}/>
             </Row>
             <PlanModal show={modalShow} onClose={handleClose} month={period} plan={selectedPlan} onSave={savePlan} />

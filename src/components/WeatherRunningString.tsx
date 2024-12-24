@@ -14,9 +14,9 @@ const WeatherString: React.FC = () => {
     }, []);
 
     return (
-        <Container>
-    <Row>
-        <Col xs={2} style={{ display: 'flex', alignItems: 'center' }}>
+        // <Container>
+    <Row className="align-items-center" >
+        <Col xs={2} lg={3} style={{ display: 'flex', alignItems: 'left' }}>
             <span style={{
                 color: 'rgba(218, 218, 218)',             // Белый цвет текста
                 fontSize: '12px',           // Уменьшенный размер шрифта
@@ -30,7 +30,7 @@ const WeatherString: React.FC = () => {
             </span>
         </Col>
 
-        <Col xs={10} style={{ display: 'flex', alignItems: 'center' }}>
+        <Col xs={10} lg={9} style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <link href="https://api.rusmeteo.net/service/informers/css/widget-ticker.min.css" rel="stylesheet" type="text/css" />
                 <a href="https://rusmeteo.net/weather/tolyatti/" className="rus-widget-ticker" id="47821b020fe18833e5bdf2b8c587ac25" style={{ width: '500px', backgroundColor: 'rgba(0, 0, 0, 0)', color: 'rgba(218, 218, 218)' }}>
@@ -39,7 +39,7 @@ const WeatherString: React.FC = () => {
             </div>
         </Col>
     </Row>
-</Container>
+// </Container>
 
 
 

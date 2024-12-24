@@ -119,18 +119,49 @@
 }
 
 /* styles.css */
-.custom-datatable .p-datatable-thead > tr > th,
-.custom-datatable .p-datatable-tbody > tr > td {
-  border: 1px solid #88b4d1; /* Цвет сетки */
+.custom-datatable {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для рамки */
+}
+
+.custom-datatable .p-datatable-thead > tr > th {
+  background-color: #f0f4f8; /* Цвет фона для заголовков */
+  color: #2c3e50; /* Цвет текста заголовков */
+  font-weight: bold;
+  padding: 10px;
+  border-bottom: 2px solid #88b4d1; /* Цвет нижней границы заголовков */
+  text-align: center;
 }
 
 .custom-datatable .p-datatable-tbody > tr:nth-child(even) {
-  background-color: #f9f9f9; /* Цвет фона для чётных строк */
+  background-color: #dbdbdb; /* Фон для четных строк */
 }
 
 .custom-datatable .p-datatable-tbody > tr:nth-child(odd) {
-  background-color: #ffffff; /* Цвет фона для нечётных строк */
+  background-color: #ffffff; /* Фон для нечетных строк */
 }
+
+.custom-datatable .p-datatable-tbody > tr:hover {
+  background-color: #e8f0fe; /* Фон строки при наведении */
+  cursor: pointer; /* Указатель при наведении */
+}
+
+.custom-datatable .p-datatable-tbody > tr > td {
+  padding: 10px;
+  border: none; /* Убраны линии сетки */
+  text-align: center;
+}
+
+.custom-datatable .p-datatable-footer {
+  background-color: #f0f4f8; /* Фон для футера */
+  font-weight: bold;
+  text-align: center;
+  border-top: 2px solid #88b4d1; /* Верхняя граница футера */
+}
+
 
 /* Моя карточка */
 .myCard {

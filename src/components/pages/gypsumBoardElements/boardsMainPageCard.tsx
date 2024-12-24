@@ -139,7 +139,7 @@ const BoardMainPageCard: React.FC<BoardCardProps> = () => {
 
     return (
         <MyCard
-            label="Производство ССС"
+            label="Производство ГСП"
             labelFontSize="14px"
             labelAlign="center"
             labelPosition={{ top: "-5px", left: "50px" }}
