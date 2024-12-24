@@ -144,7 +144,7 @@ const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList, productions }) 
                 showGridlines
                 stripedRows
                 tableStyle={{ fontSize: '14px' }} // Increased font size
-                className="p-datatable-sm" // Added PrimeReact style class for smaller table
+                className="custom-datatable" // Added PrimeReact style class for smaller table
                 dataKey="mix.id" // Added dataKey for better performance
             >
                 <Column
@@ -164,13 +164,13 @@ const MixPlanTableData: FC<MixPlanTableDataProps> = ({ planList, productions }) 
                         body={(rowData) => 
                         <div style={{ textAlign: 'center', padding: '1' }}>
                             <div style={{ color: 'blue', fontWeight: 'bold' }}>
-                                {rowData.planValue[date] ?? ''}
+                                {rowData.planValue[date] ? rowData.planValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
                             </div>
 
                             <div style={{
                                 color: !rowData.planValue[date] ? 'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '10px'
                             }}>
-                                {rowData.factValue[date] ?? ''}
+                                {rowData.factValue[date] ? rowData.factValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
                             </div>
                         </div>}
                         footer={
