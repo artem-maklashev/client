@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Nav, Navbar, NavbarBrand, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getUserRole } from "../../service/Api";
-import logo from "./cgristmas-logo.svg"
+import logo from "./logo-new.svg"
 
 interface NavigationBarProps {
     tokenValid?: boolean; // Пропс для проверки валидности токена

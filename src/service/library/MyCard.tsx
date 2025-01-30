@@ -70,7 +70,7 @@ const MyCard: React.FC<CardProps> = ({
           }}
         >
           {label}
-          <div className="icon"></div>
+          {/* <div className="icon"></div> */}
         </div>
       )}
       <div
