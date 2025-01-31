@@ -44,7 +44,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
     return (
         <Container fluid className="mb-2 ">
             <Col className="col-12">
-            <div className="card">
+            <div className="card" >
                 <DataTable value={planList} scrollable scrollHeight="400px" size="small" tableStyle={{ width: '100%', fontSize: 14 }} className="p-datatable-sm">
                     <Column field="planDate" header="Дата" />
                     <Column

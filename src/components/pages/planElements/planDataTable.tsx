@@ -150,7 +150,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
     return (
 
-        <div className="card mt-2 mb-5">
+        <div className="card mt-2 mb-5" style={{ border: 'none', boxShadow: 'none' }}>
             
             <DataTable
                 value={formattedData}
