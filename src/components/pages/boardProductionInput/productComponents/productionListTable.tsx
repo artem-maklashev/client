@@ -3,7 +3,6 @@ import { Col, Container, Row, Table } from "react-bootstrap";
 import ReportData from "../../../../model/ReportData";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import ReportModalPage from "../ReportModalPage";
-import { TiEdit, TiTrash } from "react-icons/ti";
 import GypsumBoardCategory from "../../../../model/gypsumBoard/GypsumBoardCategory";
 import { saveConsumptions, saveUpdatedReport } from "../SaveUpdatedReport";
 import BoardProduction from "../../../../model/production/BoardProduction";
@@ -139,6 +138,11 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
     setUpdateConsumption(true);
   }, [reportData]);
 
+  function checkDefectActs(productions: BoardProduction[]): number {
+    return productions.reduce((sum, production) => 
+      production.category.id === 1 ? sum - production.value : sum + production.value, 0);
+  }
+
   return (
     <Container fluid className="mt-5">
       <Row>
@@ -155,7 +159,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                 <th className="text-center">Наименование</th>
                 <th className="text-center">Простои</th>
                 <th className="text-center">Материалы</th>
-                <th className="text-center ">Действия.</th>
+                <th className="text-center">Акты бракования</th>
+                <th className="text-center ">Действия</th>
               </tr>
             </thead>
 
@@ -221,6 +226,15 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
                       ) : (
                         <i className="pi pi-check" style={{ color: "green" }}></i>
                       )}
+                    </td>
+                    <td className="text-center">
+                    { isLoading ? ( <ProgressSpinner style={{ width: "25px", height: "25px" }} />) :
+                      Math.abs(Math.round(checkDefectActs(item.productions))) === 0 ? (
+                        <i className="pi pi-check" style={{ color: "green" }}></i>
+                      ) : (
+                        <i className="pi pi-minus" style={{ color: "gray" }}></i>
+                      )
+                    }                    
                     </td>
                     <td className="text-center">
                       {/* Кнопка редактирования */}
