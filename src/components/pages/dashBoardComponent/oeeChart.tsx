@@ -6,7 +6,7 @@ import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Legend, Li
 import Delays from "../../../model/delays/Delays";
 import ApiService from "../../../service/ApiService";
 
-interface ProductivityChartProps {
+interface OeeChartProps {
     productions: BoardProduction[];
     delays: Delays[];
 }
@@ -18,12 +18,18 @@ interface CustomTooltipProps {
 
 interface CombinedData {
     date: string;
-    value: number;
-    time: number;
-    productivity: number;
+    startTime: string;
+    shiftId: number;
+    plantime: number;
+    delaysTime: number;
+    thickness: number;
+    productionSpeed: number;
+    bruttoProduction: number;
+    nettoProduction: number;
+    oee: number;
 }
 
-const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, delays }) => {
+const ProductivityChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
 
     const [productionData, setProductionData] = useState<BoardProduction[]>([]);
     const [delaysData, setDelaysData] = useState<Delays[]>([]);
@@ -66,7 +72,7 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
     };
 
     useEffect(() => {
-        setProductionData(productions.filter(p => p.category.id === 1));
+        setProductionData(productions);
     }, [productions]);
 
     useEffect(() => {
@@ -80,36 +86,46 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
             const data: CombinedData[] = [];
 
             productionData.forEach((item) => {
-                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0]);
+                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0] 
+                && d.startTime === ApiService.formatDateToISO(item.productionList.productionStart).split('T')[1]);
+                const productionSpeed = item.product.productionSpeed;
                 const thickness = Number(item.product.thickness.value.replace(",", "."));
-                console.log('Толщина', thickness);
-                const normalizedValue = thickness * item.value / 12.5;
                 if (existingData) {
-                    existingData.value += normalizedValue;
+                    if (item.category.id === 1) {
+                        existingData.bruttoProduction += item.value;
+                    } else if (item.category.id === 2 || item.category.id === 3) {
+                        existingData.nettoProduction += item.value;
+                    }      
                 } else {
                     data.push({
                         date: ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0],
-                        value: normalizedValue,
-                        time: 0,
-                        productivity: 0,
+                        startTime: ApiService.formatDateToISO(item.productionList.productionStart).split('T')[1], 
+                        plantime: new Date(item.productionList.productionFinish).getTime() - new Date(item.productionList.productionStart).getTime(),
+                        delaysTime: 0,
+                        productionSpeed: productionSpeed,
+                        thickness: thickness,
+                        bruttoProduction: item.category.id === 1 ? item.value : 0 ,
+                        nettoProduction: item.category.id === 2 || item.category.id === 3 ? item.value: 0,
+                        oee: 0,
+                        shiftId: item.productionList.shift.id,
                     });
                 }
             });
             delaysData.forEach((item) => {
-                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.delayDate).split('T')[0]);
+                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.delayDate).split('T')[0] 
+                && d.shiftId === item.shift.id);
                 if (existingData) {
-                    existingData.time += (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60);
-                } else {
-                    data.push({
-                        date: ApiService.formatDateToISO(item.delayDate).split('T')[0],
-                        value: 0,
-                        time: (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60) ,
-                        productivity: 0,
-                    });
-                }
+                    existingData.delaysTime += (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()); 
+                }                 
             });
-            data.forEach((item) => { item.value ? (item.productivity = item.value / (1440 - item.time)) : item.productivity=0});
-            data.sort((a,b) => (new Date(a.date).getTime() - new Date(b.date).getTime()));
+            
+            data.forEach((item) => { item.bruttoProduction ? (item.oee = (item.plantime - item.delaysTime) / item.plantime*1/(item.thickness*item.productionSpeed)* 
+                item.bruttoProduction/(item.plantime-item.delaysTime)*(item.nettoProduction/item.bruttoProduction)) : item.oee = 0});
+            data.sort((a, b) => {
+                const dateTimeA = `${a.date}T${a.startTime}Z`;
+                const dateTimeB = `${b.date}T${b.startTime}Z`;
+                return new Date(dateTimeA).getTime() - new Date(dateTimeB).getTime();
+            });
             return data;
         }
         if (productionData) {
@@ -121,7 +137,7 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
     return (
         <Container>
             <Card
-                title={<h5 style={{ fontSize: '14px', fontWeight: 'bold', color: '#4a4a4a' }}>Производительность приведенная к толщине 12.5 мм, м²/мин</h5>}
+                title={<h5 style={{ fontSize: '14px', fontWeight: 'bold', color: '#4a4a4a' }}>Общая эффективность оборудования</h5>}
                 className="mb-2 mt-2 text-center shadow-sm"
                 style={{ width: '100%', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9', overflowX: 'auto' }}
             > 
@@ -167,7 +183,7 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
                             <Line
                                 yAxisId="left"
                                 type="monotone"
-                                dataKey="productivity"
+                                dataKey="oee"
                                 stroke="#4a90e2"
                                 activeDot={{ r: 8, fill: '#4a90e2' }}
                                 strokeWidth={3}
