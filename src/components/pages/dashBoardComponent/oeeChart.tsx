@@ -227,7 +227,7 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
         <Line
             yAxisId="left"
             type="monotone"
-            dataKey="aviability"
+            dataKey="availability"
             stroke="#ff6b6b" // Красный цвет
             strokeDasharray="5 5" // Пунктирная линия
             strokeWidth={1} // Тонкая линия
