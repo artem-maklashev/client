@@ -17,6 +17,7 @@ import MonthRangeSelector from "./dashBoardComponent/monthRangeSelector";
 import PlanFactChartByMonth from "./dashBoardComponent/planFactChartByMonth";
 import DelaysMonthChartBoard from "./dashBoardComponent/delaysMonthChart";
 import ProductivityChart from "./dashBoardComponent/productivityChart";
+import OeeChart from "./dashBoardComponent/oeeChart";
 
 interface DashBoardProps {
 
@@ -171,6 +172,9 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                 <Row>
                                     <ProductivityChart productions={allProductionData} delays={delays} />                              </Row>
                                 <Row>
+                                    <Row>
+                                        <OeeChart productions={allProductionData} delays={delays} /> 
+                                    </Row>
                                     {uniqueTradeMarks.map(tradeMark => {
                                         const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
                                         return (
