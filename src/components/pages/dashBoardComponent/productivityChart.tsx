@@ -16,12 +16,6 @@ interface CustomTooltipProps {
     payload?: Array<{ payload: any }>;  // Упрощено для обработки различных типов данных
 }
 
-interface LineChartPayload {
-    payload: {
-        [key: string]: string | number; // Замените any на конкретные типы данных, если они известны
-    };
-}
-
 interface CombinedData {
     date: string;
     value: number;

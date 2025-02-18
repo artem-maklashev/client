@@ -14,26 +14,31 @@ class GypsumBoard extends Product {
     thickness: Thickness;
     width: Width;
     length: Length;
+    productionSpeed: number;
     name: string;    
 
     constructor();
     constructor(
         id: number, ptype: ProductTypes, tradeMark: TradeMark, 
         boardType: BoardType, edge: Edge, thickness: Thickness, 
-        width: Width, length: Length
+        width: Width, length: Length, productionSpeed: number
     );
     constructor(
         id?: number, ptype?: ProductTypes, tradeMark?: TradeMark, 
         boardType?: BoardType, edge?: Edge, thickness?: Thickness, 
-        width?: Width, length?: Length
+        width?: Width, length?: Length, productionSpeed?: number
     ) {
-        if (id !== undefined && ptype !== undefined && tradeMark !== undefined && boardType !== undefined && edge !== undefined && thickness !== undefined && width !== undefined && length !== undefined) {
+        if (id !== undefined && ptype !== undefined && tradeMark !== undefined && boardType 
+            !== undefined && edge !== undefined && thickness !== undefined && width !== undefined && length !== undefined
+            && productionSpeed !== undefined
+        ) {
             super(id, ptype, tradeMark);
             this.boardType = boardType;
             this.edge = edge;
             this.thickness = thickness;
             this.width = width;
-            this.length = length;   
+            this.length = length;  
+            this.productionSpeed = productionSpeed; 
         } else {
             // Значения по умолчанию
             super(0, new ProductTypes(), new TradeMark());
@@ -42,6 +47,7 @@ class GypsumBoard extends Product {
             this.thickness = new Thickness();
             this.width = new Width();
             this.length = new Length();
+            this.productionSpeed = 0;
         }
         this.name = this.toString();
     }
