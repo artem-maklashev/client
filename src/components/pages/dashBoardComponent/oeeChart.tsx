@@ -47,12 +47,12 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
                 <div className="custom-tooltip" style={{ background: 'transparent ' }}>
                     <strong>
                         <p className="label">{`Дата: ${date}`}</p>
-                        <p className="label">{`Начало смены: ${startTime}`}</p>
+                        <p className="label">{`Начало производства: ${startTime.substring(0,5)}`}</p>
                         <p className="label">{`Заформовано: ${bruttoProduction.toFixed(0)} м2`}</p>
                         <p className="label">{`Товар: ${nettoProduction.toFixed(0)} м2`}</p>
                         <p className="label">{`Плановое время: ${plantime.toFixed(0)}`}</p>
                         <p className="intro">{`Время простоев: ${delaysTime.toFixed(0)}`}</p>
-                        <p className="desc">{`"Эффективность": ${(oee).toFixed(0)}`}</p>
+                        <p className="desc">{`OEE: ${(oee).toFixed(2)}`}</p>
                     </strong>
                 </div>
             );
@@ -176,10 +176,10 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
                 style={{ width: '100%', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9', overflowX: 'auto' }}
             > 
             <Accordion>
-            <AccordionTab header="показать график">
+            <AccordionTab header="показать график" className="flex align-items-center gap-2 w-full">
                 <Col
                     className="col-12"
-                    style={{ minWidth: '500px', width: '100%', height: '250px', padding: '10px' }}
+                    style={{ minWidth: '500px', width: '100%', height: '350px', padding: '10px' }}
                 >
                     <ResponsiveContainer>
     <LineChart
@@ -231,7 +231,7 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
             type="monotone"
             dataKey="availability"
             stroke="#ff6b6b" // Красный цвет
-            strokeDasharray="5 5" // Пунктирная линия
+            // strokeDasharray="5 5" // Пунктирная линия
             strokeWidth={1} // Тонкая линия
             // activeDot={{ r: 6, fill: '#ff6b6b' }}
         />
@@ -241,7 +241,7 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
             type="monotone"
             dataKey="performance"
             stroke="#6bff6b" // Зеленый цвет
-            strokeDasharray="5 5" // Пунктирная линия
+            // strokeDasharray="5 5" // Пунктирная линия
             strokeWidth={1} // Тонкая линия
             // activeDot={{ r: 6, fill: '#6bff6b' }}
         />
@@ -251,7 +251,7 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
             type="monotone"
             dataKey="quality"
             stroke="#ffa500" // Оранжевый цвет
-            strokeDasharray="5 5" // Пунктирная линия
+            // strokeDasharray="5 5" // Пунктирная линия
             strokeWidth={1} // Тонкая линия
             // activeDot={{ r: 6, fill: '#ffa500' }}
         />
