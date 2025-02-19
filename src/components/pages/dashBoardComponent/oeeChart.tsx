@@ -5,6 +5,7 @@ import BoardProduction from "../../../model/production/BoardProduction"
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Legend, Line, Tooltip, ReferenceLine } from "recharts";
 import Delays from "../../../model/delays/Delays";
 import ApiService from "../../../service/ApiService";
+import { Accordion, AccordionTab } from "primereact/accordion";
 
 interface OeeChartProps {
     productions: BoardProduction[];
@@ -41,7 +42,6 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
 
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
-            // Убедитесь, что данные корректно обрабатываются
             const { date, bruttoProduction, delaysTime, oee, startTime,  nettoProduction, plantime } = payload[0]?.payload || {};
             return (
                 <div className="custom-tooltip" style={{ background: 'transparent ' }}>
@@ -175,6 +175,8 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
                 className="mb-2 mt-2 text-center shadow-sm"
                 style={{ width: '100%', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9', overflowX: 'auto' }}
             > 
+            <Accordion>
+            <AccordionTab header="показать график">
                 <Col
                     className="col-12"
                     style={{ minWidth: '500px', width: '100%', height: '250px', padding: '10px' }}
@@ -264,6 +266,8 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
     </LineChart>
 </ResponsiveContainer>
                 </Col>
+                </AccordionTab>
+                </Accordion>
             </Card>
 
         </Container>

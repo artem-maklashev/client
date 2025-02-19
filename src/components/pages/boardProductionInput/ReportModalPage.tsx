@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Col, Container, Row } from "react-bootstrap";
 import "../../pages/MyStyle.css";
 import ReportData from "../../../model/ReportData";
@@ -31,6 +31,7 @@ import ProductTypes from "../../../model/ProductTypes";
 import MaterialConsumption from "../../../model/specification/MaterialConsumption";
 import Specification from "../../../model/specification/Specification";
 import EditConsumptionModal from "./specificationComponents/EditConsumptionModal";
+import { Toast } from "primereact/toast";
 dayjs.extend(utc);
 
 interface ReportModalPageProps {
@@ -79,6 +80,9 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const [editConsumtionShow, setEditConsumtionShow] = useState(false);
   const [specification, setSpecification] = useState<Specification[]>([]);
   const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const toast = useRef<Toast>(null); // Создаем ref для Toast
 
 
   const getName = (gboard: GypsumBoard) => {
@@ -326,6 +330,30 @@ useEffect(() => {
   const handleSave = () => {
     console.log("Установлено значение startDate в ReportMoadl: " + startDate);
     console.log("Установлено значение endDate в ReportMoadl: " + endDate);
+   // Проверяем, что startDate меньше endDate
+  if (startDate && endDate && new Date(startDate).getTime() >= new Date(endDate).getTime()) {
+    // Показываем уведомление об ошибке
+    toast.current?.show({
+      severity: 'error', // Тип уведомления (error, success, info, warn)
+      summary: 'Ошибка', // Заголовок уведомления
+      detail: 'Дата начала производства должна быть раньше даты окончания производства', // Сообщение
+      life: 3000 // Время отображения в миллисекундах
+    });
+    return; // Прерываем выполнение функции
+  }
+
+  delays.forEach((delay) => {
+    if (delay.startTime && delay.endTime && new Date(delay.startTime).getTime() >= new Date(delay.endTime).getTime()) {
+      // Показываем уведомление об ошибке
+      toast.current?.show({
+        severity: 'error', // Тип уведомления (error, success, info, warn)
+        summary: 'Ошибка', // Заголовок уведомления
+        detail: 'Время простоя заполнено непрвильно', // Сообщение
+        life: 3000 // Время отображения в миллисекундах
+      });
+      return; // Прерываем выполнение функции
+    }
+  });
 
     if (draftReport) {
       draftReport.product = selectedProduct as GypsumBoard;
@@ -339,7 +367,7 @@ useEffect(() => {
       console.log(draftReport);
       onSave(draftReport, consumptions);
     }
-    onHide();
+    onHide();  
   };
 
   const handleClose = () => {
@@ -634,6 +662,7 @@ useEffect(() => {
       // }
       // }
       />
+      <Toast ref={toast} />
     </Modal>
   );
 };
