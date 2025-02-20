@@ -204,6 +204,7 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
             tick={{ fontSize: 12, fill: '#555' }}
             axisLine={{ stroke: '#888' }}
             tickLine={{ stroke: '#888' }}
+            domain={['auto', 'auto']}
         />
         <Tooltip
             contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd', borderRadius: '5px', fontSize: '12px' }}
@@ -262,6 +263,14 @@ const OeeChart: React.FC<OeeChartProps> = ({ productions, delays }) => {
             // strokeDasharray="3 3" // Пунктирная линия
             strokeWidth={1} // Толщина линии
             label={{ value: 'Цель: 0.85', position: 'insideRight', fill: '#888', fontSize: 12 }} // Подпись линии
+        />
+        <ReferenceLine
+            yAxisId="left"
+            y={1} // Значение константы
+            stroke="black" // Цвет линии
+            // strokeDasharray="3 3" // Пунктирная линия
+            strokeWidth={2} // Толщина линии
+            label={{ value: '1', position: 'right', fill: '#888', fontSize: 12 }} // Подпись линии
         />
     </LineChart>
 </ResponsiveContainer>

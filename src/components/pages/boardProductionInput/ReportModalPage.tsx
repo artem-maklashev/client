@@ -79,9 +79,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
   const [editConsumtionShow, setEditConsumtionShow] = useState(false);
   const [specification, setSpecification] = useState<Specification[]>([]);
-  const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
-  const [toastMessage, setToastMessage] = useState("");
-  const [showToast, setShowToast] = useState(false);
+  const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);  
   const toast = useRef<Toast>(null); // Создаем ref для Toast
 
 
