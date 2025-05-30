@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import BoardDefectsLog from "../../model/defects/BoardDefectsLog";
 import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import DefectsTable from "./defectElements/DefectsTable";
-import { useFetchProductionData } from "./commonElements/GetProductionData";
 import ShiftsDefect from "./defectElements/ShiftsDefect";
 import ChartDefects from "./defectElements/ChartDefects";
 import { api } from "../../service/Api";
@@ -177,8 +176,8 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
                                         <ChartDefects defectsLog={defectsData} data={productionData} />
                                     </Row>
                                 </Tab>
-                                <Tab eventKey="opinion" title="В разработке" disabled={true}>
-                                    В разработке...
+                                <Tab eventKey="opinion" title="В разработке" disabled={false}>
+                                    График брака по сменам
                                 </Tab>
                             </Tabs>
                         </div>

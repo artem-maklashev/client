@@ -36,7 +36,7 @@ interface LineChartPayload {
 
 const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData, allProductionData }) => {
 
-    const timeZone = process.env.REACT_APP_TIMEZONE;
+    // const timeZone = process.env.REACT_APP_TIMEZONE;
 
     console.log("Данные по производству: " + productionData?.length);
     console.log((productionData[0]?.productionList.productionDate));
