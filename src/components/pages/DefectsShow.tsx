@@ -8,6 +8,7 @@ import { api } from "../../service/Api";
 import ApiService from "../../service/ApiService";
 import BoardProduction from "../../model/production/BoardProduction";
 import Preloader from "./commonElements/preloader";
+import DefectsByShift from "./defectElements/defectsByShift";
 
 interface DefectsShowProps {
 }
@@ -178,6 +179,7 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
                                 </Tab>
                                 <Tab eventKey="opinion" title="В разработке" disabled={false}>
                                     График брака по сменам
+                                    <DefectsByShift production={productionData} />
                                 </Tab>
                             </Tabs>
                         </div>

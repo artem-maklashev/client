@@ -29,7 +29,7 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({production}) => {
         const result:ByDayDefects[]  = [];
         if (bp.length !== 0) {
             bp.forEach(p => {
-                const StrDate = p.productionList.productionDate.toISOString().split('T')[0];
+                const StrDate =new Date( p.productionList.productionDate).toISOString().split('T')[0];
                 const existingEntry = result.find(r => r.day === StrDate);
                 if (!existingEntry) {
                     result.push({day: StrDate, total: 0, fact: 0, defectsPercentage: 0});
@@ -58,7 +58,7 @@ return (
             <h2>Defects by Shift</h2>
             {uniqueShifts.map(shift => (
                 <div key={shift.id}>
-                    <h3>Shift {shift.id}</h3>
+                    <h3>Смена {shift.name}</h3>
                     {precentage(production.filter(p => p.productionList.shift.id === shift.id)).map(d => (
                         <div key={d.day}>
                             <p>Day: {d.day}</p>
