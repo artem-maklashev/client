@@ -177,8 +177,7 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
                                         <ChartDefects defectsLog={defectsData} data={productionData} />
                                     </Row>
                                 </Tab>
-                                <Tab eventKey="opinion" title="В разработке" disabled={false}>
-                                    График брака по сменам
+                                <Tab eventKey="opinion" title="Брак по сменам" disabled={false}>
                                     <DefectsByShift production={productionData} />
                                 </Tab>
                             </Tabs>
