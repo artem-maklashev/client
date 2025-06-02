@@ -54,11 +54,7 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
             });
         }
         return result;
-    }
-
-    const handleClick = (data: any) => {
-        console.log(data);
-    };
+    } 
 
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (!active || !payload || payload.length === 0) {
@@ -84,14 +80,7 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
         );
     };
 
-    const legendFormatter = (value: string) => {
-        switch(value) {
-            case 'planValue': return 'Plan';
-            case 'productionValue': return 'Fact';
-            case 'defectPercent': return 'Defects %';
-            default: return value;
-        }
-    };
+    
 
     const printStyles = `
   @media print {
