@@ -56,7 +56,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
         };
 
         const newDuration = (new Date(selectedEndDate).getTime() - new Date(selectedStartDate).getTime()) / (1000 * 60);
-        setPlanDuration(newDuration);
+        setPlanDuration(newDuration); //Нужно изменить на получение данных с выпуска об отработанном времени
 
         fetchData();
     }, [selectedStartDate, selectedEndDate, fetchDelaysData]);

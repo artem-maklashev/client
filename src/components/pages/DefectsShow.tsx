@@ -158,32 +158,30 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
                 <Preloader />
             )}
             <Container className="p-lg-2 mb-5">
-                <Row xs={1} md={5} lg={1} className="d-flex justify-content-center">
-                    <Row className="d-flex justify-content-center">
-                        <div className="col-lg-11 ">
-                            <Tabs defaultActiveKey="table" id="uncontrolled-tab-example" >
-                                <Tab eventKey="table" title="Таблица" className="mb-5">
-                                    <Row className="justify-content-center ">
-                                        <Col className="col-lg-8">
-                                            <DefectsTable defectsLog={defectsData} data={productionData} />
-                                        </Col>
-                                        <Col className="col-lg-3 ">
-                                            <ShiftsDefect data={productionData} defectsLog={defectsData} />
-                                        </Col>
-                                    </Row>
-                                </Tab>
-                                <Tab eventKey="bar" title="График" className="mb-5">
-                                    <Row className="justify-content-center">
-                                        <ChartDefects defectsLog={defectsData} data={productionData} />
-                                    </Row>
-                                </Tab>
-                                <Tab eventKey="opinion" title="Брак по сменам" disabled={false}>
-                                    <DefectsByShift production={productionData} />
-                                </Tab>
-                            </Tabs>
-                        </div>
-                    </Row>
-                </Row>
+                <Tabs defaultActiveKey="table" id="uncontrolled-tab-example">
+                    <Tab eventKey="table" title="Таблица" className="mb-3">
+                        <Row className="justify-content-center">
+                            {/* Основная таблица — занимает всю ширину на мобильных */}
+                            <Col xs={12} lg={8} className="mb-3 mb-lg-0">
+                                <DefectsTable defectsLog={defectsData} data={productionData} />
+                            </Col>
+                            {/* Блок смен — переносится на новую строку на мобильных */}
+                            <Col xs={12} lg={3}>
+                                <ShiftsDefect data={productionData} defectsLog={defectsData} />
+                            </Col>
+                        </Row>
+                    </Tab>
+                    <Tab eventKey="bar" title="График" className="mb-3">
+                        <Row className="justify-content-center">
+                            <Col xs={12}>
+                                <ChartDefects defectsLog={defectsData} data={productionData} />
+                            </Col>
+                        </Row>
+                    </Tab>
+                    <Tab eventKey="opinion" title="Брак по сменам">
+                        <DefectsByShift production={productionData} />
+                    </Tab>
+                </Tabs>
             </Container>
         </div>
     );
