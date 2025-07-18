@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row, Table } from "react-bootstrap";
+import { Badge, Col, Container, ProgressBar, Row, Spinner, Table } from "react-bootstrap";
+import { Button } from "primereact/button";
 import ReportData from "../../../../model/ReportData";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import ReportModalPage from "../ReportModalPage";
@@ -10,20 +11,15 @@ import Delays from "../../../../model/delays/Delays";
 import { getUserRole } from "../../../../service/Api";
 import ApiService from "../../../../service/ApiService";
 import MaterialConsumption from "../../../../model/specification/MaterialConsumption";
-import { Button } from "primereact/button";
-import { ProgressSpinner } from "primereact/progressspinner";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
 interface ProductionListTableProps {
   boardProductions: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[];
 }
 
-const ProductionListTable: React.FC<ProductionListTableProps> = ({
-  boardProductions,
-}) => {
-
+const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProductions }) => {
   const adminRoles = ['ADMIN', 'GB_ADMIN'];
-
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
   const [reportData, setReportData] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] | null>(null);
@@ -32,92 +28,50 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
   const [updateConsumption, setUpdateConsumption] = useState(false);
 
   useEffect(() => {
-    setReportData(boardProductions);
+    setReportData(boardProductions
+      .sort((a, b) => new Date(b.productionList.productionStart).getTime() - new Date(a.productionList.productionStart).getTime()));
   }, [boardProductions]);
 
-  const handleClick = (
-    // event: React.MouseEvent<HTMLElement>,
-    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
-  ) => {
-    console.log(typeof (item));
+  const handleClick = (item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
     const selectedItemButton = new ReportData(item.product, item.productionList, item.productions, item.delays, item.defectsLogs);
-    console.log(selectedItemButton);
     setSelectedItem(selectedItemButton);
     setShowModal(true);
-
   };
 
   const onSave = async (updatedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>, updatedConsumptions: MaterialConsumption[]) => {
-    console.log("Сохраняемый отчет (время начала): " + updatedReport.productionList.productionStart);
-
     if (reportData) {
-      const updatedList = reportData.map((item) => {
-        if (item.productionList.id === updatedReport.productionList.id) {
-          return updatedReport;
-        }
-        return item;
-      });
-      setReportData(updatedList);
-      console.log("обновлен список отчетов размером ", updatedList.length);
-
       try {
-        // 1. Сохраняем обновленный отчет и дожидаемся результата
-        let savedReport: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> = await saveUpdatedReport(updatedReport);
-        console.log(savedReport);
-
-        if (savedReport && updatedConsumptions && updatedConsumptions.length > 0) {
-          // 2. Если отчет сохранен и есть расходные данные, обновляем productionList для каждого consumption
+        const savedReport = await saveUpdatedReport(updatedReport);
+        
+        if (savedReport && updatedConsumptions?.length > 0) {
           updatedConsumptions.forEach((consumption) => consumption.productionList = savedReport.productionList);
-
-          try {
-            // 3. Сохраняем расходные данные после успешного сохранения отчета
-            console.log("Сохраняем расход");
-            await saveConsumptions(updatedConsumptions);
-            console.log("Расходы сохранены успешно");
-            setUpdateConsumption(true);
-          } catch (consumptionError) {
-            // 4. Логируем ошибку, если произошла ошибка при сохранении расхода
-            console.error("Ошибка при сохранении расхода:", consumptionError);
-          }
-        } else {
-          console.log("нет данных для обновления расхода.");
+          await saveConsumptions(updatedConsumptions);
+          setUpdateConsumption(true);
         }
-
-        // 5. Закрываем модальное окно независимо от результата сохранений
+        
         setShowModal(false);
-
       } catch (error) {
-        // 6. Логируем ошибку, если произошла ошибка при сохранении отчета
-        console.error("Ошибка при сохранении отчета:", error);
+        console.error("Ошибка при сохранении:", error);
       }
-
     }
   };
 
-
-  const handleRemoveReport = async (
-    // event: React.MouseEvent<HTMLElement>,
-    item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>
-  ) => {
+  const handleRemoveReport = async (item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
     try {
       await ApiService.deleteReport(item.productionList.id);
       if (reportData) {
-        const updatedList = reportData.filter(
-          (report) => report.productionList.id !== item.productionList.id
-        );
-        setReportData(updatedList);
+        setReportData(reportData.filter(report => report.productionList.id !== item.productionList.id));
       }
     } catch (error) {
       console.error("Error deleting report:", error);
-      // Optional: show an error message to the user
     }
-  }
+  };
 
   useEffect(() => {
     const fetchComsumptions = async (reports: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]) => {
-      const productions = reports.map((report) => report.productionList);
       setLoading(true);
       try {
+        const productions = reports.map(report => report.productionList);
         const consumptionsForReport = await ApiService.getConsumptionsByProductions(productions);
         setConsumptions(consumptionsForReport);
       } catch (error) {
@@ -126,10 +80,9 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
         setLoading(false);
         setUpdateConsumption(false);
       }
-    }
+    };
 
     if (reportData && updateConsumption) {
-
       fetchComsumptions(reportData);
     }
   }, [reportData, updateConsumption]);
@@ -143,140 +96,173 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
       production.category.id === 1 ? sum - production.value : sum + production.value, 0);
   }
 
+  const calculateDelays = (delays: Delays[]) => {
+    return delays.reduce((acc, delay) => {
+      const diffInMinutes = (new Date(delay.endTime).getTime() - new Date(delay.startTime).getTime()) / (1000 * 60);
+      return acc + diffInMinutes;
+    }, 0);
+  };
+
   return (
-    <Container fluid className="mt-5">
+    <Container fluid className="mt-4 px-4">
       <Row>
         <Col>
-          <Table striped bordered hover responsive size="sm" variant="light" >
-            <thead className="table-dark">
-              <tr>
-                <th className="text-center">ID</th>
-                <th className="text-center">Время производства</th>
-                {/* <th className="text-center">Окончание производства</th> */}
-                <th className="text-center">Дата</th>
-                <th className="text-center">Смена</th>
-                {/* <th className="text-center">Вид продукции</th> */}
-                <th className="text-center">Наименование</th>
-                <th className="text-center">Простои</th>
-                <th className="text-center">Материалы</th>
-                <th className="text-center">Акты бракования</th>
-                <th className="text-center ">Действия</th>
-              </tr>
-            </thead>
+          <div className="table-responsive rounded-3 shadow-sm">
+            <Table hover className="modern-table mb-0">
+              <thead className="bg-light">
+                <tr>
+                  <th className="text-center ps-4">ID</th>
+                  <th className="text-center">Время производства</th>
+                  <th className="text-center">Дата</th>
+                  <th className="text-center">Смена</th>
+                  <th className="text-center">Наименование</th>
+                  <th className="text-center">Простои</th>
+                  <th className="text-center">Материалы</th>
+                  <th className="text-center">Брак</th>
+                  <th className="text-center pe-4">Действия</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {reportData ?
-                reportData.map((item) => (
-                  <tr key={item.productionList.id}>
-                    <td className="text-nowrap">
-                      <span>{item.productionList.id}</span>
-                    </td>
-                    <td className="text-nowrap">
-                      <span >
-                        {new Date(
-                          item.productionList.productionStart
-                        ).toLocaleString()}
-                      </span>
-                      {/* </td>
-                    <td className="text-nowrap"> */}
-                      {"-"}
-                      <span>
-                        {new Date(
-                          item.productionList.productionFinish
-                        ).toLocaleString()}
-                      </span>
-                    </td>
-                    <td className="text-nowrap">
-                      <span><strong>
-                        {new Date(
-                          item.productionList.productionDate
-                        ).toLocaleDateString()}
-                      </strong>
-                      </span>
-                    </td>
-                    <td className="text-nowrap"><strong>{item.productionList.shift.name}</strong></td>
-                    {/* <td>{item.productionList.type.name}</td> */}
-                    <td className="text-nowrap">
-                      <span>
-                        <strong>
-                          {item.product.tradeMark.name} тип{" "}
-                          {(item.product as GypsumBoard).boardType.name}-
-                          {(item.product as GypsumBoard).edge.name}{" "}
-                          {(item.product as GypsumBoard).thickness.value}-
-                          {(item.product as GypsumBoard).width.value}-
-                          {(item.product as GypsumBoard).length.value}
-                        </strong>
-                      </span>
-                    </td>
-                    <td className="text-center">
-                      {item.delays.reduce((acc, delay) => {
-                        const start = new Date(delay.startTime);
-                        const end = new Date(delay.endTime);
-                        const diffInDays = (end.getTime() - start.getTime()) / (1000 * 60);
-                        return acc + diffInDays;
-                      }, 0)}
-                    </td>
-                    <td className="text-center">
+              <tbody>
+                {reportData ? (
+                  reportData.map((item) => {
+                    const delayMinutes = calculateDelays(item.delays);
+                    const hasMaterials = consumptions
+                      .filter(c => c.productionList.id === item.productionList.id)
+                      .reduce((acc, c) => acc + c.quantity, 0) > 0;
+                    const hasDefects = Math.abs(Math.round(checkDefectActs(item.productions))) !== 0;
 
-                      { isLoading ? ( <ProgressSpinner style={{ width: "25px", height: "25px" }} />) :
-                      consumptions
-                        .filter(c => c.productionList.id === item.productionList.id)
-                        .reduce((acc, consumption) => acc + consumption.quantity, 0) === 0 ? (
-                        <i className="pi pi-minus" style={{ color: "gray" }}></i>
-                      ) : (
-                        <i className="pi pi-check" style={{ color: "green" }}></i>
-                      )}
-                    </td>
-                    <td className="text-center">
-                    { isLoading ? ( <ProgressSpinner style={{ width: "25px", height: "25px" }} />) :
-                      Math.abs(Math.round(checkDefectActs(item.productions))) === 0 ? (
-                        <i className="pi pi-check" style={{ color: "green" }}></i>
-                      ) : (
-                        <i className="pi pi-minus" style={{ color: "gray" }}></i>
-                      )
-                    }                    
-                    </td>
-                    <td className="text-center">
-                      {/* Кнопка редактирования */}
-                      <Button
-                        icon="pi pi-pencil"
-                        className="p-button-rounded p-button-info p-button-sm"
-                        onClick={() => handleClick(item)}
-                        style={{
-                          marginRight: '8px',// Отступ между кнопкамиa
-                          width: '35px', // Ширина кнопки
-                          height: '35px', // Высота кнопки
-                          fontSize: '1.2rem', // Размер текста/иконки
-                          borderRadius: '25px'
-                        }}
-                      // disabled={
-                      //   getUserRole() === 'ADMIN' ? false : true}
-                      />
-                      {/* Кнопка удаления */}
-                      <Button
-                        icon="pi pi-trash"
-                        className="p-button-rounded p-button-danger p-button-sm"
-                        onClick={() => handleRemoveReport(item)}
-                        style={{
-                          marginRight: '8px',// Отступ между кнопкамиa
-                          width: '35px', // Ширина кнопки
-                          height: '35px', // Высота кнопки
-                          fontSize: '1.2rem', // Размер текста/иконки
-                          borderRadius: '25px'
-                        }}
-                        disabled={
-                          (adminRoles.includes(getUserRole())) ? false : true}
-                      />
-                    </td>
+                    function calculateProcent(item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>): React.ReactNode {
+                      const productions = item.productions;
+                      const total = productions.filter(production => production.category.id === 1);
+                      const totalValue = total.reduce((acc, t) => acc + t.value, 0);
+                      const good = productions.filter(production => production.category.id > 1 && production.category.id < 5);
+                      const goodValue = good.reduce((acc, t) => acc + t.value, 0);
+                      return (
+                        ((totalValue-goodValue)/totalValue*100).toFixed(2) + '%'
+                      );
+                    }
 
+                    return (
+                      <tr key={item.productionList.id} className="align-middle">
+                        <td className="text-center ps-4">
+                          <Badge pill bg="secondary" className="fw-normal">
+                            #{item.productionList.id}
+                          </Badge>
+                        </td>
+                        
+                        <td className="text-nowrap">
+                          <div className="d-flex flex-column">
+                            
+                            <span><small className="text-muted">Начало </small>{new Date(item.productionList.productionStart).toLocaleTimeString()}</span>
+                            
+                            <span><small className="text-muted mt-1">Окончание </small>{new Date(item.productionList.productionFinish).toLocaleTimeString()}</span>
+                          </div>
+                        </td>
+                        
+                        <td className="text-center">
+                          <div className="bg-light rounded p-2 d-inline-block">
+                            {new Date(item.productionList.productionDate).toLocaleDateString()}
+                          </div>
+                        </td>
+                        
+                        <td className="text-center">
+                          <Badge 
+                            pill 
+                            bg={item.productionList.shift.name === 'Дневная' ? 'info' : 'dark'} 
+                            className="px-3 py-1"
+                          >
+                            {item.productionList.shift.name}
+                          </Badge>
+                        </td>
+                        
+                        <td>
+                          <div>
+                            <div className="fw-semibold">
+                              {item.product.tradeMark.name} 
+                              <span className="text-muted ms-1">
+                                (тип {(item.product as GypsumBoard).boardType.name})
+                              </span>
+                            </div>
+                            <div className="text-muted small">
+                              <strong>{(item.product as GypsumBoard).thickness.value}</strong> - 
+                              {(item.product as GypsumBoard).width.value} - 
+                              {(item.product as GypsumBoard).length.value}
+                            </div>
+                          </div>
+                        </td>
+                        
+                        <td className="text-center">
+                          <div className="d-flex align-items-center gap-2">
+                            <span className="fw-semibold">{delayMinutes} мин</span>
+                            <ProgressBar 
+                              now={Math.min(delayMinutes, 100)} 
+                              variant={delayMinutes > 60 ? 'danger' : delayMinutes > 30 ? 'warning' : 'success'}
+                              className="flex-grow-1" 
+                              style={{ height: '6px' }}
+                            />
+                          </div>
+                        </td>
+                        
+                        <td className="text-center">
+                          {isLoading ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : hasMaterials ? (
+                            <i className="bi bi-check-circle-fill text-success "></i> 
+                          ) : (
+                            <i className="bi bi-dash-circle-fill text-muted " />
+                          )}
+                        </td>
+                        
+                        <td className="text-center">
+                          {isLoading ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : hasDefects ? (
+                            <i className="bi bi-exclamation-triangle-fill text-warning "/>
+                          ) : (
+                            <i className="bi bi-check-circle-fill text-success "> {calculateProcent(item)}</i> 
+                          )}
+                        </td>
+                        
+                        <td className="text-center pe-4">
+                          <div className="d-flex justify-content-center gap-2">
+                            <Button 
+                              icon="pi pi-pencil" 
+                              className="p-button-rounded p-button-sm p-button-text p-button-secondary"
+                              onClick={() => handleClick(item)}
+                              disabled={!adminRoles.includes(getUserRole())}
+                              tooltip="Редактировать"
+                              tooltipOptions={{ position: 'top' }}
+                            />
+                            <Button 
+                              icon="pi pi-trash" 
+                              className="p-button-rounded p-button-sm p-button-text p-button-danger"
+                              onClick={() => handleRemoveReport(item)}
+                              disabled={!adminRoles.includes(getUserRole())}
+                              tooltip="Удалить"
+                              tooltipOptions={{ position: 'top' }}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan={9} className="text-center py-5">
+                      <div className="d-flex flex-column align-items-center text-muted">
+                        <i className="bi bi-database-exclamation fs-1 mb-3" />
+                        <span className="fs-5">Нет данных для отображения</span>
+                      </div>
+                    </td>
                   </tr>
-                )) :
-                <td rowSpan={4}>Нет данных</td>
-              }
-            </tbody>
-          </Table>
+                )}
+              </tbody>
+            </Table>
+          </div>
         </Col>
       </Row>
+
       <ReportModalPage
         show={showModal}
         reportData={selectedItem}
@@ -284,7 +270,8 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({
           setShowModal(false);
           setSelectedItem(null);
         }}
-        onSave={onSave} />
+        onSave={onSave}
+      />
     </Container>
   );
 };
