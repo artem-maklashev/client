@@ -230,7 +230,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
                               icon="pi pi-pencil" 
                               className="p-button-rounded p-button-sm p-button-text p-button-secondary"
                               onClick={() => handleClick(item)}
-                              disabled={!adminRoles.includes(getUserRole())}
+                              // disabled={!adminRoles.includes(getUserRole())}
                               tooltip="Редактировать"
                               tooltipOptions={{ position: 'top' }}
                             />
