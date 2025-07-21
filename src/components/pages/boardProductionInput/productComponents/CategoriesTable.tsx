@@ -21,7 +21,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
     alert("Введено значение: " + newValue + " в категорию " + categories.find(cat => cat.category.id === id)?.category.title);
   };
   return (
-    <Table striped bordered hover size="sm" variant="dark" >
+    <Table striped bordered hover size="sm" variant="dark" className="modern-table" >
       <thead>
         <tr>
           <th>Вид производства</th>

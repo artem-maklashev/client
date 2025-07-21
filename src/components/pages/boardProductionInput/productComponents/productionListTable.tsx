@@ -108,7 +108,7 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
       <Row>
         <Col>
           <div className="table-responsive rounded-3 shadow-sm">
-            <Table hover className="modern-table mb-0">
+            <Table hover className="modern-table mb-0" >
               <thead className="bg-light">
                 <tr>
                   <th className="text-center ps-4">ID</th>

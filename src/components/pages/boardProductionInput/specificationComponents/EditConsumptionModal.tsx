@@ -8,6 +8,7 @@ import ProductionList from "../../../../model/production/ProductionList";
 import ApiService from "../../../../service/ApiService";
 import { Button } from "@mui/material";
 import { getUserRole } from "../../../../service/Api";
+import "./modal.css"
 
 interface EditConsumpionProps {
     show: boolean;
@@ -100,61 +101,100 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
     };
 
     return (
-        <Modal show={show} onHide={handleHide} scrollable={true} animation={true} size="lg" backdrop="static" keyboard={false}>
-            <Modal.Header >
-                <Modal.Title>Расход материалов</Modal.Title>
+        <Modal
+            show={show}
+            onHide={handleHide}
+            scrollable={true}
+            animation={true}
+            size="lg"
+            backdrop="static"
+            keyboard={false}
+            centered
+            className="modern-modal"
+        >
+            <Modal.Header className="border-0 pb-0">
+                <Modal.Title className="fw-bold fs-4 text-dark">Расход материалов</Modal.Title>
+                <button
+                    type="button"
+                    className="btn-close"
+                    onClick={handleHide}
+                    aria-label="Close"
+                />
             </Modal.Header>
-            <Modal.Body>
-                <Container fluid>
-                    <Table striped bordered hover responsive="sm" variant="dark" className="w-auto">
-                        <thead>
+
+            <Modal.Body className="pt-0">
+                <div className="table-container-modal">
+                    <Table hover className="modern-table-modal mb-0">
+                        <thead className="bg-light">
                             <tr>
-                                <th>Наименование</th>
-                                <th>Норма</th>
-                                <th>По норме</th>
-                                <th>Факт</th>
-                                <th>Отклонение</th>
+                                <th className="ps-4 py-3 text-start fw-semibold text-muted small">Наименование</th>
+                                <th className="py-3 text-end fw-semibold text-muted small">Норма</th>
+                                <th className="py-3 text-end fw-semibold text-muted small">По норме</th>
+                                <th className="py-3 text-end fw-semibold text-muted small">Факт</th>
+                                <th className="pe-4 py-3 text-end fw-semibold text-muted small">Отклонение</th>
                             </tr>
                         </thead>
                         <tbody>
                             {specification.length > 0 ? (
-                                specification.map((entry) => (
-                                    <tr key={entry.id}>
-                                        <td>{entry.material.name}</td>
-                                        <td>{entry.quantity}</td>
-                                        <td>{(entry.quantity * productionTotal).toFixed(2)}</td>
-                                        <td className="auto-width">
-                                            <Form.Control
-                                                className="w-150"
-                                                type="number"
-                                                defaultValue={getMaterialConsumption(entry)}
-                                                size="sm"
-                                                onChange={(event) => handleMaterialConsumptionChange(event, entry)}
-                                                style={{ color: 'white', backgroundColor: 'transparent' }}
-                                            />
-                                        </td>
-                                        <td style={{ color: getDifference(entry) > 0 ? 'red' : 'green' }}>
-                                            <strong>{getDifference(entry).toFixed(2)}</strong> {entry.quantity && productionTotal ? (getDifference(entry) * 100 / (entry.quantity * productionTotal)).toFixed(2) : '--'}%
-                                        </td>
+                                specification.map((entry) => {
+                                    const difference = getDifference(entry);
+                                    const percentDiff = entry.quantity && productionTotal
+                                        ? (difference * 100 / (entry.quantity * productionTotal)).toFixed(2)
+                                        : '--';
 
-                                    </tr>
-                                ))
+                                    return (
+                                        <tr key={entry.id} className="align-middle">
+                                            <td className="ps-4 fw-medium">{entry.material.name}</td>
+                                            <td className="text-end">{entry.quantity}</td>
+                                            <td className="text-end">{(entry.quantity * productionTotal).toFixed(2)}</td>
+                                            <td className="pe-3">
+                                                <Form.Control
+                                                    type="number"
+                                                    defaultValue={getMaterialConsumption(entry)}
+                                                    size="sm"
+                                                    onChange={(event) => handleMaterialConsumptionChange(event, entry)}
+                                                    className="modern-input-modal"
+                                                />
+                                            </td>
+                                            <td className={`pe-4 text-center fw-medium ${difference > 0 ? 'text-danger' : 'text-success'}`}>
+                                                <div className="d-flex flex-column">
+                                                    <span>{difference.toFixed(2)}</span>
+                                                    <small className={`badge ${difference > 0 ? 'bg-danger-light' : 'bg-success-light'} rounded-pill`}>
+                                                        {percentDiff}%
+                                                    </small>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             ) : (
                                 <tr>
-                                    <td colSpan={5}>Нет данных</td>
+                                    <td colSpan={5} className="text-center py-4 text-muted">
+                                        <i className="bi bi-database-exclamation me-2" />
+                                        Нет данных
+                                    </td>
                                 </tr>
                             )}
                         </tbody>
                     </Table>
-                </Container>
+                </div>
             </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={onHide} color="primary">
+
+            <Modal.Footer className="border-0 pt-0">
+                <button
+                    className="btn btn-outline-secondary me-2 px-4"
+                    onClick={onHide}
+                >
                     Отмена
-                </Button>
-                <Button variant="contained" onClick={handleSave} disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' ? false : true}>
+                </button>
+                <button
+                    className="btn btn-primary px-4"
+                    onClick={handleSave}
+                    disabled={!['USER', 'ADMIN'].includes(getUserRole())}
+                >
+                    <i className="bi bi-check-circle me-2" />
                     Сохранить
-                </Button>
+                </button>
             </Modal.Footer>
         </Modal>
     );

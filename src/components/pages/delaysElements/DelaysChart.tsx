@@ -1,12 +1,19 @@
 import React from "react";
 import Delays from "../../../model/delays/Delays";
 import DalayDataPrepare from "./DalayDataPrepare";
-import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Badge, Card, Col, Row } from "react-bootstrap";
 
 
 interface DelaysChartProps {
     delays_data: Delays[];
+}
+
+interface GroupedDelay {
+    delayType: string;          // Тип простоя
+    shifts: Record<string, number>; // Суммы простоев по сменам (динамические ключи)
+    total: number;              // Общая сумма по типу простоя
+    unitName?: string;          // Опционально: название участка/оборудования
 }
 
 const DelaysChart: React.FC<DelaysChartProps> = ({ delays_data }) => {
@@ -20,6 +27,7 @@ const DelaysChart: React.FC<DelaysChartProps> = ({ delays_data }) => {
 
 
     const charts = Object.entries(unitDelays).map(([delayType, chartData], chartIndex) => {
+
         const totalDelta = chartData.reduce((sum, data) => sum + data.delta, 0);
 
         return (
@@ -103,7 +111,140 @@ const DelaysChart: React.FC<DelaysChartProps> = ({ delays_data }) => {
         );
     });
 
+    const chartsByShift = Object.entries(unitDelays).map(([delayType, chartData], chartIndex) => {
+    // Получаем все уникальные смены из данных
+    const allShifts = Array.from(new Set(delays_data.map(d => d.shift.name))).sort((a, b) => a.localeCompare(b));
+
+    // Фильтруем данные только для текущего типа простоев
+    const filteredDelays = delays_data.filter(delay => {
+        
+        return delay.delayType.name === delayType;
+        
+    });
+
+    // Преобразуем данные для графика
+    const processedData = chartData.map(item => {
+        // Создаем объект с delta для каждой смены
+        const shiftsData = allShifts.reduce((acc, shift) => {
+            acc[`deltaShift${shift}`] = 0;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // Заполняем данные по сменам только для отфильтрованных простоев
+        filteredDelays
+            .filter(d => d.unitPart.unit.name === item.unitPart.unit.name)
+            .forEach(delay => {
+                const shiftKey = `deltaShift${delay.shift.name}`;
+                const delta = (new Date(delay.endTime).getTime() - new Date(delay.startTime).getTime()) / (1000 * 60);
+                shiftsData[shiftKey] += delta;
+            });
+
+        return {
+  unitPart: item.unitPart,
+  ...shiftsData,
+  delta: Object.values(shiftsData).reduce((sum, val) => sum + val, 0)
+}
+
+    }).sort((a, b) => b.delta - a.delta);
+
+    const totalDelta = processedData.reduce((sum, data) => sum + data.delta, 0);
+
     return (
+        <Col key={`chart-col-${chartIndex}`} md={6} className="mb-4 g-3">
+            <Card className="shadow-sm border-primary h-100">
+                <Card.Body className="p-3">
+                    {/* Заголовок карточки */}
+                    <div className="d-inline-block p-2 rounded-3 mb-3" style={{
+                        backgroundColor: 'rgba(136, 132, 216, 0.1)',
+                        borderLeft: '4px solid #8884d8',
+                        boxShadow: '0 2px 6px rgba(136, 132, 216, 0.2)',
+                        width: '100%'
+                    }}>
+                        <h4 className="mb-0" style={{
+                            fontWeight: 600,
+                            color: '#8884d8',
+                            fontSize: '1.3rem',
+                            letterSpacing: '0.5px'
+                        }}>
+                            {delayType}: <span style={{ fontWeight: 700 }}>{totalDelta} мин</span>
+                        </h4>
+                    </div>
+
+                    {/* График */}
+                    <div style={{
+                        width: "100%",
+                        height: `${chartData.length * 50 + 40}px`,
+                        filter: "drop-shadow(0px 4px 8px rgba(136, 132, 216, 0.3))"
+                    }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                                data={processedData}
+                                layout="vertical"
+                                margin={{ top: 5, right: 50, bottom: 20, left: 5 }}
+                                stackOffset="none"
+                            >
+                                <defs>
+                                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="2" result="blur" />
+                                        <feOffset dx="1" dy="1" in="blur" result="offsetBlur" />
+                                        <feComposite in="SourceGraphic" in2="offsetBlur" operator="over" />
+                                    </filter>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                                <XAxis
+                                    type="number"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 12 }}
+                                />
+                                <YAxis
+                                    type="category"
+                                    dataKey="unitPart.unit.name"
+                                    tick={{ fontSize: 12 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    width={120}
+                                />
+                                <Tooltip
+                                    formatter={(value, name) => {
+                                        const shiftName = name.toString().replace('deltaShift', '');
+                                        return [`${value} минут`, `Смена ${shiftName}`];
+                                    }}
+                                    labelFormatter={(label) => `Участок: ${label}`}
+                                />
+                                <Legend />
+
+                                {allShifts.map((shift, index) => (
+                                    <Bar
+                                        key={`shift-${shift}`}
+                                        dataKey={`deltaShift${shift}`}
+                                        stackId="stack"
+                                        fill={`hsl(${index * 90}, 70%, 60%)`}
+                                        name={`Смена ${shift}`}
+                                        barSize={25}
+                                        radius={index === allShifts.length - 1 ? [0, 4, 4, 0] : 0}
+                                        animationDuration={500}
+                                        filter="url(#shadow)"
+                                    >
+                                        {index === allShifts.length - 1 && (
+                                            <LabelList
+                                                dataKey="delta"
+                                                position="right"
+                                                formatter={(value: number) => `${value} мин`}
+                                            />
+                                        )}
+                                    </Bar>
+                                ))}
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card.Body>
+            </Card>
+        </Col>
+    );
+});
+    return (
+
         <div className="container">
             <Row>
                 <h3>Суммарное количество простоев: {total} минут</h3>
@@ -134,6 +275,7 @@ const DelaysChart: React.FC<DelaysChartProps> = ({ delays_data }) => {
                 </div>
             </Row>
             <Row className="col-12">{charts}</Row>
+            <Row className="col-12">{chartsByShift}</Row>
         </div>
     );
 }

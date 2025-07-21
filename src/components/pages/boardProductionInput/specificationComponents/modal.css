@@ -1,0 +1,59 @@
+.modern-modal {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modern-modal .modal-content {
+  border: solid 1px #b9d3ed;
+  border-radius: 12px;
+}
+
+/* Кастомизация стандартного backdrop */
+.modern-modal + .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5); /* Увеличиваем прозрачность */
+  backdrop-filter: blur(3px); /* Добавляем размытие */
+}
+
+.modern-table-modal {
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: rgba(240, 242, 245, 0.5);
+}
+
+.modern-table-modal th {
+  border-bottom: 2px solid #f0f2f5;
+}
+
+.modern-table-modal td {
+  border-top: 1px solid #f0f2f5;
+  vertical-align: middle;
+}
+
+.modern-input-modal {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 0.375rem 0.75rem;
+  transition: all 0.2s;
+}
+
+.modern-input-modal:focus {
+  background-color: white;
+  border-color: #8884d8;
+  box-shadow: 0 0 0 0.25rem rgba(136, 132, 216, 0.25);
+}
+
+.bg-danger-light {
+  background-color: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+}
+
+.bg-success-light {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+  color: #198754 !important;
+}
+
+.table-container-modal {
+  background-color: #fafaf8;
+  border-radius: 10px;
+  overflow: hidden;
+}

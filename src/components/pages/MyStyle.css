@@ -268,13 +268,23 @@
   border: 1px solid rgba(255, 255, 255, 0.5) !important; /* Прозрачные границы ячеек */
 }
 
+/* Базовые стили modern-table */
 .modern-table {
   --table-accent-color: rgba(136, 132, 216, 0.1);
   --table-hover-color: rgba(136, 132, 216, 0.05);
   font-family: 'Segoe UI', system-ui, sans-serif;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.modern-table th {
+/* Стили для светлой темы */
+.modern-table:not(.table-dark) {
+  --bs-table-bg: #ededed;
+  --bs-table-striped-bg: var(--table-accent-color);
+  --bs-table-hover-bg: var(--table-hover-color);
+}
+
+.modern-table:not(.table-dark) th {
   background-color: #f8f9fa;
   color: #495057;
   font-weight: 600;
@@ -282,6 +292,37 @@
   font-size: 0.75rem;
   letter-spacing: 0.5px;
   border-bottom: 2px solid #dee2e6;
+}
+
+/* Стили для темной темы (variant="dark") */
+.modern-table.table-dark {
+  --table-accent-color: rgba(136, 132, 216, 0.15);
+  --table-hover-color: rgba(136, 132, 216, 0.1);
+  --bs-table-bg: #212529;
+  --bs-table-striped-bg: var(--table-accent-color);
+  --bs-table-hover-bg: var(--table-hover-color);
+  --bs-table-color: #e9ecef;
+  --bs-table-border-color: #495057;
+}
+
+.modern-table.table-dark th {
+  background-color: #2c3034;
+  color: #adb5bd;
+  border-bottom-color: var(--bs-table-border-color);
+}
+
+.modern-table.table-dark td {
+  border-top-color: var(--bs-table-border-color);
+}
+
+/* Общие стили для обеих тем */
+.modern-table th,
+.modern-table td {
+  padding: 0.75rem 1rem;
+}
+
+.modern-table.table-hover tbody tr:hover {
+  color: var(--bs-table-hover-color);
 }
 
 .table-row:hover {

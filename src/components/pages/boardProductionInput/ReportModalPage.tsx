@@ -504,7 +504,7 @@ useEffect(() => {
                 <h3 className="text-center">Данные по производству</h3>
                 <CategoriesTable
                   categories={tableData}
-                  handleEditCategory={handleEditCategory}
+                  handleEditCategory={handleEditCategory}                  
                 />
                 <Row>
                   <h4 className="text-center">
