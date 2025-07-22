@@ -12,6 +12,7 @@ import GypsumBoardChart from "./gypsumBoardElements/GypsumBoardChart";
 import { api } from "../../service/Api";
 import DateRangeSelector from './dashBoardComponent/dateRangeSelector';
 import { start } from 'repl';
+import PlanFactDinamics from './gypsumBoardElements/planFactDinamics';
 
 interface GypsumBoardShowProps {
 }
@@ -112,6 +113,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
                             <Col className="d-flex justify-content-center">
                                 <GypsumBoardTable data={gypsumBoardData} />
+                                <PlanFactDinamics startDate={selectedStartDate} endDate={selectedEndDate} />
                             </Col>
                         </Tab>
                         <Tab eventKey="bar" title="График">
