@@ -58,7 +58,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
         fetchData();
     }, [fetchGypsumBoardData]);
-    
+
 
     function getCurrentDate(): string {
         const now = new Date();
@@ -76,7 +76,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
         const month = (firstDay.getMonth() + 1).toString().padStart(2, '0');
 
         return `${year}-${month}-01`;
-    }    
+    }
 
     useEffect(() => {
         setLoading(false);
@@ -84,9 +84,9 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
 
     const handlePeriodChange = (startDate: Date | null, endDate: Date | null) => {
         if (startDate && endDate) {
-        setSelectedStartDate(startDate.toDateString());
-        setSelectedEndDate(endDate.toDateString());
-    }
+            setSelectedStartDate(startDate.toDateString());
+            setSelectedEndDate(endDate.toDateString());
+        }
     };
 
     return (
@@ -97,7 +97,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                         <DateRangeSelector onDatesChange={handlePeriodChange}
                         />
                     </Col>
-                </Row>                
+                </Row>
             </Container>
 
             {errorText && <div className="error-message">{errorText}</div>}
@@ -110,11 +110,14 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                                     <span className="preloader"></span>
                                 </div>
                             )}
-
-                            <Col className="d-flex justify-content-center">
+                            <Row>
+                            <Col className="d-flex justify-content-center col-lg-6 col-sm-12">
                                 <GypsumBoardTable data={gypsumBoardData} />
+                            </Col>
+                            <Col className="d-flex justify-content-center col-lg-6 col-sm-12">
                                 <PlanFactDinamics startDate={selectedStartDate} endDate={selectedEndDate} />
                             </Col>
+                            </Row>
                         </Tab>
                         <Tab eventKey="bar" title="График">
                             <Col className="col-12">
