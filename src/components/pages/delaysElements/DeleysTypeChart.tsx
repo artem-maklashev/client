@@ -9,10 +9,7 @@ interface DelaysTypeChartProps {
 
 const DelaysTypeChart: React.FC<DelaysTypeChartProps> = ({ data }) => {
 
-    const uniqueDelayTypes = Array.from(new Set(data.map(d => d.delayType.name)));
-
-    console.log('Количество поступивших простоев в графики по сменам:' + Object.entries(data).length);
-    console.log(data);
+    const uniqueDelayTypes = Array.from(new Set(data.map(d => d.delayType.name)));   
     const allShifts = Array.from(new Set(Object.values(data).flat().map(d => d.shift.name))).sort((a, b) => a.localeCompare(b));
 
     const chartsByShift = uniqueDelayTypes.map((delayType, chartIndex) => {
