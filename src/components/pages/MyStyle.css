@@ -163,94 +163,278 @@
 }
 
 
-/* Моя карточка */
+/* Modern Production Card - Business Style */
 .myCard {
-  position: relative; /* Для позиционирования метки */
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center; /* Центрируем содержимое по горизонтали */
-  padding: 12px 10px 8px;
-  border-radius: 8px; /* Скруглённые углы */
-  border: 1px solid #cfcfcf;
-  font-family: Helvetica Neue, Arial, sans-serif;
-  font-size: 16px;
-  width: 100%; /* Ширина подстраивается под контент */
-  min-width: 250px;
-  /* max-width: 400px; Максимальная ширина, если нужно ограничить */
+  align-items: center;
+  padding: 28px 24px;
+  border-radius: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  width: 100%;
+  min-width: 280px;
   overflow: visible;
-
-  /* Градиентный фон и тень */
-  background: linear-gradient(
-    to bottom right,
-    #f5f5f5,
-    #ccccccec
-  ); /* Серый градиент */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
-  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  
+  /* Деловой glassmorphism */
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  
+  /* Профессиональные тени */
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.03),
+    inset 0 0 12px rgba(255, 255, 255, 0.9);
+  
+  /* Плавные переходы */
+  transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  
+  /* Деловой градиентный фон */
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.9));
 }
 
 .myCard:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Увеличенная тень при наведении */
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    0 24px 48px rgba(0, 0, 0, 0.04),
+    inset 0 0 16px rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.96);
+  
+  /* Деловой эффект свечения */
+  filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.08));
 }
 
+/* Label - Professional Badge */
 .myCard__label {
   position: absolute;
-  top: -15px; /* Немного снижаем метку */
-  left: 10px;
-  background: linear-gradient(135deg, rgb(142, 142, 142), rgb(92, 92, 92)); /* Плавный градиент для объема */
-  border: 1px solid rgba(69, 68, 68, 0.8); /* Полупрозрачная рамка */
-  border-radius: 8px; /* Скругленные углы */
-  padding: 5px 30px 5px 5px; /* Добавляем отступ справа */
-  font-size: 14px; /* Читаемый размер текста */
-  color: #f0f0f0; /* Светлый текст */
-  font-weight: 700; /* Жирный текст */
-  z-index: 10; /* Обеспечиваем видимость метки */
-  text-align: center; /* Центровка текста */
+  top: -14px;
+  left: 20px;
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  border-radius: 16px;
+  padding: 8px 28px 8px 20px;
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 600;
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  
+  /* Профессиональные тени */
+  box-shadow: 
+    0 4px 8px -2px rgba(79, 70, 229, 0.2),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  
+  /* Анимация */
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Деловая граница */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.myCard__label::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: 0.8;
+  
+  /* Анимация точки */
+  transition: all 0.3s ease;
+  box-shadow: 0 0 6px rgba(79, 70, 229, 0.3);
+}
+
+.myCard__label:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 6px 12px -2px rgba(79, 70, 229, 0.25),
+    0 3px 6px -1px rgba(0, 0, 0, 0.08),
+    inset 0 -1px 4px rgba(0, 0, 0, 0.12),
+    inset 0 1px 3px rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, #4338ca, #3730a3);
+}
+
+.myCard__label:hover::after {
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(79, 70, 229, 0.5);
+}
+
+/* Value - Main Content */
+.myCard__value {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: #1e293b;
+  margin-top: 12px;
+  text-align: center;
+  letter-spacing: -0.2px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Деловой текстовый градиент */
+  background: linear-gradient(95deg, #374151, #4f46e5, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  
+  /* Профессиональная тень для текста */
+  text-shadow: 0 1px 2px rgba(79, 70, 229, 0.05);
+}
+
+.myCard:hover .myCard__value {
+  transform: scale(1.01);
+  text-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
+}
+
+/* Icon - Professional Indicator */
+.myCard .icon {
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  width: 28px;
+  height: 28px;
+  z-index: 15;
+  
+  /* Деловой индикатор */
+  background: linear-gradient(135deg, #4f46e5, #3730a3);
+  border-radius: 50%;
+  
+  /* Профессиональные тени */
+  box-shadow: 
+    0 0 0 3px rgba(255, 255, 255, 0.95),
+    0 0 0 4px rgba(79, 70, 229, 0.2),
+    0 3px 8px rgba(79, 70, 229, 0.3);
+  
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease; /* Плавный переход для hover-анимации */
-
-  /* Добавляем стили для обрезания текста */
-  white-space: nowrap; /* Отключаем перенос текста */
-  overflow: hidden; /* Обрезаем текст, выходящий за пределы */
-  text-overflow: ellipsis; /* Добавляем троеточие (...) */
-  max-width: 200px; /* Ограничиваем максимальную ширину */
-}
-
-
-.myCard__label:hover {
-  transform: scale(1.05); /* Легкое увеличение при наведении */
-  box-shadow: 
-    0px 3px 6px rgba(0, 0, 0, 0.6), /* Более выраженная тень */
-    inset 0px -1px 3px rgba(255, 255, 255, 0.4); /* Более четкая внутренняя тень */
-  background: linear-gradient(135deg, rgb(162, 162, 162), rgb(102, 102, 102)); /* Усиление контраста градиента */
-}
-
-.myCard__value {
-  font-family: 'Roboto', 'Arial', sans-serif; /* Современный и читаемый шрифт */
-  font-weight: 600; /* Полужирный для акцента */
-  font-size: 20px; /* Оптимальный размер для ключевых данных */
-  color: inherit; /* Позволяет задавать цвет отдельно через inline-стиль */
-  margin-top: 6px;
-  text-align: center; /* Центровка текста */
-  letter-spacing: 0.5px; /* Легкая разреженность для читаемости */
-  transition: all 0.2s ease; /* Плавный переход для hover-эффекта */
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
   
-  cursor: default; /* Убирает нежелательные указатели мыши */
+  /* Анимация */
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Чистая граница */
+  border: 2px solid rgba(255, 255, 255, 0.9);
 }
 
-/* Иконка над меткой */
-.myCard .icon {
+.myCard:hover .icon {
+  transform: scale(1.08);
+  box-shadow: 
+    0 0 0 3px rgba(255, 255, 255, 0.98),
+    0 0 0 5px rgba(79, 70, 229, 0.25),
+    0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+/* Status Indicator */
+.myCard::before {
+  content: '';
   position: absolute;
-  top: 0px; /*Смещение иконки выше метки*/
-  left: 93%; /* Центрирование по горизонтали относительно карточки */
-  transform: translateX(-50%); /* Центрирование */
-  width: 20px; /* Ширина иконки */
-  height: 20px; /* Высота иконки */
-  background: url('../../images/christmas-ball.png') center / cover no-repeat;
-  z-index: 15; /* Обеспечиваем, что иконка будет выше метки */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  border-radius: 20px 20px 0 0;
+  opacity: 0.85;
+  
+  /* Анимация линии */
+  transition: all 0.4s ease;
+}
+
+.myCard:hover::before {
+  height: 5px;
+  opacity: 0.95;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed, #4338ca);
+}
+
+/* Нижняя тень при наведении */
+.myCard::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 12%;
+  width: 76%;
+  height: 16px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.myCard:hover::after {
+  opacity: 0.8;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .myCard {
+    padding: 24px 20px;
+    min-width: auto;
+    border-radius: 18px;
+  }
+  
+  .myCard__value {
+    font-size: 22px;
+    margin-top: 16px;
+  }
+  
+  .myCard__label {
+    top: -12px;
+    left: 16px;
+    padding: 6px 24px 6px 18px;
+    font-size: 11px;
+    max-width: 180px;
+  }
+  
+  .myCard .icon {
+    top: -6px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+  .myCard {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+  
+  .myCard__value {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  .myCard__label {
+    max-width: 150px;
+    font-size: 10px;
+    padding: 5px 20px 5px 16px;
+  }
+  
+  .myCard::before {
+    height: 3px;
+  }
 }
 
 

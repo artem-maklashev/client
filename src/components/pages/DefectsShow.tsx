@@ -116,7 +116,8 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
     console.log("Передаю данные по производству в размере " + productionData.length)
 
     return (
-        <div className="row mt-5" style={{ backgroundColor: '#b5b5b5' }}>
+        
+        <div className="row mt-5 justify-content-center" style={{ backgroundColor: '#b5b5b5' }}>
             <Container className="container mt-auto">
                 <div className="row mt-5 justify-content-center">
                     <div className="col-md-3 mb-3 mx-auto">
@@ -157,16 +158,16 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
             {loading && (
                 <Preloader />
             )}
-            <Container className="p-lg-2 mb-5">
+            <Container className="p-lg-2 col-lg-11 mb-5">
                 <Tabs defaultActiveKey="table" id="uncontrolled-tab-example">
                     <Tab eventKey="table" title="Таблица" className="mb-3">
                         <Row className="justify-content-center">
                             {/* Основная таблица — занимает всю ширину на мобильных */}
-                            <Col xs={12} lg={8} className="mb-3 mb-lg-0">
+                            <Col xs={12} lg={7} className="mb-3 mb-lg-0">
                                 <DefectsTable defectsLog={defectsData} data={productionData} />
                             </Col>
                             {/* Блок смен — переносится на новую строку на мобильных */}
-                            <Col xs={12} lg={3}>
+                            <Col xs={12} lg={5}>
                                 <ShiftsDefect data={productionData} defectsLog={defectsData} />
                             </Col>
                         </Row>
@@ -184,6 +185,7 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
                 </Tabs>
             </Container>
         </div>
+       
     );
 };
 
