@@ -111,7 +111,7 @@ const GypsumBoardShow: React.FC<GypsumBoardShowProps> = () => {
                                 </div>
                             )}
                             <Row>
-                            <Col className="d-flex justify-content-center col-lg-6 col-sm-12">
+                            <Col className="d-flex justify-content-center col-lg-6 col-sm-12 pb-4">
                                 <GypsumBoardTable data={gypsumBoardData} />
                             </Col>
                             <Col className="d-flex justify-content-center col-lg-6 col-sm-12">

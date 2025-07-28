@@ -24,9 +24,9 @@ return (
                 <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
                     <BoardMainPageCard />
                 </Col>
-                <Col className="mt-3 col-lg-3 col-sm-12  align-items-center">
+                {/* <Col className="mt-3 col-lg-3 col-sm-12  align-items-center">
                     <MixMainPageCard />
-                </Col>
+                </Col> */}
             </Row>
             {/* Пример добавления видео */}
             {/* <Row className="justify-content-center mt-3">

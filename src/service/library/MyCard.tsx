@@ -1,17 +1,22 @@
 import React from "react";
 
 interface CardProps {
-  label?: string; // Метка теперь необязательна
-  value: React.ReactNode; // Поддержка строк, чисел и JSX
+  label?: string;
+  value: React.ReactNode;
   valueColor?: string;
   labelFontSize?: string;
-  labelAlign?: 'left' | 'center' | 'right'; // Позиция label
+  labelAlign?: 'left' | 'center' | 'right';
   labelPosition?: {
-    top?: string | number;  // Расположение сверху
-    left?: string | number; // Расположение слева
-    right?: string | number; // Расположение справа
-    bottom?: string | number; // Расположение снизу
+    top?: string | number;
+    left?: string | number;
+    right?: string | number;
+    bottom?: string | number;
   };
+  labelVariant?: 'floating' | 'inline' | 'top';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+  withBorder?: boolean;
+  className?: string;
   onClick?: () => void;
 }
 
@@ -22,66 +27,168 @@ const MyCard: React.FC<CardProps> = ({
   onClick,
   labelFontSize = '12px',
   labelAlign = 'left',
-  labelPosition = { top: '-10px', left: '10px' }, // Значения по умолчанию
+  labelPosition,
+  labelVariant = 'floating',
+  size = 'md',
+  variant = 'default',
+  withBorder = false,
+  className = '',
+  ...props
 }) => {
+  // Размеры карточки
+  const getSizeStyles = () => {
+    switch (size) {
+      case 'sm':
+        return { padding: '12px 16px', minHeight: '80px' };
+      case 'lg':
+        return { padding: '24px 20px', minHeight: '120px' };
+      default:
+        return { padding: '16px 18px', minHeight: '100px' };
+    }
+  };
+
+  // Варианты стилей карточки
+  const getVariantStyles = () => {
+    const baseStyles = {
+      background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03)',
+      borderRadius: '12px',
+    };
+
+    switch (variant) {
+      case 'primary':
+        return {
+          ...baseStyles,
+          border: withBorder ? '1px solid rgba(99, 102, 241, 0.2)' : '1px solid rgba(0, 0, 0, 0.06)',
+          background: 'linear-gradient(145deg, #f0f4ff, #e8eefe)',
+        };
+      case 'success':
+        return {
+          ...baseStyles,
+          border: withBorder ? '1px solid rgba(34, 197, 94, 0.2)' : '1px solid rgba(0, 0, 0, 0.06)',
+          background: 'linear-gradient(145deg, #f0fdf4, #e8fce8)',
+        };
+      case 'warning':
+        return {
+          ...baseStyles,
+          border: withBorder ? '1px solid rgba(251, 191, 36, 0.2)' : '1px solid rgba(0, 0, 0, 0.06)',
+          background: 'linear-gradient(145deg, #fffbeb, #fefce8)',
+        };
+      case 'danger':
+        return {
+          ...baseStyles,
+          border: withBorder ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(0, 0, 0, 0.06)',
+          background: 'linear-gradient(145deg, #fef2f2, #fdeeee)',
+        };
+      default:
+        return {
+          ...baseStyles,
+          border: withBorder ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+        };
+    }
+  };
+
+  // Позиция лейбла по умолчанию в зависимости от варианта
+  const getDefaultLabelPosition = () => {
+    if (labelPosition) return labelPosition;
+    
+    switch (labelVariant) {
+      case 'inline':
+        return { top: '8px', left: '16px' };
+      case 'top':
+        return { top: '0px', left: '0px' };
+      default: // floating
+        return { top: '-10px', left: '16px' };
+    }
+  };
+
+  const labelPositionStyles = getDefaultLabelPosition();
+
+  // Стили для разных вариантов лейбла
+  const getLabelVariantStyles = () => {
+    switch (labelVariant) {
+      case 'inline':
+        return {
+          position: 'static' as const,
+          transform: 'none',
+          marginBottom: '8px',
+          display: 'inline-block',
+        };
+      case 'top':
+        return {
+          position: 'static' as const,
+          transform: 'none',
+          width: '100%',
+          marginBottom: '12px',
+          padding: '8px 12px',
+          background: 'rgba(0, 0, 0, 0.03)',
+          borderRadius: '8px',
+        };
+      default: // floating
+        return {
+          position: 'absolute' as const,
+          top: labelPositionStyles.top,
+          left: labelPositionStyles.left,
+          right: labelPositionStyles.right,
+          bottom: labelPositionStyles.bottom,
+        };
+    }
+  };
+
   return (
     <div
-      className="myCard mt-2 mb-3"
+      className={`myCard ${className}`}
       onClick={onClick}
       style={{
         cursor: onClick ? "pointer" : "default",
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        position: 'relative', // Для правильного позиционирования label
-        padding: '10px 10px 10px', // Обеспечиваем отступы для карточки
-        width: '100%', // Ширина карточки должна быть 100% от родителя
-        background: 'linear-gradient(to bottom right, #f5f5f5, #e0e0e0)',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px', // Скругленные углы
-
+        position: 'relative',
+        width: '100%',
+        transition: 'all 0.2s ease-in-out',
+        ...getSizeStyles(),
+        ...getVariantStyles(),
+        ...(onClick && {
+          cursor: 'pointer',
+          ':hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06)',
+          }
+        }),
       }}
+      {...props}
     >
-
-      {/* Условие, чтобы label отображался только если он есть */}
-      {/* <div className="icon"></div> */}
       {label && (
         <div
           className="myCard__label"
           style={{
             fontSize: labelFontSize,
             textAlign: labelAlign,
-            position: 'absolute',
-            top: labelPosition.top,  // Используем значение top
-            left: labelPosition.left, // Используем значение left
-            right: labelPosition.right, // Используем значение right, если нужно
-            bottom: labelPosition.bottom, // Используем значение bottom, если нужно
-            // background: 'white',
-            // border: '1px solid #ccc',
-            // borderRadius: '12px',
-            // padding: '0 5px',
-            // fontWeight: '600',
-            // color: '#555',
-            // zIndex: 10, // Чтобы метка была поверх других элементов
-            whiteSpace: 'nowrap', // Запрещает перенос строки и обрезание
-            maxWidth: '90%', // Устанавливаем максимальную ширину метки в 90% от контейнера
-            overflow: 'hidden', // Прячет переполнение
-            textOverflow: 'ellipsis', // Добавляет многоточие, если текст не помещается
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            ...getLabelVariantStyles(),
           }}
         >
           {label}
-          {/* <div className="icon"></div> */}
         </div>
       )}
+      
       <div
         className="myCard__value"
         style={{
-          color: valueColor,
-          // marginTop: '5px', // Добавляем отступ сверху для контента, если есть метка
-          textAlign: 'center', // Центрируем значение
+          color: valueColor || '#1e293b',
+          textAlign: 'center',
+          fontWeight: 600,
+          fontSize: size === 'sm' ? '18px' : size === 'lg' ? '28px' : '22px',
+          lineHeight: 1.3,
+          marginTop: label && labelVariant === 'floating' ? '16px' : '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '32px',
         }}
       >
-        {value} {/* Отображаем любой React-элемент */}
+        {value}
       </div>
     </div>
   );
