@@ -77,27 +77,42 @@ const PlanPage: React.FC<PlanPageProps> = () => {
     }
 
     return (
-        <Container d-flex className="mt-5 mb-5">
-            <Row>
-                <Container className=" mt-3 mb-2">
-                    <Row>
-                        <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
-                        <Col lg={9} sm={12}>
-                            <PlanTable planList={planList} planEditing={handleEditPlan} planDelete={planDelete} />
-                        </Col>
-                    </Row>
-                    <Row className='justify-content-center'>
-                        <Col xs={1}>
-                            <Button variant="primary" onClick={() => setModalShow(true)} size="sm">Добавить</Button>
-                        </Col>
-                    </Row>
-                </Container>
+        <Container fluid className="mt-5 ">
+            <Row >
+                {/* Левая колонка - два элемента друг под другом */}
+                <Col lg={4} sm={12} className="mt-4">
+
+
+                    <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
+
+
+
+
+                    {/* <div className="d-flex justify-content-start">
+                        <Button variant="primary" onClick={() => setModalShow(true)} size="sm">
+                            Добавить
+                        </Button>
+                    </div> */}
+
+                    <PlanTable planList={planList} planEditing={handleEditPlan} planDelete={planDelete} onAddPlan={() => setModalShow(true)} />
+
+                </Col>
+
+                {/* Кнопка "Добавить" под таблицей */}
+
+
+
+
+
+
+                {/* Правая колонка - третий элемент справа */}
+                <Col lg={8} sm={12} className="mt-4">
+                    <PlanDataTable planList={planList} productions={productions} />
+                </Col>
             </Row>
-            <Row className="mb-3">
-                <PlanDataTable planList={planList} productions={productions}/>
-            </Row>
+
             <PlanModal show={modalShow} onClose={handleClose} month={period} plan={selectedPlan} onSave={savePlan} />
-        </Container >
+        </Container>
     );
 }
 export default PlanPage;

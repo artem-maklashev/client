@@ -429,6 +429,7 @@
   .myCard::before {
     height: 3px;
   }
+
 }
 
 
@@ -564,4 +565,129 @@
 
 .badge {
   font-weight: 500;
+}
+
+
+/* таблица плана*/
+.p-datatable {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Заголовок таблицы */
+.p-datatable .p-datatable-thead > tr > th {
+background: linear-gradient(180deg, #e6eeff 0%, #cbd2df 100%);
+box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+  padding: 12px 16px;
+  border: none;
+  /* box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05); */
+}
+
+/* Строка таблицы */
+.p-datatable .p-datatable-tbody > tr {
+  transition: background 0.2s ease;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+background-color: #f1f5f9;}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #d4d4d4;
+}
+
+/* Колонки */
+.p-datatable .p-column-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.p-datatable .p-sortable-column-indicator {
+  margin-left: 4px;
+}
+
+/* Кнопки действий */
+.p-button-info {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.p-button-info2 {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  width: auto;
+  height: 32px;
+  border-radius: 3%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.p-button-info:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.p-button-info2:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.p-button-danger {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.p-button-danger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Пагинация */
+.p-paginator {
+  background: #f9fafb;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.p-paginator .p-paginator-page {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #374151;
+  font-size: 1rem;
+  padding: 4px 8px;
+  transition: background 0.2s ease, border 0.2s ease;
+}
+
+.p-paginator .p-paginator-page.p-highlight {
+  background: #e0e0e0;
+  border: 1px solid #e0e0e0;
+}
+
+/* Улучшенный датапикер */
+.datepicker-container {
+  margin-bottom: 20px;
+}
+
+/* Улучшенные отступы */
+.row > .col {
+  padding: 10px;
 }

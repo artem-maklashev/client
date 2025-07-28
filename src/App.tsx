@@ -20,6 +20,8 @@ import ConsumptionReport from './components/pages/ConsumptionReport';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Замените на любую другую тему
 // import 'primereact/resources/primereact.min.css'; // Основные стили PrimeReact
 import 'primeicons/primeicons.css';
+import 'primereact/resources/primereact.min.css';
+
 
 
 

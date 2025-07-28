@@ -150,16 +150,17 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
     return (
 
-        <div className="card mt-2 mb-5" style={{ border: 'none', boxShadow: 'none' }}>
+        <div className="card mt-2 mb-5" style={{ border: '1px', boxShadow: 'none' }}>
             
             <DataTable
                 value={formattedData}
                 scrollable
-                scrollHeight="600px"
+                scrollHeight="820px"
                 showGridlines
                 stripedRows={false} // Отключаем чередование строк, чтобы настроить вручную
                 tableStyle={{ fontSize: 12 }}
-                className="custom-datatable"
+                // className="custom-datatable"
+                className="p-datatable-striped p-datatable-hover"
                 dataKey="gupsumboard.id"
             >
                 {/* Колонка с информацией о гипсокартоне */}
@@ -167,7 +168,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                     header="Гипсокартон"
                     body={(rowData) => {
                         return (
-                            <div style={{ color: 'blue', fontWeight: 'bold' }}>
+                            <div style={{ color: '#374151', fontWeight: 'bold' }}>
                                 {`${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
                     ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
                             </div>
@@ -212,6 +213,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                     body={(rowData) => calculateRowTotal(rowData.planValue)} // Выводим сумму по строке
                     footer={Object.values(columnTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
                     className="font-bold"
+                    
                     bodyStyle={{ fontWeight: 'bold' }} />
             </DataTable>
 
