@@ -1,7 +1,7 @@
 import { addLocale } from "primereact/api";
 import { Calendar } from "primereact/calendar";
 import React, { useEffect, useState } from "react";
-import { Card, Col, Container } from "react-bootstrap";
+import { Card, Col } from "react-bootstrap";
 import '../../../App.css'
 
 addLocale('ru', {
@@ -15,9 +15,7 @@ addLocale('ru', {
     clear: "Очистить",
     dateFormat: "dd.mm.yy",
     weekHeader: "Нед"
-    //...
 });
-
 
 interface PeriodSelectorProps {
     period: Date;
@@ -26,23 +24,38 @@ interface PeriodSelectorProps {
 
 const PeriodSelector: React.FC<PeriodSelectorProps> = ({ period, onPeriodChange }) => {
     const [selectedPeriod, setSelectedPeriod] = useState<Date | null>(period);
-    useEffect(() => {
-        if (selectedPeriod)
-            onPeriodChange(selectedPeriod);
-    }, [onPeriodChange, selectedPeriod]);
-    return (
-        <Col >
-            <Card className="d-flex justify-content-center">
-                <Card.Header className='text-center'><h5>Выберите период</h5></Card.Header>
 
-            <Calendar value={selectedPeriod} onChange={(e) => setSelectedPeriod(e.value || new Date())} view="month" dateFormat="MM yy"
-                locale="ru"
-                inline
-                style={{fontSize: 13}}
-                className="custom-calendar"
-            />
+    useEffect(() => {
+        if (selectedPeriod) {
+            onPeriodChange(selectedPeriod);
+        }
+    }, [onPeriodChange, selectedPeriod]);
+
+    return (
+        <Col xs={12} className="mb-2">
+            <Card className="shadow-sm border-0 rounded-3">
+                <Card.Header className="bg-white border-0 py-1 text-center">
+                    <h5 className="mb-0 text-dark fw-normal">Выберите период</h5>
+                </Card.Header>
+                <Card.Body className="p-3 d-flex justify-content-center">
+                    <Calendar 
+                        value={selectedPeriod} 
+                        onChange={(e) => setSelectedPeriod(e.value || new Date())} 
+                        view="month" 
+                        dateFormat="MM yy"
+                        locale="ru"
+                        inline
+                        style={{ 
+                            width: '100%',
+                            maxWidth: '300px',
+                            margin: '0 auto',
+                            fontSize: '14px'
+                        }}
+                        className="custom-calendar border-0"
+                    />
+                </Card.Body>
             </Card>
-       </Col>
+        </Col>
     );
 };
 
