@@ -572,6 +572,8 @@
 .p-datatable {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: small;
+ 
 }
 
 /* Заголовок таблицы */
@@ -588,6 +590,11 @@ box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5),
 /* Строка таблицы */
 .p-datatable .p-datatable-tbody > tr {
   transition: background 0.2s ease;
+  
+}
+/* Строка таблицы - добавляем отступы */
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 12px 16px; /* Вертикальные 12px, горизонтальные 16px */
 }
 
 .p-datatable .p-datatable-tbody > tr:nth-child(even) {
@@ -691,3 +698,110 @@ background-color: #f1f5f9;}
 .row > .col {
   padding: 10px;
 }
+
+/* Современный пагинатор */
+.modern-paginator .p-paginator {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.modern-paginator .p-paginator-page,
+.modern-paginator .p-paginator-next,
+.modern-paginator .p-paginator-prev,
+.modern-paginator .p-paginator-first,
+.modern-paginator .p-paginator-last {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  min-width: 36px;
+  height: 36px;
+  margin: 0 3px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.modern-paginator .p-paginator-page:hover:not(.p-highlight),
+.modern-paginator .p-paginator-next:hover,
+.modern-paginator .p-paginator-prev:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modern-paginator .p-paginator-page.p-highlight {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+/* Круглые кнопки для стрелок */
+.modern-paginator .p-paginator-first,
+.modern-paginator .p-paginator-prev,
+.modern-paginator .p-paginator-next,
+.modern-paginator .p-paginator-last {
+  border-radius: 50%;
+  width: 36px;
+}
+
+/* Выпадающий список */
+.modern-paginator .p-dropdown {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.modern-paginator .p-dropdown:hover {
+  border-color: #cbd5e1;
+}
+
+/* Компактный пагинатор */
+.compact-paginator .p-paginator {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.compact-paginator .p-paginator-page,
+.compact-paginator .p-paginator-next,
+.compact-paginator .p-paginator-prev {
+  min-width: 28px;
+  height: 28px;
+  margin: 0 1px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+/* Кастомизированный календарь */
+/* .custom-calendar .p-datepicker {
+  font-size: 12px;
+  padding: 0.5rem;
+}
+
+.custom-calendar .p-datepicker-calendar td,
+.custom-calendar .p-datepicker-calendar th {
+  padding: 0.25rem;
+  min-width: 1.8rem;
+  height: 1.8rem;
+}
+
+.custom-calendar .p-datepicker-header {
+  padding: 0.25rem;
+}
+
+.custom-calendar .p-datepicker-title {
+  font-size: 13px;
+}
+
+.custom-calendar .p-datepicker-prev,
+.custom-calendar .p-datepicker-next {
+  width: 1.5rem;
+  height: 1.5rem;
+} */

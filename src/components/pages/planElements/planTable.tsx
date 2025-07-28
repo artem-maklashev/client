@@ -44,7 +44,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
     const processedPlanList = planList.map(item => ({
         ...item,
         gypsumBoardSearchText: `${item.gypsumBoard.tradeMark.name} ${item.gypsumBoard.boardType.name} ${item.gypsumBoard.edge.name} ${item.gypsumBoard.thickness.value}×${item.gypsumBoard.width.value}×${item.gypsumBoard.length.value}`
-    }));
+    })).sort((a, b) => new Date(b.planDate).getTime() - new Date(a.planDate).getTime());
 
     if (processedPlanList.length === 0) {
         return (
@@ -77,16 +77,16 @@ const PlanTable: React.FC<PlanTableProps> = ({ planList, planEditing, planDelete
                             <DataTable
                                 value={processedPlanList}
                                 scrollable
-                                scrollHeight="400px"
+                                scrollHeight="370px"
                                 size="normal"
                                 paginator
-                                rows={10}
+                                rows={5}
                                 rowsPerPageOptions={[5, 10, 20, 50]}
                                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                                 currentPageReportTemplate="Показано {first} - {last} из {totalRecords}"
                                 emptyMessage="Нет данных для отображения"
                                 // tableStyle={{ width: '100%', minWidth: '800px' }}
-                                className="p-datatable-striped p-datatable-hover"
+                                className="p-datatable-striped p-datatable-hover compact-paginator"
                                 responsiveLayout="scroll"
                             >
                                 {/* Дата с сортировкой */}

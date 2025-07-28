@@ -5,20 +5,25 @@ import WeatherString from "../WeatherRunningString";
 const Footer = () => {
     return (
         <Container>
-            <Navbar fixed="bottom" bg="dark" variant="dark" >
-                <Row >
-                    <Row className="justify-content-start ">
-                    <Col sm={10} lg={8} xl={8}>
-                        <WeatherString />
-                    </Col>
-                    </Row>
-                    <Row className="justify-content-start ">
-
-                        <Col sm={2} lg={4} xl={4}>
-                            <Navbar.Text style={{ fontSize: '10px', marginTop: 'auto' }} >&copy; 2023-2025 Маклашев Артем</Navbar.Text>
+            <Navbar fixed="bottom" bg="dark" variant="dark" className="py-0"> {/* Уменьшаем padding */}
+                <Container fluid>
+                    <Row className="w-100 align-items-center"> {/* Добавляем выравнивание */}
+                        <Col xs={12} sm={8} lg={8} className="pe-0"> {/* Убираем margin и padding */}
+                            <div className="d-flex align-items-center" style={{ height: "100%" }}>
+                                <WeatherString />
+                            </div>
+                        </Col>
+                        <Col xs={12} sm={4} lg={4} className="text-sm-end text-center ps-0"> {/* Убираем лишние отступы */}
+                            <Navbar.Text style={{
+                                fontSize: '10px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                lineHeight: '1.5' /* Единая высота строки */
+                            }}>
+                                &copy; 2023-2025 Маклашев Артем
+                            </Navbar.Text>
                         </Col>
                     </Row>
-                </Row>
+                </Container>
             </Navbar>
         </Container>
     );

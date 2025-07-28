@@ -34,9 +34,9 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ period, onPeriodChange 
     return (
         <Col xs={12} className="mb-2">
             <Card className="shadow-sm border-0 rounded-3">
-                <Card.Header className="bg-white border-0 py-1 text-center">
+                {/* <Card.Header className="bg-white border-0 py-1 text-center">
                     <h5 className="mb-0 text-dark fw-normal">Выберите период</h5>
-                </Card.Header>
+                </Card.Header> */}
                 <Card.Body className="p-3 d-flex justify-content-center">
                     <Calendar 
                         value={selectedPeriod} 
@@ -47,9 +47,9 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ period, onPeriodChange 
                         inline
                         style={{ 
                             width: '100%',
-                            maxWidth: '300px',
+                            maxWidth: '240px',
                             margin: '0 auto',
-                            fontSize: '14px'
+                            fontSize: '10px'
                         }}
                         className="custom-calendar border-0"
                     />
