@@ -6,6 +6,7 @@ import DelaysChart from "./delaysElements/DelaysChart";
 import { api } from "../../service/Api";
 import Preloader from "./commonElements/preloader";
 import ApiService from "../../service/ApiService";
+import DateRangeSelector from "./dashBoardComponent/dateRangeSelector";
 
 interface DelaysShowProps {
 }
@@ -36,7 +37,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
             // }
             // const data: Delays[] = await response.data;
             const data: Delays[] = await ApiService.fetchDelaysData(
-                new Date(selectedStartDate), 
+                new Date(selectedStartDate),
                 new Date(selectedEndDate));
             setErrorText(null);
             setDelaysData(data);
@@ -111,11 +112,23 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
         });
     };
 
+    const formatDate = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
+    const handlePeriodChange = (startDate: Date | null, endDate: Date | null) => {
+        if (startDate && endDate) {
+            setSelectedStartDate(formatDate(startDate));
+            setSelectedEndDate(formatDate(endDate));
+        }
+    };
     return (
         <div className="row mt-5" style={{ backgroundColor: '#b5b5b5' }}>
             <Container className="container mt-auto">
-                <div className="row mt-5">
+                {/* <div className="row mt-5">
                     <div className="col-md-3 mb-3 mx-auto">
                         <div className="input-group">
                             <span className="input-group-text" id="basic-addon1">
@@ -146,7 +159,12 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
+                <Row className='justify-content-center mt-3'>
+                    <Col lg={3} sm={3}>
+                        <DateRangeSelector onDatesChange={handlePeriodChange} />
+                    </Col>
+                </Row>
             </Container>
 
 

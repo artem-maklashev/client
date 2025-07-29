@@ -1,8 +1,9 @@
 import BoardProduction from "../../../model/production/BoardProduction";
 import React from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import DefectsDataPrepare from "./DefectsDataPrepare";
 import BoardDefectsLog from "../../../model/defects/BoardDefectsLog";
+import NotQulaty from "./notQulaty";
 
 interface ShiftsDefectProps {
     defectsLog: BoardDefectsLog[];
@@ -89,7 +90,7 @@ const ShiftsDefect: React.FC<ShiftsDefectProps> = ({ defectsLog, data }) => {
     };
 
     return (
-        <div style={{ padding: '1rem' }}>
+        <Container style={{ padding: '1rem' }}>
             <Row className="justify-content-center">
                 <Col md={6} lg={4} style={{ marginBottom: '1.5rem' }}>
                     <div style={cardStyle}>
@@ -142,7 +143,7 @@ const ShiftsDefect: React.FC<ShiftsDefectProps> = ({ defectsLog, data }) => {
                                         let backgroundColor = '#ffffff';
                                         if (defectPercent > 10) {
                                             backgroundColor = '#fee2e2'; // красный фон для высокого процента
-                                        } else if (defectPercent > 5) {
+                                        } else if (defectPercent > 3) {
                                             backgroundColor = '#ffedd5'; // оранжевый фон для среднего процента
                                         }
                                         
@@ -301,7 +302,12 @@ const ShiftsDefect: React.FC<ShiftsDefectProps> = ({ defectsLog, data }) => {
                     </div>
                 </Col>
             </Row>
-        </div>
+            <Row >
+                <Col className="col-12 d-flex justify-content-end">
+                    <NotQulaty productionData={data} />
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

@@ -1,16 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import Delays from "../../../model/delays/Delays";
 import DelayDataPrepare from "./DalayDataPrepare";
-import {Button, Col, Row} from "react-bootstrap";
+import { Button, Col, Row, Card } from "react-bootstrap";
+import { FaPrint, FaDownload } from "react-icons/fa";
 
 interface DelaysTableProps {
     data: Delays[];
     planDuration: number;
 }
 
-const DelaysTable: React.FC<DelaysTableProps> = ({data, planDuration}) => {
+const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
+    const [isPrinting, setIsPrinting] = useState(false);
+
     if (data.length === 0) {
-        return <div>Данных нет</div>;
+        return (
+            <Card className="shadow-sm border-0">
+                <Card.Body className="text-center py-5">
+                    <div className="text-muted">
+                        <i className="bi bi-info-circle me-2"></i>
+                        Данных по простоям нет
+                    </div>
+                </Card.Body>
+            </Card>
+        );
     }
 
     const minDate = new Date(Math.min(...data.map(delay => new Date(delay.delayDate).getTime())));
@@ -22,177 +34,245 @@ const DelaysTable: React.FC<DelaysTableProps> = ({data, planDuration}) => {
 
     const preparedData = new DelayDataPrepare(filteredData).getSummary();
     const delaysSummary = preparedData.delaysSummary;
-    const unitData = preparedData.unitData    
+    const unitData = preparedData.unitData;
+
+    const formatPercentage = (value: number, total: number): string => {
+        if (total === 0) return '0.00';
+        return ((value * 100) / total).toFixed(2);
+    };
 
     const tables = Object.entries(unitData).map(
         ([delayType, tableData], tableIndex) => (
-            <Row key={`row-${tableIndex}`} className="mb-2">
-                <h4 className="text-center">{delayType}</h4>
-                <div key={`table-${tableIndex}`} className="table-responsive">
-                    <table
-                        className="table table-bordered table-hover table-light table-striped"
-                        id={`gypsumBoardTable-${tableIndex}`}
-                    >
-                        <thead className="table-dark">
-                        <tr>
-                            <th className="text-center">Участок</th>
-                            <th className="text-center">Узел</th>
-                            <th className="text-center">Деталь</th>
-                            <th className="text-center">Длительность</th>
-                            <th className="text-center">%</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {tableData.map((item, index) => (
-                            <tr key={`${delayType}-${index}`}>
-                                <td>{item.unitPart.unit.productionArea.name}</td>
-                                <td>{item.unitPart.unit.name}</td>
-                                <td>{item.unitPart.name}</td>
-                                <td className="text-center">{item.delta}</td>
-                                <td className="text-center">{planDuration ? (item.delta*100/planDuration).toFixed(2) : 0 } %</td>
-                            </tr>
-                        ))}
-                        <tr key={`total-${tableIndex}`} className="table-success">
-                            <td colSpan={3} className="text-end"><strong>Итого</strong></td>
-                            <td className="text-center"><strong>{delaysSummary[delayType]}</strong></td>
-                            <td className="text-center"><strong>{planDuration ? (delaysSummary[delayType]*100/planDuration).toFixed(2) : 0} %</strong></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </Row>
+            <Card key={`card-${tableIndex}`} className="mb-4 shadow-sm border-0">
+                <Card.Header className="bg-primary text-white">
+                    <h5 className="mb-0 text-center">{delayType}</h5>
+                </Card.Header>
+                <Card.Body className="p-0">
+                    <div className="table-responsive">
+                        <table className="table table-hover mb-0">
+                            <thead className="table-light">
+                                <tr>
+                                    <th className="text-center align-middle" style={{ width: '20%' }}>Участок</th>
+                                    <th className="text-center align-middle" style={{ width: '20%' }}>Узел</th>
+                                    <th className="text-center align-middle" style={{ width: '30%' }}>Деталь</th>
+                                    <th className="text-center align-middle" style={{ width: '15%' }}>Длительность (мин)</th>
+                                    <th className="text-center align-middle" style={{ width: '15%' }}>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tableData.map((item, index) => (
+                                    <tr key={`${delayType}-${index}`}>
+                                        <td className="align-middle">{item.unitPart.unit.productionArea.name}</td>
+                                        <td className="align-middle">{item.unitPart.unit.name}</td>
+                                        <td className="align-middle">{item.unitPart.name}</td>
+                                        <td className="text-center align-middle fw-medium">{item.delta}</td>
+                                        <td className="text-center align-middle">
+                                            <span className="badge bg-info-subtle text-info-emphasis">
+                                                {formatPercentage(item.delta, planDuration)}%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                                <tr className="table-success fw-bold">
+                                    <td colSpan={3} className="text-end align-middle">Итого:</td>
+                                    <td className="text-center align-middle">{delaysSummary[delayType]}</td>
+                                    <td className="text-center align-middle">
+                                        <span className="badge bg-success-subtle text-success-emphasis">
+                                            {formatPercentage(delaysSummary[delayType], planDuration)}%
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </Card.Body>
+            </Card>
         )
     );
 
     const printStyles = `
-  @media print {
-    @page {
-      size: landscape;
-      margin: 5mm;
-    }
-    body {
-      padding: 5px;
-      font-family: Arial, sans-serif;
-    }
-    .no-print {
-      display: none !important;
-    }
-    .print-section {
-      width: 100%;
-      margin-bottom: 5px;
-      page-break-after: avoid;
-    }
-    table {
-      width: 100%;
-      margin: 5px 0;
-      font-size: inherit;
-    }
-    th, td {
-      padding: 4px;
-      line-height: 1.2;
-    }
-    h4 {
-      margin: 8px 0;
-      font-size: 1.1rem;
-    }
-    .table-responsive {
-      overflow-x: visible;
-    }
-  }
-`;
-    
-
-    const handlePrint = () => {
-        const printContent = document.getElementById('print-content');
-        
-        if (printContent) {
-            const printWindow = window.open('', '_blank');
-            
-            if (printWindow) {
-                const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-                    .map(el => el.outerHTML)
-                    .join('');
-                
-                const printStyles = `
-                    <style>
-                        @page {
-                            size: landscape;
-                            margin: 5mm;
-                        }
-                        body { 
-                            margin: 0; 
-                            padding: 5px; 
-                            font-family: Arial, sans-serif;
-                        }
-                        .print-section { 
-                            page-break-after: avoid; 
-                            margin-bottom: 5px;
-                        }
-                        h4 { 
-                            text-align: center; 
-                            margin: 8px 0;
-                            font-size: 1.1rem;
-                        }
-                        table { 
-                            width: 100%; 
-                            border-collapse: collapse; 
-                            margin: 5px 0;
-                            font-size: inherit;
-                        }
-                        th, td { 
-                            border: 1px solid #ddd; 
-                            padding: 4px; 
-                            text-align: left;
-                            line-height: 1.2;
-                        }
-                        th { 
-                            background-color: #f2f2f2; 
-                            text-align: center;
-                        }
-                        .table-responsive {
-                            overflow-x: visible;
-                        }
-                    </style>
-                `;
-                
-                printWindow.document.write(`
-                    <html>
-                        <head>
-                            <title>Отчет по простоям</title>
-                            ${styles}
-                            ${printStyles}
-                        </head>
-                        <body>
-                            ${printContent.innerHTML}
-                            <script>
-                                window.onload = function() {
-                                    setTimeout(function() {
-                                        window.print();
-                                        window.close();
-                                    }, 200);
-                                };
-                            </script>
-                        </body>
-                    </html>
-                `);
-                
-                printWindow.document.close();
-            } else {
-                alert('Пожалуйста, разрешите всплывающие окна для этого сайта');
+        @media print {
+            @page {
+                size: landscape;
+                margin: 5mm;
+            }
+            body {
+                padding: 5px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-section {
+                width: 100%;
+                margin-bottom: 5px;
+                page-break-after: avoid;
+            }
+            .card {
+                border: 1px solid #dee2e6;
+                margin-bottom: 10px;
+                page-break-inside: avoid;
+            }
+            .card-header {
+                background-color: #f8f9fa !important;
+                color: #212529 !important;
+                border-bottom: 1px solid #dee2e6;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            table {
+                width: 100%;
+                margin: 5px 0;
+                font-size: 12px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #dee2e6 !important;
+                padding: 6px 8px !important;
+                line-height: 1.3;
+            }
+            th {
+                background-color: #f8f9fa !important;
+                font-weight: 600;
+            }
+            .table-responsive {
+                overflow-x: visible;
+            }
+            .badge {
+                background-color: #e9ecef !important;
+                color: #495057 !important;
+                border: 1px solid #dee2e6;
+            }
+            h4, h5 {
+                margin: 8px 0;
+                font-size: 1.1rem;
+                color: #212529 !important;
             }
         }
+    `;
+
+    const handlePrint = () => {
+        setIsPrinting(true);
+        
+        // Небольшая задержка для рендеринга
+        setTimeout(() => {
+            window.print();
+            setIsPrinting(false);
+        }, 100);
     };
 
-    return <div>
-        <style>{printStyles}</style>
-        <Button variant="primary" onClick={handlePrint} className="no-print mb-3 justify-content-end" >
-            Печать
-        </Button>
-        <div id="print-content">
-            <h4>Отчет по простоям за период {minDate.toLocaleDateString()} - {maxDate.toLocaleDateString()}</h4>
-            {tables}
+    const handleExport = () => {
+        // TODO: Реализация экспорта в Excel/CSV
+        alert('Функция экспорта будет реализована позже');
+    };
+
+    return (
+        <div className="delays-table-container">
+            <style>{printStyles}</style>
+            
+            {/* Заголовок с кнопками управления */}
+            <Row className="align-items-center mb-4">
+                <Col xs={12} md={6}>
+                    <h4 className="mb-0">
+                        <i className="bi bi-clock-history me-2"></i>
+                        Отчет по простоям
+                    </h4>
+                    <div className="text-muted small">
+                        Период: {minDate.toLocaleDateString()} - {maxDate.toLocaleDateString()}
+                    </div>
+                </Col>
+                <Col xs={12} md={6} className="d-flex justify-content-end gap-2 mt-3 mt-md-0">
+                    <Button 
+                        variant="outline-primary" 
+                        onClick={handleExport} 
+                        className="no-print d-flex align-items-center"
+                        disabled={isPrinting}
+                    >
+                        <FaDownload className="me-2" />
+                        Экспорт
+                    </Button>
+                    <Button 
+                        variant="primary" 
+                        onClick={handlePrint} 
+                        className="no-print d-flex align-items-center"
+                        disabled={isPrinting}
+                    >
+                        <FaPrint className="me-2" />
+                        Печать
+                    </Button>
+                </Col>
+            </Row>
+
+            {/* Сводная информация */}
+            <Card className="mb-4 shadow-sm border-0 no-print">
+                <Card.Body>
+                    <Row>
+                        <Col md={4} className="mb-3 mb-md-0">
+                            <div className="d-flex align-items-center">
+                                <div className="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i className="bi bi-list-task text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <div className="text-muted small">Всего записей</div>
+                                    <div className="h5 mb-0">{data.length}</div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col md={4} className="mb-3 mb-md-0">
+                            <div className="d-flex align-items-center">
+                                <div className="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i className="bi bi-calendar-range text-success fs-4"></i>
+                                </div>
+                                <div>
+                                    <div className="text-muted small">Период</div>
+                                    <div className="h5 mb-0">
+                                        {Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24))+1} дней
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col md={4}>
+                            <div className="d-flex align-items-center">
+                                <div className="bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i className="bi bi-stopwatch text-info fs-4"></i>
+                                </div>
+                                <div>
+                                    <div className="text-muted small">Общее время простоев</div>
+                                    <div className="h5 mb-0">
+                                        {Object.values(delaysSummary).reduce((a, b) => a + b, 0)} мин
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                </Card.Body>
+            </Card>
+
+            {/* Таблицы с данными */}
+            <div id="print-content">
+                {tables}
+            </div>
+
+            {/* Информация о плане */}
+            {planDuration > 0 && (
+                <Card className="mt-4 shadow-sm border-0 no-print">
+                    <Card.Body className="text-center">
+                        <div className="text-muted">
+                            Общее плановое время: <strong>{planDuration} минут</strong> | 
+                            Процент простоев: <strong>
+                                {formatPercentage(
+                                    Object.values(delaysSummary).reduce((a, b) => a + b, 0), 
+                                    planDuration
+                                )}%
+                            </strong>
+                        </div>
+                    </Card.Body>
+                </Card>
+            )}
         </div>
-    </div>;
+    );
 };
 
 export default DelaysTable;
