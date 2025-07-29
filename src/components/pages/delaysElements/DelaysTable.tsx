@@ -49,42 +49,42 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
                 </Card.Header>
                 <Card.Body className="p-0">
                     <div className="table-responsive">
-                        <table className="table table-hover mb-0">
-                            <thead className="table-light">
-                                <tr>
-                                    <th className="text-center align-middle" style={{ width: '20%' }}>Участок</th>
-                                    <th className="text-center align-middle" style={{ width: '20%' }}>Узел</th>
-                                    <th className="text-center align-middle" style={{ width: '30%' }}>Деталь</th>
-                                    <th className="text-center align-middle" style={{ width: '15%' }}>Длительность (мин)</th>
-                                    <th className="text-center align-middle" style={{ width: '15%' }}>%</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {tableData.map((item, index) => (
-                                    <tr key={`${delayType}-${index}`}>
-                                        <td className="align-middle">{item.unitPart.unit.productionArea.name}</td>
-                                        <td className="align-middle">{item.unitPart.unit.name}</td>
-                                        <td className="align-middle">{item.unitPart.name}</td>
-                                        <td className="text-center align-middle fw-medium">{item.delta}</td>
-                                        <td className="text-center align-middle">
-                                            <span className="badge bg-info-subtle text-info-emphasis">
-                                                {formatPercentage(item.delta, planDuration)}%
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                                <tr className="table-success fw-bold">
-                                    <td colSpan={3} className="text-end align-middle">Итого:</td>
-                                    <td className="text-center align-middle">{delaysSummary[delayType]}</td>
-                                    <td className="text-center align-middle">
-                                        <span className="badge bg-success-subtle text-success-emphasis">
-                                            {formatPercentage(delaysSummary[delayType], planDuration)}%
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+    <table className="table table-bordered table-hover mb-0" style={{ tableLayout: 'auto' }}>
+        <thead className="table-light">
+            <tr>
+                <th className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>Участок</th>
+                <th className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>Узел</th>
+                <th className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>Деталь</th>
+                <th className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>Длительность (мин)</th>
+                <th className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>%</th>
+            </tr>
+        </thead>
+        <tbody>
+            {tableData.map((item, index) => (
+                <tr key={`${delayType}-${index}`}>
+                    <td className="align-middle" style={{ whiteSpace: 'nowrap' }}>{item.unitPart.unit.productionArea.name}</td>
+                    <td className="align-middle" style={{ whiteSpace: 'nowrap' }}>{item.unitPart.unit.name}</td>
+                    <td className="align-middle">{item.unitPart.name}</td>
+                    <td className="text-center align-middle fw-medium" style={{ whiteSpace: 'nowrap' }}>{item.delta}</td>
+                    <td className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>
+                        <span className="badge bg-info-subtle text-info-emphasis">
+                            {formatPercentage(item.delta, planDuration)}%
+                        </span>
+                    </td>
+                </tr>
+            ))}
+            <tr className="table-success fw-bold">
+                <td colSpan={3} className="text-end align-middle">Итого:</td>
+                <td className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>{delaysSummary[delayType]}</td>
+                <td className="text-center align-middle" style={{ whiteSpace: 'nowrap' }}>
+                    <span className="badge bg-success-subtle text-success-emphasis">
+                        {formatPercentage(delaysSummary[delayType], planDuration)}%
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
                 </Card.Body>
             </Card>
         )

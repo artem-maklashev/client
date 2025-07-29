@@ -21,6 +21,7 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
 
+
     const fetchDelaysData = useCallback(async () => {
         setLoading(true);
         try {
@@ -56,12 +57,50 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
             await fetchDelaysData();
         };
 
-        const newDuration = (new Date(selectedEndDate).getTime() - new Date(selectedStartDate).getTime()) / (1000 * 60);
-        setPlanDuration(newDuration); //Нужно изменить на получение данных с выпуска об отработанном времени
+        // const newDuration = (new Date(selectedEndDate).getTime() - new Date(selectedStartDate).getTime()) / (1000 * 60);
+       
+
+            // setPlanDuration(newDuration); //Нужно изменить на получение данных с выпуска об отработанном времени
 
         fetchData();
     }, [selectedStartDate, selectedEndDate, fetchDelaysData]);
 
+    useEffect(() => {
+        const fetchFact = async () => {
+            try {
+                const response = await ApiService.fetchBoardProduction(
+                    new Date(selectedStartDate),
+                    new Date(selectedEndDate)
+                );
+
+                if (response && response.length > 0) {
+                    const filteredData = response.filter(item => item.category.id === 1);
+                    // Кэшируем Date объекты для лучшей производительности
+                    const duration = filteredData.reduce((acc, curr) => {
+                        const startDate = new Date(curr.productionList.productionStart).getTime();
+                        const endDate = new Date(curr.productionList.productionFinish).getTime();
+
+                        // Проверяем корректность дат
+                        if (isNaN(startDate) || isNaN(endDate) || startDate > endDate) {
+                            console.warn('Invalid date range for item:', curr);
+                            return acc;
+                        }
+
+                        return acc + (endDate - startDate);
+                    }, 0);
+
+                    setPlanDuration(Math.floor(duration / (1000 * 60))); // Конвертируем в минуты
+                } else {
+                    setPlanDuration(0);
+                }
+            } catch (error) {
+                console.error("Error fetching fact data:", error);
+                setPlanDuration(0); // Устанавливаем 0 в случае ошибки
+            }
+        };
+
+        fetchFact();
+    }, [selectedStartDate, selectedEndDate]);
 
     // const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     //     const enteredDate = event.target.value;
