@@ -63,23 +63,23 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
     }, [selectedStartDate, selectedEndDate, fetchDelaysData]);
 
 
-    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const enteredDate = event.target.value;
-        console.log(enteredDate)
-        if (event.target.id === "startDateInput") {
-            setSelectedStartDate(enteredDate);
-            console.log("УСТАНОВЛЕНА НОВАЯ НАЧАЛЬНАЯ ДАТА")
-            setErrorText(null); // Clear any previous error message
-        } else if (event.target.id === "endDateInput") {
-            setSelectedEndDate(enteredDate);
-            console.log("УСТАНОВЛЕНА НОВАЯ КОНЕЧНАЯ ДАТА")
-            setErrorText(null); // Clear any previous error message
-        } else {
-            // Handle invalid date
-            setErrorText(`Invalid date format. Please use ${getLocalizedDateFormat()}.`);
-        }
+    // const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const enteredDate = event.target.value;
+    //     console.log(enteredDate)
+    //     if (event.target.id === "startDateInput") {
+    //         setSelectedStartDate(enteredDate);
+    //         console.log("УСТАНОВЛЕНА НОВАЯ НАЧАЛЬНАЯ ДАТА")
+    //         setErrorText(null); // Clear any previous error message
+    //     } else if (event.target.id === "endDateInput") {
+    //         setSelectedEndDate(enteredDate);
+    //         console.log("УСТАНОВЛЕНА НОВАЯ КОНЕЧНАЯ ДАТА")
+    //         setErrorText(null); // Clear any previous error message
+    //     } else {
+    //         // Handle invalid date
+    //         setErrorText(`Invalid date format. Please use ${getLocalizedDateFormat()}.`);
+    //     }
 
-    };
+    // };
 
     // Function to get the current date in YYYY-MM-DD format (required by input type="date")
     function getCurrentDate(): string {
@@ -103,14 +103,14 @@ const DelaysShow: React.FC<DelaysShowProps> = () => {
     }
 
     // Function to get the localized date format
-    const getLocalizedDateFormat = (): string => {
-        const exampleDate = new Date(2023, 0, 1); // January 1, 2023
-        return exampleDate.toLocaleDateString(undefined, {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric',
-        });
-    };
+    // const getLocalizedDateFormat = (): string => {
+    //     const exampleDate = new Date(2023, 0, 1); // January 1, 2023
+    //     return exampleDate.toLocaleDateString(undefined, {
+    //         day: 'numeric',
+    //         month: 'numeric',
+    //         year: 'numeric',
+    //     });
+    // };
 
     const formatDate = (date: Date): string => {
         const year = date.getFullYear();

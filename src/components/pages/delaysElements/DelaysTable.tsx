@@ -90,88 +90,140 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
         )
     );
 
-    const printStyles = `
-        @media print {
-            @page {
-                size: landscape;
-                margin: 5mm;
-            }
-            body {
-                padding: 5px;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-section {
-                width: 100%;
-                margin-bottom: 5px;
-                page-break-after: avoid;
-            }
-            .card {
-                border: 1px solid #dee2e6;
-                margin-bottom: 10px;
-                page-break-inside: avoid;
-            }
-            .card-header {
-                background-color: #f8f9fa !important;
-                color: #212529 !important;
-                border-bottom: 1px solid #dee2e6;
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-            }
-            table {
-                width: 100%;
-                margin: 5px 0;
-                font-size: 12px;
-                border-collapse: collapse;
-            }
-            th, td {
-                border: 1px solid #dee2e6 !important;
-                padding: 6px 8px !important;
-                line-height: 1.3;
-            }
-            th {
-                background-color: #f8f9fa !important;
-                font-weight: 600;
-            }
-            .table-responsive {
-                overflow-x: visible;
-            }
-            .badge {
-                background-color: #e9ecef !important;
-                color: #495057 !important;
-                border: 1px solid #dee2e6;
-            }
-            h4, h5 {
-                margin: 8px 0;
-                font-size: 1.1rem;
-                color: #212529 !important;
-            }
-        }
-    `;
-
     const handlePrint = () => {
-        setIsPrinting(true);
+        const printContent = document.querySelector('.delays-table-container');
         
-        // Небольшая задержка для рендеринга
-        setTimeout(() => {
-            window.print();
+        if (printContent) {
+            setIsPrinting(true);
+            
+            const printWindow = window.open('', '_blank');
+            
+            if (printWindow) {
+                const printStyles = `
+                    <style>
+                        @page {
+                            size: landscape;
+                            margin: 5mm;
+                        }
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                            padding: 5px;
+                            margin: 0;
+                        }
+                        .print-header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .print-header h4 {
+                            margin: 0 0 10px 0;
+                            color: #212529;
+                        }
+                        .print-header p {
+                            margin: 0;
+                            color: #6c757d;
+                        }
+                        .card {
+                            border: 1px solid #dee2e6;
+                            margin-bottom: 15px;
+                            page-break-inside: avoid;
+                        }
+                        .card-header {
+                            background-color: #f8f9fa;
+                            color: #212529;
+                            border-bottom: 1px solid #dee2e6;
+                            padding: 10px 15px;
+                        }
+                        .card-header h5 {
+                            margin: 0;
+                            text-align: center;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 0;
+                            font-size: 12px;
+                        }
+                        th, td {
+                            border: 1px solid #dee2e6;
+                            padding: 6px 8px;
+                            line-height: 1.3;
+                        }
+                        th {
+                            background-color: #f8f9fa;
+                            font-weight: 600;
+                            text-align: center;
+                        }
+                        .text-center {
+                            text-align: center;
+                        }
+                        .text-end {
+                            text-align: right;
+                        }
+                        .fw-bold {
+                            font-weight: bold;
+                        }
+                        .table-success {
+                            background-color: #d1e7dd;
+                        }
+                        .badge {
+                            display: inline-block;
+                            padding: 0.35em 0.65em;
+                            font-size: 0.75em;
+                            font-weight: 700;
+                            line-height: 1;
+                            color: #495057;
+                            text-align: center;
+                            white-space: nowrap;
+                            vertical-align: baseline;
+                            border-radius: 0.375rem;
+                            background-color: #e9ecef;
+                        }
+                    </style>
+                `;
+                
+                const printHTML = `
+                    <div class="print-header">
+                        <h4>Отчет по простоям</h4>
+                        <p>Период: ${minDate.toLocaleDateString()} - ${maxDate.toLocaleDateString()}</p>
+                    </div>
+                    ${printContent.innerHTML}
+                `;
+                
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Отчет по простоям</title>
+                            ${printStyles}
+                        </head>
+                        <body>
+                            ${printHTML}
+                            <script>
+                                window.onload = function() {
+                                    setTimeout(function() {
+                                        window.print();
+                                        window.close();
+                                    }, 500);
+                                };
+                            </script>
+                        </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+            } else {
+                alert('Пожалуйста, разрешите всплывающие окна для этого сайта');
+            }
+            
             setIsPrinting(false);
-        }, 100);
+        }
     };
 
     const handleExport = () => {
-        // TODO: Реализация экспорта в Excel/CSV
         alert('Функция экспорта будет реализована позже');
     };
 
     return (
         <div className="delays-table-container">
-            <style>{printStyles}</style>
-            
             {/* Заголовок с кнопками управления */}
             <Row className="align-items-center mb-4">
                 <Col xs={12} md={6}>
@@ -228,7 +280,7 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
                                 <div>
                                     <div className="text-muted small">Период</div>
                                     <div className="h5 mb-0">
-                                        {Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24))+1} дней
+                                        {Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24))} дней
                                     </div>
                                 </div>
                             </div>
@@ -250,8 +302,8 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
                 </Card.Body>
             </Card>
 
-            {/* Таблицы с данными */}
-            <div id="print-content">
+            {/* Таблицы с данными - только это будет печататься */}
+            <div className="print-content">
                 {tables}
             </div>
 
