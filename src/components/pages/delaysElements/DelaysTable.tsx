@@ -280,7 +280,7 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
                                 <div>
                                     <div className="text-muted small">Период</div>
                                     <div className="h5 mb-0">
-                                        {Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24))} дней
+                                        {Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24))+1} дней
                                     </div>
                                 </div>
                             </div>
