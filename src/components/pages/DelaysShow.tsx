@@ -3,7 +3,6 @@ import Delays from "../../model/delays/Delays";
 import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import DelaysTable from "./delaysElements/DelaysTable";
 import DelaysChart from "./delaysElements/DelaysChart";
-import { api } from "../../service/Api";
 import Preloader from "./commonElements/preloader";
 import ApiService from "../../service/ApiService";
 import DateRangeSelector from "./dashBoardComponent/dateRangeSelector";
