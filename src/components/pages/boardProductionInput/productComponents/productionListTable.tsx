@@ -48,6 +48,10 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
           await saveConsumptions(updatedConsumptions);
           setUpdateConsumption(true);
         }
+
+        if (savedReport) {
+          setReportData(reportData.map(report => report.productionList.id === savedReport.productionList.id ? savedReport : report));
+        }
         
         setShowModal(false);
       } catch (error) {
