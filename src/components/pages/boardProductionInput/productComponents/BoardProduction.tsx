@@ -42,8 +42,22 @@ const BoardProductionPage: React.FC = () => {
     };
 
     const onSave = async (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-        await saveUpdatedReport(report);
+        const savedReport = await saveUpdatedReport(report);
         setShowReportModal(false);
+
+        setReports(prevReports => {
+            const findReport = prevReports.find(r => r.productionList.id === savedReport.productionList.id);
+            if (findReport) {
+                // Создаем новый массив с обновленным отчетом
+                return prevReports.map(r =>
+                    r.productionList.id === savedReport.productionList.id ? report : r
+                );
+            } else {
+                // Создаем новый массив с добавленным отчетом
+                return [...prevReports, report];
+            }
+        });
+        
         await refreshProductionList(); // Обновить список отчетов после сохранения
     };
 

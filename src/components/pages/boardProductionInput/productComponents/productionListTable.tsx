@@ -28,8 +28,15 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
   const [updateConsumption, setUpdateConsumption] = useState(false);
 
   useEffect(() => {
-    setReportData(boardProductions
-      .sort((a, b) => new Date(b.productionList.productionStart).getTime() - new Date(a.productionList.productionStart).getTime()));
+    if (Array.isArray(boardProductions)) { // Проверяем, что boardProductions - массив
+      setReportData(
+        [...boardProductions].sort( // Создаем копию массива перед сортировкой
+          (a, b) => new Date(b.productionList.productionStart).getTime() - new Date(a.productionList.productionStart).getTime()
+        )
+      );
+    } else {
+      setReportData([]); // Если boardProductions не массив, устанавливаем пустой массив
+    }
   }, [boardProductions]);
 
   const handleClick = (item: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
@@ -47,6 +54,10 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
           updatedConsumptions.forEach((consumption) => consumption.productionList = savedReport.productionList);
           await saveConsumptions(updatedConsumptions);
           setUpdateConsumption(true);
+        }
+
+        if (savedReport) {
+          setReportData(reportData.map(report => report.productionList.id === savedReport.productionList.id ? savedReport : report));
         }
         
         setShowModal(false);
