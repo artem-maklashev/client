@@ -116,8 +116,8 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
 
         const printStyles = `
       <style>
-        body { margin: 0; padding: 20px; font-family: Arial; }
-        .print-section { page-break-after: auto; margin-bottom: 30px; }
+        body { margin: 0; padding: 10px; font-family: Arial; }
+        .print-section { page-break-after: auto; margin-bottom: 10px; }
         h4 { text-align: center; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -162,7 +162,7 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
                     const data = generateWaterfallData(production.filter(p => p.productionList.shift.id === shift.id));
 
                     return (
-                        <Row key={shift.id} className="print-section border" style={{ paddingBottom: '20px', borderColor: 'grey' }}>
+                        <Row key={shift.id} className="print-section border" >
                             <Badge className="bg-secondary mb-2 " style={{ fontSize: '20px'}}>Смена {shift.name}</Badge>
 
                             <ResponsiveContainer width="100%" height={500}>
