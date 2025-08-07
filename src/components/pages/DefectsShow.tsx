@@ -131,7 +131,9 @@ const DefectsShow: React.FC<DefectsShowProps> = () => {
                         </Row>
                     </Tab>
                     <Tab eventKey="opinion" title="Брак по сменам">
+                        <Container className="p-lg-2 col-lg-11 mb-5">
                         <DefectsByShift production={productionData} />
+                        </Container>
                     </Tab>
                 </Tabs>
                 {/* </Container> */}
