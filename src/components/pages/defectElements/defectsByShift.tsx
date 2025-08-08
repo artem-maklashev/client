@@ -14,7 +14,9 @@ import {
     LabelList,
     Cell,
     ReferenceLine,
-    LegendProps,    
+    LegendProps,
+    ComposedChart,
+    Line,
 } from "recharts";
 
 interface DefectsByShiftProps {
@@ -29,12 +31,24 @@ interface ByDayDefects {
     defectsPercentageAvg: number;
 }
 
-interface WaterfallData {
+type DailyData = {
     name: string;
     value: number;
     bridge: number;
-    isTotal?: boolean;
-}
+    isTotal: false;
+    defectsPercentage: number;
+};
+
+
+type TotalData = {
+    name: string;
+    value: number;
+    bridge: number;
+    isTotal: true;
+};
+
+type WaterfallData = DailyData | TotalData;
+
 
 const getLocalDateString = (dateInput: string | Date): string => {
     const date = new Date(dateInput);
@@ -70,14 +84,15 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
             if (isDefect) result[dateStr].fact += p.value;
         });
 
-        let sum = 0;
-        let counter = 0;
+        let runningTotal = 0;
+        let runningFact = 0;
+
 
         return Object.values(result).map(r => {
             r.defectsPercentage = r.total > 0 ? (1 - r.fact / r.total) * 100 : 0;
-            sum += r.defectsPercentage;
-            counter++;
-            r.defectsPercentageAvg = sum / counter;
+            runningTotal += r.total;
+            runningFact += r.fact;
+            r.defectsPercentageAvg = (1 - runningFact / runningTotal) * 100;
             return r;
         });
     };
@@ -87,21 +102,40 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
         let runningTotal = 0;
         let previousValue = 0;
 
-        const result = percentages.map(p => {
-            const bridge = runningTotal;
-            const deviation = p.defectsPercentageAvg - previousValue;
-            runningTotal += deviation;
-            previousValue = p.defectsPercentageAvg;
+        const result: WaterfallData[] = [];
 
-            return { name: p.day, value: deviation, bridge, isTotal: false };
-        });
+        for (const p of percentages) {
+
+            if (p.defectsPercentage) {
+
+                const delta = p.defectsPercentageAvg - previousValue;
+
+                result.push({
+                    name: p.day,
+                    value: delta,
+                    bridge: runningTotal,
+                    isTotal: false,
+                    defectsPercentage: p.defectsPercentage
+                });
+
+                runningTotal += delta;
+                previousValue = p.defectsPercentageAvg;
+            }
+
+        }
 
         if (percentages.length > 0) {
-            result.push({ name: 'Итого', value: runningTotal, bridge: 0, isTotal: true });
+            result.push({
+                name: 'Итого',
+                value: runningTotal,
+                bridge: 0,
+                isTotal: true
+            });
         }
 
         return result;
     };
+
 
     const handlePrint = () => {
         const printContent = document.getElementById('print-content');
@@ -141,21 +175,37 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
         if (!generateWaterfallData || generateWaterfallData.length === 0) return [];
 
         return [
-            { value: 'Увеличение', type: 'circle', color: '#ef4444', id: 'increase' },
-            { value: 'Снижение', type: 'circle', color: '#10b981', id: 'decrease' },
-            { value: 'Итог', type: 'circle', color: '#6366f1', id: 'total' }
+            { value: 'Средний % - Увеличение', type: 'circle', color: '#ef4444', id: 'increase' },
+            { value: 'Средний % - Снижение', type: 'circle', color: '#10b981', id: 'decrease' },
+            { value: 'Средний % - Итог', type: 'circle', color: '#6366f1', id: 'total' },
+            { value: 'Процент брака за сутки', type: 'rect', color: '#060aebff', id: 'defectPercentage' }
         ];
-    }, [generateWaterfallData]);
+    }, []);
 
 
     return (
         <div>
             <style>{`@media print { .no-print { display: none !important; } .print-section { page-break-after: always; } }`}</style>
 
-            <div className="no-print mb-3 d-flex justify-content-between align-items-center">
-                <h2>Процент брака по сменам</h2>
-                <Button variant="primary" onClick={handlePrint}>Печать</Button>
-            </div>
+            <div className="no-print mb-4 d-flex justify-content-between align-items-center border-bottom pb-3">
+    <div className="d-flex align-items-center">
+        <div className="bg-primary bg-opacity-10 p-2 rounded me-3">
+            <i className="bi bi-clipboard2-data fs-4 text-primary"></i>
+        </div>
+        <div>
+            <h2 className="m-0">Статистика брака</h2>
+            <p className="m-0 text-muted small">По сменам и периодам</p>
+        </div>
+    </div>
+    <Button 
+        variant="outline-secondary"
+        onClick={handlePrint}
+        className="border-2 px-4"
+    >
+        <i className="bi bi-printer me-2"></i>
+        Печать
+    </Button>
+</div>
 
             <div id="print-content">
                 {uniqueShifts.map((shift, index) => {
@@ -163,10 +213,10 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
 
                     return (
                         <Row key={shift.id} className="print-section border" >
-                            <Badge className="bg-secondary mb-2 " style={{ fontSize: '20px'}}>Смена {shift.name}</Badge>
+                            <Badge className="bg-secondary mb-2 " style={{ fontSize: '20px' }}>Смена {shift.name}</Badge>
 
                             <ResponsiveContainer width="100%" height={500}>
-                                <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 150 }}>
+                                <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 150 }}>
                                     <defs>
                                         <linearGradient id="totalGradient" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="0%" stopColor="#818cf8" />
@@ -176,11 +226,18 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
 
                                     <CartesianGrid strokeDasharray="4 4" vertical horizontal={false} stroke="#e2e8f0" />
                                     <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} tick={{ fontSize: 12, fill: '#64748b' }} axisLine={{ stroke: '#cbd5e1' }} />
-                                    <YAxis tick={{ fill: '#64748b', fontSize: 12 }} axisLine={{ stroke: '#cbd5e1' }} />
+                                    <YAxis yAxisId="left" tick={{ fill: '#64748b', fontSize: 12 }} axisLine={{ stroke: '#cbd5e1' }} />
+                                    <YAxis
+                                        yAxisId="right"
+                                        orientation="right"
+                                        tick={{ fill: '#64748b', fontSize: 12 }}
+                                        axisLine={{ stroke: '#cbd5e1' }}
+                                        domain={[(dataMin: number) => 0, (dataMax: number) => Math.round(dataMax * 1.5)]}
+                                    />
                                     <Tooltip formatter={(v: number) => [v.toFixed(2), 'Отклонение']} />
 
-                                    <Bar dataKey="bridge" stackId="a" fill="transparent" />
-                                    <Bar dataKey="value" name="Отклонение" stackId="a" barSize={32}>
+                                    <Bar yAxisId='left' dataKey="bridge" stackId="a" fill="transparent" />
+                                    <Bar yAxisId='left' dataKey="value" name="Отклонение" stackId="a" barSize={32}>
                                         {data.map((entry, i) => (
                                             <Cell
                                                 key={`cell-${i}`}
@@ -189,11 +246,22 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
                                             />
                                         ))}
                                         <LabelList dataKey="value" position="top" formatter={(value: number, entry: any) => {
-    if (!entry || !entry.payload) return value.toFixed(2);
-    return entry.payload.name || value;}} />
+                                            if (!entry || !entry.payload) return value.toFixed(2);
+                                            return entry.payload.name || value;
+                                        }} />
                                     </Bar>
 
-                                    <ReferenceLine y={3} stroke="#19437fff" strokeWidth={1.5} strokeDasharray="4 4" />
+                                    <ReferenceLine yAxisId="left" y={3} stroke="#19437fff" strokeWidth={1.5} strokeDasharray="4 4" />
+                                    <Line yAxisId="right" type="step" dataKey="defectsPercentage" stroke="#19437fff" strokeWidth={2}>
+                                        <LabelList
+                                            dataKey="defectsPercentage"
+                                            position="bottom"
+                                            formatter={(value: number) => `${value.toFixed(1)}%`}
+                                            fill="#19437fff"
+                                            fontSize={12}
+                                            fontWeight="bold"
+                                        />
+                                    </Line>
 
                                     <Legend
                                         wrapperStyle={{ paddingTop: '16px' }}
@@ -211,16 +279,16 @@ const DefectsByShift: React.FC<DefectsByShiftProps> = ({ production }) => {
                                                     ))}
                                                 </div>
                                             );
-                                        }}/>;
+                                        }} />;
 
-                            </BarChart>
-                        </ResponsiveContainer>
-            </Row>
-            );
-        })}
-        </div>
-    </div >
-  );
+                                </ComposedChart>
+                            </ResponsiveContainer>
+                        </Row>
+                    );
+                })}
+            </div>
+        </div >
+    );
 };
 
 export default DefectsByShift;
