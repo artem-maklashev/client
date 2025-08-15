@@ -21,7 +21,7 @@ const NotQulaty: React.FC<NotQualtyProps> = ({ productionData }) => {
     if (notQualty.length === 0) {
         return (
             <div className="text-center p-3">
-                <p className="text-muted">Нет данных о браке</p>
+                <p className="text-muted">Нет данных о неопределенном качестве</p>
             </div>
         );
     }

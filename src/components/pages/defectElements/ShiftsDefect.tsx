@@ -31,7 +31,7 @@ const ShiftsDefect: React.FC<ShiftsDefectProps> = ({ defectsLog, data }) => {
                 backgroundColor: '#f8fafc',
                 borderRadius: '8px',
                 border: '1px dashed #cbd5e1'
-            }}>
+            }}>                
                 Нет данных для отображения
             </div>
         );
