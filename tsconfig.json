@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es2020",
     "downlevelIteration": true,
     "lib": [
       "dom",
@@ -15,14 +15,14 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
-    "outDir": "build",
-    "declaration": true,
-    "sourceMap": true
+    "jsx": "react-jsx",
+    // "outDir": "build",
+    // "declaration": true,
+    // "sourceMap": true
   },
   "include": [
     "src"

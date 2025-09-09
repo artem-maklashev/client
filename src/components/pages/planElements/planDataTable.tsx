@@ -6,6 +6,8 @@ import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
 import 'primereact/resources/themes/nano/theme.css';
 import BoardProduction from "../../../model/production/BoardProduction";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { Button } from "primereact/button";
+import { exportToHTML } from "./exportToHTML";
 
 interface PlanTableProps {
     planList: Plan[];
@@ -145,12 +147,21 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 <ProgressSpinner />
             </div>
         );
-    }
-
+    }  
 
     return (
 
         <div className="card mt-2 mb-5" style={{ border: '1px', boxShadow: 'none' }}>
+
+            {/* 🔹 Кнопка экспорта */}
+            <div className="mb-3 flex justify-end">
+                <Button 
+                    label="Сохранить в HTML" 
+                    icon="pi pi-download" 
+                    onClick={() => exportToHTML(headers, formattedData, columnTotals, calculateRowTotal)} 
+                    className="p-button-sm p-button-outlined" 
+                />
+            </div>
             
             <DataTable
                 value={formattedData}
