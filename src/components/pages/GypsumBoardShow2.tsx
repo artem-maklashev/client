@@ -11,7 +11,6 @@ import TypesChart from './gypsumBoardElements/TypesChart';
 import GypsumBoardChart from "./gypsumBoardElements/GypsumBoardChart";
 import { api } from "../../service/Api";
 import DateRangeSelector from './dashBoardComponent/dateRangeSelector';
-import { start } from 'repl';
 import PlanFactDinamics from './gypsumBoardElements/planFactDinamics';
 
 interface GypsumBoardShowProps {

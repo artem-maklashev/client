@@ -188,11 +188,10 @@ const ProductionListTable: React.FC<ProductionListTableProps> = ({ boardProducti
                         </td>
                         
                         <td>
-                          <div>
-                            <div className="fw-semibold">
+                          <div>                            <div className="fw-semibold">
                               {item.product.tradeMark.name} 
                               <span className="text-muted ms-1">
-                                (тип {(item.product as GypsumBoard).boardType.name})
+                                (тип {(item.product as GypsumBoard).boardType.name}-{(item.product as GypsumBoard).edge.name})
                               </span>
                             </div>
                             <div className="text-muted small">
