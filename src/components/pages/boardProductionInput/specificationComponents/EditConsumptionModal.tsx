@@ -190,7 +190,7 @@ const EditConsumptionModal: React.FC<EditConsumpionProps> = ({
                 <button
                     className="btn btn-primary px-4"
                     onClick={handleSave}
-                    disabled={!['USER', 'ADMIN'].includes(getUserRole())}
+                    disabled={!['USER', 'ADMIN', 'GB_ADMIN'].includes(getUserRole())}
                 >
                     <i className="bi bi-check-circle me-2" />
                     Сохранить

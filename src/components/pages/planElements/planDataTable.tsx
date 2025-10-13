@@ -68,15 +68,18 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
             return total + (planValue ?? 0); // Суммируем только плановые значения, пропуская null
         }, 0);
     };
+    type DateValueGroup = {
+        values: { [date: string]: number | null };
+    };
 
 
     // Расчёт итога для каждого столбца (для каждой даты)
-    const calculateColumnTotals = (groupedPlans: GypsumBoardPlan[], headers: string[]): { [date: string]: number } => {
+    const calculateColumnTotals = (groupedData: DateValueGroup[], headers: string[]): { [date: string]: number } => {
         const columnTotals: { [date: string]: number } = {};
 
         headers.forEach((date) => {
             let totalForDate = 0;
-            groupedPlans.forEach((plan) => {
+            groupedData.forEach((plan) => {
                 totalForDate += plan.values[date] ?? 0; // Если значение null, то прибавляем 0
             });
             columnTotals[date] = totalForDate;
@@ -133,6 +136,26 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
         return formattedData;
     };
 
+    // Сумма фактических значений по строке
+    const calculateFactTotal = (factValues: { [date: string]: number | null }): number => {
+        return Object.values(factValues).reduce((total: number, factValue: number | null) => {
+            return total + (factValue ?? 0);
+        }, 0);
+    };
+
+    // Сумма отклонений по строке
+    const calculateDeviationTotal = (
+        planValues: { [date: string]: number | null },
+        factValues: { [date: string]: number | null }
+    ): number => {
+        const dates = Object.keys({ ...planValues, ...factValues });
+        return dates.reduce((total, date) => {
+            const plan = planValues[date] ?? 0;
+            const fact = factValues[date] ?? 0;
+            return total + (fact - plan);
+        }, 0);
+    };
+
 
 
     const headers = generateHeaders(planList);
@@ -140,7 +163,14 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
     const columnTotals = calculateColumnTotals(groupedPlans, headers);
     const groupedProd = groupedProductions(productions);
     const formattedData = formatGroupedData(groupedPlans, groupedProd);
-
+    const factTotals = calculateColumnTotals(groupedProd, headers);
+    const deviationTotals= (): { [date: string]: number } => {
+        const totals: { [date: string]: number } = {};
+        headers.forEach((date: string) => {
+            totals[date] = (factTotals[date] ?? 0) - (columnTotals[date] ?? 0);
+        });
+        return totals;
+    };
     if (!formattedData.length) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
@@ -158,7 +188,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 <Button 
                     label="Сохранить в HTML" 
                     icon="pi pi-download" 
-                    onClick={() => exportToHTML(headers, formattedData, columnTotals, calculateRowTotal)} 
+                    onClick={() => exportToHTML(headers, formattedData, columnTotals, factTotals, deviationTotals(), calculateRowTotal)} 
                     className="p-button-sm p-button-outlined" 
                 />
             </div>
@@ -199,13 +229,20 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                         body={(rowData) => (
                             <div style={{ textAlign: 'center', padding: '1' }}>                                
                                     <div style={{ color: 'blue', fontWeight: 'bold' }}>
-                                        {rowData.planValue[date] ? rowData.planValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
+                                        {rowData.planValue[date] ? 'п '+rowData.planValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
+                                    </div>
+                                    <div style={{ 
+                                        color: !rowData.planValue[date] ?  'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '11px' }}>
+                                        {rowData.factValue[date] ? 'ф '+rowData.factValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
+                                    </div>
+                                    <div style={{ 
+                                        color: !rowData.planValue[date] ?  'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '8px' }}>
+                                        {rowData.factValue[date] ? 'откл. '+(
+                                            rowData.factValue[date]-
+                                            (rowData.planValue[date]  || 0)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
                                     </div>
                                
-                                    <div style={{ 
-                                        color: !rowData.planValue[date] ?  'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '10px' }}>
-                                        {rowData.factValue[date] ? rowData.factValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
-                                    </div>                                
+                                                                    
                             </div>
                         )}
                         footer={
@@ -220,12 +257,29 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
                 {/* Колонка с итогом по строке */}
                 <Column
-                    header="Итого"
+                    header="Итого план"
                     body={(rowData) => calculateRowTotal(rowData.planValue)} // Выводим сумму по строке
                     footer={Object.values(columnTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
                     className="font-bold"
                     
                     bodyStyle={{ fontWeight: 'bold' }} />
+                    {/* Колонка с итогом факт */}
+                <Column
+                    header="Итого факт"
+                    body={(rowData) => calculateFactTotal(rowData.factValue)}
+                    className="font-bold"
+                    bodyStyle={{ fontWeight: 'bold' }}
+                    footer={Object.values(factTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
+                />
+
+                {/* Колонка с итогом отклонения */}
+                <Column
+                    header="Отклонение"
+                    body={(rowData) => calculateDeviationTotal(rowData.planValue, rowData.factValue)}
+                    className="font-bold"
+                    bodyStyle={{ fontWeight: 'bold' }}
+                    footer={Object.values(factTotals).reduce((total, value) => total + value, 0) - Object.values(columnTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
+                />
             </DataTable>
 
         </div>
