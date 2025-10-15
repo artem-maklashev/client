@@ -806,3 +806,40 @@ background-color: #f1f5f9;}
   height: 1.5rem;
 } */
 
+@media print {
+  body * {
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+    height: auto;
+    overflow: visible;
+  }
+
+  .no-print,
+  .no-print * {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+  }
+}
+
+
+
+
+
+
+

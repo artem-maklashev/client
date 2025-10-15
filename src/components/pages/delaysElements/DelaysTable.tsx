@@ -56,8 +56,8 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
 
     // Рендер при наличии данных
     return (
-        <div className="delays-table-container">
-            {/* Header with buttons */}
+        <div className="print-area">
+            {/* Header */}
             <Row className="align-items-center mb-4">
                 <Col md={6}>
                     <h4 className="mb-0">
@@ -67,7 +67,8 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
                         Период: {minDate.toLocaleDateString()} – {maxDate.toLocaleDateString()}
                     </div>
                 </Col>
-                <Col md={6} className="d-flex justify-content-end gap-2">
+
+                <Col md={6} className="d-flex justify-content-end gap-2 no-print">
                     <Button variant="outline-primary" onClick={handleExport} disabled={isPrinting || isExporting}>
                         {isExporting ? (
                             <> <span className="spinner-border spinner-border-sm me-2"></span>Экспорт...</>
@@ -81,8 +82,8 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
                 </Col>
             </Row>
 
-            {/* Summary Card */}
-            <Card className="mb-4 shadow-sm border-0 no-print">
+            {/* Summary */}
+            <Card className="mb-4 shadow-sm border-0">
                 <Card.Body>
                     <Row>
                         <Col md={3}>
@@ -106,7 +107,7 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
             </Card>
 
             {/* Tables */}
-            <div className="print-content">
+            <div>
                 {Object.entries(unitData).map(([delayType, tableData], i) => (
                     <DelayUnitTable
                         key={i}
@@ -119,6 +120,7 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ data, planDuration }) => {
                 ))}
             </div>
         </div>
+
     );
 };
 
