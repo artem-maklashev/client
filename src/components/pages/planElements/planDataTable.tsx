@@ -3,7 +3,7 @@ import Plan from "../../../model/gypsumBoard/Plan";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
-import 'primereact/resources/themes/nano/theme.css';
+// import 'primereact/resources/themes/nano/theme.css';
 import BoardProduction from "../../../model/production/BoardProduction";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Button } from "primereact/button";
@@ -28,10 +28,16 @@ interface ProductionData {
 const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
     // Генерация заголовков по уникальным датам
-    const generateHeaders = (planData: Plan[]) => {
+    const generateHeaders = (planData: Plan[], productions: BoardProduction[]) => {
         const headersData: string[] = [];
         planData.forEach((plan) => {
             const dateString = new Date(plan.planDate).toLocaleDateString();
+            if (!headersData.includes(dateString)) {
+                headersData.push(dateString);
+            }
+        });
+        productions.forEach((production) => {
+            const dateString = new Date(production.productionList.productionDate).toLocaleDateString();
             if (!headersData.includes(dateString)) {
                 headersData.push(dateString);
             }
@@ -158,13 +164,13 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
 
 
-    const headers = generateHeaders(planList);
+    const headers = generateHeaders(planList, productions);
     const groupedPlans = groupByGypsumBoard(planList);
     const columnTotals = calculateColumnTotals(groupedPlans, headers);
     const groupedProd = groupedProductions(productions);
     const formattedData = formatGroupedData(groupedPlans, groupedProd);
     const factTotals = calculateColumnTotals(groupedProd, headers);
-    const deviationTotals= (): { [date: string]: number } => {
+    const deviationTotals = (): { [date: string]: number } => {
         const totals: { [date: string]: number } = {};
         headers.forEach((date: string) => {
             totals[date] = (factTotals[date] ?? 0) - (columnTotals[date] ?? 0);
@@ -177,7 +183,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 <ProgressSpinner />
             </div>
         );
-    }  
+    }
 
     return (
 
@@ -185,14 +191,14 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
             {/* 🔹 Кнопка экспорта */}
             <div className="mb-3 flex justify-end">
-                <Button 
-                    label="Сохранить в HTML" 
-                    icon="pi pi-download" 
-                    onClick={() => exportToHTML(headers, formattedData, columnTotals, factTotals, deviationTotals(), calculateRowTotal)} 
-                    className="p-button-sm p-button-outlined" 
+                <Button
+                    label="Сохранить в HTML"
+                    icon="pi pi-download"
+                    onClick={() => exportToHTML(headers, formattedData, columnTotals, factTotals, deviationTotals(), calculateRowTotal)}
+                    className="p-button-sm p-button-outlined"
                 />
             </div>
-            
+
             <DataTable
                 value={formattedData}
                 scrollable
@@ -216,7 +222,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                         )
                     }}
                     frozen
-                    style={{ minWidth: '330px',  }}
+                    style={{ minWidth: '330px', }}
                     headerStyle={{ textAlign: 'left' }}
                 />
 
@@ -226,31 +232,69 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                     <Column
                         key={date}
                         header={date}
-                        body={(rowData) => (
-                            <div style={{ textAlign: 'center', padding: '1' }}>                                
-                                    <div style={{ color: 'blue', fontWeight: 'bold' }}>
-                                        {rowData.planValue[date] ? 'п '+rowData.planValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
-                                    </div>
-                                    <div style={{ 
-                                        color: !rowData.planValue[date] ?  'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '11px' }}>
-                                        {rowData.factValue[date] ? 'ф '+rowData.factValue[date].toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
-                                    </div>
-                                    <div style={{ 
-                                        color: !rowData.planValue[date] ?  'green' : rowData.planValue[date] < rowData.factValue[date] ? 'green' : 'red', fontSize: '8px' }}>
-                                        {rowData.factValue[date] ? 'откл. '+(
-                                            rowData.factValue[date]-
-                                            (rowData.planValue[date]  || 0)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) : ''}
-                                    </div>
-                               
-                                                                    
-                            </div>
-                        )}
+                        body={(rowData) => {
+                            const plan = rowData.planValue[date];
+                            const fact = rowData.factValue[date];
+                            const deviation = fact !== undefined ? fact - (plan || 0) : null;
+
+                            const deviationColor = !plan
+                                ? 'green'
+                                : plan < fact
+                                    ? 'green'
+                                    : 'red';
+
+                            const factColor = !plan
+                                ? '#28a745' // success
+                                : plan < fact
+                                    ? '#28a745'
+                                    : '#dc3545'; // danger
+
+                            return (
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    padding: '4px',
+                                    fontFamily: 'Segoe UI, sans-serif',
+                                    fontSize: '12px'
+                                }}>
+                                    {plan !== undefined && (
+                                        <div style={{
+                                            color: '#007bff',
+                                            fontWeight: 600
+                                        }}>
+                                            {plan.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+                                        </div>
+                                    )}
+
+                                    {fact !== undefined && (
+                                        <div style={{
+                                            color: factColor,
+                                            fontWeight: 600
+                                        }}>
+                                           {fact.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+                                        </div>
+                                    )}
+
+                                    {deviation !== null && (
+                                        <div style={{
+                                            color: deviationColor,
+                                            fontSize: '11px'
+                                        }}>
+                                            Δ: {deviation.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }}
+
                         footer={
                             <div className="text-center font-bold">
 
                                 {columnTotals[date] ?? 0}
                             </div>
-                            
+
                         } // Итоги по столбцу
                     />
                 ))}
@@ -261,9 +305,9 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                     body={(rowData) => calculateRowTotal(rowData.planValue)} // Выводим сумму по строке
                     footer={Object.values(columnTotals).reduce((total, value) => total + value, 0)} // Итоговая сумма по всем столбцам
                     className="font-bold"
-                    
+
                     bodyStyle={{ fontWeight: 'bold' }} />
-                    {/* Колонка с итогом факт */}
+                {/* Колонка с итогом факт */}
                 <Column
                     header="Итого факт"
                     body={(rowData) => calculateFactTotal(rowData.factValue)}
