@@ -29,38 +29,65 @@
 #CMD ["nginx", "-g", "daemon off;"]
 
 # Стадия 1: Сборка приложения
-FROM node:18 as builder
+# FROM node:18 as builder
+
+# WORKDIR /app
+
+# COPY package*.json ./
+# RUN npm install
+
+# COPY . .
+# COPY .env.production .env
+# COPY .babelrc .babelrc
+# RUN npm run build
+
+# # Стадия 2: Копирование сборки в образ с Nginx
+# FROM nginx
+
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# WORKDIR /usr/share/nginx/html
+
+# # Копирование статических файлов из стадии 1
+# COPY --from=builder /app/build .
+
+# # Опциональные: Настройка Nginx и установка дополнительных инструментов
+# # ...
+
+# # Удаление временных файлов и пакетных менеджеров
+# RUN rm -rf /app \
+#     && apt-get update \
+#     && apt-get install -y --no-install-recommends \
+#         # установка дополнительных инструментов (если необходимо) \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
+
+# # Команда для запуска сервера Nginx
+# CMD ["nginx", "-g", "daemon off;"]
+
+# Стадия 1: сборка
+FROM node:18-slim AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+
+# Устанавливаем все зависимости, включая dev
+RUN npm ci
 
 COPY . .
+
 COPY .env.production .env
-COPY .babelrc .babelrc
+
 RUN npm run build
 
-# Стадия 2: Копирование сборки в образ с Nginx
-FROM nginx
+FROM nginx:alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /usr/share/nginx/html
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Копирование статических файлов из стадии 1
-COPY --from=builder /app/build .
+EXPOSE 80
 
-# Опциональные: Настройка Nginx и установка дополнительных инструментов
-# ...
-
-# Удаление временных файлов и пакетных менеджеров
-RUN rm -rf /app \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        # установка дополнительных инструментов (если необходимо) \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Команда для запуска сервера Nginx
 CMD ["nginx", "-g", "daemon off;"]
+
