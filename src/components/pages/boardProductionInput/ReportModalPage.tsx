@@ -32,6 +32,7 @@ import MaterialConsumption from "../../../model/specification/MaterialConsumptio
 import Specification from "../../../model/specification/Specification";
 import EditConsumptionModal from "./specificationComponents/EditConsumptionModal";
 import { Toast } from "primereact/toast";
+import { start } from "repl";
 dayjs.extend(utc);
 
 interface ReportModalPageProps {
@@ -79,7 +80,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
   const [editConsumtionShow, setEditConsumtionShow] = useState(false);
   const [specification, setSpecification] = useState<Specification[]>([]);
-  const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);  
+  const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
   const toast = useRef<Toast>(null); // Создаем ref для Toast
 
 
@@ -107,7 +108,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
 
 
-      
+
       if (!reportData) {
         console.log("Создание нового отчета...");
         const emptyReport = await createNewReport(shiftList[0], gypsumBoardList[0]);
@@ -161,22 +162,22 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   useEffect(() => {
     if (selectedProduct) {
-        console.log("Заменяем продукт в BoardProductions на " + JSON.stringify(selectedProduct));
+      console.log("Заменяем продукт в BoardProductions на " + JSON.stringify(selectedProduct));
 
-        const updatedTableData = tableData.map((prod) =>
-            prod.product.id !== selectedProduct.id
-                ? { ...prod, product: selectedProduct }
-                : prod
-        );
+      const updatedTableData = tableData.map((prod) =>
+        prod.product.id !== selectedProduct.id
+          ? { ...prod, product: selectedProduct }
+          : prod
+      );
 
-        setTableData(updatedTableData as BoardProduction[]);
-        
+      setTableData(updatedTableData as BoardProduction[]);
+
     }
-}, [selectedProduct]);
+  }, [selectedProduct]);
 
-useEffect(() => {
-  console.log("Обновлённое tableData:", tableData);
-}, [tableData]);
+  useEffect(() => {
+    console.log("Обновлённое tableData:", tableData);
+  }, [tableData]);
 
 
   useEffect(() => {
@@ -328,30 +329,51 @@ useEffect(() => {
   const handleSave = () => {
     console.log("Установлено значение startDate в ReportMoadl: " + startDate);
     console.log("Установлено значение endDate в ReportMoadl: " + endDate);
-   // Проверяем, что startDate меньше endDate
-  if (startDate && endDate && new Date(startDate).getTime() >= new Date(endDate).getTime()) {
-    // Показываем уведомление об ошибке
-    toast.current?.show({
-      severity: 'error', // Тип уведомления (error, success, info, warn)
-      summary: 'Ошибка', // Заголовок уведомления
-      detail: 'Дата начала производства должна быть раньше даты окончания производства', // Сообщение
-      life: 3000 // Время отображения в миллисекундах
-    });
-    return; // Прерываем выполнение функции
-  }
 
-  delays.forEach((delay) => {
-    if (delay.startTime && delay.endTime && new Date(delay.startTime).getTime() >= new Date(delay.endTime).getTime()) {
-      // Показываем уведомление об ошибке
+    // Вспомогательная функция для показа уведомлений
+    const showErrorToast = (message: string) => {
       toast.current?.show({
-        severity: 'error', // Тип уведомления (error, success, info, warn)
-        summary: 'Ошибка', // Заголовок уведомления
-        detail: 'Время простоя заполнено непрвильно', // Сообщение
-        life: 3000 // Время отображения в миллисекундах
+        severity: 'error',
+        summary: 'Ошибка',
+        detail: message,
+        life: 5000
       });
-      return; // Прерываем выполнение функции
+    };
+
+    // Проверяем, что startDate меньше endDate
+    if (startDate && endDate && new Date(startDate).getTime() >= new Date(endDate).getTime()) {
+      showErrorToast('Дата начала производства должна быть раньше даты окончания производства');
+      return;
     }
-  });
+
+    // Проверка простоев
+    let hasDelayErrors = false;
+
+    for (const delay of delays) {
+      let delayStartTime = new Date(delay.startTime).getTime();
+      let delayEndTime = new Date(delay.endTime).getTime();
+      let reportStartTime = new Date(startDate!).getTime();
+      let reportEndTime = new Date(endDate!).getTime();
+
+      // Проверка 1: Начало простоя должно быть раньше конца
+      if (delayStartTime >= delayEndTime) {
+        showErrorToast('Начало простоя не может быть позже или равно его окончанию');
+        hasDelayErrors = true;
+        break;
+      }
+
+      // Проверка 2: Простой должен полностью находиться в пределах отчета
+      if (delayStartTime < reportStartTime || delayEndTime > reportEndTime) {
+        showErrorToast('Время простоя выходит за пределы периода отчета');
+        hasDelayErrors = true;
+        break;
+      }
+    }
+
+    // Если есть ошибки в простоях, прерываем сохранение
+    if (hasDelayErrors) {
+      return;
+    }
 
     if (draftReport) {
       draftReport.product = selectedProduct as GypsumBoard;
@@ -365,7 +387,7 @@ useEffect(() => {
       console.log(draftReport);
       onSave(draftReport, consumptions);
     }
-    onHide();  
+    onHide();
   };
 
   const handleClose = () => {
@@ -416,7 +438,7 @@ useEffect(() => {
                   <Stack spacing={3}>
                     <MobileDateTimePicker
                       label="Дата"
-                      value={startDate ? dayjs(startDate) : null}                      
+                      value={startDate ? dayjs(startDate) : null}
                       onChange={(newValue) => setStartDate(handleDateChange(newValue))}
                       ampm={false}
                       orientation="landscape"
@@ -504,7 +526,7 @@ useEffect(() => {
                 <h3 className="text-center">Данные по производству</h3>
                 <CategoriesTable
                   categories={tableData}
-                  handleEditCategory={handleEditCategory}                  
+                  handleEditCategory={handleEditCategory}
                 />
                 <Row>
                   <h4 className="text-center">
