@@ -7,7 +7,7 @@ import Length from "./Length";
 import Thickness from "./Thickness";
 import Width from "./Width";
 
-class GypsumBoard extends Product {
+export class GypsumBoard extends Product {
 
     boardType: BoardType;
     edge: Edge;
