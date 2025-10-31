@@ -109,7 +109,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 };
             }
 
-            const pValue = Number(p.value.toFixed(0));
+            const pValue =p.value ? Number(p.value.toFixed(0)) : 0;
             // Добавляем значение по дате для текущего гипсокартона
             if (groupedData[gypsumBoardId].values[date] === null) {
                 groupedData[gypsumBoardId].values[date] = pValue;
