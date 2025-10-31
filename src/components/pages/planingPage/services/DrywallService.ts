@@ -1,14 +1,19 @@
+import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import ApiService from "../../../../service/ApiService";
 import { DrywallItem } from "../models/DrywallItem";
 
 
 export class DrywallService {
-  private items: DrywallItem[] = [];
 
-//   async loadItems(): Promise<DrywallItem[]> {
-//     this.items = await ApiService.fetchGypsumBoards();
-//     return this.items;
-//   }
+  private items: DrywallItem[] = [];
+  async loadItems(): Promise<DrywallItem[]> {
+    const allGypsumBoards: GypsumBoard[] = await ApiService.fetchGypsumBoards();
+    const limitedBoards = allGypsumBoards.slice(0, 3);
+     this.items = limitedBoards.map((gb, index) => new DrywallItem(gb.id ?? index+1, gb, Math.random() * (37700 - 12050) + 12050));
+    return this.items;
+  }
+
+
   getItems(): DrywallItem[] {
     return [...this.items];
   }
