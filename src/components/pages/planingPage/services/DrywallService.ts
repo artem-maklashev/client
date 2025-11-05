@@ -15,8 +15,8 @@ export class DrywallService {
         gb,
         Math.floor(Math.random() * (37700 - 12050) + 12050),
         month,
-        new Date(month.getTime() + index),
-        new Date(month.getTime() + index + 1)
+        new Date(month.getTime() + (index+1)*1000*60),
+        new Date(month.getTime() + (index+2)*2000*60)
       )
     );
   } 

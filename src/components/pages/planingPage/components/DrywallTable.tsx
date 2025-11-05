@@ -30,6 +30,24 @@ export const DrywallTable: React.FC = () => {
     setItems(drywallService.getItems());
   };
 
+  const handleSplit = (item: DrywallItem) => {
+    const input = prompt(`Введите количество для первой части (макс ${item.quantity}):`);
+    const firstQuantity = Number(input);
+
+    if (!drywallService || isNaN(firstQuantity)) return;
+
+    try {
+      const [firstPart, secondPart] = item.splitItem(firstQuantity);
+      drywallService.removeItem(item.id);
+      drywallService.insertAt(firstPart, 0); // можно вставить в начало
+      drywallService.insertAt(secondPart, 1);
+      setItems(drywallService.getItems());
+    } catch (error) {
+      alert((error as Error).message);
+    }
+  };
+
+
   return (
     <div className="card">
       <h3 style={{
@@ -54,19 +72,49 @@ export const DrywallTable: React.FC = () => {
           header="Тип гипсокартона"
           body={(rowData: DrywallItem) => rowData.gypsumBoard?.toString() ?? "—"}
         />
-        <Column field="quantity" header="Количество (шт)" />
+        <Column field="quantity" header="м²" />
         <Column
           header="Месяц"
-          body={(rowData) => rowData.month?.toLocaleDateString("ru-RU")}
+          body={(rowData) =>
+            rowData.month?.toLocaleDateString("ru-RU", {
+              month: "short",
+              year: "numeric"
+            })
+          }
         />
+
         <Column
           header="Начало производства"
-          body={(rowData) => rowData.startProduction?.toLocaleDateString("ru-RU")}
+          body={(rowData) => rowData.startProduction?.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          })}
         />
         <Column
           header="Конец производства"
-          body={(rowData) => rowData.endProduction?.toLocaleDateString("ru-RU")}
+          body={(rowData) => rowData.endProduction?.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          })}
         />
+        <Column
+          header="Действия"
+          body={(rowData: DrywallItem) => (
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => handleSplit(rowData)}
+            >
+              Разделить
+            </button>
+          )}
+        />
+
       </DataTable>
     </div>
   );

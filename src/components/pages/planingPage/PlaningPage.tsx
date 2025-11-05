@@ -16,7 +16,7 @@ const PlaningPage: React.FC<PlaningPageProps> = () => {
     return (
         <Container fluid className="mt-5">
             <Row className="mt-5">
-                <Col lg={4} sm={12} className="mt-4">
+                <Col lg={6} sm={12} className="mt-4">
                     <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
                     <DrywallTable />
                 </Col>

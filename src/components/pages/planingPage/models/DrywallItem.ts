@@ -14,7 +14,7 @@ export class DrywallItem extends ProductItem {
             month, startProduction, endProduction);
     }
 
-    splitItem(newQuantity: number): { firstPart: DrywallItem; secondPart: DrywallItem } {
+    splitItem(newQuantity: number): [ firstPart: DrywallItem, secondPart: DrywallItem ] {
         if (newQuantity >= this.quantity || newQuantity <= 0) {
             throw new Error("New quantity must be greater than 0 and less than the current quantity.");
         }
@@ -39,6 +39,6 @@ export class DrywallItem extends ProductItem {
             this.endProduction
         );
 
-        return { firstPart, secondPart };
+        return [firstPart, secondPart];
     }
 }
