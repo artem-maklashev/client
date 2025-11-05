@@ -288,8 +288,8 @@ class ApiService {
 
     static async fetchGypsumBoards() {
         try {
-            const response = await api.get(`${process.env.REACT_APP_API_URL}/gypsumBoard`);
-            return response.data;
+            const response = await api.get(`${this.baseUrl}/gypsumBoard`);
+            return response.data.map(GypsumBoard.fromJSON);
         } catch (error: any) {
             console.error(`Произошла ошибка при получении списка ГСП`);
         }

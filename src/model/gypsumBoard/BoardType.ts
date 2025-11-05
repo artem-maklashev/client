@@ -10,5 +10,11 @@ class BoardType {
         this.name = name !== undefined ? name : '';
         this.description = description;
     }
+    toString() {
+        return this.name;
+    }
+    static fromJSON(json: any): BoardType {
+        return new BoardType(json.id, json.name, json.description);
+    }
 }
 export default BoardType;

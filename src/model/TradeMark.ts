@@ -12,5 +12,8 @@ class TradeMark {
     toString() {
         return this.name;
     }
+    static fromJSON(json: any): TradeMark {
+        return new TradeMark(json.id, json.name);
+    }
 }
 export default TradeMark;

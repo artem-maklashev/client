@@ -37,8 +37,8 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         {/* <Nav.Link as={Link} to="/" onClick={handleNavClose}>Home</Nav.Link> */}
-                        <NavDropdown 
-                        title="Гипсокартон" id="board-dropdown"  >
+                        <NavDropdown
+                            title="Гипсокартон" id="board-dropdown"  >
                             <NavDropdown title="Выпуск ГСП" id="board-production" disabled={(gypsumBoardUsers.includes(getUserRole())) ? false : true} className="dropend">
                                 <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose} >Добавить выпуск</NavDropdown.Item>
                                 <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
@@ -51,6 +51,8 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                                 false}
                                 style={{ color: "#ffd700" }}>Основные показатели</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/plan" onClick={handleNavClose}>План</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/planingPage" onClick={handleNavClose} disabled={
+                                    getUserRole() === 'ADMIN' ? false : true}>Планирование</NavDropdown.Item>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/board" onClick={handleNavClose}>Производство</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/boardDelays" onClick={handleNavClose}>Простои</NavDropdown.Item>

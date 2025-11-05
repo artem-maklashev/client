@@ -30,6 +30,7 @@ import MixReport from './components/pages/drymix/MixReport';
 import MixProduction from './components/pages/drymix/MixProductionPage';
 import MixPlanPage from './components/pages/drymix/mixPlan';
 import Tree from './components/pages/tree';
+import PlaningPage from './components/pages/planingPage/PlaningPage';
 
 
 
@@ -149,6 +150,7 @@ function App() {
                 <Route path="mixReport" element={tokenValid ? <MixReport /> : <Navigate to="/login" />} />
                 <Route path='/mixProduction' element={tokenValid ? <MixProduction /> : <Navigate to="/login" />} />
                 <Route path="/mixPlan" element={tokenValid ? <MixPlanPage /> : <Navigate to="/login" />} />
+                <Route path="/planingPage" element={tokenValid ? <PlaningPage /> : <Navigate to="/login" />} />
                 <Route path="/" element={tokenValid ? <MainPage /> : <Navigate to="/login" />} />
                 {/*<Route path="/" element={<MainPage />} />*/}
                 <Route path="/register" element={<RegistrationPage />} />

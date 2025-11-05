@@ -8,6 +8,7 @@ import Thickness from "./Thickness";
 import Width from "./Width";
 
 export class GypsumBoard extends Product {
+    
 
     boardType: BoardType;
     edge: Edge;
@@ -55,5 +56,18 @@ export class GypsumBoard extends Product {
     toString(): string {
         return `${this.tradeMark.name} тип ${this.boardType.name} ${this.edge.name}-${this.thickness.value}-${this.width.value}-${this.length.value}`;
     }
+    static fromJSON(obj: any) {
+         return new GypsumBoard(
+      obj.id,
+      ProductTypes.fromJSON(obj.ptype),
+      TradeMark.fromJSON(obj.tradeMark),
+      BoardType.fromJSON(obj.boardType),
+      Edge.fromJSON(obj.edge),
+      Thickness.fromJSON(obj.thickness),
+      Width.fromJSON(obj.width),
+      Length.fromJSON(obj.length),
+      obj.productionSpeed
+    );
+  }
 }
 export default GypsumBoard;
