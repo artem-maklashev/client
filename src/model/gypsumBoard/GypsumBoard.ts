@@ -16,22 +16,23 @@ export class GypsumBoard extends Product {
     width: Width;
     length: Length;
     productionSpeed: number;
-    name: string;    
+    name: string; 
+    factSpeed: number;   
 
     constructor();
     constructor(
         id: number, ptype: ProductTypes, tradeMark: TradeMark, 
         boardType: BoardType, edge: Edge, thickness: Thickness, 
-        width: Width, length: Length, productionSpeed: number
+        width: Width, length: Length, productionSpeed: number, factSpeed: number
     );
     constructor(
         id?: number, ptype?: ProductTypes, tradeMark?: TradeMark, 
         boardType?: BoardType, edge?: Edge, thickness?: Thickness, 
-        width?: Width, length?: Length, productionSpeed?: number
+        width?: Width, length?: Length, productionSpeed?: number, factSpeed?: number
     ) {
         if (id !== undefined && ptype !== undefined && tradeMark !== undefined && boardType 
             !== undefined && edge !== undefined && thickness !== undefined && width !== undefined && length !== undefined
-            && productionSpeed !== undefined
+            && productionSpeed !== undefined && factSpeed !== undefined
         ) {
             super(id, ptype, tradeMark);
             this.boardType = boardType;
@@ -40,6 +41,7 @@ export class GypsumBoard extends Product {
             this.width = width;
             this.length = length;  
             this.productionSpeed = productionSpeed; 
+            this.factSpeed = factSpeed;
         } else {
             // Значения по умолчанию
             super(0, new ProductTypes(), new TradeMark());
@@ -49,6 +51,7 @@ export class GypsumBoard extends Product {
             this.width = new Width();
             this.length = new Length();
             this.productionSpeed = 0;
+            this.factSpeed = 0;
         }
         this.name = this.toString();
     }
@@ -66,7 +69,8 @@ export class GypsumBoard extends Product {
       Thickness.fromJSON(obj.thickness),
       Width.fromJSON(obj.width),
       Length.fromJSON(obj.length),
-      obj.productionSpeed
+      obj.productionSpeed,
+      obj.factSpeed
     );
   }
 }

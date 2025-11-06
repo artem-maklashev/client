@@ -4,6 +4,8 @@ import { Column } from "primereact/column";
 import { DrywallItem } from "../models/DrywallItem";
 import { DrywallService } from "../services/DrywallService";
 import ApiService from "../../../../service/ApiService";
+import { Card } from "react-bootstrap";
+import PlaningInputItem from "./PlaningItemInput";
 
 export const DrywallTable: React.FC = () => {
   const [items, setItems] = useState<DrywallItem[]>([]);
@@ -49,18 +51,15 @@ export const DrywallTable: React.FC = () => {
 
 
   return (
-    <div className="card">
-      <h3 style={{
-        margin: 0,
-        fontSize: '1.125rem',
-        fontWeight: 600,
-        color: '#1e293b',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem'
-      }}>
+    <Card>
+      <Card.Title className="text-center">    
         <i className="bi bi-calendar2-week" />
-        Порядок производства гипсокартона</h3>
+        Порядок производства гипсокартона
+      </Card.Title>
+      <Card.Body>
+      <PlaningInputItem onAdd={function (item: DrywallItem): void {
+          throw new Error("Function not implemented.");
+        } } />
       <DataTable
         value={items}
         reorderableRows
@@ -116,6 +115,7 @@ export const DrywallTable: React.FC = () => {
         />
 
       </DataTable>
-    </div>
+      </Card.Body>
+    </Card>
   );
 };

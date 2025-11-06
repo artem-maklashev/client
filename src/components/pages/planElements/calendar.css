@@ -23,8 +23,15 @@
   transition: all 0.2s ease;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #495057;
+  color: #495057;  
 }
+
+.p-monthpicker .p-monthpicker-months {
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 0.5rem !important;
+}
+
 
 .p-monthpicker-month:hover {
   background-color: #e9ecef;
@@ -47,4 +54,9 @@
 .custom-calendar-panel {
   border: none !important;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.05) !important;
+  height: auto;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

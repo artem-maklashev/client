@@ -2,6 +2,7 @@
 import { DrywallItem } from "../models/DrywallItem";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import ApiService from "../../../../service/ApiService";
+import { start } from "repl";
 
 export class DrywallService {
   private items: DrywallItem[] = [];
@@ -9,17 +10,30 @@ export class DrywallService {
   constructor(gypsumBoards: GypsumBoard[]) {
     const limitedBoards = gypsumBoards.slice(0, 3);
     const month = new Date(2025, 10, 1);
-    this.items = limitedBoards.map((gb, index) =>
-      new DrywallItem(
+    const firstDayStart = new Date(month);
+    firstDayStart.setHours(8, 0, 0, 0);
+    const startDate = new Date(firstDayStart);
+    alert('Начало производства: ' + startDate.toLocaleString());
+
+    this.items = limitedBoards.map((gb, index) => {
+      const production = Math.floor(Math.random() * (37700 - 12050) + 12050);
+      const itemStart = new Date(startDate); // ← создаём копию
+      const widthValue = parseFloat(String(gb.width.value).replace(",", "."))/1000;
+      const endDate = new Date(itemStart.getTime() + (production * 60 * 1000 / (gb.factSpeed * widthValue)) );
+      const item = new DrywallItem(
         gb.id ?? index + 1,
         gb,
-        Math.floor(Math.random() * (37700 - 12050) + 12050),
+        production,
         month,
-        new Date(month.getTime() + (index+1)*1000*60),
-        new Date(month.getTime() + (index+2)*2000*60)
-      )
-    );
-  } 
+        itemStart,
+        endDate
+      );
+      startDate.setTime(endDate.getTime()); // ← обновляем для следующего
+      return item;
+    });
+
+
+  }
 
   getItems(): DrywallItem[] {
     return [...this.items];
