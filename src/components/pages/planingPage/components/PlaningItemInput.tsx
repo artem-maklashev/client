@@ -3,22 +3,35 @@ import ApiService from "../../../../service/ApiService";
 import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { DrywallItem } from "../models/DrywallItem";
+import BoardType from "../../../../model/gypsumBoard/BoardType";
+import Width from "../../../../model/gypsumBoard/Width";
 
 interface PlaningInputItemProps {
-    onAdd: (item: DrywallItem) => void;
+    onAdd: (item: DrywallItem) => void;    
 }
 
 const PlaningInputItem: React.FC<PlaningInputItemProps> = ({ onAdd }) => {
+    const emptyBoard: GypsumBoard = new GypsumBoard();
+    const emptyType = new BoardType(0,"не рабочее время");
+    emptyBoard.boardType = emptyType;
+    emptyBoard.factSpeed = 1/1.2;
+    const emptyWidth = new Width(0,"1200");
+    emptyBoard.width = emptyWidth;
+    emptyBoard.id = 0;
+
     const [gypsumBoardList, setGypsumboardList] = useState<GypsumBoard[]>([]);
     const [selectedBoardId, setSelectedBoardId] = useState<number | "">("");
-    const [quantity, setQuantity] = useState<number | "">("");
+    const [quantity, setQuantity] = useState<number | "">("");   
 
 
     useEffect(() => {
         const initializeService = async () => {
             try {
                 const gypsumBoards = await ApiService.fetchGypsumBoards();
-                setGypsumboardList(gypsumBoards);
+                const emptyList = [];
+                emptyList.push(emptyBoard);
+                const combined = [...emptyList, ...gypsumBoards];
+                setGypsumboardList(combined);
             } catch (error) {
                 console.error("Ошибка загрузки гипсокартона:", error);
             }
@@ -60,7 +73,7 @@ const PlaningInputItem: React.FC<PlaningInputItemProps> = ({ onAdd }) => {
 
 
     return (
-        <Form className="d-flex align-items-center flex-wrap gap-3">
+        <Form className="d-flex align-items-center flex-wrap gap-3 mb-3">
             {/* Метка + селектор */}
             <div className="d-flex align-items-center gap-2">
                 <Form.Label htmlFor="gypsumBoardSelect" className="mb-0" style={{ whiteSpace: "nowrap" }}>

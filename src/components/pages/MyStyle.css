@@ -616,6 +616,10 @@ background-color: #f1f5f9;}
 }
 
 /* Кнопки действий */
+.p-tooltip {
+  font-size: 10px; /* или 0.75rem */
+}
+
 .p-button-info {
   background: linear-gradient(135deg, #3498db, #2980b9);
   border: none;
@@ -666,6 +670,24 @@ background-color: #f1f5f9;}
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.p-button-success {
+  background: linear-gradient(135deg, #27ae60, #1e8449); /* зелёный градиент */
+  border: none;
+  color: white;
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.p-button-success:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 
 /* Пагинация */
 .p-paginator {

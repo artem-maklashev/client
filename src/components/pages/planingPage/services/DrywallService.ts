@@ -4,34 +4,16 @@ import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import Width from "../../../../model/gypsumBoard/Width";
 import ApiService from "../../../../service/ApiService";
 import { start } from "repl";
+import ProductTypes from "../../../../model/ProductTypes";
+import TradeMark from "../../../../model/TradeMark";
+import BoardType from "../../../../model/gypsumBoard/BoardType";
 
 export class DrywallService {
   private items: DrywallItem[] = [];
+  private month: Date;
 
-  constructor(gypsumBoards: GypsumBoard[]) {
-    const limitedBoards = gypsumBoards.slice(0, 3);
-    const month = new Date(2025, 10, 1);
-    let startDate = this.setStartTime(month);
-    alert('Начало производства: ' + startDate.toLocaleString());
-
-    this.items = limitedBoards.map((gb, index) => {
-      const production = Math.floor(Math.random() * (37700 - 12050) + 12050);
-      const itemStart = new Date(startDate); // ← создаём копию
-      const widthValue = this.calculateWidthValue(gb.width);
-      const endDate = this.calculateEndDate(itemStart, production, gb.factSpeed, widthValue);
-      const item = new DrywallItem(
-        gb.id ?? index + 1,
-        gb,
-        production,
-        month,
-        itemStart,
-        endDate
-      );
-      startDate = endDate; // ← обновляем для следующего
-      return item;
-    });
-
-
+  constructor(month: Date) {
+    this.month = new Date(month);
   }
 
   getItems(): DrywallItem[] {
@@ -40,11 +22,17 @@ export class DrywallService {
 
   addItem(item: DrywallItem) {
     this.items.push(item);
+    this.calculatePeriods();
   }
 
-  removeItem(id: number) {
+  removeItemById(id: number) {
     this.items = this.items.filter((item) => item.id !== id);
   }
+
+  removeItemByIndex(index: number) {
+    this.items = this.items.filter((_, i) => i !== index);
+  }
+
 
   updateItem(item: DrywallItem) {
     const index = this.items.findIndex((i) => i.id === item.id);
@@ -59,6 +47,7 @@ export class DrywallService {
 
   reorderItems(newOrder: DrywallItem[]) {
     this.items = [...newOrder];
+    this.calculatePeriods();
   }
 
   insertAt(item: DrywallItem, index: number) {
@@ -101,12 +90,12 @@ export class DrywallService {
     if (isNaN(widthValue) || widthValue <= 0) {
       throw new Error(`Некорректная ширина продукции: ${widthValue}`);
     }
-    
+
     const duration = (quantity * 60 * 1000) / (factSpeed * widthValue);
     if (isNaN(duration) || !isFinite(duration)) {
       throw new Error(`Некорректные параметры для вычисления длительности производства: quantity=${quantity}, factSpeed=${factSpeed}, widthValue=${widthValue}`);
     }
-    
+
     return new Date(start.getTime() + duration);
   }
 
@@ -121,8 +110,8 @@ export class DrywallService {
     return newDate;
   }
 
-  calculatePeriods(month: Date) {
-    let firstDayStart = this.setStartTime(month);
+  calculatePeriods() {
+    let firstDayStart = this.setStartTime(this.month);
     this.items.forEach((item) => {
       const itemStart = new Date(firstDayStart); // ← создаём копию
       const widthValue = this.calculateWidthValue(item.gypsumBoard.width);

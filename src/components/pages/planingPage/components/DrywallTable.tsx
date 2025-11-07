@@ -3,19 +3,23 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { DrywallItem } from "../models/DrywallItem";
 import { DrywallService } from "../services/DrywallService";
-import ApiService from "../../../../service/ApiService";
 import { Card } from "react-bootstrap";
 import PlaningInputItem from "./PlaningItemInput";
+import { Button } from "primereact/button";
 
-export const DrywallTable: React.FC = () => {
+interface DrywallTableProps {
+  month: Date;
+}
+
+export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
   const [items, setItems] = useState<DrywallItem[]>([]);
   const [drywallService, setDrywallService] = useState<DrywallService | null>(null);
 
   useEffect(() => {
     const initializeService = async () => {
       try {
-        const gypsumBoards = await ApiService.fetchGypsumBoards();
-        const service = new DrywallService(gypsumBoards);
+        // const gypsumBoards = await ApiService.fetchGypsumBoards();
+        const service = new DrywallService(month);
         setDrywallService(service);
         setItems(service.getItems());
       } catch (error) {
@@ -40,10 +44,47 @@ export const DrywallTable: React.FC = () => {
 
     try {
       const [firstPart, secondPart] = item.splitItem(firstQuantity);
-      drywallService.removeItem(item.id);
-      drywallService.insertAt(firstPart, 0); // можно вставить в начало
-      drywallService.insertAt(secondPart, 1);
+      const index = items.findIndex((i) => i.startProduction === item.startProduction);
+      drywallService.removeItemByIndex(index);
+      drywallService.insertAt(firstPart, index); // можно вставить в начало
+      drywallService.insertAt(secondPart, index + 1);
+      drywallService.calculatePeriods();
       setItems(drywallService.getItems());
+
+    } catch (error) {
+      alert((error as Error).message);
+    }
+  };
+
+  const handleAddItem = (item: DrywallItem) => {
+    if (!drywallService) return;
+    drywallService.addItem(item);
+    setItems(drywallService.getItems());
+  };
+
+  const handleDelete = (item: DrywallItem) => {
+    if (!drywallService) return;
+    const index = items.findIndex((i) => i.startProduction === item.startProduction);
+    drywallService.removeItemByIndex(index);
+    drywallService.calculatePeriods();
+
+    setItems(drywallService.getItems());
+  };
+
+  const handleEdit = (item: DrywallItem) => {
+    const input = prompt(`Введите количество :`);
+    const quantity = Number(input);
+
+    if (!drywallService || isNaN(quantity)) return;
+
+    try {
+      const index = items.findIndex((i) => i.startProduction === item.startProduction);
+      const newItem = item;
+      newItem.quantity = quantity;
+      drywallService.removeItemByIndex(index);// можно вставить в начало
+      drywallService.calculatePeriods();
+      setItems(drywallService.getItems());
+
     } catch (error) {
       alert((error as Error).message);
     }
@@ -52,69 +93,90 @@ export const DrywallTable: React.FC = () => {
 
   return (
     <Card>
-      <Card.Title className="text-center">    
+      <Card.Title className="text-center mt-1">
         <i className="bi bi-calendar2-week" />
         Порядок производства гипсокартона
       </Card.Title>
       <Card.Body>
-      <PlaningInputItem onAdd={function (item: DrywallItem): void {
-          throw new Error("Function not implemented.");
-        } } />
-      <DataTable
-        value={items}
-        reorderableRows
-        onRowReorder={onRowReorder}
-        tableStyle={{ minWidth: "30rem" }}
-      >
-        <Column rowReorder headerStyle={{ width: "3rem" }} />
-        <Column
-          header="Тип гипсокартона"
-          body={(rowData: DrywallItem) => rowData.gypsumBoard?.toString() ?? "—"}
-        />
-        <Column field="quantity" header="м²" />
-        <Column
-          header="Месяц"
-          body={(rowData) =>
-            rowData.month?.toLocaleDateString("ru-RU", {
-              month: "short",
-              year: "numeric"
-            })
-          }
-        />
+        <PlaningInputItem onAdd={handleAddItem} />
+        <DataTable
+          value={items}
+          reorderableRows
+          onRowReorder={onRowReorder}
+          tableStyle={{ minWidth: "30rem" }}
+        >
+          <Column rowReorder headerStyle={{ width: "3rem" }} />
+          <Column
+            header="Тип гипсокартона"
+            body={(rowData: DrywallItem) => rowData.gypsumBoard?.toString() ?? "—"}
+          />
+          <Column field="quantity" header="м²" />
+          <Column
+            header="Месяц"
+            body={(rowData) =>
+              rowData.month?.toLocaleDateString("ru-RU", {
+                month: "short",
+                year: "numeric"
+              })
+            }
+          />
 
-        <Column
-          header="Начало производства"
-          body={(rowData) => rowData.startProduction?.toLocaleDateString("ru-RU", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-          })}
-        />
-        <Column
-          header="Конец производства"
-          body={(rowData) => rowData.endProduction?.toLocaleDateString("ru-RU", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-          })}
-        />
-        <Column
-          header="Действия"
-          body={(rowData: DrywallItem) => (
-            <button
-              className="btn btn-sm btn-outline-primary"
-              onClick={() => handleSplit(rowData)}
-            >
-              Разделить
-            </button>
-          )}
-        />
+          <Column
+            header="Начало производства"
+            body={(rowData) => rowData.startProduction?.toLocaleDateString("ru-RU", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit"
+            })}
+          />
+          <Column
+            header="Конец производства"
+            body={(rowData) => rowData.endProduction?.toLocaleDateString("ru-RU", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit"
+            })}
+          />
+          <Column
+            header="Действия"
+            style={{ width: '120px', textAlign: 'center' }}
+            body={(rowData) => (
+              <div className="d-flex justify-content-center gap-2">
+                <Button
+                  icon="pi pi-pencil"
+                  className="p-button-rounded p-button-info p-button-sm"
+                  onClick={() => handleEdit(rowData)}
+                  tooltip="Редактировать"
+                  tooltipOptions={{ position: 'top' }}
+                />
 
-      </DataTable>
+                <Button
+                  icon="pi pi-sort"
+                  rounded
+                  severity="success"
+                  onClick={() => handleSplit(rowData)}
+                  tooltip="Разделить"
+                  tooltipOptions={{ position: 'top' }}
+                />
+
+                <Button
+                  icon="pi pi-trash"
+                  className="p-button-rounded p-button-danger p-button-sm"
+                  onClick={() => handleDelete(rowData)}
+                  tooltip="Удалить"
+                  tooltipOptions={{ position: 'top' }}
+                />
+              </div>
+            )}
+          />
+
+
+
+        </DataTable>
       </Card.Body>
     </Card>
   );
