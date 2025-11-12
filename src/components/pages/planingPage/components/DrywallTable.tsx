@@ -17,24 +17,47 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
   const [drywallService, setDrywallService] = useState<DrywallService | null>(null);
 
   useEffect(() => {
+    let isCancelled = false;
+    
     const initializeService = async () => {
       try {
+        // Очищаем текущие элементы перед загрузкой новых
+        setItems([]);
+        if (onItemsChange) {
+          onItemsChange([]);
+        }
+        
         const service = new DrywallService(month);
+        if (isCancelled) return;
+        
         setDrywallService(service);
         const serviceItems = await service.loadItems();
-        serviceItems.forEach(item => service.addItem(item)); // Добавляем загруженные элементы в сервис
-        setItems(service.getItems());
+        if (isCancelled) return;
         
-        // Передаем данные в родительский компонент
-        if (onItemsChange) {
-          onItemsChange(service.getItems());
+        serviceItems.forEach(item => service.addItem(item)); // Добавляем загруженные элементы в сервис
+        const items = service.getItems();
+        
+        if (!isCancelled) {
+          setItems(items);
+          
+          // Передаем данные в родительский компонент
+          if (onItemsChange) {
+            onItemsChange(items);
+          }
         }
       } catch (error) {
-        console.error("Ошибка загрузки гипсокартона:", error);
+        if (!isCancelled) {
+          console.error("Ошибка загрузки гипсокартона:", error);
+        }
       }
     };
+    
     initializeService();
-  }, []);
+    
+    return () => {
+      isCancelled = true;
+    };
+  }, [month]);
 
   const onRowReorder = (e: any) => {
     if (!drywallService) return;
@@ -135,7 +158,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
         Порядок производства гипсокартона
       </Card.Title>
       <Card.Body>
-        <PlaningInputItem onAdd={handleAddItem} />
+        <PlaningInputItem onAdd={handleAddItem} month={month}/>
         <DataTable
           value={items}
           reorderableRows

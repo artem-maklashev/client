@@ -127,7 +127,17 @@ export class DrywallService {
       item.endProduction = endDate;
       firstDayStart = endDate; // ← обновляем для следующего
     });
+    this.items.forEach((item) => {
+      if (item.id === -1) {
+        const responce = this.repository.addDrywallItem(item);
+        responce.then((data) => {
+          if (data) {
+            item.id = data.id;
+          }
+        }).catch((error) => {
+          console.error("Ошибка при сохранении элемента планирования:", error);
+        });
+      }
+    });
   }
-
-
 }

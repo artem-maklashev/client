@@ -51,7 +51,16 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ period, onPeriodChange 
         <Card.Body className="p-3 d-flex justify-content-center align-items-center">
           <Calendar
             value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.value || new Date())}
+            onChange={(e) => {
+              if (e.value) {
+                const date = new Date(e.value.getFullYear(), e.value.getMonth(), 1);
+                setSelectedPeriod(date);
+              } else {
+                const now = new Date();
+                const date = new Date(now.getFullYear(), now.getMonth(), 1);
+                setSelectedPeriod(date);
+              }
+            }}
             view="month"
             dateFormat="mm yy"
             locale="ru"

@@ -8,6 +8,7 @@ import Width from "../../../../model/gypsumBoard/Width";
 
 interface PlaningItemInputProps {
     onAdd: (item: DrywallItem) => void;
+    month: Date;
 }
 
 /**
@@ -17,7 +18,7 @@ interface PlaningItemInputProps {
  *
  * @param onAdd - функция обратного вызова для добавления нового элемента планирования
  */
-const PlaningItemInput: React.FC<PlaningItemInputProps> = ({ onAdd }) => {
+const PlaningItemInput: React.FC<PlaningItemInputProps> = ({ onAdd, month }) => {
     /**
      * Создаем пустой гипсокартон для не рабочего времени с помощью useMemo для оптимизации
      * Этот элемент добавляется в начало списка для возможности выбора "не рабочего времени"
@@ -84,7 +85,7 @@ const PlaningItemInput: React.FC<PlaningItemInputProps> = ({ onAdd }) => {
      * @returns новый элемент DrywallItem
      */
     const createDrywallItem = (board: GypsumBoard, parsedQuantity: number): DrywallItem => {
-        const month = new Date(); // Текущая дата
+        // const month = new Date(); // Текущая дата
         const startProduction = new Date(month);
         startProduction.setHours(8, 0, 0, 0); // Устанавливаем время начала на 8:00
 
@@ -92,10 +93,10 @@ const PlaningItemInput: React.FC<PlaningItemInputProps> = ({ onAdd }) => {
         const endProduction = new Date(startProduction.getTime() + (parsedQuantity / board.factSpeed) * 60 * 1000);
 
         return new DrywallItem(
-            Date.now(), // Уникальный ID
+            -1, // Уникальный ID
             board,
             parsedQuantity,
-            month,
+            new Date(new Date(month.getFullYear(), month.getMonth(), 1).toISOString()),
             startProduction,
             endProduction
         );
