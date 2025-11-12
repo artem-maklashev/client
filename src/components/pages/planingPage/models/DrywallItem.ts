@@ -4,13 +4,13 @@ import { ProductItem } from "./library/ProductItem";
 export class DrywallItem extends ProductItem {
     constructor(
         public id: number,
-        public gypsumBoard: GypsumBoard,
+        public product: GypsumBoard,
         public quantity: number,
         public month: Date,
         public startProduction: Date,
         public endProduction: Date
     ) {
-        super(id,gypsumBoard,quantity,
+        super(id,product,quantity,
             month, startProduction, endProduction);
     }
 
@@ -22,8 +22,8 @@ export class DrywallItem extends ProductItem {
         const remainingQuantity = this.quantity - newQuantity;
 
         const firstPart = new DrywallItem(
-            this.id, // можно оставить тот же ID или сгенерировать новый
-            this.gypsumBoard,
+            -1, // можно оставить тот же ID или сгенерировать новый
+            this.product,
             newQuantity,
             this.month,
             this.startProduction,
@@ -31,8 +31,8 @@ export class DrywallItem extends ProductItem {
         );
 
         const secondPart = new DrywallItem(
-            Date.now(), // или использовать UUID, если нужен уникальный ID
-            this.gypsumBoard,
+            -1, // или использовать UUID, если нужен уникальный ID
+            this.product,
             remainingQuantity,
             this.month,
             this.startProduction,
@@ -41,4 +41,15 @@ export class DrywallItem extends ProductItem {
 
         return [firstPart, secondPart];
     }
+
+    static fromJSON(obj: any) {
+             return new DrywallItem(
+          obj.id,
+          GypsumBoard.fromJSON(obj.product),
+          obj.quantity,
+          new Date(obj.month),
+          new Date(obj.startProduction),
+          new Date(obj.endProduction)
+        );
+      }
 }

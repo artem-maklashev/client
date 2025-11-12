@@ -1,20 +1,22 @@
-// DrywallService.ts
 import { DrywallItem } from "../models/DrywallItem";
-import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import Width from "../../../../model/gypsumBoard/Width";
-import ApiService from "../../../../service/ApiService";
-import { start } from "repl";
-import ProductTypes from "../../../../model/ProductTypes";
-import TradeMark from "../../../../model/TradeMark";
-import BoardType from "../../../../model/gypsumBoard/BoardType";
+import { DrywallRepository } from "./DrywallRepository";
 
 export class DrywallService {
+  private static baseUrl = process.env.REACT_APP_API_URL;
+
   private items: DrywallItem[] = [];
   private month: Date;
+  private repository: DrywallRepository = new DrywallRepository();
 
   constructor(month: Date) {
     this.month = new Date(month);
   }
+
+  async loadItems(): Promise<DrywallItem[]> {
+    return this.repository.getDrywallItemsByMonth(this.month);
+  }
+
 
   getItems(): DrywallItem[] {
     return [...this.items];
@@ -27,10 +29,12 @@ export class DrywallService {
 
   removeItemById(id: number) {
     this.items = this.items.filter((item) => item.id !== id);
+    this.calculatePeriods();
   }
 
   removeItemByIndex(index: number) {
     this.items = this.items.filter((_, i) => i !== index);
+    this.calculatePeriods();
   }
 
 
@@ -38,6 +42,7 @@ export class DrywallService {
     const index = this.items.findIndex((i) => i.id === item.id);
     if (index !== -1) {
       this.items[index] = item;
+      this.calculatePeriods();
     }
   }
 
@@ -52,11 +57,13 @@ export class DrywallService {
 
   insertAt(item: DrywallItem, index: number) {
     this.items.splice(index, 0, item);
+    this.calculatePeriods();
   }
 
   moveItem(oldIndex: number, newIndex: number) {
     const [movedItem] = this.items.splice(oldIndex, 1);
     this.insertAt(movedItem, newIndex);
+    this.calculatePeriods();
   }
 
   /**
@@ -114,11 +121,13 @@ export class DrywallService {
     let firstDayStart = this.setStartTime(this.month);
     this.items.forEach((item) => {
       const itemStart = new Date(firstDayStart); // ← создаём копию
-      const widthValue = this.calculateWidthValue(item.gypsumBoard.width);
-      const endDate = this.calculateEndDate(itemStart, item.quantity, item.gypsumBoard.factSpeed, widthValue);
+      const widthValue = this.calculateWidthValue(item.product.width);
+      const endDate = this.calculateEndDate(itemStart, item.quantity, item.product.factSpeed, widthValue);
       item.startProduction = itemStart;
       item.endProduction = endDate;
       firstDayStart = endDate; // ← обновляем для следующего
     });
   }
+
+
 }

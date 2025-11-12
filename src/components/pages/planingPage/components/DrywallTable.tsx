@@ -9,19 +9,26 @@ import { Button } from "primereact/button";
 
 interface DrywallTableProps {
   month: Date;
+  onItemsChange?: (items: DrywallItem[]) => void; // Добавлен пропс для передачи данных
 }
 
-export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
+export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange }) => {
   const [items, setItems] = useState<DrywallItem[]>([]);
   const [drywallService, setDrywallService] = useState<DrywallService | null>(null);
 
   useEffect(() => {
     const initializeService = async () => {
       try {
-        // const gypsumBoards = await ApiService.fetchGypsumBoards();
         const service = new DrywallService(month);
         setDrywallService(service);
+        const serviceItems = await service.loadItems();
+        serviceItems.forEach(item => service.addItem(item)); // Добавляем загруженные элементы в сервис
         setItems(service.getItems());
+        
+        // Передаем данные в родительский компонент
+        if (onItemsChange) {
+          onItemsChange(service.getItems());
+        }
       } catch (error) {
         console.error("Ошибка загрузки гипсокартона:", error);
       }
@@ -33,7 +40,13 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
     if (!drywallService) return;
     const reordered = e.value as DrywallItem[];
     drywallService.reorderItems(reordered);
-    setItems(drywallService.getItems());
+    const updatedItems = drywallService.getItems();
+    setItems(updatedItems);
+    
+    // Передаем обновленные данные в родительский компонент
+    if (onItemsChange) {
+      onItemsChange(updatedItems);
+    }
   };
 
   const handleSplit = (item: DrywallItem) => {
@@ -46,10 +59,16 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
       const [firstPart, secondPart] = item.splitItem(firstQuantity);
       const index = items.findIndex((i) => i.startProduction === item.startProduction);
       drywallService.removeItemByIndex(index);
-      drywallService.insertAt(firstPart, index); // можно вставить в начало
+      drywallService.insertAt(firstPart, index);
       drywallService.insertAt(secondPart, index + 1);
-      drywallService.calculatePeriods();
-      setItems(drywallService.getItems());
+      drywallService.calculatePeriods(); // Пересчитываем периоды после вставки элементов
+      const updatedItems = drywallService.getItems();
+      setItems(updatedItems);
+      
+      // Передаем обновленные данные в родительский компонент
+      if (onItemsChange) {
+        onItemsChange(updatedItems);
+      }
 
     } catch (error) {
       alert((error as Error).message);
@@ -59,7 +78,13 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
   const handleAddItem = (item: DrywallItem) => {
     if (!drywallService) return;
     drywallService.addItem(item);
-    setItems(drywallService.getItems());
+    const updatedItems = drywallService.getItems();
+    setItems(updatedItems);
+    
+    // Передаем обновленные данные в родительский компонент
+    if (onItemsChange) {
+      onItemsChange(updatedItems);
+    }
   };
 
   const handleDelete = (item: DrywallItem) => {
@@ -68,7 +93,13 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
     drywallService.removeItemByIndex(index);
     drywallService.calculatePeriods();
 
-    setItems(drywallService.getItems());
+    const updatedItems = drywallService.getItems();
+    setItems(updatedItems);
+    
+    // Передаем обновленные данные в родительский компонент
+    if (onItemsChange) {
+      onItemsChange(updatedItems);
+    }
   };
 
   const handleEdit = (item: DrywallItem) => {
@@ -83,7 +114,13 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
       newItem.quantity = quantity;
       drywallService.removeItemByIndex(index);// можно вставить в начало
       drywallService.calculatePeriods();
-      setItems(drywallService.getItems());
+      const updatedItems = drywallService.getItems();
+      setItems(updatedItems);
+      
+      // Передаем обновленные данные в родительский компонент
+      if (onItemsChange) {
+        onItemsChange(updatedItems);
+      }
 
     } catch (error) {
       alert((error as Error).message);
@@ -108,7 +145,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month }) => {
           <Column rowReorder headerStyle={{ width: "3rem" }} />
           <Column
             header="Тип гипсокартона"
-            body={(rowData: DrywallItem) => rowData.gypsumBoard?.toString() ?? "—"}
+            body={(rowData: DrywallItem) => rowData.product?.toString() ?? "—"}
           />
           <Column field="quantity" header="м²" />
           <Column
