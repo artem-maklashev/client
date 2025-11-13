@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DrywallGanttChart } from "./components/DrywallGanttChart";
 import { DrywallItem } from "./models/DrywallItem";
 import { DrywallTable } from "./components/DrywallTable";
+import { ProductionTable } from "./components/ProductionTable";
 
 interface PlaningPageProps {
 }
@@ -46,7 +47,8 @@ const PlaningPage: React.FC<PlaningPageProps> = () => {
         {activeTab === "table" ? (
           <DrywallTable month={period} onItemsChange={handleItemsChange} />
         ) : (
-          <DrywallGanttChart items={drywallItems} />
+          // <DrywallGanttChart items={drywallItems} />
+          <ProductionTable items={drywallItems} />
         )}
       </Col>
     </Row>

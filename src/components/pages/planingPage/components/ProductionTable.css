@@ -1,0 +1,191 @@
+/* ProductionTable.css */
+.production-table-container {
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+
+.production-table {
+  min-width: 800px;
+  font-size: 12px;
+  margin-bottom: 0;
+  background-color: white;
+}
+
+/* Переменные для цветов */
+:root {
+  --color-low: #e3f2fd;
+  --color-medium: #90caf9;
+  --color-high: #1976d2;
+  --color-border: #dee2e6;
+  --color-text: #212529;
+}
+
+.product-header {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  min-width: 200px;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  border-right: 2px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.time-header {
+  background-color: #f8f9fa;
+  text-align: center;
+  min-width: 60px;
+  vertical-align: middle;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.time-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+  padding: 4px 2px;
+}
+
+.time-header .date {
+  font-size: 10px;
+  color: #6c757d;
+  font-weight: normal;
+}
+
+.time-header .time {
+  font-size: 11px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.product-type-cell {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  border-right: 2px solid var(--color-border);
+  padding: 8px 12px !important;
+}
+
+.product-name {
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  display: block;
+  color: var(--color-text);
+}
+
+.production-cell {
+  text-align: center;
+  vertical-align: middle;
+  padding: 2px !important;
+  border: 1px solid var(--color-border);
+  position: relative;
+  min-width: 40px;
+  height: 40px;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+
+.production-cell:hover {
+  transform: scale(1.05);
+  z-index: 2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.3);
+}
+
+.duration-badge {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #1976d2;
+  border: 1px solid rgba(25, 118, 210, 0.3);
+  display: inline-block;
+  line-height: 1.2;
+}
+
+/* Цвета для ячеек в зависимости от продолжительности */
+.production-cell[style*="var(--color-low)"] {
+  border-color: #90caf9;
+}
+
+.production-cell[style*="var(--color-medium)"] {
+  border-color: #42a5f5;
+}
+
+.production-cell[style*="var(--color-high)"] {
+  border-color: #1565c0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .production-table {
+    font-size: 10px;
+    min-width: 600px;
+  }
+  
+  .product-name {
+    font-size: 10px;
+    max-width: 150px;
+  }
+  
+  .production-cell {
+    min-width: 30px;
+    height: 30px;
+  }
+  
+  .duration-badge {
+    font-size: 8px;
+    padding: 0 2px;
+  }
+  
+  .time-header {
+    min-width: 50px;
+  }
+}
+
+@media (max-width: 576px) {
+  .production-table-container {
+    margin: 0 -12px;
+  }
+}
+
+/* Стили для печати */
+@media print {
+  .production-table {
+    font-size: 8px;
+    min-width: auto;
+  }
+  
+  .production-cell {
+    min-width: 25px;
+    height: 25px;
+  }
+  
+  .duration-badge {
+    font-size: 7px;
+  }
+}
+
+/* Стили для пустых ячеек */
+.production-cell:empty::before {
+  content: "—";
+  color: #6c757d;
+  font-size: 10px;
+}
+
+/* Улучшение читаемости строк */
+.production-table tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.production-table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
