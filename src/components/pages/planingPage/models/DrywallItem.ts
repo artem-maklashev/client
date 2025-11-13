@@ -22,19 +22,19 @@ export class DrywallItem extends ProductItem {
         const remainingQuantity = this.quantity - newQuantity;
 
         const firstPart = new DrywallItem(
-            -1, // можно оставить тот же ID или сгенерировать новый
+            this.id, 
             this.product,
             newQuantity,
-            this.month,
+            new Date(this.month),
             this.startProduction,
             this.endProduction
         );
 
         const secondPart = new DrywallItem(
-            -1, // или использовать UUID, если нужен уникальный ID
+            -1, 
             this.product,
             remainingQuantity,
-            this.month,
+            new Date(this.month),
             this.startProduction,
             this.endProduction
         );

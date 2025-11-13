@@ -6,16 +6,13 @@ import Edge from "./Edge";
 import Length from "./Length";
 import Thickness from "./Thickness";
 import Width from "./Width";
+import GypsumBoard from "./GypsumBoard";
 
-export class GypsumBoard extends Product {
+export class EmptyBoard extends GypsumBoard {
     
 
-    boardType: BoardType;
-    edge: Edge;
-    thickness: Thickness;
-    width: Width;
-    length: Length;
-    productionSpeed: number;
+    boardType: BoardType;    
+    width: Width;   
     name: string; 
     factSpeed: number;   
 
@@ -30,38 +27,21 @@ export class GypsumBoard extends Product {
         boardType?: BoardType, edge?: Edge, thickness?: Thickness, 
         width?: Width, length?: Length, productionSpeed?: number, factSpeed?: number
     ) {
-        if (id !== undefined && ptype !== undefined && tradeMark !== undefined && boardType 
-            !== undefined && edge !== undefined && thickness !== undefined && width !== undefined && length !== undefined
-            && productionSpeed !== undefined && factSpeed !== undefined
-        ) {
-            super(id, ptype, tradeMark);
-            this.boardType = boardType;
-            this.edge = edge;
-            this.thickness = thickness;
-            this.width = width;
-            this.length = length;  
-            this.productionSpeed = productionSpeed; 
-            this.factSpeed = factSpeed;
-        } else {
+            (super())
             // Значения по умолчанию
-            super(0, new ProductTypes(), new TradeMark());
-            this.boardType = new BoardType();
+            this.boardType = new BoardType(0, "нерабочее время");
             this.edge = new Edge();
             this.thickness = new Thickness();
-            this.width = new Width();
+            this.width = new Width(0, "1200");
             this.length = new Length();
             this.productionSpeed = 0;
-            this.factSpeed = 0;
-        }
+            this.factSpeed = 1 / 1.2; // Скорость производства по умолчанию0;
+        
         this.name = this.toString();
     }
 
-    toString(): string {
-        if (this.id !== 0) {
-        return `${this.tradeMark.name} тип ${this.boardType.name} ${this.edge.name}-${this.thickness.value}-${this.width.value}-${this.length.value}`;
-        } else {
-            return `${this.boardType.name}`;
-        }
+    toString(): string {        
+            return `${this.boardType.name}`;        
     }
     static fromJSON(obj: any) {
          return new GypsumBoard(

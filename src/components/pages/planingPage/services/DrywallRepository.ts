@@ -33,20 +33,34 @@ export class DrywallRepository {
     async addDrywallItem(drywallItemDTO: DrywallItem) {
         if (drywallItemDTO) {
             try {
-                const responce = await api.put(`${process.env.REACT_APP_API_URL}/planing/addDrywallItem`, drywallItemDTO);
-                // Сервер возвращает объект только с id, остальные поля null
-                // Поэтому создаем новый объект DrywallItem, копируя данные из исходного объекта и обновляя только id
-                return new DrywallItem(
-                    responce.data.id,
-                    drywallItemDTO.product,
-                    drywallItemDTO.quantity,
-                    drywallItemDTO.month,
-                    drywallItemDTO.startProduction,
-                    drywallItemDTO.endProduction
-                );
+                const responce = await api.put(`${process.env.REACT_APP_API_URL}/planing/addDrywallItem`, drywallItemDTO);                                
+                return  DrywallItem.fromJSON(responce.data);                    
+                ;
             } catch (error: any) {
                 console.error(`Произошла ошибка при сохранении данных по планированию`, error);
                 throw error; // Пробрасываем ошибку выше, чтобы вызывающий код мог обработать её правильно
+            }
+        }
+    }
+
+    async deleteDrywallItem(id: number) {
+        try {
+            return await api.delete(`${process.env.REACT_APP_API_URL}/planing/deleteDrywallItem/${id}`);
+        } catch (error: any) {
+            console.error(`Произошла ошибка при удалении данных по планированию`, error);
+            throw error; // Пробрасываем ошибку выше, чтобы вызывающий код мог обработать е
+        }
+    }
+
+    async updateDrywallItem(drywallItemDTO: DrywallItem) {
+        if (drywallItemDTO) {
+            try {
+                const responce = await api.put(`${process.env.REACT_APP_API_URL}/planing/updateDrywallItem`, drywallItemDTO);                
+                return  DrywallItem.fromJSON(responce.data);                    
+                ;
+            } catch (error: any) {
+                console.error(`Произошла ошибка при сохранении данных по планированию`, error);
+                throw error; // Пробрасываем ошибку выше, чтобы вызывающий код мог обработать е
             }
         }
     }

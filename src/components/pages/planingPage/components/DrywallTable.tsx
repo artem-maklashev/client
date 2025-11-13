@@ -6,7 +6,7 @@ import { DrywallService } from "../services/DrywallService";
 import { Card } from "react-bootstrap";
 import PlaningInputItem from "./PlaningItemInput";
 import { Button } from "primereact/button";
-
+import ToastMessage from "../models/library/ToastMessage";
 interface DrywallTableProps {
   month: Date;
   onItemsChange?: (items: DrywallItem[]) => void; // Добавлен пропс для передачи данных
@@ -15,10 +15,13 @@ interface DrywallTableProps {
 export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange }) => {
   const [items, setItems] = useState<DrywallItem[]>([]);
   const [drywallService, setDrywallService] = useState<DrywallService | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<'success' | 'danger' | 'warning' | 'info'>('success');
 
   useEffect(() => {
     let isCancelled = false;
-    
+
     const initializeService = async () => {
       try {
         // Очищаем текущие элементы перед загрузкой новых
@@ -26,23 +29,26 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
         if (onItemsChange) {
           onItemsChange([]);
         }
-        
+
         const service = new DrywallService(month);
-        if (isCancelled) return;
         
+        if (isCancelled) return;
+
         setDrywallService(service);
-        const serviceItems = await service.loadItems();
+        const loadedItems = await service.loadItems();
         if (isCancelled) return;
-        
-        serviceItems.forEach(item => service.addItem(item)); // Добавляем загруженные элементы в сервис
-        const items = service.getItems();
-        
+
+        // Устанавливаем загруженные элементы в сервис без пересчета периодов
+        service.setItems(loadedItems);
+
+        // Устанавливаем загруженные элементы напрямую без добавления в сервис
+        // Это предотвращает ненужный пересчет периодов для загруженных данных
         if (!isCancelled) {
-          setItems(items);
-          
+          setItems(loadedItems);
+
           // Передаем данные в родительский компонент
           if (onItemsChange) {
-            onItemsChange(items);
+            onItemsChange(loadedItems);
           }
         }
       } catch (error) {
@@ -51,13 +57,19 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
         }
       }
     };
-    
+
     initializeService();
-    
+
     return () => {
       isCancelled = true;
     };
   }, [month]);
+
+  const message = (message: string, type: 'success' | 'danger' | 'warning' | 'info') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const onRowReorder = (e: any) => {
     if (!drywallService) return;
@@ -65,14 +77,14 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
     drywallService.reorderItems(reordered);
     const updatedItems = drywallService.getItems();
     setItems(updatedItems);
-    
+
     // Передаем обновленные данные в родительский компонент
     if (onItemsChange) {
       onItemsChange(updatedItems);
     }
   };
 
-  const handleSplit = (item: DrywallItem) => {
+  const handleSplit = async (item: DrywallItem) => {
     const input = prompt(`Введите количество для первой части (макс ${item.quantity}):`);
     const firstQuantity = Number(input);
 
@@ -81,13 +93,13 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
     try {
       const [firstPart, secondPart] = item.splitItem(firstQuantity);
       const index = items.findIndex((i) => i.startProduction === item.startProduction);
-      drywallService.removeItemByIndex(index);
-      drywallService.insertAt(firstPart, index);
+      // await drywallService.removeItemByIndex(index);
+      await drywallService.updateItem(firstPart);
       drywallService.insertAt(secondPart, index + 1);
-      drywallService.calculatePeriods(); // Пересчитываем периоды после вставки элементов
+      // drywallService.calculatePeriods(); // Пересчитываем периоды после вставки элементов
       const updatedItems = drywallService.getItems();
       setItems(updatedItems);
-      
+
       // Передаем обновленные данные в родительский компонент
       if (onItemsChange) {
         onItemsChange(updatedItems);
@@ -103,43 +115,51 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
     drywallService.addItem(item);
     const updatedItems = drywallService.getItems();
     setItems(updatedItems);
-    
+
     // Передаем обновленные данные в родительский компонент
     if (onItemsChange) {
       onItemsChange(updatedItems);
     }
   };
 
-  const handleDelete = (item: DrywallItem) => {
+  const handleDelete = async (item: DrywallItem) => {
     if (!drywallService) return;
     const index = items.findIndex((i) => i.startProduction === item.startProduction);
-    drywallService.removeItemByIndex(index);
-    drywallService.calculatePeriods();
-
-    const updatedItems = drywallService.getItems();
-    setItems(updatedItems);
     
-    // Передаем обновленные данные в родительский компонент
-    if (onItemsChange) {
-      onItemsChange(updatedItems);
-    }
-  };
+    try {
+        const deletedId = await drywallService.removeItemByIndex(index);
+        
+        const updatedItems = drywallService.getItems();
+        setItems(updatedItems);
 
-  const handleEdit = (item: DrywallItem) => {
+       message(`Успешно удалены данные с ID: ${deletedId}`, "success");
+
+        if (onItemsChange) {
+            onItemsChange(updatedItems);
+        }
+    } catch (error) {
+        message((error as Error).message, "danger");
+    }
+};
+
+  const handleEdit = async (item: DrywallItem) => {
     const input = prompt(`Введите количество :`);
     const quantity = Number(input);
 
     if (!drywallService || isNaN(quantity)) return;
 
     try {
-      const index = items.findIndex((i) => i.startProduction === item.startProduction);
       const newItem = item;
       newItem.quantity = quantity;
-      drywallService.removeItemByIndex(index);// можно вставить в начало
-      drywallService.calculatePeriods();
+      const  result = await drywallService.updateItem(newItem);
+      if (result) {
+        message("Успешно обновлено", "info");
+      } else {
+        message("Ошибка при обновлении", "danger");
+      }
       const updatedItems = drywallService.getItems();
       setItems(updatedItems);
-      
+
       // Передаем обновленные данные в родительский компонент
       if (onItemsChange) {
         onItemsChange(updatedItems);
@@ -158,7 +178,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
         Порядок производства гипсокартона
       </Card.Title>
       <Card.Body>
-        <PlaningInputItem onAdd={handleAddItem} month={month}/>
+        <PlaningInputItem onAdd={handleAddItem} month={month} />
         <DataTable
           value={items}
           reorderableRows
@@ -238,6 +258,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
 
         </DataTable>
       </Card.Body>
+      <ToastMessage type={toastType} message={toastMessage} show={showToast} onClose={() => setShowToast(false)}/>
     </Card>
   );
 };

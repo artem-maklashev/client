@@ -5,6 +5,7 @@ import { Button, Form, InputGroup } from "react-bootstrap";
 import { DrywallItem } from "../models/DrywallItem";
 import BoardType from "../../../../model/gypsumBoard/BoardType";
 import Width from "../../../../model/gypsumBoard/Width";
+import { EmptyBoard } from "../../../../model/gypsumBoard/EmptyBoard";
 
 interface PlaningItemInputProps {
     onAdd: (item: DrywallItem) => void;
@@ -24,13 +25,14 @@ const PlaningItemInput: React.FC<PlaningItemInputProps> = ({ onAdd, month }) => 
      * Этот элемент добавляется в начало списка для возможности выбора "не рабочего времени"
      */
     const emptyBoard: GypsumBoard = useMemo(() => {
-        const board = new GypsumBoard();
-        const emptyType = new BoardType(0, "не рабочее время");
-        board.boardType = emptyType;
-        board.factSpeed = 1 / 1.2; // Скорость производства по умолчанию
-        const emptyWidth = new Width(0, "1200");
-        board.width = emptyWidth;
-        board.id = 0;
+        // const board = new GypsumBoard();
+        // const emptyType = new BoardType(0, "нерабочее время");
+        // board.boardType = emptyType;
+        // board.factSpeed = 1 / 1.2; // Скорость производства по умолчанию
+        // const emptyWidth = new Width(0, "1200");
+        // board.width = emptyWidth;
+        // board.id = 0;
+        const board = new EmptyBoard();
         return board;
     }, []);
 
@@ -93,7 +95,7 @@ const PlaningItemInput: React.FC<PlaningItemInputProps> = ({ onAdd, month }) => 
         const endProduction = new Date(startProduction.getTime() + (parsedQuantity / board.factSpeed) * 60 * 1000);
 
         return new DrywallItem(
-            -1, // Уникальный ID
+            board.id === 0 ? 0 : -1, 
             board,
             parsedQuantity,
             new Date(new Date(month.getFullYear(), month.getMonth(), 1).toISOString()),
