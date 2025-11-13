@@ -58,7 +58,7 @@ export class GypsumBoard extends Product {
 
     toString(): string {
         if (this.id !== 0) {
-        return `${this.tradeMark.name} тип ${this.boardType.name} ${this.edge.name}-${this.thickness.value}-${this.width.value}-${this.length.value}`;
+        return `${this.tradeMark.name} тип ${this.boardType.name}-${this.edge.name} ${this.thickness.value}-${this.width.value}-${this.length.value}`;
         } else {
             return `${this.boardType.name}`;
         }
