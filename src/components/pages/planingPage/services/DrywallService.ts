@@ -112,14 +112,20 @@ export class DrywallService {
   }
 
 
-  async updateItem(item: DrywallItem) {
-    const index = this.items.findIndex((i) => i.id === item.id);
+  async updateItem(item: DrywallItem, index: number) {
+    
+    let result: DrywallItem | undefined = item;
+
     if (index !== -1) {
-      const result = await this.repository.updateDrywallItem(item);
-      this.items[index] = item;
-      return result;
+      if (item.id > 0) {
+        result = await this.repository.updateDrywallItem(item);
+      }
     }
+    this.items[index] = item;
+    this.calculatePeriods();
+    return result
   }
+
 
   getItem(id: number): DrywallItem | undefined {
     return this.items.find((item) => item.id === id);

@@ -8,19 +8,20 @@ import 'primeicons/primeicons.css';
 
 interface SlideSidebarProps {
   header?: string;
-  children: React.ReactNode; // содержимое панели
+  label? : string;
+  children: React.ReactNode; 
 }
 
-export const SlideSidebar: React.FC<SlideSidebarProps> = ({ header = 'Панель', children }) => {
+export const SlideSidebar: React.FC<SlideSidebarProps> = ({ header , children, label }) => {
   const [visible, setVisible] = useState(false);
 
   return (
     <>
       <Button
-        label="Открыть панель"
-        icon="pi pi-bars"
+        label={label}
         onClick={() => setVisible(true)}
         className="p-button-sm"
+        icon="pi pi-arrow-right"
       />
 
       <Sidebar

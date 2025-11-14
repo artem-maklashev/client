@@ -94,7 +94,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
       const [firstPart, secondPart] = item.splitItem(firstQuantity);
       const index = items.findIndex((i) => i.startProduction === item.startProduction);
       // await drywallService.removeItemByIndex(index);
-      await drywallService.updateItem(firstPart);
+      await drywallService.updateItem(firstPart, index);
       drywallService.insertAt(secondPart, index + 1);
       // drywallService.calculatePeriods(); // Пересчитываем периоды после вставки элементов
       const updatedItems = drywallService.getItems();
@@ -142,7 +142,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
     }
 };
 
-  const handleEdit = async (item: DrywallItem) => {
+  const handleEdit = async (item: DrywallItem, index: number) => {
     const input = prompt(`Введите количество :`);
     const quantity = Number(input);
 
@@ -151,7 +151,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
     try {
       const newItem = item;
       newItem.quantity = quantity;
-      const  result = await drywallService.updateItem(newItem);
+      const  result = await drywallService.updateItem(newItem, index);
       if (result) {
         message("Успешно обновлено", "info");
       } else {
@@ -224,12 +224,12 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
           <Column
             header="Действия"
             style={{ width: '120px', textAlign: 'center' }}
-            body={(rowData) => (
+            body={(rowData, options) => (
               <div className="d-flex justify-content-center gap-2">
                 <Button
                   icon="pi pi-pencil"
                   className="p-button-rounded p-button-info p-button-sm"
-                  onClick={() => handleEdit(rowData)}
+                  onClick={() => handleEdit(rowData, options.rowIndex)}
                   tooltip="Редактировать"
                   tooltipOptions={{ position: 'top' }}
                 />

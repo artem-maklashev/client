@@ -5,13 +5,13 @@ import { DrywallGanttChart } from "./components/DrywallGanttChart";
 import { DrywallItem } from "./models/DrywallItem";
 import { DrywallTable } from "./components/DrywallTable";
 import { ProductionTable } from "./components/ProductionTable";
+import { SlideSidebar } from "../../../service/library/slidepanel/SlideSidebar";
 
 interface PlaningPageProps {
 }
 const PlaningPage: React.FC<PlaningPageProps> = () => {
     const now = new Date()
     const [period, setPeriod] = useState<Date>(new Date(now.getFullYear(), now.getMonth(), 1));
-    const [activeTab, setActiveTab] = useState<"table" | "gantt">("table");
     const [drywallItems, setDrywallItems] = useState<DrywallItem[]>([]);
 
     function onPeriodChange(period: Date): void {
@@ -23,34 +23,18 @@ const PlaningPage: React.FC<PlaningPageProps> = () => {
     };
 
     return (
-  <Container fluid className="mt-5">
-    <Row className="mt-5">
-      <Col lg={12} sm={12} className="mt-4">
+  <Container fluid className="mt-5 mb-2">
+    <Row className="mt-5" >
+      <Col lg={2} sm={12} className="mt-4">
         <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
-
-        {/* Вкладки для переключения между таблицей и диаграммой Ганта */}
-        <div className="d-flex mb-3">
-          <button 
-            className={`btn ${activeTab === "table" ? "btn-primary" : "btn-outline-primary"} me-2`}
-            onClick={() => setActiveTab("table")}
-          >
-            Таблица
-          </button>
-          <button 
-            className={`btn ${activeTab === "gantt" ? "btn-primary" : "btn-outline-primary"}`}
-            onClick={() => setActiveTab("gantt")}
-          >
-            Диаграмма Ганта
-          </button>
-        </div>
-
-        {activeTab === "table" ? (
+        <SlideSidebar header="Календарь производства" label="Календарь" children={
           <DrywallTable month={period} onItemsChange={handleItemsChange} />
-        ) : (
-          // <DrywallGanttChart items={drywallItems} />
-          <ProductionTable items={drywallItems} />
-        )}
+        } />
+          {/* <DrywallGanttChart items={drywallItems} /> */}
       </Col>
+      <Col lg={10} sm={12} className="mt-4">
+          <ProductionTable items={drywallItems} />
+       </Col>
     </Row>
   </Container>
 );
