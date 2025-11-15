@@ -42,6 +42,9 @@ export class DrywallItem extends ProductItem {
         return [firstPart, secondPart];
     }
 
+    // TODO: Исправить десериализацию EmptyBoard
+    // Сейчас метод всегда создает GypsumBoard, даже если это EmptyBoard
+    // Нужно проверять тип продукта и создавать соответствующий экземпляр
     static fromJSON(obj: any) {
              return new DrywallItem(
           obj.id,
@@ -52,4 +55,4 @@ export class DrywallItem extends ProductItem {
           new Date(obj.endProduction)
         );
       }
-}
+    }

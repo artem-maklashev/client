@@ -27,7 +27,7 @@ export class EmptyBoard extends GypsumBoard {
         boardType?: BoardType, edge?: Edge, thickness?: Thickness, 
         width?: Width, length?: Length, productionSpeed?: number, factSpeed?: number
     ) {
-            (super())
+            super();
             // Значения по умолчанию
             this.boardType = new BoardType(0, "нерабочее время");
             this.edge = new Edge();
@@ -35,7 +35,7 @@ export class EmptyBoard extends GypsumBoard {
             this.width = new Width(0, "1200");
             this.length = new Length();
             this.productionSpeed = 0;
-            this.factSpeed = 1 / 1.2; // Скорость производства по умолчанию0;
+            this.factSpeed = 1 / 1.2; // Скорость производства по умолчанию
         
         this.name = this.toString();
     }
@@ -44,7 +44,7 @@ export class EmptyBoard extends GypsumBoard {
             return `${this.boardType.name}`;        
     }
     static fromJSON(obj: any) {
-         return new GypsumBoard(
+         return new EmptyBoard(
       obj.id,
       ProductTypes.fromJSON(obj.ptype),
       TradeMark.fromJSON(obj.tradeMark),
@@ -58,4 +58,4 @@ export class EmptyBoard extends GypsumBoard {
     );
   }
 }
-export default GypsumBoard;
+export default EmptyBoard;

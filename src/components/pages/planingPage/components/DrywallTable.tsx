@@ -10,32 +10,35 @@ import ToastMessage from "../models/library/ToastMessage";
 interface DrywallTableProps {
   month: Date;
   onItemsChange?: (items: DrywallItem[]) => void; // Добавлен пропс для передачи данных
+  loadedItems: DrywallItem[];
 }
 
-export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange }) => {
+export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange, loadedItems }) => {
   const [items, setItems] = useState<DrywallItem[]>([]);
   const [drywallService, setDrywallService] = useState<DrywallService | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState<'success' | 'danger' | 'warning' | 'info'>('success');
+  const [toastType, setToastType] = useState<'success' | 'danger' | 'warning' | 'info'>('success');  
 
   useEffect(() => {
     let isCancelled = false;
 
+    
+
     const initializeService = async () => {
       try {
         // Очищаем текущие элементы перед загрузкой новых
-        setItems([]);
-        if (onItemsChange) {
-          onItemsChange([]);
-        }
+        // setItems([]);
+        // if (onItemsChange) {
+        //   onItemsChange([]);
+        // }
 
         const service = new DrywallService(month);
         
         if (isCancelled) return;
 
         setDrywallService(service);
-        const loadedItems = await service.loadItems();
+        // const loadedItems = await service.loadItems();
         if (isCancelled) return;
 
         // Устанавливаем загруженные элементы в сервис без пересчета периодов
@@ -63,7 +66,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
     return () => {
       isCancelled = true;
     };
-  }, [month]);
+  }, [loadedItems, month, onItemsChange]);
 
   const message = (message: string, type: 'success' | 'danger' | 'warning' | 'info') => {
     setToastMessage(message);
@@ -92,6 +95,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
 
     try {
       const [firstPart, secondPart] = item.splitItem(firstQuantity);
+      // TODO: Использовать более надежный способ поиска индекса, например по id
       const index = items.findIndex((i) => i.startProduction === item.startProduction);
       // await drywallService.removeItemByIndex(index);
       await drywallService.updateItem(firstPart, index);
@@ -124,6 +128,8 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
 
   const handleDelete = async (item: DrywallItem) => {
     if (!drywallService) return;
+    // TODO: Использовать более надежный способ поиска индекса, например по id
+    // TODO: Использовать более надежный способ поиска индекса, например по id
     const index = items.findIndex((i) => i.startProduction === item.startProduction);
     
     try {
