@@ -24,8 +24,8 @@
 
 /* Переменные для цветов */
 :root {
-  --color-low: #e3f2fd;
-  --color-medium: #90caf9;
+  --color-low: #bce2fd;
+  --color-medium: #67b9fc;
   --color-high: #1976d2;
   --color-border: #dee2e6;
   --color-text: #212529;
@@ -109,7 +109,7 @@
 }
 
 .duration-badge {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(236, 233, 233, 0.9);
   border-radius: 3px;
   padding: 1px 4px;
   font-size: 9px;
@@ -166,22 +166,115 @@
   }
 }
 
-/* Стили для печати */
+/* скрываем неактивные страницы на экране */
+.hidden-page {
+  display: none;
+}
+
+/* ===============================
+   ПЕЧАТЬ ВСЕХ ТАБЛИЦ
+   =============================== */
 @media print {
+
+  /* Скрываем всё на странице */
+  body * {
+    visibility: hidden !important;
+  }
+
+  .hidden-page {
+    display: block !important;
+  }
+
+  .print-table {
+    page-break-after: always;
+  }
+
+  /* Показываем только то, что должно печататься */
+  .print-container,
+  .print-container * {
+    visibility: visible !important;
+  }
+
+  /* Печатный контейнер вынести в левый верх */
+  .print-container {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Каждая таблица — с новой страницы */
+  .print-table {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* Убираем фиксированные хедеры, скроллы и фризинг */
+  .p-datatable,
+  .p-datatable-wrapper,
+  .p-datatable-scrollable-header,
+  .p-datatable-scrollable-body,
+  .p-datatable-frozen-view,
+  .p-datatable-unfrozen-view {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Убираем тени/ховеры — печать должна быть чистой */
+  .production-table-container {
+    border: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  .production-cell:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Фиксированные колонки на печати — обычные */
+  .product-header,
+  .product-type-cell {
+    position: static !important;
+    left: auto !important;
+    z-index: auto !important;
+  }
+
+  /* Цвета/заливки для улучшения контрастности */
+  .production-table th,
+  .production-table td {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Корректные размеры шрифтов для печати */
   .production-table {
-    font-size: 8px;
-    min-width: auto;
+    font-size: 11px !important;
+    background: white !important;
   }
-  
-  .production-cell {
-    min-width: 25px;
-    height: 25px;
+
+  .print-table {
+    page-break-after: always !important; /* старый синтаксис */
+    break-after: page !important;        /* новый синтаксис */
   }
-  
-  .duration-badge {
-    font-size: 7px;
+
+  /* Отменяем margin/padding обёрток, чтобы таблица начиналась сверху */
+  .print-container {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Включаем все таблицы (если используешь hidden-page) */
+  .hidden-page {
+    display: block !important;
   }
 }
+
+
 
 /* Стили для пустых ячеек */
 .production-cell:empty::before {

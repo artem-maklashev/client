@@ -303,7 +303,7 @@ const ShiftsDefect: React.FC<ShiftsDefectProps> = ({ defectsLog, data }) => {
                 </Col>
             </Row>
             <Row >
-                <Col className="col-12 d-flex justify-content-end">
+                <Col className="col-12 d-flex justify-content-center">
                     <NotQulaty productionData={data} />
                 </Col>
             </Row>

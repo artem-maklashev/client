@@ -52,13 +52,10 @@ const NotQulaty: React.FC<NotQualtyProps> = ({ productionData }) => {
                                     </td>
                                     <td className="align-middle">
                                         <div>
-                                            <strong>
-                                                {item.product.tradeMark.name} {item.product.boardType.name}
-                                            </strong>
-                                        </div>
-                                        <div className="small text-muted">
-                                            {item.product.edge.name} {item.product.thickness.value}×
-                                            {item.product.width.value}×{item.product.length.value}
+                                            <span className="small text-muted">
+                                                {item.product.tradeMark.name} {item.product.boardType.name}-{item.product.edge.name} {item.product.thickness.value}×
+                                                {item.product.width.value}×{item.product.length.value}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="align-middle text-end" style={{ whiteSpace: 'nowrap' }}>

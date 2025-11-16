@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
+import { Button } from "primereact/button";
 import { DrywallItem } from "../models/DrywallItem";
 import { SelectButton } from "primereact/selectbutton";
 import "./ProductionTable.css";
@@ -18,6 +19,15 @@ interface ProductionCell {
 // -----------------------------------------------------
 // Helpers
 // -----------------------------------------------------
+
+const chunkArray = <T,>(arr: T[], size: number): T[][] => {
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+};
+
 const formats = [
   { label: "12ч", value: 12 },
   { label: "24ч", value: 24 },
@@ -39,10 +49,10 @@ const createTimeColumns = (items: DrywallItem[], stepHours: number): Date[] => {
   if (items.length === 0) return [];
 
   const minStart = new Date(Math.min(...items.map(i => i.startProduction.getTime())));
-  const maxEnd   = new Date(Math.max(...items.map(i => i.endProduction.getTime())));
+  const maxEnd = new Date(Math.max(...items.map(i => i.endProduction.getTime())));
 
   const start = roundToHour(minStart);
-  const end   = roundToHour(addHours(maxEnd, stepHours));
+  const end = roundToHour(addHours(maxEnd, stepHours));
 
   const columns: Date[] = [];
   let current = start;
@@ -74,10 +84,52 @@ const getCellColor = (duration: number) => {
 export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }) => {
   const [format, setFormat] = useState<number>(24);
   const [items, setItems] = useState<DrywallItem[]>([]);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [activePage, setActivePage] = useState(0);
+
+
+
 
   useEffect(() => {
     setItems(planingItems);
   }, [planingItems]);
+
+  const handlePrint = () => {
+  if (!tableRef.current) return;
+
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) return;
+
+  const doc = printWindow.document;
+
+  doc.open();
+  doc.write(`
+    <html>
+    <head>
+      <title>Печать таблицы</title>
+      <link rel="stylesheet" href="/ProductionTable.css" />
+      <style>
+        body { margin: 0; padding: 20px; font-family: Arial; }
+      </style>
+    </head>
+    <body>
+      <div class="print-container">
+        ${tableRef.current.innerHTML}
+      </div>
+    </body>
+    </html>
+  `);
+  doc.close();
+
+  // Дать окну время прогрузиться
+  printWindow.onload = () => {
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
+};
+
+
 
   const productTypes = useMemo(
     () => Array.from(new Set(items?.map(i => i.product.toString()))).sort(),
@@ -85,35 +137,40 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
   );
 
   const timeColumns = useMemo(
-  () => createTimeColumns(items, format),
-  [items, format]
-);
+    () => createTimeColumns(items, format),
+    [items, format]
+  );
 
-const tableData = useMemo(() => {
-  return productTypes.map(type => {
-    const cells = timeColumns.map(() => ({ item: null, duration: 0 }) as ProductionCell);
+  const pagedColumns = useMemo(
+    () => chunkArray(timeColumns, 10),
+    [timeColumns]
+  );
 
-    const rows = items.filter(i => i.product.toString() === type);
+  const tableData = useMemo(() => {
+    return productTypes.map(type => {
+      const cells = timeColumns.map(() => ({ item: null, duration: 0 }) as ProductionCell);
 
-    rows.forEach(item => {
-      const start = item.startProduction.getTime();
-      const end = item.endProduction.getTime();
+      const rows = items.filter(i => i.product.toString() === type);
 
-      timeColumns.forEach((col, idx) => {
-        const colStart = col.getTime();
-        const colEnd = colStart + format * 3600 * 1000;
+      rows.forEach(item => {
+        const start = item.startProduction.getTime();
+        const end = item.endProduction.getTime();
 
-        const minutes = getOverlapMinutes(start, end, colStart, colEnd);
+        timeColumns.forEach((col, idx) => {
+          const colStart = col.getTime();
+          const colEnd = colStart + format * 3600 * 1000;
 
-        if (minutes > 0) {
-          cells[idx] = { item, duration: minutes };
-        }
+          const minutes = getOverlapMinutes(start, end, colStart, colEnd);
+
+          if (minutes > 0) {
+            cells[idx] = { item, duration: minutes };
+          }
+        });
       });
-    });
 
-    return { productType: type, cells };
-  });
-}, [items, productTypes, timeColumns, format]);
+      return { productType: type, cells };
+    });
+  }, [items, productTypes, timeColumns, format]);
 
   const cellTemplate = (row: { productType: string; cells: ProductionCell[] }, colIndex: number) => {
     const cell = row.cells[colIndex];
@@ -132,9 +189,9 @@ const tableData = useMemo(() => {
         title={
           cell.duration > 0
             ? `${row.productType}\n` +
-              `${timeColumns[colIndex].toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })} - ` +
-              `${new Date(timeColumns[colIndex].getTime() + format * 3600 * 1000).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}\n` +
-              `Продолжительность: ${Math.round(cell.duration)} мин.`
+            `${timeColumns[colIndex].toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })} - ` +
+            `${new Date(timeColumns[colIndex].getTime() + format * 3600 * 1000).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}\n` +
+            `Продолжительность: ${Math.round(cell.duration)} мин.`
             : ""
         }
       >
@@ -162,30 +219,68 @@ const tableData = useMemo(() => {
     );
   }
 
+
+  
   return (
     <Card
       className="full-height-card"
       title={
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>
             <i className="bi bi-table" style={{ marginRight: 8 }} />
             Таблица производства гипсокартона
+          </span>
+
+          <div style={{ marginTop: 10 }}>
+            <Button
+              label="←"
+              disabled={activePage === 0}
+              onClick={() => setActivePage(p => p - 1)}
+              className="p-button-text"
+            />
+
+            <span style={{ margin: "0 10px" }}>
+              Страница {activePage + 1} / {pagedColumns.length}
             </span>
 
-          <SelectButton
-            value={format}
-            options={formats}
-            optionLabel="label"
-            optionValue="value"
-            onChange={e => setFormat(e.value)}
-            aria-label="12/24ч"
-            
+            <Button
+              label="→"
+              disabled={activePage === pagedColumns.length - 1}
+              onClick={() => setActivePage(p => p + 1)}
+              className="p-button-text"
             />
+          </div>
+
+
+          <div>
+            <Button
+              icon="pi pi-print"
+              className="p-button-rounded p-button-text"
+              onClick={handlePrint}
+              aria-label="Печать"
+            />
+            <SelectButton
+              value={format}
+              options={formats}
+              optionLabel="label"
+              optionValue="value"
+              onChange={e => setFormat(e.value)}
+              aria-label="12/24ч"
+
+            />
+          </div>
 
         </div>
       }
     >
-      <DataTable value={tableData} scrollable scrollHeight="100%">
+      <div ref={tableRef} className="print-container">
+
+  {pagedColumns.map((pageCols, pageIndex) => (
+    <div
+      key={pageIndex}
+      className={`print-table ${pageIndex === activePage ? "" : "hidden-page"}`}
+    >
+      <DataTable value={tableData}>
         <Column
           field="productType"
           header="Вид гипсокартона"
@@ -194,7 +289,7 @@ const tableData = useMemo(() => {
           style={{ minWidth: 200 }}
         />
 
-        {timeColumns.map((time, i) => (
+        {pageCols.map((time, i) => (
           <Column
             key={i}
             header={
@@ -208,11 +303,17 @@ const tableData = useMemo(() => {
                 </div>
               </div>
             }
-            body={row => cellTemplate(row, i)}
+            body={row => cellTemplate(row, timeColumns.indexOf(time))}
             style={{ minWidth: 120, textAlign: "center" }}
           />
         ))}
       </DataTable>
+    </div>
+  ))}
+
+</div>
+      
+
     </Card>
   );
 };
