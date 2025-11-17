@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { DrywallItem } from "../models/DrywallItem";
 import { SelectButton } from "primereact/selectbutton";
 import "./ProductionTable.css";
+import { ProductionPlan } from "./models/ProductionPlan";
 
 interface ProductionTableProps {
   planingItems: DrywallItem[];
@@ -33,44 +34,6 @@ const formats = [
   { label: "24ч", value: 24 },
 ];
 
-const roundToHour = (d: Date) => {
-  const nd = new Date(d);
-  nd.setMinutes(0, 0, 0);
-  return nd;
-};
-
-const addHours = (d: Date, h: number) => {
-  const nd = new Date(d);
-  nd.setHours(nd.getHours() + h);
-  return nd;
-};
-
-const createTimeColumns = (items: DrywallItem[], stepHours: number): Date[] => {
-  if (items.length === 0) return [];
-
-  const minStart = new Date(Math.min(...items.map(i => i.startProduction.getTime())));
-  const maxEnd = new Date(Math.max(...items.map(i => i.endProduction.getTime())));
-
-  const start = roundToHour(minStart);
-  const end = roundToHour(addHours(maxEnd, stepHours));
-
-  const columns: Date[] = [];
-  let current = start;
-
-  while (current <= end) {
-    columns.push(new Date(current));
-    current = addHours(current, stepHours);   // <-- шаг теперь зависит от format
-  }
-
-  return columns;
-};
-
-const getOverlapMinutes = (start: number, end: number, colStart: number, colEnd: number) => {
-  const overlapStart = Math.max(start, colStart);
-  const overlapEnd = Math.min(end, colEnd);
-  return Math.max(0, (overlapEnd - overlapStart) / (1000 * 60));
-};
-
 const getCellColor = (duration: number) => {
   if (duration === 0) return "transparent";
   if (duration <= 180) return "var(--color-low)";
@@ -86,7 +49,10 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
   const [items, setItems] = useState<DrywallItem[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
   const [activePage, setActivePage] = useState(0);
+  const plan = useMemo(() => new ProductionPlan(items, format), [items, format]);
 
+  const tableData = plan.getTableData();
+  const timeColumns = plan.getTimeColumns();
 
 
 
@@ -127,50 +93,13 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
     printWindow.print();
     printWindow.close();
   };
-};
-
-
-
-  const productTypes = useMemo(
-    () => Array.from(new Set(items?.map(i => i.product.toString()))).sort(),
-    [items]
-  );
-
-  const timeColumns = useMemo(
-    () => createTimeColumns(items, format),
-    [items, format]
-  );
+}; 
 
   const pagedColumns = useMemo(
     () => chunkArray(timeColumns, 10),
     [timeColumns]
   );
-
-  const tableData = useMemo(() => {
-    return productTypes.map(type => {
-      const cells = timeColumns.map(() => ({ item: null, duration: 0 }) as ProductionCell);
-
-      const rows = items.filter(i => i.product.toString() === type);
-
-      rows.forEach(item => {
-        const start = item.startProduction.getTime();
-        const end = item.endProduction.getTime();
-
-        timeColumns.forEach((col, idx) => {
-          const colStart = col.getTime();
-          const colEnd = colStart + format * 3600 * 1000;
-
-          const minutes = getOverlapMinutes(start, end, colStart, colEnd);
-
-          if (minutes > 0) {
-            cells[idx] = { item, duration: minutes };
-          }
-        });
-      });
-
-      return { productType: type, cells };
-    });
-  }, [items, productTypes, timeColumns, format]);
+  
 
   const cellTemplate = (row: { productType: string; cells: ProductionCell[] }, colIndex: number) => {
     const cell = row.cells[colIndex];
@@ -186,14 +115,14 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
           fontWeight: cell.duration > 0 ? "bold" : "normal",
           color: cell.duration > 180 || cell.item?.id === 0 ? "#fff" : undefined
         }}
-        title={
-          cell.duration > 0
-            ? `${row.productType}\n` +
-            `${timeColumns[colIndex].toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })} - ` +
-            `${new Date(timeColumns[colIndex].getTime() + format * 3600 * 1000).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}\n` +
-            `Продолжительность: ${Math.round(cell.duration)} мин.`
-            : ""
-        }
+        // title={
+        //   cell.duration > 0
+        //     ? `${row.productType}\n` +
+        //     `${timeColumns[colIndex].toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })} - ` +
+        //     `${new Date(timeColumns[colIndex].getTime() + format * 3600 * 1000).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}\n` +
+        //     `Продолжительность: ${Math.round(cell.duration)} мин.`
+        //     : ""
+        // }
       >
         {cell.duration > 0 && cell.item && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -296,10 +225,10 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
               <div>
                 <div>{time.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" })}</div>
                 <div>
-                  {time.toLocaleTimeString("ru-RU", {
+                  {format === 12 ? time.toLocaleTimeString("ru-RU", {
                     hour: "2-digit",
                     minute: "2-digit"
-                  })}
+                  }): ""}
                 </div>
               </div>
             }

@@ -10,11 +10,11 @@ export class DrywallItem extends ProductItem {
         public startProduction: Date,
         public endProduction: Date
     ) {
-        super(id,product,quantity,
+        super(id, product, quantity,
             month, startProduction, endProduction);
     }
 
-    splitItem(newQuantity: number): [ firstPart: DrywallItem, secondPart: DrywallItem ] {
+    splitItem(newQuantity: number): [firstPart: DrywallItem, secondPart: DrywallItem] {
         if (newQuantity >= this.quantity || newQuantity <= 0) {
             throw new Error("New quantity must be greater than 0 and less than the current quantity.");
         }
@@ -22,7 +22,7 @@ export class DrywallItem extends ProductItem {
         const remainingQuantity = this.quantity - newQuantity;
 
         const firstPart = new DrywallItem(
-            this.id, 
+            this.id,
             this.product,
             newQuantity,
             new Date(this.month),
@@ -31,7 +31,7 @@ export class DrywallItem extends ProductItem {
         );
 
         const secondPart = new DrywallItem(
-            -1, 
+            -1,
             this.product,
             remainingQuantity,
             new Date(this.month),
@@ -42,17 +42,21 @@ export class DrywallItem extends ProductItem {
         return [firstPart, secondPart];
     }
 
+    getDuration(): number {
+        return this.endProduction.getTime() - this.startProduction.getTime();
+    }
+
     // TODO: Исправить десериализацию EmptyBoard
     // Сейчас метод всегда создает GypsumBoard, даже если это EmptyBoard
     // Нужно проверять тип продукта и создавать соответствующий экземпляр
     static fromJSON(obj: any) {
-             return new DrywallItem(
-          obj.id,
-          GypsumBoard.fromJSON(obj.product),
-          obj.quantity,
-          new Date(obj.month),
-          new Date(obj.startProduction),
-          new Date(obj.endProduction)
+        return new DrywallItem(
+            obj.id,
+            GypsumBoard.fromJSON(obj.product),
+            obj.quantity,
+            new Date(obj.month),
+            new Date(obj.startProduction),
+            new Date(obj.endProduction)
         );
-      }
     }
+}
