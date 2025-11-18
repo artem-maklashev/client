@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { DrywallItem } from "../models/DrywallItem";
 import { SelectButton } from "primereact/selectbutton";
 import "./ProductionTable.css";
+import styles from './PaginationControls.module.css';
 import { ProductionPlan } from "./models/ProductionPlan";
 
 interface ProductionTableProps {
@@ -61,15 +62,15 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
   }, [planingItems]);
 
   const handlePrint = () => {
-  if (!tableRef.current) return;
+    if (!tableRef.current) return;
 
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
 
-  const doc = printWindow.document;
+    const doc = printWindow.document;
 
-  doc.open();
-  doc.write(`
+    doc.open();
+    doc.write(`
     <html>
     <head>
       <title>Печать таблицы</title>
@@ -85,21 +86,21 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
     </body>
     </html>
   `);
-  doc.close();
+    doc.close();
 
-  // Дать окну время прогрузиться
-  printWindow.onload = () => {
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+    // Дать окну время прогрузиться
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    };
   };
-}; 
 
   const pagedColumns = useMemo(
-    () => chunkArray(timeColumns, 10),
+    () => chunkArray(timeColumns, 11),
     [timeColumns]
   );
-  
+
 
   const cellTemplate = (row: { productType: string; cells: ProductionCell[] }, colIndex: number) => {
     const cell = row.cells[colIndex];
@@ -114,25 +115,24 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
           padding: "1px",
           fontWeight: cell.duration > 0 ? "bold" : "normal",
           color: cell.duration > 180 || cell.item?.id === 0 ? "#fff" : undefined
-        }}
-        // title={
-        //   cell.duration > 0
-        //     ? `${row.productType}\n` +
-        //     `${timeColumns[colIndex].toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })} - ` +
-        //     `${new Date(timeColumns[colIndex].getTime() + format * 3600 * 1000).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}\n` +
-        //     `Продолжительность: ${Math.round(cell.duration)} мин.`
-        //     : ""
-        // }
+        }}      
       >
         {cell.duration > 0 && cell.item && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span>{Math.round(cell.duration)}'</span>
+            <span style={{ lineHeight: "1", margin: 0, padding: 0 }}>
+              {Math.round(cell.duration)}'
+            </span>
             <span style={{ fontSize: "0.8em" }}>
-              {cell.item?.id !== 0 &&
-                Math.round(
-                  cell.duration * cell.item.product.factSpeed * (Number(cell.item.product.width.value) / 1000)
-                )}{" "}
-              м².
+              {cell.item?.id !== 0 && (
+                <>
+                  {Math.round(
+                    cell.duration *
+                    cell.item.product.factSpeed *
+                    (Number(cell.item.product.width.value) / 1000)
+                  )}{" "}
+                  м².
+                </>
+              )}
             </span>
           </div>
         )}
@@ -149,7 +149,7 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
   }
 
 
-  
+
   return (
     <Card
       className="full-height-card"
@@ -160,24 +160,28 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
             Таблица производства гипсокартона
           </span>
 
-          <div style={{ marginTop: 10 }}>
-            <Button
-              label="←"
+          <div className={styles.container}>
+            <button
+              className={styles.navButton}
               disabled={activePage === 0}
               onClick={() => setActivePage(p => p - 1)}
-              className="p-button-text"
-            />
+              aria-label="Предыдущая страница"
+            >
+              ←
+            </button>
 
-            <span style={{ margin: "0 10px" }}>
+            <span className={styles.pageInfo}>
               Страница {activePage + 1} / {pagedColumns.length}
             </span>
 
-            <Button
-              label="→"
+            <button
+              className={styles.navButton}
               disabled={activePage === pagedColumns.length - 1}
               onClick={() => setActivePage(p => p + 1)}
-              className="p-button-text"
-            />
+              aria-label="Следующая страница"
+            >
+              →
+            </button>
           </div>
 
 
@@ -204,44 +208,43 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
     >
       <div ref={tableRef} className="print-container">
 
-  {pagedColumns.map((pageCols, pageIndex) => (
-    <div
-      key={pageIndex}
-      className={`print-table ${pageIndex === activePage ? "" : "hidden-page"}`}
-    >
-      <DataTable value={tableData}>
-        <Column
-          field="productType"
-          header="Вид гипсокартона"
-          frozen
-          alignFrozen="left"
-          style={{ minWidth: 200 }}
-        />
+        {pagedColumns.map((pageCols, pageIndex) => (
+          <div
+            key={pageIndex}
+            className={`print-table ${pageIndex === activePage ? "" : "hidden-page"}`}
+          >
+            <DataTable value={tableData} className="my-table" size='small'>
+              <Column
+                field="productType"
+                header="Вид гипсокартона"
+                frozen
+                alignFrozen="left"
+                style={{ minWidth: 250, borderCollapse: "collapse" }}
 
-        {pageCols.map((time, i) => (
-          <Column
-            key={i}
-            header={
-              <div>
-                <div>{time.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" })}</div>
-                <div>
-                  {format === 12 ? time.toLocaleTimeString("ru-RU", {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                  }): ""}
-                </div>
-              </div>
-            }
-            body={row => cellTemplate(row, timeColumns.indexOf(time))}
-            style={{ minWidth: 120, textAlign: "center" }}
-          />
+              />              
+                {pageCols.map((time, i) => (
+                  <Column
+                    key={i}
+                    header={
+                      <div>
+                        <div>{time.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" })}</div>
+                        <div>
+                          {format === 12 ? time.toLocaleTimeString("ru-RU", {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          }) : ""}
+                        </div>
+                      </div>
+                    }
+                    body={row => cellTemplate(row, timeColumns.indexOf(time))}                    
+                  />
+                ))}
+              
+            </DataTable>
+          </div>
         ))}
-      </DataTable>
-    </div>
-  ))}
+      </div>
 
-</div>
-      
 
     </Card>
   );
