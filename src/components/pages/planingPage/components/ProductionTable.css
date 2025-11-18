@@ -236,7 +236,7 @@
 
 .my-table .p-datatable-tbody > tr > td:first-child,
 .my-table .p-datatable-thead > tr > th:first-child {
-    min-width: 250px !important;
+    min-width: 200px !important;
     width: 200px !important;
     border-right: 2px solid var(--color-border);
 }
