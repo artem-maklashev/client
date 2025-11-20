@@ -53,7 +53,7 @@ export class ProductionPlan {
         return columns;
     }
 
-    public getTableData(): { productType: string; cells: ProductionCell[] }[] {
+    public getTableData(): { productType: string; cells: ProductionCell[], total: number }[] {
         const productTypes = this.getProductTypes();
         const timeColumns = this.getTimeColumns();
 
@@ -61,7 +61,7 @@ export class ProductionPlan {
             const cells: ProductionCell[] = timeColumns.map(() => ({ item: null, duration: 0 }));
 
             const rows = this.items.filter(item => item.product.toString() === productType);
-
+            
             rows.forEach(item => {
                 const start = item.startProduction.getTime();
                 const end = item.endProduction.getTime();
@@ -78,7 +78,10 @@ export class ProductionPlan {
                 });
             });
 
-            return { productType, cells };
+            const total = cells.reduce((acc, item) => acc + (item.item?.product ? item.duration*item.item?.product.factSpeed*Number(item.item.product.width.value)/1000 : 0), 0);
+
+
+            return { productType, cells, total: Math.round(total) as number };
         });
     }
 }

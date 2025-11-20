@@ -35,14 +35,6 @@ const formats = [
   { label: "12ч", value: 12 },
   { label: "24ч", value: 24 },
 ];
-
-const getCellColor = (duration: number) => {
-  if (duration === 0) return "transparent";
-  if (duration <= 180) return "var(--color-low)";
-  if (duration <= 540) return "var(--color-medium)";
-  return "var(--color-high)";
-};
-
 // -----------------------------------------------------
 // Component
 // -----------------------------------------------------
@@ -98,10 +90,11 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
   };
 
   const pagedColumns = useMemo(
-    () => chunkArray(timeColumns, 11),
+    () => chunkArray(timeColumns, 12
+    ),
     [timeColumns]
   );
-  
+
   return (
     <Card
       className="full-height-card"
@@ -166,37 +159,40 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
             className={`print-table ${pageIndex === activePage ? "" : "hidden-page"}`}
           >
             <DataTable value={tableData} className="my-table" size='small'>
-              <Column
-                field="productType"
-                header="Вид гипсокартона"
-                frozen
-                alignFrozen="left"
-                style={{ minWidth: 250, borderCollapse: "collapse" }}
-
-              />              
-                {pageCols.map((time, i) => (
-                  <Column
-                    key={i}
-                    header={
-                      <div>
-                        <div>{time.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" })}</div>
-                        <div>
-                          {format === 12 ? time.toLocaleTimeString("ru-RU", {
-                            hour: "2-digit",
-                            minute: "2-digit"
-                          }) : ""}
-                        </div>
-                      </div>
-                    }
-                    body={row =>
-                      <ProductionRow
-                        rowData={row}
-                        colIndex={timeColumns.indexOf(time)} />
-                    }
-                  />
-                ))}
-              
-            </DataTable>
+  <Column
+    field="productType"
+    header="Вид гипсокартона"
+    frozen
+    alignFrozen="left"
+    style={{ minWidth: 250, borderCollapse: "collapse" }}
+  />
+  <Column
+    field="total"
+    header="Итого"    
+    style={{ minWidth: 20, borderCollapse: "collapse" }}
+  />              
+  {pageCols.map((time, i) => (
+    <Column
+      key={i}
+      header={
+        <div>
+          <div>{time.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" })}</div>
+          <div>
+            {format === 12 ? time.toLocaleTimeString("ru-RU", {
+              hour: "2-digit",
+              minute: "2-digit"
+            }) : ""}
+          </div>
+        </div>
+      }
+      body={row =>
+        <ProductionRow
+          rowData={row}
+          colIndex={timeColumns.indexOf(time)} />
+      }
+    />
+  ))}
+</DataTable>
           </div>
         ))}
       </div>
