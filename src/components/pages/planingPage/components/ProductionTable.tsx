@@ -8,6 +8,7 @@ import { SelectButton } from "primereact/selectbutton";
 import "./ProductionTable.css";
 import styles from './PaginationControls.module.css';
 import { ProductionPlan } from "./models/ProductionPlan";
+import ProductionRow from "./ProductionRow";
 
 interface ProductionTableProps {
   planingItems: DrywallItem[];
@@ -100,56 +101,7 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
     () => chunkArray(timeColumns, 11),
     [timeColumns]
   );
-
-
-  const cellTemplate = (row: { productType: string; cells: ProductionCell[] }, colIndex: number) => {
-    const cell = row.cells[colIndex];
-    const bg = getCellColor(cell.duration);
-
-    return (
-      <div
-        style={{
-          backgroundColor: cell.item?.id === 0 ? "grey" : bg,
-          cursor: cell.duration > 0 ? "pointer" : "default",
-          textAlign: "center",
-          padding: "1px",
-          fontWeight: cell.duration > 0 ? "bold" : "normal",
-          color: cell.duration > 180 || cell.item?.id === 0 ? "#fff" : undefined
-        }}      
-      >
-        {cell.duration > 0 && cell.item && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span style={{ lineHeight: "1", margin: 0, padding: 0 }}>
-              {Math.round(cell.duration)}'
-            </span>
-            <span style={{ fontSize: "0.8em" }}>
-              {cell.item?.id !== 0 && (
-                <>
-                  {Math.round(
-                    cell.duration *
-                    cell.item.product.factSpeed *
-                    (Number(cell.item.product.width.value) / 1000)
-                  )}{" "}
-                  м².
-                </>
-              )}
-            </span>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  if (!items.length) {
-    return (
-      <Card>
-        <p className="text-center text-muted">Нет данных для отображения</p>
-      </Card>
-    );
-  }
-
-
-
+  
   return (
     <Card
       className="full-height-card"
@@ -236,7 +188,11 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
                         </div>
                       </div>
                     }
-                    body={row => cellTemplate(row, timeColumns.indexOf(time))}                    
+                    body={row =>
+                      <ProductionRow
+                        rowData={row}
+                        colIndex={timeColumns.indexOf(time)} />
+                    }
                   />
                 ))}
               
