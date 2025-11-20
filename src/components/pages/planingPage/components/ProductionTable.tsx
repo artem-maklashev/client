@@ -169,7 +169,7 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
   <Column
     field="total"
     header="Итого"    
-    style={{ minWidth: 20, borderCollapse: "collapse" }}
+    style={{ minWidth: 20, borderCollapse: "collapse", border: "1px solid #ddd", textAlign: "center" }}
   />              
   {pageCols.map((time, i) => (
     <Column
@@ -190,6 +190,7 @@ export const ProductionTable: React.FC<ProductionTableProps> = ({ planingItems }
           rowData={row}
           colIndex={timeColumns.indexOf(time)} />
       }
+      style={{border: "1px solid #ddd"}}
     />
   ))}
 </DataTable>
