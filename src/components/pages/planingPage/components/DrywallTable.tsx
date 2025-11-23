@@ -36,12 +36,13 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
         const service = new DrywallService(month);
         
         if (isCancelled) return;
-
+        
         setDrywallService(service);
         // const loadedItems = await service.loadItems();
         if (isCancelled) return;
 
         // Устанавливаем загруженные элементы в сервис без пересчета периодов
+        loadedItems.sort((a, b) => b.startProduction.getTime() - a.startProduction.getTime());
         service.setItems(loadedItems);
 
         // Устанавливаем загруженные элементы напрямую без добавления в сервис
