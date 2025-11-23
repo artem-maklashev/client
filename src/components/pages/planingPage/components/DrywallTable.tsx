@@ -189,7 +189,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
           value={items}
           reorderableRows
           onRowReorder={onRowReorder}
-          tableStyle={{ minWidth: "30rem" }}
+          tableStyle={{ minWidth: "30rem" }}          
         >
           <Column rowReorder headerStyle={{ width: "3rem" }} />
           <Column
@@ -209,6 +209,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
 
           <Column
             header="Начало производства"
+            field="startProduction"
             body={(rowData) => rowData.startProduction?.toLocaleDateString("ru-RU", {
               day: "2-digit",
               month: "2-digit",
@@ -216,6 +217,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
               hour: "2-digit",
               minute: "2-digit"
             })}
+            sortable
           />
           <Column
             header="Конец производства"
