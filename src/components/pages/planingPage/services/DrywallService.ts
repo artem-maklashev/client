@@ -72,6 +72,7 @@ export class DrywallService {
       }
     }
   }
+  result.sort((a, b) => b.startProduction.getTime() - a.startProduction.getTime());
 
   return result;
 }

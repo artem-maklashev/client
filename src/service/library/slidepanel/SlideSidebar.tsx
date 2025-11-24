@@ -5,14 +5,15 @@ import { Button } from 'primereact/button';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/lara-light-blue/theme.css'
 
 interface SlideSidebarProps {
   header?: string;
-  label? : string;
-  children: React.ReactNode; 
+  label?: string;
+  children: React.ReactNode;
 }
 
-export const SlideSidebar: React.FC<SlideSidebarProps> = ({ header , children, label }) => {
+export const SlideSidebar: React.FC<SlideSidebarProps> = ({ header, children, label }) => {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -20,8 +21,8 @@ export const SlideSidebar: React.FC<SlideSidebarProps> = ({ header , children, l
       <Button
         label={label}
         onClick={() => setVisible(true)}
-        className="p-button-sm"
-        icon="pi pi-arrow-right"
+        className="p-button-rounded p-button-text" icon="pi pi-arrow-right"
+        rounded
       />
 
       <Sidebar

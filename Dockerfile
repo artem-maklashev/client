@@ -72,22 +72,23 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Устанавливаем все зависимости, включая dev
-RUN npm ci
+# Устанавливаем зависимости (с проверкой наличия lock-файла)
+RUN set -eux; \
+    if [ -f package-lock.json ]; then \
+      npm ci --no-audit --no-fund; \
+    else \
+      npm install --no-audit --no-fund; \
+    fi
 
+# Копируем исходный код
 COPY . .
-
 COPY .env.production .env
 
 RUN npm run build
 
 FROM nginx:alpine
-
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
 COPY --from=builder /app/build /usr/share/nginx/html
-
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
 
