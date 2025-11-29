@@ -21,6 +21,8 @@ import 'primereact/resources/themes/saga-blue/theme.css'; // Замените н
 // import 'primereact/resources/primereact.min.css'; // Основные стили PrimeReact
 import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.min.css';
+import Snowfall from 'react-snowfall'
+
 
 
 
@@ -136,7 +138,9 @@ function App() {
     return (
         // <Router>
         <div>
-            {/* <Tree /> */}
+            <Tree />
+                <Snowfall />
+
             <NavigationBar tokenValid={tokenValid} onLogout={handleLogout} />
             <Routes>                
                 <Route path="/dashBoard" element={tokenValid ? <DashBoard /> : <Navigate to="/login" />} />
