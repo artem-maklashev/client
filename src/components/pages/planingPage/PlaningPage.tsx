@@ -23,8 +23,7 @@ const PlaningPage: React.FC<PlaningPageProps> = () => {
     }
 
      useEffect(() => {
-        let isCancelled = false;
-    
+        let isCancelled = false;   
         
     
         const initializeService = async () => {
@@ -67,10 +66,11 @@ const PlaningPage: React.FC<PlaningPageProps> = () => {
   <Container fluid className="mt-5 mb-5">
     <Row className="mt-5" >
       <Col lg={2} sm={12} className="mt-4">
+      <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
         <SlideSidebar header="Календарь производства" label="Ввод данных" children={
           <DrywallTable month={period} onItemsChange={handleItemsChange} loadedItems={drywallItems}/>
-        } />
-        <PeriodSelector onPeriodChange={onPeriodChange} period={period} />
+        }         
+        />
           {/* <DrywallGanttChart items={drywallItems} /> */}
       </Col>
       <Col lg={10} sm={12} className="mt-4">

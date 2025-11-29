@@ -42,7 +42,6 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
         if (isCancelled) return;
 
         // Устанавливаем загруженные элементы в сервис без пересчета периодов
-        loadedItems.sort((a, b) => b.startProduction.getTime() - a.startProduction.getTime());
         service.setItems(loadedItems);
 
         // Устанавливаем загруженные элементы напрямую без добавления в сервис
@@ -217,8 +216,7 @@ export const DrywallTable: React.FC<DrywallTableProps> = ({ month, onItemsChange
               year: "numeric",
               hour: "2-digit",
               minute: "2-digit"
-            })}
-            sortable
+            })}            
           />
           <Column
             header="Конец производства"
