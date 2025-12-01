@@ -18,6 +18,7 @@ import PlanFactChartByMonth from "./dashBoardComponent/planFactChartByMonth";
 import DelaysMonthChartBoard from "./dashBoardComponent/delaysMonthChart";
 import ProductivityChart from "./dashBoardComponent/productivityChart";
 import OeeChart from "./dashBoardComponent/oeeChart";
+import Dashboard from "./dashBoardComponent/testDasboard/Dashboard";
 
 interface DashBoardProps {
 
@@ -139,115 +140,116 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     }
 
     return (
-        <Container fluid className="mt-5 mb-5 bg-secondary">
-            <Row>
-                <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mt-5">
-                    <Tab eventKey={1} title="По дням">
-                        <Row className="mt-5">
-                            {loading && (
-                                <Preloader />
-                            )}
-                        </Row>
-                        <Row lg={12} sm={12} md={12}>
-                            <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
-                                <Row>
-                                    <DayRangeSelector onDatesChange={handleDatesChange} />
-                                </Row>
-                                <Row>
-                                    <Speedometr productionData={allProductionData} />
-                                </Row>
-                                <Row>
-                                    <BatteryChart planData={planData} factData={productionData} />
-                                </Row>
-                                <Row>
-                                    <ShiftDefects shiftProduction={allProductionData} />
-                                </Row>
-                            </Col>
-                            <Col lg={9} sm={12} className="mb-5">
-                                <Row>
-                                    <Col >
-                                        <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <ProductivityChart productions={allProductionData} delays={delays} />                              </Row>
-                                <Row>
-                                    <Row>
-                                        <OeeChart productions={allProductionData} delays={delays} /> 
-                                    </Row>
-                                    {uniqueTradeMarks.map(tradeMark => {
-                                        const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
-                                        return (
-                                            <Col key={tradeMark} lg={colWidth} sm={12}>
-                                                <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
-                                            </Col>
-                                        );
-                                    })}
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        <DelaysChartBoard delays={delays} />
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-                    </Tab>
-                    <Tab eventKey={2} title="По месяцам" mountOnEnter unmountOnExit>
-                        {activeTab === '2' &&
-                            <Row>
-                                <Row className="mt-5">
-                                    {loading && (
-                                        <Preloader />
-                                    )}
-                                </Row>
-                                <Row lg={12} sm={12} md={12}>
-                                    <Col className="col-lg-3 col-md-12 col-sm-12 mb-2">
-                                        <Row>
-                                            <Col className="col-6">
-                                                <MonthRangeSelector onDatesChange={handleMonthChange} />
-                                            </Col>
-                                            <Col className="col-6">
-                                                <Speedometr productionData={allProductionMonthData} />
-                                            </Col>
-                                        </Row>
-                                        <Row >
-                                            <Col className="col-lg-12 col-sm-6">
-                                                <BatteryChart planData={planMonthData} factData={productionMonthData} />
-                                            </Col>
+        // <Container fluid className="mt-5 mb-5 bg-secondary">
+        //     <Row>
+        //         <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mt-5">
+        //             <Tab eventKey={1} title="По дням">
+        //                 <Row className="mt-5">
+        //                     {loading && (
+        //                         <Preloader />
+        //                     )}
+        //                 </Row>
+        //                 <Row lg={12} sm={12} md={12}>
+        //                     <Col className="col-lg-3 col-md-6 col-sm-6 mb-2">
+        //                         <Row>
+        //                             <DayRangeSelector onDatesChange={handleDatesChange} />
+        //                         </Row>
+        //                         <Row>
+        //                             <Speedometr productionData={allProductionData} />
+        //                         </Row>
+        //                         <Row>
+        //                             <BatteryChart planData={planData} factData={productionData} />
+        //                         </Row>
+        //                         <Row>
+        //                             <ShiftDefects shiftProduction={allProductionData} />
+        //                         </Row>
+        //                     </Col>
+        //                     <Col lg={9} sm={12} className="mb-5">
+        //                         <Row>
+        //                             <Col >
+        //                                 <PlanFactChart planData={planData} productionData={productionData} allProductionData={allProductionData} />
+        //                             </Col>
+        //                         </Row>
+        //                         <Row>
+        //                             <ProductivityChart productions={allProductionData} delays={delays} />                              </Row>
+        //                         <Row>
+        //                             <Row>
+        //                                 <OeeChart productions={allProductionData} delays={delays} /> 
+        //                             </Row>
+        //                             {uniqueTradeMarks.map(tradeMark => {
+        //                                 const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
+        //                                 return (
+        //                                     <Col key={tradeMark} lg={colWidth} sm={12}>
+        //                                         <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
+        //                                     </Col>
+        //                                 );
+        //                             })}
+        //                         </Row>
+        //                         <Row>
+        //                             <Col>
+        //                                 <DelaysChartBoard delays={delays} />
+        //                             </Col>
+        //                         </Row>
+        //                     </Col>
+        //                 </Row>
+        //             </Tab>
+        //             <Tab eventKey={2} title="По месяцам" mountOnEnter unmountOnExit>
+        //                 {activeTab === '2' &&
+        //                     <Row>
+        //                         <Row className="mt-5">
+        //                             {loading && (
+        //                                 <Preloader />
+        //                             )}
+        //                         </Row>
+        //                         <Row lg={12} sm={12} md={12}>
+        //                             <Col className="col-lg-3 col-md-12 col-sm-12 mb-2">
+        //                                 <Row>
+        //                                     <Col className="col-6">
+        //                                         <MonthRangeSelector onDatesChange={handleMonthChange} />
+        //                                     </Col>
+        //                                     <Col className="col-6">
+        //                                         <Speedometr productionData={allProductionMonthData} />
+        //                                     </Col>
+        //                                 </Row>
+        //                                 <Row >
+        //                                     <Col className="col-lg-12 col-sm-6">
+        //                                         <BatteryChart planData={planMonthData} factData={productionMonthData} />
+        //                                     </Col>
                                         
-                                            <Col className="col-lg-12 col-sm-6">
-                                                <ShiftDefects shiftProduction={allProductionMonthData} />
-                                            </Col>
-                                        </Row>
-                                    </Col>
-                                    <Col lg={9} sm={12} >
-                                        <Row>
-                                            <Col >
-                                                <PlanFactChartByMonth planData={planMonthData} productionData={productionMonthData} allProductionData={allProductionMonthData} />
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            {uniqueTradeMarks.map(tradeMark => {
-                                                const data = productionMonthData.filter(prod => prod.product.tradeMark.name === tradeMark);
-                                                return (
-                                                    <Col key={tradeMark} lg={colWidth} sm={12}>
-                                                        <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
-                                                    </Col>
-                                                );
-                                            })}
-                                        </Row>
-                                        <Row>
-                                            <Col>
-                                                <DelaysMonthChartBoard delays={delaysMonth} />
-                                            </Col>
-                                        </Row>
-                                    </Col>
-                                </Row>
-                            </Row>}
-                    </Tab>
-                </Tabs>
-            </Row>
-        </Container>
+        //                                     <Col className="col-lg-12 col-sm-6">
+        //                                         <ShiftDefects shiftProduction={allProductionMonthData} />
+        //                                     </Col>
+        //                                 </Row>
+        //                             </Col>
+        //                             <Col lg={9} sm={12} >
+        //                                 <Row>
+        //                                     <Col >
+        //                                         <PlanFactChartByMonth planData={planMonthData} productionData={productionMonthData} allProductionData={allProductionMonthData} />
+        //                                     </Col>
+        //                                 </Row>
+        //                                 <Row>
+        //                                     {uniqueTradeMarks.map(tradeMark => {
+        //                                         const data = productionMonthData.filter(prod => prod.product.tradeMark.name === tradeMark);
+        //                                         return (
+        //                                             <Col key={tradeMark} lg={colWidth} sm={12}>
+        //                                                 <EdgesAndThikness allProductionData={data} tradeMark={tradeMark} />
+        //                                             </Col>
+        //                                         );
+        //                                     })}
+        //                                 </Row>
+        //                                 <Row>
+        //                                     <Col>
+        //                                         <DelaysMonthChartBoard delays={delaysMonth} />
+        //                                     </Col>
+        //                                 </Row>
+        //                             </Col>
+        //                         </Row>
+        //                     </Row>}
+        //             </Tab>
+        //         </Tabs>
+        //     </Row>
+        // </Container>
+        <Dashboard />
     )
 }
 export default DashBoard;
