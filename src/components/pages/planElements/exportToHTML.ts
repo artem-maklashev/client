@@ -1,15 +1,10 @@
 export function exportToHTML(
     headers: string[],
     formattedData: any[],
-    planTotals: {[date: string]: number},
-    factTotals: {[date: string]: number},
-    deviationTotals: {[date: string]: number},
-    calculateRowTotal: (values: { [date: string]: number | null }) => number,
-    // calculateFactTotal: (factValues: { [date: string]: number | null }) => number,
-    // calculateDeviationTotal: (
-    //     planValues: { [date: string]: number | null },
-    //     factValues: { [date: string]: number | null }
-    // ) => number
+    planTotals: { [date: string]: number },
+    factTotals: { [date: string]: number },
+    deviationTotals: { [date: string]: number },
+    calculateRowTotal: (values: { [date: string]: number | null }) => number
 ) {
     if (!formattedData.length) return;
 
@@ -39,11 +34,15 @@ export function exportToHTML(
         const cells = headers.map(h => buildCell(rowData, h)).join('');
         const rowPlanTotal = calculateRowTotal(rowData.planValue);
         const rowFactTotal = calculateRowTotal(rowData.factValue);
-        const rowDeviationTotal = deviationTotals ? rowFactTotal - rowPlanTotal : 0;
+        const rowDeviationTotal = rowFactTotal - rowPlanTotal;
 
         return `
             <tr>
-                <td style="min-width:330px; text-align:left; font-weight:700; padding:8px;">${gypsumText}</td>
+                <td style="min-width:330px; text-align:left; font-weight:700; padding:8px; 
+                           position: sticky; left: 0; background: white; z-index: 2; 
+                           border-right: 2px solid #e5e7eb;">
+                    ${gypsumText}
+                </td>
                 ${cells}
                 <td style="font-weight:700; text-align:center; padding:6px;">${rowPlanTotal.toLocaleString('ru-RU')}</td>
                 <td style="font-weight:700; text-align:center; padding:6px;">${rowFactTotal.toLocaleString('ru-RU')}</td>
@@ -73,38 +72,81 @@ export function exportToHTML(
             <meta charset="utf-8" />
             <title>Export Plan Table</title>
             <style>
-                body { font-family: Arial, Helvetica, sans-serif; padding: 16px; color: #111827; }
-                table.export-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-                table.export-table th, table.export-table td { border: 1px solid #e5e7eb; }
-                table.export-table th { background: #f3f4f6; font-weight:600; padding:8px; text-align:center; }
-                .footer-row td { background: #f9fafb; }
+                body { 
+                    font-family: Arial, Helvetica, sans-serif; 
+                    padding: 16px; 
+                    color: #111827; 
+                    margin: 0;
+                }
+                .table-container {
+                    overflow-x: auto;
+                    width: 100%;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 4px;
+                }
+                table.export-table { 
+                    border-collapse: collapse; 
+                    width: max-content; /* важно для прокрутки */
+                    min-width: 100%;
+                    font-size: 12px; 
+                }
+                table.export-table th, 
+                table.export-table td { 
+                    border: 1px solid #e5e7eb; 
+                    white-space: nowrap;
+                }
+                table.export-table th { 
+                    background: #f3f4f6; 
+                    font-weight: 600; 
+                    padding: 8px; 
+                    text-align: center; 
+                }
+                /* Закрепляем заголовок первого столбца */
+                .sticky-header {
+                    position: sticky;
+                    left: 0;
+                    background: #f3f4f6;
+                    z-index: 2;
+                    text-align: left;
+                    min-width: 330px;
+                    border-right: 2px solid #e5e7eb;
+                }
+                .footer-row td { 
+                    background: #f9fafb; 
+                }
             </style>
         </head>
         <body>
             <h2>Таблица план / факта</h2>
-            <table class="export-table">
-                <thead>
-                    <tr>
-                        <th style="text-align:left; min-width:330px;">Гипсокартон</th>
-                        ${headers.map(h => `<th>${h}</th>`).join('')}
-                        <th>Итого план</th>
-                        <th>Итого факт</th>
-                        <th>Отклонение</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${rowsHtml}
-                </tbody>
-                <tfoot>
-                    <tr class="footer-row">
-                        <td style="font-weight:700; text-align:center;">Итого</td>
-                        ${footerCells}
-                        <td style="font-weight:700; text-align:center;">${grandPlanTotal.toLocaleString('ru-RU')}</td>
-                        <td style="font-weight:700; text-align:center;">${grandFactTotal.toLocaleString('ru-RU')}</td>
-                        <td style="font-weight:700; text-align:center;">${grandDeviationTotal.toLocaleString('ru-RU')}</td>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="table-container">
+                <table class="export-table">
+                    <thead>
+                        <tr>
+                            <th class="sticky-header">Гипсокартон</th>
+                            ${headers.map(h => `<th>${h}</th>`).join('')}
+                            <th>Итого план</th>
+                            <th>Итого факт</th>
+                            <th>Отклонение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                    <tfoot>
+                        <tr class="footer-row">
+                            <td style="font-weight:700; text-align:center; 
+                                       position: sticky; left: 0; background: #f9fafb; z-index: 1;
+                                       border-right: 2px solid #e5e7eb;">
+                                Итого
+                            </td>
+                            ${footerCells}
+                            <td style="font-weight:700; text-align:center;">${grandPlanTotal.toLocaleString('ru-RU')}</td>
+                            <td style="font-weight:700; text-align:center;">${grandFactTotal.toLocaleString('ru-RU')}</td>
+                            <td style="font-weight:700; text-align:center;">${grandDeviationTotal.toLocaleString('ru-RU')}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </body>
         </html>
     `;
