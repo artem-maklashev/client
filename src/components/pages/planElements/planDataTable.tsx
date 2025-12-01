@@ -25,6 +25,12 @@ interface ProductionData {
     values: { [date: string]: number | null };
 }
 
+interface FormattedDataRow {
+    gypsumBoard: GypsumBoard;
+    planValue: { [date: string]: number | null };
+    factValue: { [date: string]: number | null };
+}
+
 const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
 
     // Генерация заголовков по уникальным датам
@@ -122,21 +128,22 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
     };
 
 
-    const formatGroupedData = (groupedPlans: any[], groupedProductions: any[]) => {
-        const formattedData: any[] = [];
+    const formatGroupedData = (
+        groupedPlans: GypsumBoardPlan[],
+        groupedProductions: ProductionData[]
+    ): FormattedDataRow[] => {
+        const formattedData: FormattedDataRow[] = [];
 
         groupedPlans.forEach((plan) => {
             const production = groupedProductions.find(
                 (prod) => prod.gypsumBoard.id === plan.gypsumBoard.id
             );
 
-            formattedData.push(
-                {
-                    gypsumBoard: plan.gypsumBoard,
-                    planValue: plan.values,
-                    factValue: production ? production.values : {},
-                }
-            );
+            formattedData.push({
+                gypsumBoard: GypsumBoard.fromJSON(plan.gypsumBoard),
+                planValue: plan.values,
+                factValue: production ? production.values : {},
+            });
         });
 
         return formattedData;
@@ -205,7 +212,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 scrollHeight="790px"
                 showGridlines
                 stripedRows={false} // Отключаем чередование строк, чтобы настроить вручную
-                tableStyle={{ fontSize: 12 }}
+                tableStyle={{ fontSize: 11 }}
                 // className="custom-datatable"
                 className="p-datatable-striped p-datatable-hover"
                 dataKey="gupsumboard.id"
@@ -216,8 +223,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                     body={(rowData) => {
                         return (
                             <div style={{ color: '#374151', fontWeight: 'bold' }}>
-                                {`${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name}
-                    ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
+                                {`${rowData.gypsumBoard.name}`}
                             </div>
                         )
                     }}
@@ -254,10 +260,9 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
-                                    gap: '4px',
-                                    padding: '4px',
-                                    fontFamily: 'Segoe UI, sans-serif',
-                                    fontSize: '12px'
+                                    gap: '2px',
+                                    padding: '2px',
+                                    fontFamily: 'Segoe UI, sans-serif'                                    
                                 }}>
                                     {plan !== undefined && (
                                         <div style={{
@@ -280,7 +285,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                                     {deviation !== null && (
                                         <div style={{
                                             color: deviationColor,
-                                            fontSize: '11px'
+                                            fontSize: '8px'
                                         }}>
                                             Δ: {deviation.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
                                         </div>

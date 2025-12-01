@@ -23,10 +23,6 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.min.css';
 import Snowfall from 'react-snowfall'
 
-
-
-
-
 import PlanPage from './components/pages/planPage';
 import MixReport from './components/pages/drymix/MixReport';
 import MixProduction from './components/pages/drymix/MixProductionPage';

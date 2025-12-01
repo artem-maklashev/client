@@ -1,4 +1,7 @@
 class Shift {
+    static fromJSON(shift: any): Shift {
+        return new Shift(shift.id, shift.name);
+    }
     id: number;
     name: string;
 

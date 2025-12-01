@@ -1,0 +1,26 @@
+/* custom-primereact-table.css */
+.my-dashboard-table .p-datatable-thead > tr > th {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 8px 20px !important;
+}
+
+.my-dashboard-table .p-datatable-tbody > tr > td {
+  padding: 8px 20px !important;
+  font-size: 0.7rem !important;
+}
+
+.my-dashboard-table .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #f8fafc76 !important;
+}
+
+.my-dashboard-table .p-datatable-tbody > tr:nth-child(odd) {
+  background-color: #ebebebd2 !important;
+}
+
+.my-dashboard-table .p-datatable-tbody > tr:hover {
+  background-color: #e0f2fe !important;
+}

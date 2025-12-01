@@ -21,7 +21,7 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
 
     const handleNavClose = () => setExpanded(false);
     return (
-        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} fixed={'top'}>
+        <Navbar expand="lg" className="bg-body-tertiary fixed-top mb-5" bg="dark" data-bs-theme="dark" expanded={expanded} >
             <div className="container-fluid">
                 <NavbarBrand as={Link} to="/">
                     <img
