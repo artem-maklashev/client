@@ -29,6 +29,7 @@ import MixProduction from './components/pages/drymix/MixProductionPage';
 import MixPlanPage from './components/pages/drymix/mixPlan';
 import Tree from './components/pages/tree';
 import PlaningPage from './components/pages/planingPage/PlaningPage';
+import useSnowEffect from './components/snowCanvas/useSnowEffect';
 
 
 
@@ -86,6 +87,7 @@ function App() {
     const navigate = useNavigate();
     const [validatingToken, setValidatingToken] = useState(true);
     const [tokenValid, setTokenValid] = useState(false);
+    useSnowEffect();
     useEffect(() => {
         async function validateToken() {
             // setValidatingToken(true);

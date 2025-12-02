@@ -38,7 +38,7 @@ export function exportToHTML(
 
         return `
             <tr>
-                <td style="min-width:330px; text-align:left; font-weight:700; padding:8px; 
+                <td style="min-width:30 0px; text-align:left; font-weight:700; padding:8px; 
                            position: sticky; left: 0; background: white; z-index: 2; 
                            border-right: 2px solid #e5e7eb;">
                     ${gypsumText}
