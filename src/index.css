@@ -12,4 +12,7 @@ code {
     monospace;
 }
 
+body {
+  cursor: url('cursor-tree.png'),  auto;
+}
 

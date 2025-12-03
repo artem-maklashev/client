@@ -34,9 +34,12 @@ const useSnowEffect = () => {
 
     let mouseX = -100;
     let mouseY = -100;
+
+
     let animationFrameId: number;
     let snowflakes: Snowflake[] = [];
-
+    let isMouseMoving = false; // ← флаг: мышь сейчас движется
+    let moveTimeout: NodeJS.Timeout | null = null;
     class Snowflake {
       x: number;
       y: number;
@@ -74,6 +77,13 @@ const useSnowEffect = () => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      isMouseMoving = true;
+
+      // Сбрасываем флаг через 100 мс, если движение прекратится
+      if (moveTimeout) clearTimeout(moveTimeout);
+      moveTimeout = setTimeout(() => {
+        isMouseMoving = false;
+      }, 100); // ← можно увеличить до 200–300 мс для плавности
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -81,7 +91,7 @@ const useSnowEffect = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (Math.random() < 0.15 && mouseX >= 0) {
+      if (isMouseMoving && Math.random() < 0.4 ) {
         snowflakes.push(new Snowflake(mouseX, mouseY));
       }
 
