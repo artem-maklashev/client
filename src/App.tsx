@@ -30,6 +30,8 @@ import MixPlanPage from './components/pages/drymix/mixPlan';
 import Tree from './components/pages/tree';
 import PlaningPage from './components/pages/planingPage/PlaningPage';
 import useSnowEffect from './components/snowCanvas/useSnowEffect';
+import Flower from './components/pages/Flower';
+import FlowerEight from './components/pages/Flower';
 
 
 
@@ -136,7 +138,8 @@ function App() {
     return (
         // <Router>
         <div>
-            <Tree />
+            {/* <Tree /> */}
+            <FlowerEight />
                 <Snowfall />
 
             <NavigationBar tokenValid={tokenValid} onLogout={handleLogout} />

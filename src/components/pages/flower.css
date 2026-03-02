@@ -1,0 +1,90 @@
+.eight {
+  position: relative;
+  width: 160px;
+  height: 260px;
+}
+
+.ring {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  left: 10px;
+}
+
+.ring.bottom {
+  top: 120px; /* Добавьте отступ для нижнего кольца */
+}
+
+.ring-scale {
+  position: absolute; /* Добавлено */
+  width: 100%;
+  height: 100%;
+}
+
+.ring.top .ring-scale {
+  top: 0;
+  transform: scale(0.9);
+  transform-origin: center;
+}
+
+.ring.bottom .ring-scale {
+  bottom: 0;
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+/* Обёртка для поворота лепестков */
+.petal-rotate {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transform-origin: 50% 50%;
+}
+
+/* Добавьте разные углы для лепестков */
+.petal-rotate:nth-child(1) { transform: rotate(0deg); }
+.petal-rotate:nth-child(2) { transform: rotate(45deg); }
+.petal-rotate:nth-child(3) { transform: rotate(90deg); }
+.petal-rotate:nth-child(4) { transform: rotate(135deg); }
+.petal-rotate:nth-child(5) { transform: rotate(180deg); }
+.petal-rotate:nth-child(6) { transform: rotate(225deg); }
+.petal-rotate:nth-child(7) { transform: rotate(270deg); }
+.petal-rotate:nth-child(8) { transform: rotate(315deg); }
+
+/* Лепесток */
+.petal {
+  width: 40px;
+  height: 70px;
+  background: radial-gradient(circle at 50% 30%, #ffb3d9, #ff2e88);
+  border-radius: 50%;
+  margin-top: 10px;
+  animation: petalPulse 3s ease-in-out infinite;
+}
+
+/* Центр исправлен */
+.center {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background: radial-gradient(circle, #ffd54f, #f57f17);
+  border-radius: 50%;
+  top: 49px;
+  left: 49px;
+  z-index: 10; /* Чтобы центр был над лепестками */
+  animation: centerGlow 2s ease-in-out infinite alternate;
+}
+
+/* Анимации */
+@keyframes petalPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes centerGlow {
+  0% { box-shadow: 0 0 6px rgba(255,193,7,0.4); }
+  100% { box-shadow: 0 0 20px rgba(255,193,7,0.9); }
+}
