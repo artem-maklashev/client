@@ -1,7 +1,10 @@
 #!/bin/sh
-set -e
+# Заменяем конфигурацию переданной переменной
+cat > /usr/share/nginx/html/runtime-config.js <<EOF
+window.__RUNTIME_CONFIG__ = {
+  SHOW_SNOW: '${SHOW_SNOW:-false}'
+};
+EOF
 
-# Подстановка переменной окружения
-sed -i "s#__SHOW_SNOW__#${SHOW_SNOW}#g" /usr/share/nginx/html/runtime-config.js
-
+# Запускаем nginx
 exec "$@"

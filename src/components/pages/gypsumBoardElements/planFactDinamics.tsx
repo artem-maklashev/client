@@ -288,10 +288,12 @@ const PlanFactDinamics: React.FC<GypsumBoardTableProps> = ({ startDate, endDate 
 
                                 <LabelList
                                     dataKey="value"
-                                    position="top"
+                                    position="centerTop"
                                     fill="#353536ff"
-                                    fontSize={12}
+                                    fontSize={11}
                                     fontWeight={600}
+                                    angle={270}
+                                    
                                 />
                             </Bar>
 

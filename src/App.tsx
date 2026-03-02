@@ -140,7 +140,7 @@ function App() {
         <div>
             {/* <Tree /> */}
             <FlowerEight />
-                <Snowfall />
+                {/* <Snowfall /> */}
 
             <NavigationBar tokenValid={tokenValid} onLogout={handleLogout} />
             <Routes>                
