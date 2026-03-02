@@ -855,7 +855,40 @@ background-color: #f1f5f9;}
     top: 0;
     left: 0;
     width: 100%;
-    padding: 0 20px;
+    padding: 0 2
+    0px;
+  }  
+}
+
+.custom-modal .modal-content {
+    background-color: #f8f9fa; /* ваш цвет фона */
+}
+
+/* Для изменения фона отдельных частей */
+.custom-modal .modal-header {
+    background-color: #185592;
+}
+
+.custom-modal .modal-body {
+    background-color: #f2f1f1;
+}
+
+.custom-modal .modal-footer {
+    background-color: #e9ecef;
+}
+
+.modal-slide-down {
+  animation: slideDown 0.8s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-120vh);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 

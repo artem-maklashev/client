@@ -421,7 +421,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   }
 
   return (
-    <Modal show={show} onHide={handleClose} centered={true} fullscreen={true}>
+    <Modal show={show} onHide={handleClose} centered={true} fullscreen={true} className="custom-modal" animation={false}
+  dialogClassName="modal-slide-down">
       <Modal.Header closeButton className="custom-modal-header">
         <Modal.Title>Редактирование данных</Modal.Title>
       </Modal.Header>

@@ -17,7 +17,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
     category,
     onHide,
     onSave
-    
+
 }) => {
     const [newValue, setNewValue] = useState<number>(category ? category.value : 0);
 
@@ -33,10 +33,10 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
         if (show && category) {
             setNewValue(category.value);
         }
-    }, [show,category]);
+    }, [show, category]);
 
     return (
-        <Modal show={show} onHide={onHide}>
+        <Modal show={show} onHide={onHide} backdrop="static" centered>
             <Modal.Header closeButton>
                 <Modal.Title>{category?.category.title}</Modal.Title>
             </Modal.Header>
@@ -47,6 +47,12 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                         type="number"
                         value={newValue}
                         onChange={(e) => setNewValue(parseFloat(e.target.value))}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault(); // Предотвращаем отправку формы
+                                handleSave();
+                            }
+                        }}
                         autoFocus
                     />
                 </Form.Group>
