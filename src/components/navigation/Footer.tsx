@@ -14,12 +14,22 @@ const Footer = () => {
                             </div>
                         </Col>
                         <Col xs={12} sm={4} lg={4} className="text-sm-end text-center ps-0"> {/* Убираем лишние отступы */}
-                            <Navbar.Text style={{
-                                fontSize: '10px',
-                                color: 'rgba(255, 255, 255, 0.7)',
-                                lineHeight: '1.5' /* Единая высота строки */
-                            }}>
-                                &copy; 2023-2025 Маклашев Артем
+                            <Navbar.Text
+                                style={{
+                                    fontSize: "10px",
+                                    color: "rgba(255, 255, 255, 0.7)",
+                                    lineHeight: "1.5"
+                                }}
+                            >
+                                <div>&copy; 2023-2026 Маклашев Артем</div>
+                                <div>                                    
+                                    <a
+                                        href="mailto:ar.maclashev@yandex.ru"
+                                        style={{ color: "rgba(255, 255, 255, 0.7)" }}
+                                    >
+                                        ar.maclashev@yandex.ru
+                                    </a>
+                                </div>
                             </Navbar.Text>
                         </Col>
                     </Row>

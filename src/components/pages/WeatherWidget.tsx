@@ -1,27 +1,49 @@
-import React, { useEffect } from 'react';
-import { Col, Container } from 'react-bootstrap';
+import React, { useEffect } from "react";
 
-const WeeklyWeatherWidget: React.FC = () => {
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://rusmeteo.net/api/informerV2/4b95f27d56601ace36314b6a9a706868/';
-        script.async = true;
-        document.body.appendChild(script);
+const WeatherWidget: React.FC = () => {
+  useEffect(() => {
+    const scriptId = "weatherwidget-script";
 
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
+    // Проверяем, чтобы скрипт не добавлялся повторно
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://app3.weatherwidget.org/js/?id=ww_3ac19717ea2c4";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
 
-    return (
-        <Container>
-            <Col>
-                <link href="https://api.rusmeteo.net/service/informers/css/widget-column.min.css" rel="stylesheet" type="text/css" />
-                <a href="https://rusmeteo.net/weather/tolyatti/weekly/" className="widget-column" id="4b95f27d56601ace36314b6a9a706868" style={{ width: 220, backgroundColor: 'rgb(0, 114, 181)', color: 'rgb(250, 250, 250)' }}>Погода</a>
-            </Col>
-        </Container>
-
-    );
+  return (
+    <div
+      id="ww_3ac19717ea2c4"
+      data-v="1.3"
+      data-loc="id"
+      data-a='{
+        "t":"ticker",
+        "lang":"ru",
+        "ids":[],
+        "font":"Arial",
+        "sl_ics":"one_a",
+        "sl_sot":"celsius",
+        "cl_bkg":"#455A64",
+        "cl_font":"#FFFFFF",
+        "cl_cloud":"#FFFFFF",
+        "cl_persp":"#81D4FA",
+        "cl_sun":"#FFC107",
+        "cl_moon":"#FFC107",
+        "cl_thund":"#FF5722"
+      }'
+    >
+      <a
+        href="https://weatherwidget.org/"
+        id="ww_3ac19717ea2c4_u"
+        target="_blank"
+        rel="noreferrer"
+      >
+      </a>
+    </div>
+  );
 };
 
-export default WeeklyWeatherWidget;
+export default WeatherWidget;
