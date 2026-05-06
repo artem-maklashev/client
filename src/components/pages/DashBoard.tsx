@@ -18,6 +18,7 @@ import PlanFactChartByMonth from "./dashBoardComponent/planFactChartByMonth";
 import DelaysMonthChartBoard from "./dashBoardComponent/delaysMonthChart";
 import ProductivityChart from "./dashBoardComponent/productivityChart";
 import OeeChart from "./dashBoardComponent/oeeChart";
+import { DelaysByTypeDTO } from "../../model/DTO/gypsumboard/delays/DelaysByTypeDTO";
 
 interface DashBoardProps {
 
@@ -31,7 +32,8 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     const [planData, setPlanData] = useState<Plan[]>([]);
     const [productionData, setProductionData] = useState<BoardProduction[]>([]);
     const [allProductionData, setAllProductionData] = useState<BoardProduction[]>([]);
-    const [delays, setDelays] = useState<Delays[]>([]);
+    const [rawDelays, setRawDelays] = useState<Delays[]>([]);
+    const [delays, setDelays] = useState<DelaysByTypeDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedMonthRange, setSelectedMonthRange] = useState<{ startDate: Date | null, endDate: Date | null }>({
         startDate: new Date(now.getFullYear(), now.getMonth(), 1),
@@ -61,7 +63,8 @@ const DashBoard: React.FC<DashBoardProps> = () => {
         setProductionData([]);
         setPlanData([]);
         setAllProductionData([]);
-        setDelays([]);
+        
+        setRawDelays([]);
         const fetchData = async () => {
             setLoading(true);
             try {
@@ -76,7 +79,9 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                     const production = filterBoardProductions(fetchedProduction);
                     setProductionData(production);
                     const fetchedDelays = await ApiService.fetchDelaysData(selectedRange.startDate, selectedRange.endDate);
-                    setDelays(fetchedDelays);
+                    setRawDelays(fetchedDelays);
+                    const fetchetDelaysByTypeDTO = await ApiService.fetchDelaysDataByType(selectedRange.startDate, selectedRange.endDate);
+                    setDelays(fetchetDelaysByTypeDTO);
                 }
             } catch (error: any) {
                 console.error(`Произошла ошибка: ${error.message}`);
@@ -170,10 +175,10 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <ProductivityChart productions={allProductionData} delays={delays} />                              </Row>
+                                    <ProductivityChart productions={allProductionData} delays={rawDelays} />                              </Row>
                                 <Row>
                                     <Row>
-                                        <OeeChart productions={allProductionData} delays={delays} /> 
+                                        <OeeChart productions={allProductionData} delays={rawDelays} /> 
                                     </Row>
                                     {uniqueTradeMarks.map(tradeMark => {
                                         const data = productionData.filter(prod => prod.product.tradeMark.name === tradeMark);
@@ -186,7 +191,7 @@ const DashBoard: React.FC<DashBoardProps> = () => {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <DelaysChartBoard delays={delays} />
+                                        <DelaysChartBoard delays={delays} rawDelays={rawDelays} />
                                     </Col>
                                 </Row>
                             </Col>

@@ -9,14 +9,15 @@ import ProductionList from "../model/production/ProductionList";
 import MaterialConsumption from "../model/specification/MaterialConsumption";
 import { format, toZonedTime } from "date-fns-tz";
 import Thickness from "../model/gypsumBoard/Thickness";
+import { DelaysByTypeDTO } from "../model/DTO/gypsumboard/delays/DelaysByTypeDTO";
 dayjs.extend(utc);
 
 
-class ApiService {   
+class ApiService {
     
     private static baseUrl = process.env.REACT_APP_API_URL;
     private static plusDays = Number(process.env.REACT_APP_PLUS_DAYS);
-
+    
     static async fetchTodayPlan(): Promise<Plan[]> {
         try {
             const response = await api.get(`${this.baseUrl}/planData`);
@@ -26,7 +27,7 @@ class ApiService {
             throw error;
         }
     }
-
+    
     static async fetchPlan(startDate: Date, endDate: Date): Promise<Plan[]> {
         try {
             const params = {
@@ -42,7 +43,7 @@ class ApiService {
             throw error;
         }
     }
-
+    
     static async fetchBoardProduction(startDate: Date, endDate: Date): Promise<BoardProduction[]> {
         try {
             const params = {
@@ -59,21 +60,21 @@ class ApiService {
         }
     }
 
-
+    
     static async fetchTodayBoardProduction(): Promise<BoardProduction[]> {
         const now = new Date();
         // const startDate = new Date(now.getFullYear(), now.getUTCMonth() + 1, 1);
         const startDate = (new Date(now.getFullYear(), now.getMonth(), 1))
         console.error("Дата наачала запроса выпуска на сегодня:" + startDate);
         console.error("Преобразованная дата начала будет:" + this.formatDateToISO(startDate));
-
+        
         const params = {
             startDate: this.formatDateToISO(startDate),
             endDate: this.formatDateToISO(now)
         };
-
+        
         try {
-
+            
             const response = await api.get(`${this.baseUrl}/allboard/production`, { params });
             return response.data;
         } catch (error: any) {
@@ -81,7 +82,7 @@ class ApiService {
             throw error;
         }
     }
-
+    
     static async fetchBoardProductionByGypsumBoardAndDate(gypsumBoards: GypsumBoard[], startDate: Date, endDate: Date): Promise<BoardProduction[]> {
         const requestBody = {
             gypsumBoards,  // объект GypsumBoard
@@ -91,14 +92,14 @@ class ApiService {
         try {
             const response = await api.post(`${this.baseUrl}/boardProductionsByGypsumBoard`, requestBody);
             return response.data;
-
+            
         } catch (error: any) {
             console.error(`Произошла ошибка при отправке запроса получения выпусков по дате и виду гипсокартона: ${error.message}`);
             throw error;
-
+            
         }
     }
-
+    
     static async fetchConsumptionsByDateAndMaterial(startDate: Date, endDate: Date, materialId: number) {
         try {
             const params = {
@@ -113,7 +114,7 @@ class ApiService {
             throw error;
         }
     }
-
+    
     static async fetchThicknesses(): Promise<Thickness[]> {
         try {
             const responce = await api.get(`${this.baseUrl}/thickness/getAll`);
@@ -123,12 +124,12 @@ class ApiService {
             throw error;
         }
     }
-
+    
     static async deleteReport(id: number): Promise<void> {
         try {
             // Отправляем DELETE-запрос на сервер
             const response = await api.delete(`${this.baseUrl}/boardProduction/${id}`);
-
+            
             // Проверяем успешность ответа
             if (response.status === 200) {
                 console.log('Отчет успешно удален');
@@ -140,30 +141,30 @@ class ApiService {
             console.error('Ошибка при удалении записи', error);
         }
     }
-
+    
     static formatDateToISO(date: Date) {
         const timeZone = 'Europe/Samara';
         const zonedDate = toZonedTime(date, timeZone);
         return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", { timeZone });
     }
-
+    
     static getFormattedDate(date: Date): string {
         const year = date.getFullYear();
         const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
         const day = date.getUTCDate().toString().padStart(2, '0');
-
+        
         return `${year}-${month}-${day}`;
     }
-
+    
     static getFirstDate(): string {
         const now = new Date();
         const firstDay = new Date(now.getFullYear(), now.getUTCMonth() + 1, 1);
         const year = firstDay.getUTCFullYear();
         const month = (firstDay.getUTCMonth() + 1).toString().padStart(2, '0');
-
+        
         return `${year}-${month}-01`;
     }
-
+    
     static getFormatedLocalDateFromDayjs(newValue: any): Date {
         if (dayjs.isDayjs(newValue)) {
             const formattedDate = dayjs(newValue).utc().local().format('YYYY-MM-DDTHH:mm');
@@ -172,44 +173,44 @@ class ApiService {
             return (new Date(newValue));
         }
     }
-
+    
     static removeTimeZone(date: Date) {
         const offset = date.getTimezoneOffset() * 60000;
-
+        
         const dateMils = date.getTime();
-
+        
         const newDate = new Date(dateMils - offset);
         console.log("Преобразуем: " + date + "\ngetTimezoneOffset: " + offset + "\ndateMils: " + dateMils + "\nПреобразованная дата: " + newDate);
         return newDate;
     }
-
+    
     static async fetchSpecification(product: GypsumBoard): Promise<Specification[]> {
         try {
             const response = await api.post(`${this.baseUrl}/specifications/getSpecificationByProduct`, product);
             console.log("Получена спецификация \n" + JSON.stringify(response.data));
             return response.data;
-
+            
         } catch (error) {
             // Обработка ошибки
             console.error('Ошибка при получении спецификации', error);
             return [];
         }
     }
-
+    
     static async fetchAllSpecifications() {
         try {
             const response = await api.get(`${this.baseUrl}/specifications/getAllSpecifications`);
             console.log("Получены все спецификации \n" + JSON.stringify(response.data));
             return response.data as Specification[];
-
+            
         } catch (error) {
-
+            
             console.error('Ошибка при получении всех спецификаций', error);
             return [];
         }
-
+        
     }
-
+    
     static async fetchConsumption(productionList: ProductionList): Promise<MaterialConsumption[]> {
         try {
             const response = await api.post(`${this.baseUrl}/specifications/getConsumption`, productionList);
@@ -220,26 +221,46 @@ class ApiService {
             return [];
         }
     }
-
+    
     static async fetchDelaysData(selectedStartDate: Date, selectedEndDate: Date) {
         try {
             // selectedStartDate = addDays(selectedStartDate, 1 + this.plusDays);
             // selectedEndDate = addDays(selectedEndDate, 1 + this.plusDays);
-
+            
             const params = new URLSearchParams({
                 startDate: this.formatDateToISO(selectedStartDate).split('T')[0],
                 endDate: this.formatDateToISO(selectedEndDate).split('T')[0]
             });
-
+            
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params}`);
-
+            
             return response.data;
-
+            
         } catch (error: any) {
             console.error(`Произошла ошибка при получени  простоев: ${error.message}`);
-
+            
         }
     }
+    
+    static async fetchDelaysDataByType(selectedStartDate: Date, selectedEndDate: Date): Promise<DelaysByTypeDTO[]> {
+        try {
+        const params = new URLSearchParams({
+                startDate: this.formatDateToISO(selectedStartDate).split('T')[0],
+                endDate: this.formatDateToISO(selectedEndDate).split('T')[0]
+            });
+            
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/delayDTO/getDelaysByRange?${params}`);
+            
+            const rawData: any[] =  response.data;
+            const delays: DelaysByTypeDTO[] = rawData.map(item => DelaysByTypeDTO.fromJSON(item));
+            return delays;
+            
+        } catch (error: any) {
+            console.error(`Произошла ошибка при получени DTO простоев: ${error.message}`);
+            return [];
+        }
+    } 
+
 
     static async fetchReports(selectedDate: Date) {
         try {

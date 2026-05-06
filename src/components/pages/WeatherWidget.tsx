@@ -1,49 +1,76 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 const WeatherWidget: React.FC = () => {
-  useEffect(() => {
-    const scriptId = "weatherwidget-script";
+   useEffect(() => {
+    const existing = document.querySelector(
+      'script[src*="c7bc7c4184f26c2bdecb81022e133179"]'
+    );
 
-    // Проверяем, чтобы скрипт не добавлялся повторно
-    if (!document.getElementById(scriptId)) {
+    if (!existing) {
       const script = document.createElement("script");
-      script.id = scriptId;
-      script.src = "https://app3.weatherwidget.org/js/?id=ww_3ac19717ea2c4";
+      script.src =
+        "https://world-weather.ru/wwinformer.php?userid=c7bc7c4184f26c2bdecb81022e133179";
       script.async = true;
+      script.charset = "utf-8";
       document.body.appendChild(script);
     }
+
+    return () => {
+      const script = document.querySelector(
+        'script[src*="c7bc7c4184f26c2bdecb81022e133179"]'
+      );
+      if (script) {
+        document.body.removeChild(script);
+      }
+    };
   }, []);
 
   return (
-    <div
-      id="ww_3ac19717ea2c4"
-      data-v="1.3"
-      data-loc="id"
-      data-a='{
-        "t":"ticker",
-        "lang":"ru",
-        "ids":[],
-        "font":"Arial",
-        "sl_ics":"one_a",
-        "sl_sot":"celsius",
-        "cl_bkg":"#455A64",
-        "cl_font":"#FFFFFF",
-        "cl_cloud":"#FFFFFF",
-        "cl_persp":"#81D4FA",
-        "cl_sun":"#FFC107",
-        "cl_moon":"#FFC107",
-        "cl_thund":"#FF5722"
-      }'
-    >
-      <a
-        href="https://weatherwidget.org/"
-        id="ww_3ac19717ea2c4_u"
-        target="_blank"
-        rel="noreferrer"
+    <>
+      <div
+        id="c7bc7c4184f26c2bdecb81022e133179"
+        className="ww-informers-box-854753"
       >
-      </a>
-    </div>
+        <p className="ww-informers-box-854754">
+          <a
+            href="https://world-weather.ru/pogoda/russia/tolyatti/month/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Подробнее о погоде в Тольятти на 30 дней
+          </a>
+          <br />
+          <a
+            href="https://world-weather.ru/pogoda/russia/volgograd/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Погода в Волгограде
+          </a>
+        </p>
+      </div>
+
+      <style>
+        {`
+          .ww-informers-box-854754 {
+            animation-name: ww-informers54;
+            animation-duration: 1.5s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 12px;
+            font-family: Arial;
+            line-height: 18px;
+            text-align: center;
+          }
+
+          @keyframes ww-informers54 {
+            0%, 80% { opacity: 0; }
+            100% { opacity: 1; }
+          }
+        `}
+      </style>
+    </>
   );
 };
-
 export default WeatherWidget;

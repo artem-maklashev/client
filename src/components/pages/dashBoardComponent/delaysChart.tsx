@@ -1,18 +1,22 @@
 import { CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis, Tooltip, Bar, ComposedChart, Line, LegendProps, TooltipProps, RectangleProps } from "recharts";
 import Delays from "../../../model/delays/Delays";
 import { Card, Col, Container } from "react-bootstrap";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 import DelaysModal from "./delaysModal";
+import { DelaysByTypeDTO } from "../../../model/DTO/gypsumboard/delays/DelaysByTypeDTO";
 
 interface DelaysChartBoardProps {
-    delays: Delays[];
+    delays: DelaysByTypeDTO[];
+    rawDelays: Delays[];
 }
+
 
 interface CombinedData {
     date: string;
-    [key: string]: number | string;
+    [key: string]: number | string;    
     totalTime: number;
+    // delayTypes: DelayData;
 }
 
 interface CustomLegendPayload {
@@ -31,9 +35,10 @@ type RoundedBarProps = RectangleProps & {
 
 
 
-const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
-    const [data, setData] = useState<Delays[]>(delays);
-    const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
+const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays, rawDelays }) => {
+    const [data, setData] = useState<DelaysByTypeDTO[]>(delays);
+    const [rawData, setRawData] = useState<Delays[]>([]);
+    // const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
     const [modalDelays, setModalDelays] = useState<Delays[]>([]);
     const [modalShow, setShowModal] = useState<boolean>(false);
     const [modalDate, setModalDate] = useState<string>('');
@@ -44,6 +49,12 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
             setData(delays);
         }
     }, [delays]);
+
+    useEffect(() => {
+        if (rawDelays) {
+            setRawData(rawDelays);
+        }
+    }, [rawDelays]);
 
     // Вычисляем длительность задержки в минутах
     function getDeltaTime(delay: Delays): number {
@@ -57,38 +68,56 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
     // }
 
 
-    useEffect(() => {
-        if (data) {
-            const groupedData: CombinedData[] = [];
+    // useEffect(() => {
+    //     if (data) {
+    //         const groupedData = useMemo(() =>
+    //             delays.map(dto => ({
+    //                 date: dto.getDate(),
+    //                 totalTime: dto.getTotalTime(),
+    //                 ...dto.getDelayTypes()
+    //             })),
+    //             [delays]
+    //         );
+            
 
-            data.sort((a, b) => new Date(a.delayDate).getTime() - new Date(b.delayDate).getTime()).forEach((item) => {
-                const dateStr = new Date(item.delayDate).toISOString().split('T')[0];
-                const existingEntry = groupedData.find((entry) => entry.date === dateStr);
+    //     //     data.sort((a, b) => new Date(a.delayDate).getTime() - new Date(b.delayDate).getTime()).forEach((item) => {
+    //     //         const dateStr = new Date(item.delayDate).toISOString().split('T')[0];
+    //     //         const existingEntry = groupedData.find((entry) => entry.date === dateStr);
 
-                if (existingEntry) {
-                    existingEntry[item.delayType.name] = (existingEntry[item.delayType.name] as number || 0) + getDeltaTime(item);
-                } else {
+    //     //         if (existingEntry) {
+    //     //             existingEntry[item.delayType.name] = (existingEntry[item.delayType.name] as number || 0) + getDeltaTime(item);
+    //     //         } else {
 
-                    groupedData.push({
-                        date: dateStr,
-                        totalTime: 0,
-                        // Ключи добавляются в отсортированном порядке
-                        // ...sortedDelayTypes.reduce((obj, type) => ({ ...obj, type: 0 }), {})
-                        [item.delayType.name]: getDeltaTime(item) || 0,
-                    });
-                }
-            });
+    //     //             groupedData.push({
+    //     //                 date: dateStr,
+    //     //                 totalTime: 0,
+    //     //                 // Ключи добавляются в отсортированном порядке
+    //     //                 // ...sortedDelayTypes.reduce((obj, type) => ({ ...obj, type: 0 }), {})
+    //     //                 [item.delayType.name]: getDeltaTime(item) || 0,
+    //     //             });
+    //     //         }
+    //     //     });
 
-            groupedData.forEach((item) => {
-                item.totalTime = Object.keys(item)
-                    .filter((key) => key !== "date" && key !== "totalTime")
-                    .reduce((sum, key) => sum + (item[key] as number), 0);
-            });
+    //     //     groupedData.forEach((item) => {
+    //     //         item.totalTime = Object.keys(item)
+    //     //             .filter((key) => key !== "date" && key !== "totalTime")
+    //     //             .reduce((sum, key) => sum + (item[key] as number), 0);
+    //     //     });
 
 
-            setCombinedData(groupedData);
-        }
-    }, [data]);
+    //         setCombinedData(data as CombinedData[]);
+    //     }
+    // }, [data]);
+
+    const combinedData = useMemo(() => {
+        if (!delays || delays.length === 0) return [];
+
+        return delays.map(dto => ({
+            date: dto.getDate(),
+            totalTime: dto.getTotalTime(),
+            ...dto.getDelayTypes()   // разворачивает Record<string, number>
+        }));
+    }, [delays]);
 
     useEffect(() => {
         if (combinedData) {
@@ -155,31 +184,31 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
         );
     }
 
-    const RoundedBar: React.FC<RoundedBarProps> = (props) => {
-        const { x, y, width, height, fill, radius = 6 } = props;
+    // const RoundedBar: React.FC<RoundedBarProps> = (props) => {
+    //     const { x, y, width, height, fill, radius = 6 } = props;
     
-        // Проверка на валидность координат
-        if (x === undefined || y === undefined || width === undefined || height === undefined) {
-            console.error("Invalid props for RoundedBar:", { x, y, width, height });
-            return null;
-        }
+    //     // Проверка на валидность координат
+    //     if (x === undefined || y === undefined || width === undefined || height === undefined) {
+    //         console.error("Invalid props for RoundedBar:", { x, y, width, height });
+    //         return null;
+    //     }
     
-        // Убедиться, что радиус не превышает половину высоты
-        const adjustedRadius = Math.min(radius, height / 2);
+    //     // Убедиться, что радиус не превышает половину высоты
+    //     const adjustedRadius = Math.min(radius, height / 2);
     
-        return (
-            <path
-                d={`M${x},${y + height} 
-                   L${x},${y + adjustedRadius} 
-                   Q${x},${y} ${x + adjustedRadius},${y} 
-                   L${x + width - adjustedRadius},${y} 
-                   Q${x + width},${y} ${x + width},${y + adjustedRadius} 
-                   L${x + width},${y + height} 
-                   Z`}
-                fill={fill}
-            />
-        );
-    };
+    //     return (
+    //         <path
+    //             d={`M${x},${y + height} 
+    //                L${x},${y + adjustedRadius} 
+    //                Q${x},${y} ${x + adjustedRadius},${y} 
+    //                L${x + width - adjustedRadius},${y} 
+    //                Q${x + width},${y} ${x + width},${y + adjustedRadius} 
+    //                L${x + width},${y + height} 
+    //                Z`}
+    //             fill={fill}
+    //         />
+    //     );
+    // };
 
 
     const handleClick = (chartData: CombinedData | undefined) => {
@@ -187,7 +216,7 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
             const date = chartData.date;
             setModalDate(date);
             console.log('Clicked date:', date);
-            const filteredDelays = data.filter((delay) => new Date(delay.delayDate).toISOString().split('T')[0] === date)
+            const filteredDelays = rawData.filter((delay) => new Date(delay.delayDate).toISOString().split('T')[0] === date)
                 .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
             setModalDelays(filteredDelays);
             setShowModal(true);
