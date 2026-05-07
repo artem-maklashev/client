@@ -12,12 +12,12 @@ interface DelaysChartBoardProps {
 }
 
 
-interface CombinedData {
-    date: string;
-    [key: string]: number | string;    
-    totalTime: number;
-    // delayTypes: DelayData;
-}
+// interface CombinedData {
+//     date: string;
+//     totalTime: number;
+//     delaysList: Delays[];
+//     [key: string]: number | string;    
+// }
 
 interface CustomLegendPayload {
     value: string;
@@ -35,9 +35,9 @@ type RoundedBarProps = RectangleProps & {
 
 
 
-const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays, rawDelays }) => {
+const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays }) => {
     const [data, setData] = useState<DelaysByTypeDTO[]>(delays);
-    const [rawData, setRawData] = useState<Delays[]>([]);
+    // const [rawData, setRawData] = useState<Delays[]>([]);
     // const [combinedData, setCombinedData] = useState<CombinedData[]>([]);
     const [modalDelays, setModalDelays] = useState<Delays[]>([]);
     const [modalShow, setShowModal] = useState<boolean>(false);
@@ -50,11 +50,11 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays, rawDelays }
         }
     }, [delays]);
 
-    useEffect(() => {
-        if (rawDelays) {
-            setRawData(rawDelays);
-        }
-    }, [rawDelays]);
+    // useEffect(() => {
+    //     if (rawDelays) {
+    //         setRawData(rawDelays);
+    //     }
+    // }, [rawDelays]);
 
     // Вычисляем длительность задержки в минутах
     function getDeltaTime(delay: Delays): number {
@@ -115,7 +115,8 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays, rawDelays }
         return delays.map(dto => ({
             date: dto.getDate(),
             totalTime: dto.getTotalTime(),
-            ...dto.getDelayTypes()   // разворачивает Record<string, number>
+            ...dto.getDelayTypes(),   // разворачивает Record<string, number>
+            delaysList: dto.getDelaysList(),
         }));
     }, [delays]);
 
@@ -125,7 +126,7 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays, rawDelays }
             const result = Array.from(
                 new Set(
                     combinedData.flatMap(item =>
-                        Object.keys(item).filter(key => key !== "date" && key !== "totalTime")
+                        Object.keys(item).filter(key => key !== "date" && key !== "totalTime" && key !== "delaysList")
                     )
                 )
             );
@@ -211,14 +212,15 @@ const DelaysChartBoard: React.FC<DelaysChartBoardProps> = ({ delays, rawDelays }
     // };
 
 
-    const handleClick = (chartData: CombinedData | undefined) => {
+    const handleClick = (chartData: DelaysByTypeDTO | undefined) => {
         if (chartData) {
             const date = chartData.date;
             setModalDate(date);
             console.log('Clicked date:', date);
-            const filteredDelays = rawData.filter((delay) => new Date(delay.delayDate).toISOString().split('T')[0] === date)
-                .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
-            setModalDelays(filteredDelays);
+            // const filteredDelays = rawData.filter((delay) => new Date(delay.delayDate).toISOString().split('T')[0] === date)
+            //     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+            setModalDelays(chartData.delaysList);
+            // setModalDelays(filteredDelays);
             setShowModal(true);
         } else {
             console.log('No data available');

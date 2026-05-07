@@ -1,12 +1,16 @@
+import Delays from "../../../delays/Delays";
+
 export class DelaysByTypeDTO {
     date: string;
     totalTime: number;
     delayTypes: Record<string, number>;
+    delaysList: Delays[];
 
-     constructor(date: string = '', totalTime: number = 0, delayTypes: Record<string, number> = {}) {
+     constructor(date: string = '', totalTime: number = 0, delayTypes: Record<string, number> = {}, delaysList: Delays[] = []) {
         this.date = date;
         this.totalTime = totalTime;
         this.delayTypes = delayTypes;
+        this.delaysList = delaysList;
     }
 
     // Статический метод для создания из JSON
@@ -24,7 +28,9 @@ export class DelaysByTypeDTO {
             }, {} as Record<string, number>);
         }
 
-        return new DelaysByTypeDTO(date, totalTime, delayTypes);
+        const delaysList = json?.delaysList ?? [];
+
+        return new DelaysByTypeDTO(date, totalTime, delayTypes, delaysList);
     }
 
     // Сеттер для delayTypes
@@ -65,5 +71,9 @@ export class DelaysByTypeDTO {
     // Получение копии карты delayTypes (если нужна)
     public getDelayTypes(): Record<string, number> {
         return { ...this.delayTypes };
+    }
+
+    public getDelaysList(): Delays[] {
+        return this.delaysList;
     }
 }
