@@ -115,7 +115,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                 };
             }
 
-            const pValue =p.value ? Number(p.value.toFixed(0)) : 0;
+            const pValue = p.value ? Number(p.value.toFixed(0)) : 0;
             // Добавляем значение по дате для текущего гипсокартона
             if (groupedData[gypsumBoardId].values[date] === null) {
                 groupedData[gypsumBoardId].values[date] = pValue;
@@ -132,21 +132,35 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
         groupedPlans: GypsumBoardPlan[],
         groupedProductions: ProductionData[]
     ): FormattedDataRow[] => {
-        const formattedData: FormattedDataRow[] = [];
 
-        groupedPlans.forEach((plan) => {
-            const production = groupedProductions.find(
-                (prod) => prod.gypsumBoard.id === plan.gypsumBoard.id
-            );
+        const result = new Map<number, FormattedDataRow>();
 
-            formattedData.push({
+        // сначала добавляем все планы
+        groupedPlans.forEach(plan => {
+            result.set(plan.gypsumBoard.id, {
                 gypsumBoard: GypsumBoard.fromJSON(plan.gypsumBoard),
                 planValue: plan.values,
-                factValue: production ? production.values : {},
+                factValue: {}
             });
         });
 
-        return formattedData;
+        // затем добавляем производство
+        groupedProductions.forEach(prod => {
+
+            const existing = result.get(prod.gypsumBoard.id);
+
+            if (existing) {
+                existing.factValue = prod.values;
+            } else {
+                result.set(prod.gypsumBoard.id, {
+                    gypsumBoard: GypsumBoard.fromJSON(prod.gypsumBoard),
+                    planValue: {},
+                    factValue: prod.values
+                });
+            }
+        });
+
+        return Array.from(result.values()).sort((a, b) => a.gypsumBoard.id - b.gypsumBoard.id);
     };
 
     // Сумма фактических значений по строке
@@ -262,7 +276,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                                     alignItems: 'center',
                                     gap: '2px',
                                     padding: '2px',
-                                    fontFamily: 'Segoe UI, sans-serif'                                    
+                                    fontFamily: 'Segoe UI, sans-serif'
                                 }}>
                                     {plan !== undefined && (
                                         <div style={{
@@ -278,7 +292,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
                                             color: factColor,
                                             fontWeight: 600
                                         }}>
-                                           {fact.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+                                            {fact.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
                                         </div>
                                     )}
 

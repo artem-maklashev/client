@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
-import addDays from 'date-fns/addDays';
+// import addDays from 'date-fns/addDays';
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ru } from 'date-fns/locale';
@@ -44,8 +44,8 @@ const DayRangeSelector: React.FC<DayRangeSelectorProps> = ({ onDatesChange }) =>
                         endDate={endDate}
                         selectsRange
                         dateFormat="d.MM.yyyy"
-                        minDate={addDays(new Date(), -60)}
-                        maxDate={addDays(new Date(), 30)}
+                        // minDate={addDays(new Date(), -60)}
+                        // maxDate={addDays(new Date(), 30)}
                         monthsShown={2} // Показывать два месяца одновременно
                         showMonthDropdown
                         showYearDropdown
