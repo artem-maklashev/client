@@ -106,7 +106,7 @@ const ConsumptionChart: React.FC<ConsumptionChartProps> = ({ startDate, endDate,
     useEffect(() => {
         const fetchAllGypsumBoards = async () => {
             try {
-                const boards = await ApiService.fetchAllGypsumBoards();
+                const boards = await ApiService.fetchGypsumBoards();
                 setAllGypsumBoards(boards);
                 console.log('All gypsum boards loaded:', boards.length);
             } catch (error) {

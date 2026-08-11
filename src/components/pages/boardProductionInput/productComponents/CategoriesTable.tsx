@@ -30,24 +30,32 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
               {entry.category.id === 6 && <span className="text-muted ms-2"></span>}
             </Form.Label>
             <div className="col-sm-4">
-              <Form.Control
-                type="number"
-                value={entry.value}
-                placeholder={`Введите значение для ${entry.category.title.toLowerCase()}`}
-                onChange={(e) => {
-                  const value = e.target.value === '' ? 0 : parseFloat(e.target.value) || entry.value;
-                  const updatedEntry = new BoardProduction(
-                    entry.id,
-                    entry.productionList,
-                    entry.product,
-                    entry.category,
-                    value
-                  );
-                  handleEditCategory(updatedEntry);
-                }}
-                disabled={entry.category.id === 6}
-                className={entry.category.id !== 6 ? "border-light bg-light" : ""}
-              />
+              <td className="p-0 align-middle">
+                <Form.Control
+                  type="number"
+                  value={entry.value === 0 ? '' : entry.value} // Очищаем 0 для удобства ввода
+                  placeholder={`${entry.category.title.toLowerCase()}`}
+                  disabled={entry.category.id === 6}
+                  onChange={(e) => {
+                    const rawValue = e.target.value;
+                    const value = rawValue === '' ? 0 : parseFloat(rawValue);
+
+                    if (isNaN(value)) return;
+
+                    const updatedEntry = new BoardProduction(
+                      entry.id,
+                      entry.productionList,
+                      entry.product,
+                      entry.category,
+                      value
+                    );
+
+                    // Обязательно передаем обновленный объект в родительское состояние:
+                    handleEditCategory(updatedEntry);
+                  }}
+                  className={`cell-input ${entry.category.id === 6 ? 'bg-transparent border-0' : ''}`}
+                />
+              </td>
             </div>
           </Form.Group>
         ))

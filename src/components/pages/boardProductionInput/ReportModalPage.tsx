@@ -219,7 +219,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   const handleEditCategory = (category: BoardProduction) => {
     setSelectedCategory(category);
-    setEditCategoryShow(true);
+    // setEditCategoryShow(true);
+    handleCategoryUpdate(category); // Обновляем данные сразу при изменении
   };
 
   const handleEditDelay = (delay: Delays) => {
