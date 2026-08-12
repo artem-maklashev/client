@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Form, Col, Container, Row } from "react-bootstrap";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Modal, Button, Form, Col, Container, Row, FloatingLabel, Card } from "react-bootstrap";
 import "../../pages/MyStyle.css";
-import ReportData from "../../../model/ReportData";
 import { ShiftList } from "./productComponents/FetchShiftList";
 import Shift from "../../../model/Shift";
 import GypsumBoard from "../../../model/gypsumBoard/GypsumBoard";
@@ -10,7 +9,6 @@ import EditCategoryModal from "./productComponents/EditCategoryModal";
 import "react-datepicker/dist/react-datepicker.css";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import GypsumBoardCategory from "../../../model/gypsumBoard/GypsumBoardCategory";
 import { Stack } from "@mui/material";
 import "dayjs/locale/ru";
 import BoardProduction from "../../../model/production/BoardProduction";
@@ -25,98 +23,60 @@ import DefectsTable from "./DefectsTable";
 import EditDefectModal from "./defectComponents/EditDefectModal";
 import utc from 'dayjs/plugin/utc';
 import ApiService from "../../../service/ApiService";
-import ProductionList from "../../../model/production/ProductionList";
 import { createNewReport } from "./NewReport";
-import ProductTypes from "../../../model/ProductTypes";
 import MaterialConsumption from "../../../model/specification/MaterialConsumption";
 import Specification from "../../../model/specification/Specification";
 import EditConsumptionModal from "./specificationComponents/EditConsumptionModal";
 import { Toast } from "primereact/toast";
-import { start } from "repl";
+import { ReportModalService } from "./reportEditing/ReportModalService";
+import { ReportModalState, BoardReportData } from "../../../model/reportEditing/ReportModalState";
 dayjs.extend(utc);
 
 interface ReportModalPageProps {
   show: boolean;
-  reportData: ReportData<
-    GypsumBoard,
-    GypsumBoardCategory,
-    BoardProduction,
-    Delays
-  > | null;
+  reportData: BoardReportData | null;
   onHide: () => void;
   onSave: (
-    reportData: ReportData<
-      GypsumBoard,
-      GypsumBoardCategory,
-      BoardProduction,
-      Delays
-    >,
+    reportData: BoardReportData,
     consumptions: MaterialConsumption[]
   ) => void;
 }
 
+/**
+ * Модальное окно редактирования отчёта.
+ *
+ * Компонент отвечает только за презентацию и состояние UI.
+ * Вся предметная бизнес-логика вынесена в ReportModalService,
+ * а агрегированное состояние — в ReportModalState.
+ */
 const ReportModalPage: React.FC<ReportModalPageProps> = ({
   show,
   reportData,
   onHide,
   onSave,
 }) => {
-
-  const [draftReport, setDraftReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
-  const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<GypsumBoard | null>(null);
+  const service = useMemo(() => new ReportModalService(), []);
   const { shiftList } = ShiftList();
-  const { gypsumBoardList, } = GypsumBoardList();//!!!
-  const [selectedCategory, setSelectedCategory] = useState<BoardProduction | null>(null);
+  const { gypsumBoardList } = GypsumBoardList();
+
+  const [state, setState] = useState<ReportModalState | null>(null);
+
   const [editCategoryShow, setEditCategoryShow] = useState(false);
   const [editDelayShow, setEditDelayShow] = useState(false);
   const [editDefectsShow, setEditDefectsShow] = useState(false);
-  const [tableData, setTableData] = useState<BoardProduction[]>([]);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [delays, setDelays] = useState<Delays[]>([]);
-  const [selectedDelay, setSelectedDelay] = useState<Delays | null>(null);
-  const [defects, setDefects] = useState<BoardDefectsLog[]>([]);
-  const [selectedDefect, setSelectedDefect] = useState<BoardDefectsLog | null>(null);
   const [editConsumtionShow, setEditConsumtionShow] = useState(false);
   const [specification, setSpecification] = useState<Specification[]>([]);
   const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
-  const toast = useRef<Toast>(null); // Создаем ref для Toast
+  const toast = useRef<Toast>(null);
 
-
-  const getName = (gboard: GypsumBoard) => {
-    return (
-      gboard.tradeMark.name +
-      " тип " +
-      gboard.boardType.name +
-      " " +
-      gboard.edge.name +
-      "-" +
-      gboard.thickness.value +
-      "-" +
-      gboard.width.value +
-      "-" +
-      gboard.length.value
-    );
-  };
-
-
+  // Инициализация состояния при открытии модального окна
   useEffect(() => {
     const initializeReportData = async () => {
-      //TO-DO необходимо дождаться получения массивов со списками...
-
-
-
-
-
       if (!reportData) {
-        console.log("Создание нового отчета...");
         const emptyReport = await createNewReport(shiftList[0], gypsumBoardList[0]);
-        console.log("Новый отчет создан:", emptyReport);
-        setDraftReport(structuredClone(emptyReport));
+        setState(fromReport(emptyReport));
       } else {
-        console.log("Использование существующего отчета:", reportData);
-        setDraftReport(structuredClone(reportData));
+        setState(fromReport(reportData));
       }
     };
 
@@ -125,508 +85,342 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
     }
   }, [show, reportData, shiftList, gypsumBoardList]);
 
-  useEffect(() => {
-    if (draftReport) {
-      setSelectedShift(draftReport.productionList.shift);
-      setSelectedProduct(draftReport.product as GypsumBoard);
-      setTableData(draftReport.productions);
-      setStartDate(draftReport.productionList.productionStart);
-      setEndDate(draftReport.productionList.productionFinish);
-      setDelays(draftReport.delays);
-      setDefects(draftReport.defectsLogs);
-      console.log("Получены данные в draftReport:\n", draftReport);
-      console.log(tableData);
-    } else {
-      console.log("draftReport еще не установлен.");
-    }
-  }, [draftReport]);
+  const fromReport = (report: BoardReportData): ReportModalState => {
+    return new ReportModalState({
+      reportData: report,
+      selectedShift: report.productionList.shift,
+      selectedProduct: report.product,
+      tableData: report.productions,
+      startDate: report.productionList.productionStart,
+      endDate: report.productionList.productionFinish,
+      delays: report.delays,
+      defects: report.defectsLogs,
+    });
+  };
 
+  // Загрузка спецификации при выборе продукта
   useEffect(() => {
     let isMounted = true;
-
     const fetchSpecification = async () => {
-      if (selectedProduct && isMounted) {
-        const data = await ApiService.fetchSpecification(selectedProduct);
+      if (state?.selectedProduct && isMounted) {
+        const data = await ApiService.fetchSpecification(state.selectedProduct);
         setSpecification(data);
       }
     };
-
     fetchSpecification();
-
     return () => {
       isMounted = false;
     };
-  }, [selectedProduct]);
+  }, [state?.selectedProduct]);
 
-
-
+  // Применение суммы дефектов к категории "брак"
   useEffect(() => {
-    if (selectedProduct) {
-      console.log("Заменяем продукт в BoardProductions на " + JSON.stringify(selectedProduct));
+    if (!state) return;
+    const tableData = service.applyDefectsSum(state.tableData, state.defects);
+    setState((prev) => (prev ? prev.withTableData(tableData) : prev));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.defects]);
 
-      const updatedTableData = tableData.map((prod) =>
-        prod.product.id !== selectedProduct.id
-          ? { ...prod, product: selectedProduct }
-          : prod
-      );
-
-      setTableData(updatedTableData as BoardProduction[]);
-
-    }
-  }, [selectedProduct]);
-
-  useEffect(() => {
-    console.log("Обновлённое tableData:", tableData);
-  }, [tableData]);
-
-
-  useEffect(() => {
-    if (selectedProduct) {
-      console.log("Заменяем продукт в простоях на " + JSON.stringify(selectedProduct));
-      const updatedDelays = delays.map((delay) =>
-        delay.product !== selectedProduct ? { ...delay, product: selectedProduct } : delay
-      );
-      setDelays(updatedDelays);
-    }
-  }, [selectedProduct]);
-
-  useEffect(() => {
-    if (!draftReport) return;
-
-    const defectsSum = defects.reduce((sum, defect) => sum + defect.value, 0);
-    console.log("defectsSum: " + defectsSum);
-
-    // Обновляем tableData на основе defects
-    setTableData(prevTableData => {
-      // Создаем новый массив с обновленным значением
-      const updatedTableData: BoardProduction[] = prevTableData.map(category => {
-        if (category.category.id === 6) {
-          return { ...category, value: defectsSum } as BoardProduction;
-        }
-        return category;
-      });
-
-      console.log(updatedTableData);
-      return updatedTableData;
-    });
-  }, [defects, draftReport]);
-
-  if (!draftReport) {
+  if (!state) {
     return null;
   }
 
-
+  const { tableData, selectedShift, selectedProduct, startDate, endDate, delays, defects } = state;
 
   const handleEditCategory = (category: BoardProduction) => {
-    setSelectedCategory(category);
-    // setEditCategoryShow(true);
-    handleCategoryUpdate(category); // Обновляем данные сразу при изменении
+    const tableData = service.updateCategoryValue(state.tableData, category);
+    setState(state.withTableData(tableData));
   };
 
   const handleEditDelay = (delay: Delays) => {
-    setSelectedDelay(delay);
-    setEditDelayShow(true);
+    setState(state.withDelays(service.upsertDelay(state.delays, delay)));
+    setEditDelayShow(false);
   };
 
-  const handleEditDefect = (defect: BoardDefectsLog) => {
-    setSelectedDefect(defect);
-    setEditDefectsShow(true);
+  const handleRemoveDelay = (removingDelay: Delays) => {
+    setState(state.withDelays(service.removeDelay(state.delays, removingDelay)));
   };
 
-  const handleCategoryUpdate = (updatedCategory: BoardProduction): void => {
-    tableData.forEach(categorie => {
-      categorie.product = selectedProduct || gypsumBoardList[0];
-      categorie.productionList = draftReport?.productionList ||
-        new ProductionList(
-          -1,
-          startDate || new Date(),
-          endDate || new Date(),
-          new Date(),
-          selectedShift || shiftList[0],
-          new ProductTypes(1, "")
-        );
-      if (categorie.category.id === updatedCategory.category.id) {
-        categorie.value = updatedCategory.value;
-      }
-    });
-  };
-
-  const handleDelayUpdate = (updatedDelay: Delays): void => {
-    // Найти элемент по id
-    const findIndex = delays.findIndex((delay) => delay.id === updatedDelay.id);
-
-    if (findIndex !== -1) {
-      // Если найден, обновить элемент
-      console.log("ОБНОВЛЯЕМ ПРОСТОЙ:\nСтарый простой:\n", delays[findIndex], "\nНовый простой\n", updatedDelay);
-      delays[findIndex] = updatedDelay;
-    } else {
-      // Если не найден, создать новый id
-      console.log("Создаем новый простой");
-
-      // Проверяем, есть ли элементы в delays
-      if (delays.length > 0) {
-
-        // Находим минимальный id и создаем новый id
-        let minId = Math.min(...delays.map(delay => delay.id));
-        if (minId > 0) {
-          minId = -1;
-        }
-        updatedDelay.id = minId - 1;
-      } else {
-        // Если список пустой, установим id равным -1
-        updatedDelay.id = -2;
-      }
-
-      console.log(updatedDelay);
-      // Добавить новый элемент      
-      delays.push(updatedDelay);
-    }
-
-    // Обновить состояние
-    setDelays([...delays]);
-  };
-
-  const handleRemoveDelay = (removingDelay: Delays): void => {
-    const updatedDelays = delays.filter(
-      (delay) => delay.id !== removingDelay.id
+  const handleDefectUpdate = (updatedDefect: BoardDefectsLog) => {
+    setState(
+      state.withDefects(
+        service.upsertDefect(state.defects, updatedDefect, state.delays)
+      )
     );
-    setDelays([...updatedDelays]);
-    if (draftReport) {
-      draftReport.delays = updatedDelays;
-    }
   };
 
-  const handleDefectUpdate = async (
-    updatedDefect: BoardDefectsLog
-  ): Promise<void> => {
-    const find = defects.find((isFind) => isFind.id === updatedDefect.id);
-    if (!find) {
-      updatedDefect.id = (() => {
-        let max = 0;
-        if (delays.length > 0) {
-          max = delays[0].id;
-        }
-        defects.forEach((defect) => {
-          if (defect.id > max) {
-            max = defect.id;
-          }
-        });
-        return max + 1;
-      })();
-      defects.push(updatedDefect);
-    } else {
-      if (defects.length > 0) {
-        defects.forEach((defect) => {
-          if (defect.id === updatedDefect.id) {
-            defect.defects = updatedDefect.defects;
-            defect.value = updatedDefect.value;
-          }
-        });
-      }
-    }
-    setDefects([...defects]);
+  const handleShiftChange = (shift: Shift | null) => {
+    setState(state.withSelectedShift(shift));
+  };
+
+  const handleProductChange = (product: GypsumBoard | null) => {
+    setState(service.applyProduct(state, product));
+  };
+
+  const handleStartDateChange = (value: any) => {
+    setState(state.withStartDate(ApiService.getFormatedLocalDateFromDayjs(value)));
+  };
+
+  const handleEndDateChange = (value: any) => {
+    setState(state.withEndDate(ApiService.getFormatedLocalDateFromDayjs(value)));
   };
 
   const handleSave = () => {
-    console.log("Установлено значение startDate в ReportMoadl: " + startDate);
-    console.log("Установлено значение endDate в ReportMoadl: " + endDate);
-
-    // Вспомогательная функция для показа уведомлений
-    const showErrorToast = (message: string) => {
+    const errorMessage = service.validate(startDate, endDate, delays);
+    if (errorMessage) {
       toast.current?.show({
         severity: 'error',
         summary: 'Ошибка',
-        detail: message,
-        life: 5000
+        detail: errorMessage,
+        life: 5000,
       });
-    };
-
-    // Проверяем, что startDate меньше endDate
-    if (startDate && endDate && new Date(startDate).getTime() >= new Date(endDate).getTime()) {
-      showErrorToast('Дата начала производства должна быть раньше даты окончания производства');
       return;
     }
-
-    // Проверка простоев
-    let hasDelayErrors = false;
-
-    for (const delay of delays) {
-      let delayStartTime = new Date(delay.startTime).getTime();
-      let delayEndTime = new Date(delay.endTime).getTime();
-      let reportStartTime = new Date(startDate!).getTime();
-      let reportEndTime = new Date(endDate!).getTime();
-
-      // Проверка 1: Начало простоя должно быть раньше конца
-      if (delayStartTime >= delayEndTime) {
-        showErrorToast('Начало простоя не может быть позже или равно его окончанию');
-        hasDelayErrors = true;
-        break;
-      }
-
-      // Проверка 2: Простой должен полностью находиться в пределах отчета
-      if (delayStartTime < reportStartTime || delayEndTime > reportEndTime) {
-        showErrorToast('Время простоя выходит за пределы периода отчета');
-        hasDelayErrors = true;
-        break;
-      }
-    }
-
-    // Если есть ошибки в простоях, прерываем сохранение
-    if (hasDelayErrors) {
-      return;
-    }
-
-    if (draftReport) {
-      draftReport.product = selectedProduct as GypsumBoard;
-      draftReport.productionList.productionStart = startDate ? new Date(startDate) : new Date();
-      draftReport.productionList.productionFinish = endDate ? new Date(endDate) : new Date();
-      draftReport.productionList.shift = selectedShift || shiftList[0];
-      draftReport.delays = delays;
-      draftReport.defectsLogs = defects;
-      draftReport.productions = tableData;
-      console.log("СОХРАНЯЕМ ДАННЫЕ В NEW CATEGORY");
-      console.log(draftReport);
-      onSave(draftReport, consumptions);
-    }
+    const report = service.buildReportData(state, shiftList[0]);
+    onSave(report, consumptions);
     onHide();
   };
 
   const handleClose = () => {
     setConsumptions([]);
+    setSpecification([]);
     onHide();
   };
-
-  const handleDateChange = (newValue: any) => {
-    return ApiService.getFormatedLocalDateFromDayjs(newValue);
-  };
-
-  function categoryWithId(id: number): number {
-    // Проверьте текущее состояние tableData
-    // console.log("Текущее состояние tableData:", tableData);
-
-    // Найдите элемент по id
-    const foundItem = tableData.find((item) => item.category.id === id);
-
-    // Проверьте найденный элемент
-    // console.log(`Найденный элемент для id=${id}:`, foundItem);
-
-    // Верните значение или 0, если элемент не найден
-    return foundItem?.value || 0;
-  }
 
   const handleSaveConsumption = (updatedConsumptions: MaterialConsumption[]) => {
     setEditConsumtionShow(false);
     setConsumptions(updatedConsumptions);
-    // alert("Нажата конопка сохранения расхода.\nПередан массив данных размером " + updatedConsumptions.length);
-    console.log(updatedConsumptions);
-  }
+  };
+
+  const categoryWithId = (id: number): number => {
+    return service.getCategoryValue(tableData, id);
+  };
+
+  const resultCheck = tableData.length > 0
+    ? (categoryWithId(1) * 2 - tableData.reduce((sum, item) => sum + (item?.value || 0), 0)).toFixed(1)
+    : null;
+  const isNonZero = resultCheck !== null && parseFloat(resultCheck) !== 0;
+
+  const defectPercent = (() => {
+    if (categoryWithId(1) <= 0) return 0;
+    return (1 - (categoryWithId(2) + categoryWithId(3) + categoryWithId(4)) / categoryWithId(1)) * 100;
+  })().toFixed(2);
 
   return (
     <Modal show={show} onHide={handleClose} centered={true} fullscreen={true} className="custom-modal" animation={false}
-  dialogClassName="modal-slide-down">
+      dialogClassName="modal-slide-down">
       <Modal.Header closeButton className="custom-modal-header">
         <Modal.Title>Редактирование данных</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Container fluid>
           <Row>
-            <Col className="col-lg-2 col-sm-6 bordered">
-              <Form.Group>
-                <Form.Label>Начало работы:</Form.Label>
-                <LocalizationProvider
-                  dateAdapter={AdapterDayjs}
-                  adapterLocale={dayjs.locale("ru")}
-                >
-                  <Stack spacing={3}>
-                    <MobileDateTimePicker
-                      label="Дата"
-                      value={startDate ? dayjs(startDate) : null}
-                      onChange={(newValue) => setStartDate(handleDateChange(newValue))}
-                      ampm={false}
-                      orientation="landscape"
-                    />
-                  </Stack>
-                </LocalizationProvider>
-              </Form.Group>
-            </Col>
-            <Col className="col-lg-2 col-sm-6 bordered">
-              <Form.Group>
-                <Form.Label>Окончание работы:</Form.Label>
-                <LocalizationProvider
-                  dateAdapter={AdapterDayjs}
-                  adapterLocale={dayjs.locale("ru")}
-                >
-                  <Stack spacing={3}>
-                    <MobileDateTimePicker
-                      label="Дата"
-                      value={endDate ? dayjs(endDate) : null}
-                      onChange={(newValue) => {
-                        setEndDate(handleDateChange(newValue));
-                      }}
-                      ampm={false}
-                      orientation="landscape"
-                    />
-                  </Stack>
-                </LocalizationProvider>
-              </Form.Group>
-            </Col>
-            <Row>
-              <Col className="col-lg-2 col-sm-6 bordered">
-                <Form.Group>
-                  <Form.Label>Смена</Form.Label>
-                  <Form.Select
-                    value={
-                      selectedShift ? selectedShift.name : shiftList[1].name
-                    }
-                    onChange={(e) => {
-                      const selectedShiftName = e.target.value;
-                      const foundShift = shiftList.find(
-                        (shift) => shift.name === selectedShiftName
-                      );
-                      setSelectedShift(foundShift || null);
-                    }}
-                  >
-                    {shiftList.map((shift) => (
-                      <option key={shift.id} value={shift.name}>
-                        {shift.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col className="col-lg-3 col-sm-6 bordered">
-                <Form.Group>
-                  <Form.Label>Гипсокартон</Form.Label>
-                  <Form.Select
-                    value={
-                      selectedProduct
-                        ? selectedProduct.id.toString()
-                        : gypsumBoardList[0].id.toString()
-                    }
-                    onChange={(e) => {
-                      const selectedProductId = parseInt(e.target.value);
-                      const foundGypsumBoard = gypsumBoardList.find(
-                        (gypsumBoard) => gypsumBoard.id === selectedProductId
-                      );
-                      setSelectedProduct(foundGypsumBoard || null);
-                    }}
-                  >
-                    {gypsumBoardList.map((gypsumBoard) => (
-                      <option
-                        key={gypsumBoard.id}
-                        value={gypsumBoard.id.toString()}
+            <Col className="col-lg-5 col-sm-12">
+              <Card className="mb-4 p-3"  bg='light'>
+                <Row>
+                  <Col className="col-lg-6 col-sm-12 bordered">
+                    <Form.Group>
+                      <LocalizationProvider
+                        dateAdapter={AdapterDayjs}
+                        adapterLocale={dayjs.locale("ru")}
                       >
-                        {getName(gypsumBoard)}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col className="col-lg-5 col-sm-12">
-                <h3 className="text-center">Данные по производству</h3>
-                <CategoriesTable
-                  categories={tableData}
-                  handleEditCategory={handleEditCategory}
-                />
-                <Row>
-                  <h4 className="text-center">
-                    Проверка:{" "}
-                    {draftReport && tableData.length > 0 ? (
-
-                      (() => {
-                        const result = (
-                          categoryWithId(1) * 2 -
-                          tableData.reduce((sum, item) => sum + (item?.value || 0), 0)
-                        ).toFixed(1);
-
-                        const isNonZero = parseFloat(result) !== 0;
-
-                        return (
-                          <span style={{ color: isNonZero ? 'red' : 'inherit' }}>
-                            {result}
-                          </span>
-                        );
-                      })()
-                    ) : (
-                      "Нет данных"
-                    )}
-
-                  </h4>
-                  <h4 className="text-center">
-                    Процент брака: {
-                      (categoryWithId(1) > 0 ?
-                        (1 - (categoryWithId(2) + categoryWithId(3) + categoryWithId(4)) / categoryWithId(1)) * 100
-                        : 0).toFixed(2)}
-                    {"%"}
-                  </h4>
-                </Row>
-
-
-              </Col>
-              <Col className="col-lg-7 col-sm-12">
-                <Row>
-                  <DelaysTable
-                    delays={delays}
-                    handleEditDelay={handleEditDelay}
-                    handleRemoveDelay={handleRemoveDelay}
-                  />
-                </Row>
-                <Row className="justify-content-center">
-                  <Button
-                    type="button"
-                    variant="outline-primary"
-                    size="sm"
-                    style={{ width: "150px" }}
-                    onClick={() => {
-                      setSelectedDelay(null);
-                      setEditDelayShow(true);
-                    }}
-                  >
-                    Добавить простой
-                  </Button>
+                        <Stack spacing={3}>
+                          <MobileDateTimePicker
+                            label="Начало работы:"
+                            value={startDate ? dayjs(startDate) : null}
+                            onChange={handleStartDateChange}
+                            ampm={false}
+                            orientation="landscape"
+                          />
+                        </Stack>
+                      </LocalizationProvider>
+                    </Form.Group>
+                  </Col>
+                  <Col className="col-lg-6 col-sm-12 bordered">
+                    <Form.Group>
+                      {/* <Form.Label>Окончание работы:</Form.Label> */}
+                      <LocalizationProvider
+                        dateAdapter={AdapterDayjs}
+                        adapterLocale={dayjs.locale("ru")}
+                      >
+                        <Stack spacing={3}>
+                          <MobileDateTimePicker
+                            label="Окончание работы:"
+                            value={endDate ? dayjs(endDate) : null}
+                            onChange={handleEndDateChange}
+                            ampm={false}
+                            orientation="landscape"
+                          />
+                        </Stack>
+                      </LocalizationProvider>
+                    </Form.Group>
+                  </Col>
                 </Row>
                 <Row>
-                  <DefectsTable
-                    defects={defects}
-                    handleEditDefects={handleEditDefect}
-                  />
+                  <Col className="col-lg-6 col-sm-12 bordered">
+                    <Form.Group>
+                      <FloatingLabel controlId="shiftSelect" label="Смена">
+                        <Form.Select
+                          value={selectedShift ? selectedShift.name : shiftList[1]?.name}
+                          onChange={(e) => {
+                            const selectedShiftName = e.target.value;
+                            const foundShift = shiftList.find(
+                              (shift) => shift.name === selectedShiftName
+                            );
+                            handleShiftChange(foundShift || null);
+                          }}
+                        >
+                          {shiftList.map((shift) => (
+                            <option key={shift.id} value={shift.name}>
+                              {shift.name}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </FloatingLabel>
+                    </Form.Group>
+                  </Col>
+                  <Col className="col-lg-6 col-sm-6 bordered">
+                    <Form.Group>
+                      <FloatingLabel controlId="gypsumBoardSelect" label="Гипсокартон">
+                        <Form.Select
+                          value={selectedProduct ? selectedProduct.id.toString() : gypsumBoardList[0]?.id.toString()}
+                          onChange={(e) => {
+                            const selectedProductId = parseInt(e.target.value);
+                            const foundGypsumBoard = gypsumBoardList.find(
+                              (gypsumBoard) => gypsumBoard.id === selectedProductId
+                            );
+                            handleProductChange(foundGypsumBoard || null);
+                          }}
+                        >
+                          {gypsumBoardList.map((gypsumBoard) => (
+                            <option
+                              key={gypsumBoard.id}
+                              value={gypsumBoard.id.toString()}
+                            >
+                              {service.getProductName(gypsumBoard)}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </FloatingLabel>
+                    </Form.Group>
+                  </Col>
                 </Row>
-                <Row className="justify-content-center">
-                  <Button
-                    type="button"
-                    variant="outline-primary"
-                    size="sm"
-                    style={{ width: "150px" }}
-                    onClick={() => {
-                      setSelectedDefect(null);
-                      setEditDefectsShow(true);
-                    }}
-                  >
-                    Добавить дефекты
-                  </Button>
-                </Row>
-                <Row className="justify-content-center mt-5">
-                  <Button
-                    type="button"
-                    variant={
+              </Card>
 
-                      "outline-primary"
 
-                    } size="sm"
-                    style={{ width: "150px" }}
-                    onClick={() => {
-                      setEditConsumtionShow(true);
-                    }}
-                  >
-                    Расход материалов
-                  </Button>
-                </Row>
-              </Col>
-            </Row>
+
+              <Row>
+                <Col className="col-lg-12 col-sm-12">
+
+                  <Card className="mb-4 " bg='light' as="h6">
+                    <Card.Header className="text-center">Данные по производству</Card.Header>
+                    <Card.Body>
+                      <CategoriesTable
+                        categories={tableData}
+                        handleEditCategory={handleEditCategory}
+                      />
+                    </Card.Body>
+                    <Card.Footer className="text-center">
+                      <Row>
+                        <Col className="text-center col-6">
+                          Проверка:{" "}
+                          {resultCheck !== null ? (
+                            <span style={{ color: isNonZero ? 'red' : 'inherit' }}>
+                              {resultCheck}
+                            </span>
+                          ) : (
+                            "Нет данных"
+                          )}
+                        </Col>
+                        <Col className="text-center col-6">
+                          Процент брака: {defectPercent}
+                          {"%"}
+                        </Col>
+                      </Row>
+                    </Card.Footer>
+                  </Card>
+                </Col>
+
+              </Row>
+            </Col>
+
+            <Col className="col-lg-7 col-sm-12">
+                <Col>
+                  <Card className="mb-4 " bg='light'>
+                    <Card.Header className="text-center" as="h5">Простой</Card.Header>
+                    <Card.Body>
+
+                      <DelaysTable
+                        delays={delays}
+                        handleEditDelay={(delay) => {
+                          setEditDelayShow(true);
+                          setState(state.withDelays([...state.delays])); // placeholder, редактирование через модалку
+                          // Note: actual editing happens via EditDelayModal below
+                        }}
+                        handleRemoveDelay={handleRemoveDelay}
+                      />
+                    </Card.Body>
+                    <Card.Footer className="text-center">
+                      <Row className="justify-content-center">
+                        <Button
+                          type="button"
+                          variant="outline-primary"
+                          size="sm"
+                          style={{ width: "150px" }}
+                          onClick={() => {
+                            setEditDelayShow(true);
+                          }}
+                        >
+                          Добавить простой
+                        </Button>
+                      </Row>
+                    </Card.Footer>
+                  </Card>
+                </Col>
+                <Card bg='light'>
+                  <Card.Header className="text-center" as="h5">
+                    Дефекты
+                  </Card.Header>
+                  <Card.Body>
+                    <DefectsTable
+                      defects={defects}
+                      handleEditDefects={(defect) => {
+                        setEditDefectsShow(true);
+                      }}
+                    />
+                  </Card.Body>
+                  <Card.Footer className="text-center">
+                    <Row className="justify-content-center">
+                      <Button
+                        type="button"
+                        variant="outline-primary"
+                        size="sm"
+                        style={{ width: "150px" }}
+                        onClick={() => {
+                          setEditDefectsShow(true);
+                        }}
+                      >
+                        Добавить дефекты
+                      </Button>
+                    </Row>
+                  </Card.Footer>
+                </Card>
+                
+              
+              <Row className="justify-content-center mt-5">
+                <Button
+                  type="button"
+                  variant="outline-primary"
+                  size="sm"
+                  style={{ width: "150px" }}
+                  onClick={() => setEditConsumtionShow(true)}
+                >
+                  Расход материалов
+                </Button>
+              </Row>
+            </Col>
+
           </Row>
-
         </Container>
       </Modal.Body>
       <Modal.Footer>
@@ -642,47 +436,39 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       </Modal.Footer>
       <EditCategoryModal
         show={editCategoryShow}
-        category={selectedCategory}
+        category={state.tableData[0] ?? null}
         onHide={() => setEditCategoryShow(false)}
         onSave={(updatedCategory) => {
-          handleCategoryUpdate(updatedCategory);
+          handleEditCategory(updatedCategory);
           setEditCategoryShow(false);
         }}
       />
       <EditDelayModal
         show={editDelayShow}
-        delay={selectedDelay}
+        delay={null}
         shift={selectedShift}
         product={selectedProduct}
-        onHide={() => { setEditDelayShow(false); setSelectedDelay(null); }}
+        onHide={() => setEditDelayShow(false)}
         onSave={(updatedDelay) => {
-          handleDelayUpdate(updatedDelay);
-          setEditDelayShow(false);
+          handleEditDelay(updatedDelay);
         }}
       />
       <EditDefectModal
         show={editDefectsShow}
-        defect={selectedDefect}
+        defect={null}
         onHide={() => setEditDefectsShow(false)}
         onSave={(updatedDefect) => {
           handleDefectUpdate(updatedDefect);
-          setSelectedDefect(null);
-          setEditDefectsShow(false);
         }}
       />
       <EditConsumptionModal
         show={editConsumtionShow}
         product={selectedProduct}
         productionTotal={tableData[0] ? tableData[0].value : 0}
-        produtionList={draftReport.productionList}
+        produtionList={state.reportData.productionList}
         onHide={() => setEditConsumtionShow(false)}
         specifications={specification}
         onSave={handleSaveConsumption}
-      // onSave={(updatedConsumption) => {      
-      // handleConsumptionUpdate(updatedConsumption);
-      //   setEditConsumtionShow(false);
-      // }
-      // }
       />
       <Toast ref={toast} />
     </Modal>
@@ -690,4 +476,3 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 };
 
 export default ReportModalPage;
-

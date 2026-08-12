@@ -14,10 +14,9 @@ const DefectsTable: React.FC<DefectsTableProps> = ({
 }) => {
     return (
         <div>
-        <h3 className="text-center">
-            Дефекты
-        </h3>
-        <Table striped bordered hover size="sm" responsive variant="dark">
+        
+       
+        <Table striped bordered hover size="sm" responsive variant="light">
             <thead>
                 <tr>   
                 <th>Причины дефекта</th>                 
@@ -34,11 +33,12 @@ const DefectsTable: React.FC<DefectsTableProps> = ({
                             <td>{entry.defects.defectTypes.name}</td>                            
                             <td>{entry.value}</td>                        
                             <td>
-                                <Button
-                                    variant="secondary"
-                                    style={{ right: 0 }}
+                                <Button 
+                                className="d-flex justify-content-center"
+                                    variant="outline-primary"
+                                    size="sm"                      
                                     onClick={() => handleEditDefects(entry)}                                >
-                                    <TiEdit />
+                                    <TiEdit size={18} />
                                 </Button>{" "}                                
                             </td>                            
                         </tr>

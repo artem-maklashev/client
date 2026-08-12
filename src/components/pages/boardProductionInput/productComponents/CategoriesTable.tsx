@@ -21,11 +21,11 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
   //   // alert("Введено значение: " + newValue + " в категорию " + categories.find(cat => cat.category.id === id)?.category.title);
   // };
   return (
-    <Form className='mb-4'>
+    <Form>
       {categories.length > 0 ? (
         categories.map((entry) => (
           <Form.Group key={entry.category.id} className="row align-items-center mt-1" controlId={`category-${entry.category.id}`}>
-            <Form.Label className="col-sm-8 col-form-label fw-bold">
+            <Form.Label className="col-sm-8 col-form-label ">
               {entry.category.title}
               {entry.category.id === 6 && <span className="text-muted ms-2"></span>}
             </Form.Label>

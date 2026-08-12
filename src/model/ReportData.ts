@@ -56,25 +56,17 @@ class ReportData<T extends Product, U extends ProductCategories, V extends Produ
         return this;
     }
 
-    updateDelays(delay: X) : this {
-        this.delays.map((entry) => {
-            if (entry.id === delay.id) {
-                return delay;
-            } else {
-                return entry;
-            }
-        });
+    updateDelays(delay: X): this {
+        this.delays = this.delays.map((entry) =>
+            entry.id === delay.id ? delay : entry
+        );
         return this;
     }
 
-    updateDefect(defect: BoardDefectsLog) {
-        this.defectsLogs.map((entry) => {
-            if (entry.id === defect.id) {
-                return defect;
-            } else {
-                return entry;
-            }
-        });
+    updateDefect(defect: BoardDefectsLog): this {
+        this.defectsLogs = this.defectsLogs.map((entry) =>
+            entry.id === defect.id ? defect : entry
+        );
         return this;
       }
 

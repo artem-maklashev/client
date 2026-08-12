@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, ButtonGroup, Table } from "react-bootstrap";
 import { TiEdit, TiTrash } from "react-icons/ti";
 import Delays from "../../../../model/delays/Delays";
 import { getUserRole } from "../../../../service/Api";
@@ -10,7 +10,7 @@ interface DelaysTableProps {
     handleRemoveDelay: (removingDelay: Delays) => void;
 }
 
-const DelaysTable: React.FC<DelaysTableProps> = ({delays, handleEditDelay, handleRemoveDelay}) => {
+const DelaysTable: React.FC<DelaysTableProps> = ({ delays, handleEditDelay, handleRemoveDelay }) => {
     const [localDelays, setLocalDelays] = useState<Delays[]>([]);
 
     useEffect(() => {
@@ -25,8 +25,8 @@ const DelaysTable: React.FC<DelaysTableProps> = ({delays, handleEditDelay, handl
 
     return (
         <div>
-            <h3 className="text-center">Простои</h3>
-            <Table striped bordered hover size="sm" responsive variant="dark">
+
+            <Table striped bordered hover size="sm" responsive variant="light">
                 <thead>
                     <tr>
                         <th>Время начала</th>
@@ -49,21 +49,24 @@ const DelaysTable: React.FC<DelaysTableProps> = ({delays, handleEditDelay, handl
                                 <td>{entry.unitPart.unit.name}</td>
                                 <td>{entry.unitPart.unit.productionArea.name}</td>
                                 <td>
-                                    <Button
-                                        variant="secondary"
+                                    <ButtonGroup size="sm" className="d-flex justify-content-center">
+                                        <Button
+                                            variant="outline-primary"
+                                            onClick={() => handleEditDelay(entry)}
+                                            title="Редактировать"
+                                        >
+                                            <TiEdit size={18} />
+                                        </Button>
                                         
-                                        onClick={() => handleEditDelay(entry)}
-                                    >
-                                        <TiEdit />
-                                    </Button>{" "}
-                                    <Button
-                                        variant="secondary"
-                                        onClick={() => handleRemoveDelay(entry)}
-                                        style={{ color: "red" }}
-                                        disabled={getUserRole() === 'ADMIN' ? false : true}
-                                    >
-                                        <TiTrash />
-                                    </Button>
+                                        <Button
+                                            variant="outline-danger"
+                                            onClick={() => handleRemoveDelay(entry)}
+                                            disabled={getUserRole() !== 'ADMIN'}
+                                            title="Удалить"
+                                        >
+                                            <TiTrash size={18} />
+                                        </Button>
+                                    </ButtonGroup>
                                 </td>
                             </tr>
                         ))
