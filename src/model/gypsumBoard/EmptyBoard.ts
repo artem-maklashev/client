@@ -11,10 +11,10 @@ import GypsumBoard from "./GypsumBoard";
 export class EmptyBoard extends GypsumBoard {
     
 
-    boardType: BoardType;    
-    width: Width;   
-    name: string; 
-    factSpeed: number;   
+    declare boardType: BoardType;    
+    declare width: Width;   
+    declare name: string; 
+    declare factSpeed: number;   
 
     constructor();
     constructor(
