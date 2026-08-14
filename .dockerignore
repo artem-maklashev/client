@@ -1,6 +1,9 @@
-
 dist
 .git
 .vscode
 *.log
 npm-debug.log*
+node_modules
+.idea
+client.zip
+*.ps1
