@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Table } from "react-bootstrap";
+import { Badge, Button, ButtonGroup, Table } from "react-bootstrap";
 import { TiEdit, TiTrash } from "react-icons/ti";
 import Delays from "../../../../model/delays/Delays";
 import { getUserRole } from "../../../../service/Api";
@@ -24,55 +24,83 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ delays, handleEditDelay, hand
     //     };
 
     return (
-        <div>
-
-            <Table striped bordered hover size="sm" responsive variant="light">
-                <thead>
+        <div className="table-responsive rounded-2">
+            <Table hover align="center" className="mb-0 table-sm small align-middle border">
+                <thead className="table-light text-secondary">
                     <tr>
-                        <th>Время начала</th>
-                        <th>Время окончания</th>
-                        <th>Длительность</th>
-                        <th>Деталь</th>
-                        <th>Оборудование/Причина</th>
-                        <th>Участок</th>
-                        <th>Редактировать</th>
+                        <th className="py-2 px-3 fw-semibold">Период</th>
+                        <th className="py-2 px-3 fw-semibold text-center">Длит.</th>
+                        <th className="py-2 px-3 fw-semibold">Деталь</th>
+                        <th className="py-2 px-3 fw-semibold">Оборудование / Причина</th>
+                        <th className="py-2 px-3 fw-semibold">Участок</th>
+                        <th className="py-2 px-3 fw-semibold text-end">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                     {localDelays.length > 0 ? (
-                        localDelays.map((entry) => (
-                            <tr key={entry.id}>
-                                <td>{new Date(entry.startTime).toLocaleString()}</td>
-                                <td>{new Date(entry.endTime).toLocaleString()}</td>
-                                <td>{(new Date(entry.endTime).getTime() - new Date(entry.startTime).getTime()) / (1000 * 60)}</td>
-                                <td>{entry.unitPart.name}</td>
-                                <td>{entry.unitPart.unit.name}</td>
-                                <td>{entry.unitPart.unit.productionArea.name}</td>
-                                <td>
-                                    <ButtonGroup size="sm" className="d-flex justify-content-center">
-                                        <Button
-                                            variant="outline-primary"
-                                            onClick={() => handleEditDelay(entry)}
-                                            title="Редактировать"
-                                        >
-                                            <TiEdit size={18} />
-                                        </Button>
-                                        
-                                        <Button
-                                            variant="outline-danger"
-                                            onClick={() => handleRemoveDelay(entry)}
-                                            disabled={getUserRole() !== 'ADMIN'}
-                                            title="Удалить"
-                                        >
-                                            <TiTrash size={18} />
-                                        </Button>
-                                    </ButtonGroup>
-                                </td>
-                            </tr>
-                        ))
+                        localDelays.map((entry) => {
+                            const durationMinutes = Math.round(
+                                (new Date(entry.endTime).getTime() - new Date(entry.startTime).getTime()) / (1000 * 60)
+                            );
+
+                            return (
+                                <tr key={entry.id}>
+                                    {/* Время начала и окончания в две компактные строки */}
+                                    <td className="px-3">
+                                        <div className="fw-semibold text-dark">
+                                            {new Date(entry.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                        <div className="fw-semibold text-dark" >
+                                            {new Date(entry.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                    </td>
+
+                                    {/* Длительность в виде бейджа */}
+                                    <td className="px-3 text-center">
+                                        <Badge bg="light" className="text-dark border fw-medium px-2 py-1">
+                                            {durationMinutes} мин
+                                        </Badge>
+                                    </td>
+
+                                    {/* Деталь */}
+                                    <td className="px-3 fw-medium text-dark">{entry.unitPart.name}</td>
+
+                                    {/* Оборудование */}
+                                    <td className="px-3 text-secondary">{entry.unitPart.unit.name}</td>
+
+                                    {/* Участок */}
+                                    <td className="px-3 text-secondary">{entry.unitPart.unit.productionArea.name}</td>
+
+                                    {/* Кнопки действий */}
+                                    <td className="px-3 text-end">
+                                        <ButtonGroup size="sm">
+                                            <Button
+                                                variant="outline-primary"
+                                                className="py-1 px-2"
+                                                onClick={() => handleEditDelay(entry)}
+                                                title="Редактировать"
+                                            >
+                                                <TiEdit size={16} />
+                                            </Button>
+                                            <Button
+                                                variant="outline-danger"
+                                                className="py-1 px-2"
+                                                onClick={() => handleRemoveDelay(entry)}
+                                                disabled={getUserRole() !== 'ADMIN'}
+                                                title={getUserRole() !== 'ADMIN' ? 'Недостаточно прав для удаления' : 'Удалить'}
+                                            >
+                                                <TiTrash size={16} />
+                                            </Button>
+                                        </ButtonGroup>
+                                    </td>
+                                </tr>
+                            );
+                        })
                     ) : (
                         <tr>
-                            <td colSpan={7} className="text-center">Нет данных для отображения</td>
+                            <td colSpan={6} className="text-center py-4 text-muted">
+                                Нет данных для отображения
+                            </td>
                         </tr>
                     )}
                 </tbody>

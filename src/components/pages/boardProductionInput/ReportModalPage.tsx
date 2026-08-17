@@ -216,51 +216,24 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         <Container fluid>
           <Row>
             <Col className="col-lg-5 col-sm-12">
-              <Card className="mb-4 p-3"  bg='light'>
-                <Row>
-                  <Col className="col-lg-6 col-sm-12 bordered">
-                    <Form.Group>
-                      <LocalizationProvider
-                        dateAdapter={AdapterDayjs}
-                        adapterLocale={dayjs.locale("ru")}
-                      >
-                        <Stack spacing={3}>
-                          <MobileDateTimePicker
-                            label="Начало работы:"
-                            value={startDate ? dayjs(startDate) : null}
-                            onChange={handleStartDateChange}
-                            ampm={false}
-                            orientation="landscape"
-                          />
-                        </Stack>
-                      </LocalizationProvider>
-                    </Form.Group>
-                  </Col>
-                  <Col className="col-lg-6 col-sm-12 bordered">
-                    <Form.Group>
-                      {/* <Form.Label>Окончание работы:</Form.Label> */}
-                      <LocalizationProvider
-                        dateAdapter={AdapterDayjs}
-                        adapterLocale={dayjs.locale("ru")}
-                      >
-                        <Stack spacing={3}>
-                          <MobileDateTimePicker
-                            label="Окончание работы:"
-                            value={endDate ? dayjs(endDate) : null}
-                            onChange={handleEndDateChange}
-                            ampm={false}
-                            orientation="landscape"
-                          />
-                        </Stack>
-                      </LocalizationProvider>
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="col-lg-6 col-sm-12 bordered">
-                    <Form.Group>
-                      <FloatingLabel controlId="shiftSelect" label="Смена">
+              <Card className="p-3 border-0 shadow-sm rounded-3 bg-white ">
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale={dayjs.locale("ru")}
+                >
+                  {/* Строка 1: Смена и Номенклатура */}
+                  <Row className="g-3 mb-2">
+                    {/* Смена */}
+                    <Col xs={12} md={3}>
+                      <div className="position-relative border rounded-2 px-2 pb-1 pt-2 bg-white">
+                        <label
+                          className="position-absolute bg-white px-1 text-secondary fw-semibold"
+                          style={{ top: '-9px', left: '10px', fontSize: '0.75rem', lineHeight: 1 }}
+                        >
+                          Смена
+                        </label>
                         <Form.Select
+                          size="sm"
                           value={selectedShift ? selectedShift.name : shiftList[1]?.name}
                           onChange={(e) => {
                             const selectedShiftName = e.target.value;
@@ -269,6 +242,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                             );
                             handleShiftChange(foundShift || null);
                           }}
+                          className="border-0 shadow-none p-0 fw-medium bg-transparent"
                         >
                           {shiftList.map((shift) => (
                             <option key={shift.id} value={shift.name}>
@@ -276,13 +250,20 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                             </option>
                           ))}
                         </Form.Select>
-                      </FloatingLabel>
-                    </Form.Group>
-                  </Col>
-                  <Col className="col-lg-6 col-sm-6 bordered">
-                    <Form.Group>
-                      <FloatingLabel controlId="gypsumBoardSelect" label="Гипсокартон">
+                      </div>
+                    </Col>
+
+                    {/* Номенклатура */}
+                    <Col xs={12} md={9}>
+                      <div className="position-relative border rounded-2 px-2 pb-1 pt-2 bg-white">
+                        <label
+                          className="position-absolute bg-white px-1 text-secondary fw-semibold"
+                          style={{ top: '-9px', left: '10px', fontSize: '0.75rem', lineHeight: 1 }}
+                        >
+                          Гипсокартон
+                        </label>
                         <Form.Select
+                          size="sm"
                           value={selectedProduct ? selectedProduct.id.toString() : gypsumBoardList[0]?.id.toString()}
                           onChange={(e) => {
                             const selectedProductId = parseInt(e.target.value);
@@ -291,6 +272,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                             );
                             handleProductChange(foundGypsumBoard || null);
                           }}
+                          className="border-0 shadow-none p-0 fw-medium bg-transparent text-truncate"
                         >
                           {gypsumBoardList.map((gypsumBoard) => (
                             <option
@@ -301,10 +283,55 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                             </option>
                           ))}
                         </Form.Select>
-                      </FloatingLabel>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                      </div>
+                    </Col>
+                  </Row>
+
+                  {/* Строка 2: Начало и Окончание работы */}
+                  <Row className="g-3">
+                    <Col xs={12} md={6}>
+                      <MobileDateTimePicker
+                        label="Начало работы:"
+                        value={startDate ? dayjs(startDate) : null}
+                        onChange={handleStartDateChange}
+                        ampm={false}
+                        orientation="landscape"
+                        slotProps={{
+                          textField: {
+                            size: "small",
+                            fullWidth: true,
+                            sx: {
+                              '& .MuiInputBase-root': { height: '38px' },
+                              '& .MuiInputBase-input': { fontSize: '0.875rem' },
+                              '& .MuiInputLabel-root': { fontSize: '0.85rem' }
+                            }
+                          }
+                        }}
+                      />
+                    </Col>
+
+                    <Col xs={12} md={6}>
+                      <MobileDateTimePicker
+                        label="Окончание работы:"
+                        value={endDate ? dayjs(endDate) : null}
+                        onChange={handleEndDateChange}
+                        ampm={false}
+                        orientation="landscape"
+                        slotProps={{
+                          textField: {
+                            size: "small",
+                            fullWidth: true,
+                            sx: {
+                              '& .MuiInputBase-root': { height: '38px' },
+                              '& .MuiInputBase-input': { fontSize: '0.875rem' },
+                              '& .MuiInputLabel-root': { fontSize: '0.85rem' }
+                            }
+                          }
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                </LocalizationProvider>
               </Card>
 
 
@@ -312,31 +339,41 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
               <Row>
                 <Col className="col-lg-12 col-sm-12">
 
-                  <Card className="mb-4 " bg='light' as="h6">
-                    <Card.Header className="text-center">Данные по производству</Card.Header>
-                    <Card.Body>
+                  <Card className="border-0 shadow-sm rounded-3 h-100 d-flex flex-column">
+                    {/* <Card.Header className="bg-light border-bottom-0 py-2 px-3 fs-6 fw-bold text-dark">
+                      Данные по производству
+                    </Card.Header> */}
+                    <Card.Body className="p-2 flex-grow-1 bg-light">
                       <CategoriesTable
                         categories={tableData}
                         handleEditCategory={handleEditCategory}
                       />
                     </Card.Body>
-                    <Card.Footer className="text-center">
-                      <Row>
-                        <Col className="text-center col-6">
-                          Проверка:{" "}
-                          {resultCheck !== null ? (
-                            <span style={{ color: isNonZero ? 'red' : 'inherit' }}>
-                              {resultCheck}
-                            </span>
-                          ) : (
-                            "Нет данных"
-                          )}
-                        </Col>
-                        <Col className="text-center col-6">
-                          Процент брака: {defectPercent}
-                          {"%"}
-                        </Col>
-                      </Row>
+                    <Card.Footer className="p-2 bg-light border-top rounded-bottom-1">
+                      <div className="d-flex gap-2">
+                        {/* Карточка: Проверка */}
+                        <div className="w-50 bg-white p-2 rounded-2 border text-center shadow-sm">
+                          <div className="text-secondary small fw-medium mb-1">Проверка</div>
+                          <div
+                            className={`fw-bold fs-6 ${resultCheck === null
+                              ? 'text-muted'
+                              : isNonZero
+                                ? 'text-danger'
+                                : 'text-success'
+                              }`}
+                          >
+                            {resultCheck !== null ? resultCheck : '—'}
+                          </div>
+                        </div>
+
+                        {/* Карточка: Процент брака */}
+                        <div className="w-50 bg-white p-1 rounded-2 border text-center shadow-sm">
+                          <div className="text-secondary small fw-medium mb-1">Процент брака</div>
+                          <div className="fw-bold fs-6 text-warning">
+                            {defectPercent !== undefined && defectPercent !== null ? `${defectPercent}%` : '—'}
+                          </div>
+                        </div>
+                      </div>
                     </Card.Footer>
                   </Card>
                 </Col>
@@ -345,48 +382,19 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
             </Col>
 
             <Col className="col-lg-7 col-sm-12">
-                <Col>
-                  <Card className="mb-4 " bg='light'>
-                    <Card.Header className="text-center" as="h5">Простой</Card.Header>
-                    <Card.Body>
-
-                      <DelaysTable
-                        delays={delays}
-                        handleEditDelay={(delay) => {
-                          setEditDelayShow(true);
-                          setState(state.withDelays([...state.delays])); // placeholder, редактирование через модалку
-                          // Note: actual editing happens via EditDelayModal below
-                        }}
-                        handleRemoveDelay={handleRemoveDelay}
-                      />
-                    </Card.Body>
-                    <Card.Footer className="text-center">
-                      <Row className="justify-content-center">
-                        <Button
-                          type="button"
-                          variant="outline-primary"
-                          size="sm"
-                          style={{ width: "150px" }}
-                          onClick={() => {
-                            setEditDelayShow(true);
-                          }}
-                        >
-                          Добавить простой
-                        </Button>
-                      </Row>
-                    </Card.Footer>
-                  </Card>
-                </Col>
-                <Card bg='light'>
-                  <Card.Header className="text-center" as="h5">
-                    Дефекты
-                  </Card.Header>
+              <Col>
+                <Card className="mb-4 shadow-sm border-0" bg='white'>
+                  <Card.Header className="text-center bg-white" as="h6" >Простой</Card.Header>
                   <Card.Body>
-                    <DefectsTable
-                      defects={defects}
-                      handleEditDefects={(defect) => {
-                        setEditDefectsShow(true);
+
+                    <DelaysTable
+                      delays={delays}
+                      handleEditDelay={(delay) => {
+                        setEditDelayShow(true);
+                        setState(state.withDelays([...state.delays])); // placeholder, редактирование через модалку
+                        // Note: actual editing happens via EditDelayModal below
                       }}
+                      handleRemoveDelay={handleRemoveDelay}
                     />
                   </Card.Body>
                   <Card.Footer className="text-center">
@@ -397,23 +405,53 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                         size="sm"
                         style={{ width: "150px" }}
                         onClick={() => {
-                          setEditDefectsShow(true);
+                          setEditDelayShow(true);
                         }}
                       >
-                        Добавить дефекты
+                        Добавить простой
                       </Button>
                     </Row>
                   </Card.Footer>
                 </Card>
-                
-              
-              <Row className="justify-content-center mt-5">
+              </Col>
+              <Card bg='white' className="shadow-sm border-0">
+                <Card.Header className="text-center" as="h6">
+                  Дефекты
+                </Card.Header>
+                <Card.Body>
+                  <DefectsTable
+                    defects={defects}
+                    handleEditDefects={(defect) => {
+                      setEditDefectsShow(true);
+                    }}
+                  />
+                </Card.Body>
+                <Card.Footer className="text-center">
+                  <Row className="justify-content-center">
+                    <Button
+                      type="button"
+                      variant="outline-primary"
+                      size="sm"
+                      style={{ width: "150px" }}
+                      onClick={() => {
+                        setEditDefectsShow(true);
+                      }}
+                    >
+                      Добавить дефекты
+                    </Button>
+                  </Row>
+                </Card.Footer>
+              </Card>
+
+
+              <Row className="justify-content-center mt-5 ">
                 <Button
                   type="button"
                   variant="outline-primary"
                   size="sm"
                   style={{ width: "150px" }}
                   onClick={() => setEditConsumtionShow(true)}
+                  className="shadow-sm"
                 >
                   Расход материалов
                 </Button>
