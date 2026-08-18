@@ -63,7 +63,9 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   const [editCategoryShow, setEditCategoryShow] = useState(false);
   const [editDelayShow, setEditDelayShow] = useState(false);
+  const [editingDelay, setEditingDelay] = useState<Delays | null>(null);
   const [editDefectsShow, setEditDefectsShow] = useState(false);
+  const [editingDefect, setEditingDefect] = useState<BoardDefectsLog | null>(null);
   const [editConsumtionShow, setEditConsumtionShow] = useState(false);
   const [specification, setSpecification] = useState<Specification[]>([]);
   const [consumptions, setConsumptions] = useState<MaterialConsumption[]>([]);
@@ -134,6 +136,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
 
   const handleEditDelay = (delay: Delays) => {
     setState(state.withDelays(service.upsertDelay(state.delays, delay)));
+    setEditingDelay(null);
     setEditDelayShow(false);
   };
 
@@ -147,6 +150,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
         service.upsertDefect(state.defects, updatedDefect, state.delays)
       )
     );
+    setEditingDefect(null);
+    setEditDefectsShow(false);
   };
 
   const handleShiftChange = (shift: Shift | null) => {
@@ -390,9 +395,8 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                     <DelaysTable
                       delays={delays}
                       handleEditDelay={(delay) => {
+                        setEditingDelay(delay);
                         setEditDelayShow(true);
-                        setState(state.withDelays([...state.delays])); // placeholder, редактирование через модалку
-                        // Note: actual editing happens via EditDelayModal below
                       }}
                       handleRemoveDelay={handleRemoveDelay}
                     />
@@ -405,6 +409,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                         size="sm"
                         style={{ width: "150px" }}
                         onClick={() => {
+                          setEditingDelay(null);
                           setEditDelayShow(true);
                         }}
                       >
@@ -422,6 +427,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                   <DefectsTable
                     defects={defects}
                     handleEditDefects={(defect) => {
+                      setEditingDefect(defect);
                       setEditDefectsShow(true);
                     }}
                   />
@@ -483,18 +489,24 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       />
       <EditDelayModal
         show={editDelayShow}
-        delay={null}
+        delay={editingDelay}
         shift={selectedShift}
         product={selectedProduct}
-        onHide={() => setEditDelayShow(false)}
+        onHide={() => {
+          setEditingDelay(null);
+          setEditDelayShow(false);
+        }}
         onSave={(updatedDelay) => {
           handleEditDelay(updatedDelay);
         }}
       />
       <EditDefectModal
         show={editDefectsShow}
-        defect={null}
-        onHide={() => setEditDefectsShow(false)}
+        defect={editingDefect}
+        onHide={() => {
+          setEditingDefect(null);
+          setEditDefectsShow(false);
+        }}
         onSave={(updatedDefect) => {
           handleDefectUpdate(updatedDefect);
         }}

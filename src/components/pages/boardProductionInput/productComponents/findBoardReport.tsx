@@ -18,7 +18,6 @@ const FindBoardReport: React.FC = () => {
     const [productions, setProductions] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>([]);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [showReportModal, setShowReportModal] = useState<boolean>(false);
-    const [newReport, setNewReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -39,17 +38,9 @@ const FindBoardReport: React.FC = () => {
         };
 
         findReport();
-    }, [selectedDate]);
+    }, [selectedDate]);    
 
-
-
-    const onSave = async (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
-        await saveUpdatedReport(report);
-        setShowReportModal(false);
-        // await refreshProductionList(); // Обновить список отчетов после сохранения
-    };
-
-    function handleChange(date: Date | null,): void {
+    function handleChange(date: Date | null): void {
         setSelectedDate(date);
     }
 
@@ -86,22 +77,8 @@ const FindBoardReport: React.FC = () => {
                 <Col className="col-12">
                     <ProductionListTable boardProductions={productions} />
                 </Col>
-            </Row>
-            <Row className="justify-content-center">
-                {/* <Col className="col-2 mb-5">
-                    <Button onClick={handleAddReport} style={{ width: '150px' }}>Добавить отчет</Button>
-
-                </Col> */}
-            </Row>
-            <ReportModalPage
-                show={showReportModal}
-                reportData={newReport}
-                onHide={() => {
-                    setShowReportModal(false);
-                    // refreshProductionList();
-                }}
-                onSave={onSave}
-            />
+            </Row>          
+           
         </Container>
     );
 };

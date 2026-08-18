@@ -101,6 +101,8 @@ export class ReportModalService {
    */
   upsertDelay(delays: Delays[], delay: Delays): Delays[] {
     const index = delays.findIndex((item) => item.id === delay.id);
+    console.log(JSON.stringify(delay));
+
     if (index === -1) {
       const newDelay = { ...delay, id: this.generateDelayId(delays) };
       return [...delays, newDelay];
