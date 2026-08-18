@@ -220,14 +220,59 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
       <Modal.Body>
         <Container fluid>
           <Row>
-            <Col className="col-lg-5 col-sm-12">
+            <Col className="col-lg-4 col-sm-12">
               <Card className="p-3 border-0 shadow-sm rounded-3 bg-white ">
                 <LocalizationProvider
                   dateAdapter={AdapterDayjs}
                   adapterLocale={dayjs.locale("ru")}
                 >
-                  {/* Строка 1: Смена и Номенклатура */}
+
+                  {/* Строка 1: Начало и Окончание работы */}
                   <Row className="g-3 mb-2">
+                    <Col xs={12} md={6}>
+                      <MobileDateTimePicker
+                        label="Начало работы:"
+                        value={startDate ? dayjs(startDate) : null}
+                        onChange={handleStartDateChange}
+                        ampm={false}
+                        orientation="landscape"
+                        slotProps={{
+                          textField: {
+                            size: "small",
+                            fullWidth: true,
+                            sx: {
+                              '& .MuiInputBase-root': { height: '38px' },
+                              '& .MuiInputBase-input': { fontSize: '0.875rem' },
+                              '& .MuiInputLabel-root': { fontSize: '0.85rem' }
+                            }
+                          }
+                        }}
+                      />
+                    </Col>
+
+                    <Col xs={12} md={6}>
+                      <MobileDateTimePicker
+                        label="Окончание работы:"
+                        value={endDate ? dayjs(endDate) : null}
+                        onChange={handleEndDateChange}
+                        ampm={false}
+                        orientation="landscape"
+                        slotProps={{
+                          textField: {
+                            size: "small",
+                            fullWidth: true,
+                            sx: {
+                              '& .MuiInputBase-root': { height: '38px' },
+                              '& .MuiInputBase-input': { fontSize: '0.875rem' },
+                              '& .MuiInputLabel-root': { fontSize: '0.85rem' }
+                            }
+                          }
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                  {/* Строка 2: Смена и Номенклатура */}
+                  <Row className="g-3">
                     {/* Смена */}
                     <Col xs={12} md={3}>
                       <div className="position-relative border rounded-2 px-2 pb-1 pt-2 bg-white">
@@ -291,51 +336,6 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                       </div>
                     </Col>
                   </Row>
-
-                  {/* Строка 2: Начало и Окончание работы */}
-                  <Row className="g-3">
-                    <Col xs={12} md={6}>
-                      <MobileDateTimePicker
-                        label="Начало работы:"
-                        value={startDate ? dayjs(startDate) : null}
-                        onChange={handleStartDateChange}
-                        ampm={false}
-                        orientation="landscape"
-                        slotProps={{
-                          textField: {
-                            size: "small",
-                            fullWidth: true,
-                            sx: {
-                              '& .MuiInputBase-root': { height: '38px' },
-                              '& .MuiInputBase-input': { fontSize: '0.875rem' },
-                              '& .MuiInputLabel-root': { fontSize: '0.85rem' }
-                            }
-                          }
-                        }}
-                      />
-                    </Col>
-
-                    <Col xs={12} md={6}>
-                      <MobileDateTimePicker
-                        label="Окончание работы:"
-                        value={endDate ? dayjs(endDate) : null}
-                        onChange={handleEndDateChange}
-                        ampm={false}
-                        orientation="landscape"
-                        slotProps={{
-                          textField: {
-                            size: "small",
-                            fullWidth: true,
-                            sx: {
-                              '& .MuiInputBase-root': { height: '38px' },
-                              '& .MuiInputBase-input': { fontSize: '0.875rem' },
-                              '& .MuiInputLabel-root': { fontSize: '0.85rem' }
-                            }
-                          }
-                        }}
-                      />
-                    </Col>
-                  </Row>
                 </LocalizationProvider>
               </Card>
 
@@ -386,7 +386,7 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
               </Row>
             </Col>
 
-            <Col className="col-lg-7 col-sm-12">
+            <Col className="col-lg-8 col-sm-12">
               <Col>
                 <Card className="mb-4 shadow-sm border-0" bg='white'>
                   <Card.Header className="text-center bg-white" as="h6" >Простой</Card.Header>

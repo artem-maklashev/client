@@ -1,0 +1,110 @@
+.preloader-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    margin: 0;
+
+    .preloader-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        padding: 50px 60px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+        min-width: 350px;
+    }
+
+    .logo-container {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+        position: relative;
+    }
+
+    .logo-spinner {
+        animation: rotate 3s linear infinite;
+        width: 100%;
+        height: 100%;
+    }
+
+    .logo-circle {
+        stroke-dasharray: 283;
+        stroke-dashoffset: 283;
+        animation: dash 1.5s ease-in-out infinite alternate;
+    }
+
+    .logo-path {
+        opacity: 0.5;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .loading-title {
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+    }
+
+    .loading-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin-bottom: 25px;
+    }
+
+    .loading-progress {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
+        }
+    }
+
+    .progress-text {
+        display: block;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        margin-top: 10px;
+        font-weight: 600;
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes dash {
+        0% {
+            stroke-dashoffset: 283;
+        }
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 0.3;
+        }
+        50% {
+            opacity: 0.8;
+        }
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
+}
