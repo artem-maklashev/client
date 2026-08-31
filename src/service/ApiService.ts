@@ -372,6 +372,18 @@ class ApiService {
             console.error(`Произошла ошибка при получении расхода материалов`, error);
         }
       }
+
+    static async getConsumptionsByProduction(ids: number[], difference: number) {
+        try {
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/specifications/gypsum-board-consumption`,
+                 { params: { ids, difference } }
+
+            );
+            return response.data;
+        } catch (error: any) {
+            console.error(`Произошла ошибка при получении расхода материалов`, error);
+        }
+    }
 }
 
 export default ApiService;
