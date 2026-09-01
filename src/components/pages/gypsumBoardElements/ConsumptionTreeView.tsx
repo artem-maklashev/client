@@ -23,7 +23,7 @@ export const ConsumptionTreeView: React.FC<Props> = ({ consumptions }) => {
                                 {item.gypsumBoard.toString() || 'ГСП'} 
                             </span>
                             <Badge bg="light" text="secondary" pill className="border">
-                                {item.averageConsumptionComparisons.length} компонентов
+                                компонентов: {item.averageConsumptionComparisons.length} 
                             </Badge>
                         </div>
                     </Accordion.Header>
