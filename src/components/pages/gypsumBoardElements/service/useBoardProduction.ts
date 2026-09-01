@@ -1,6 +1,7 @@
 // useBoardProduction.ts
 import { useQuery } from '@tanstack/react-query';
 import ApiService from '../../../../service/ApiService';
+import { useMemo } from 'react';
 
 export const useBoardProduction = (startDate: Date, endDate: Date) => {
     // 1. Запрашиваем план
@@ -75,27 +76,29 @@ export const useBoardProduction = (startDate: Date, endDate: Date) => {
 
     const defectPercentResult = total === 0 ? 0 : ((total - value) / total) * 100;
 
-    const productionDict: Record<string, number[]> = fact.reduce((acc, bp) => {
-        // 1. Получаем дату и превращаем её в удобную строку-ключ.
-        // Если вам нужно группировать строго по дням (без учета времени):
-        const dateKey = new Date(bp.productionList.productionDate).toLocaleDateString("ru-RU");
-        // Результат будет в виде "01.09.2026"
+    const productionDict: Record<string, number[]> = useMemo(() => {
+        return fact.reduce((acc, bp) => {
+            // 1. Получаем дату и превращаем её в удобную строку-ключ.
+            // Если вам нужно группировать строго по дням (без учета времени):
+            const dateKey = new Date(bp.productionList.productionDate).toLocaleDateString("ru-RU");
+            // Результат будет в виде "01.09.2026"
 
-        // 2. Получаем ID (обратите внимание на регистр, обычно id пишется с маленькой буквы)
-        const listId = bp.productionList.id;
+            // 2. Получаем ID (обратите внимание на регистр, обычно id пишется с маленькой буквы)
+            const listId = bp.productionList.id;
 
-        // 3. Если такого ключа(даты) еще нет в словаре, создаем пустой массив
-        if (!acc[dateKey]) {
-            acc[dateKey] = [];
-        }
+            // 3. Если такого ключа(даты) еще нет в словаре, создаем пустой массив
+            if (!acc[dateKey]) {
+                acc[dateKey] = [];
+            }
 
-        // 4. Добавляем ID в массив, только если его там еще нет (чтобы избежать дубликатов)
-        if (!acc[dateKey].includes(listId)) {
-            acc[dateKey].push(listId);
-        }
+            // 4. Добавляем ID в массив, только если его там еще нет (чтобы избежать дубликатов)
+            if (!acc[dateKey].includes(listId)) {
+                acc[dateKey].push(listId);
+            }
 
-        return acc;
-    }, {} as Record<string, number[]>);
+            return acc;
+        }, {} as Record<string, number[]>);
+    }, [fact]); // useMemo будет пересчитывать только если fact изменится
 
 
     return {

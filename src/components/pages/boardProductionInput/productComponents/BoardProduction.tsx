@@ -12,7 +12,7 @@ import { saveUpdatedReport } from "../SaveUpdatedReport";
 import Preloader from "../../commonElements/preloader";
 
 const BoardProductionPage: React.FC = () => {
-    const { productionList, fetchProductionData, isLoading: isFetching } = useProductionLogData();
+    const { productionList, fetchProductionData, isLoading: isFetching, error: fetchError } = useProductionLogData();
     const [reports, setReports] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>([]);
     const [showReportModal, setShowReportModal] = useState<boolean>(false);
     const [newReport, setNewReport] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays> | null>(null);
@@ -79,6 +79,22 @@ const BoardProductionPage: React.FC = () => {
                 </div>
             )}
         <Container fluid className="mt-5 mb-5" style={{ backgroundColor: 'grey' }}>
+            {fetchError && (
+                <Row className="justify-content-center mb-4">
+                    <Col className="col-10 col-md-6">
+                        <div style={{
+                            backgroundColor: '#f8d7da',
+                            color: '#842029',
+                            border: '1px solid #f5c2c7',
+                            borderRadius: '8px',
+                            padding: '1rem 1.25rem',
+                            fontWeight: 500,
+                        }}>
+                            {fetchError}
+                        </div>
+                    </Col>
+                </Row>
+            )}
             <Row>
                 <Col className="col-12">
                     <ProductionListTable boardProductions={reports} />

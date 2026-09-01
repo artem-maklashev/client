@@ -39,29 +39,39 @@ import Delays from "../../../../model/delays/Delays";
 
 export function useProductionLogData()  {
     const [productionList, setProductionList] = useState<ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[]>([]);
-    // const [errorText, setErrorText] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchProductionData = useCallback(async () => {
         setIsLoading(true);
+        setError(null);
         try {
             const response = await api.get(`${process.env.REACT_APP_API_URL}/boardProductions_10`);
-            const data: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] = response.data;            
+            const data: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>[] = response.data;
             setProductionList(data);
-        } catch (error) {            
-            // setErrorText('Данные по ProductionList не могут быть загружены. Попробуйте позже.');
-            console.error('fetch productionList failed', error);
-            alert('Данные по ProductionList не могут быть загружены. Попробуйте позже.');
+        } catch (e) {
+            console.error('fetch productionList failed', e);
+            setError('Данные по ProductionList не могут быть загружены. Проверьте доступность сервера и попробуйте позже.');
         } finally {
             setIsLoading(false);
-        }   
+        }
     }, []);
 
     useEffect(() => {
-       
-            fetchProductionData();
-        
+        let isMounted = true;
+        // Отменяем сброс состояния, если компонент уже размонтирован
+        const run = async () => {
+            await fetchProductionData();
+            if (!isMounted) {
+                setIsLoading(false);
+                setError(null);
+            }
+        };
+        run();
+        return () => {
+            isMounted = false;
+        };
     }, [fetchProductionData]);
+
     return { productionList, fetchProductionData, isLoading, error };
 };

@@ -47,14 +47,19 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
     }, [selectedDay, productionDict]);
 
     return (
-        <Card className="p-4 shadow-sm border-0 rounded-4 bg-white mt-4">
-            <h5 className="mb-4 fw-bold text-dark">
-                Данные по расходу материалов, требующие внимания
-            </h5>
-            
+        <Card className="border-0 shadow-sm rounded-4 overflow-hidden"
+            style={{ backgroundColor: '#fffbf48f' }}>
+            <Card.Header
+                className="border-bottom-0  pb-2 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2 fw-semibold text-dark"
+                style={{ backgroundColor: '#6968688f' }}
+            >
+                
+                    Данные по расходу материалов, требующие внимания
+               
+            </Card.Header>
             {lastThreeDays.length > 0 ? (
                 <>
-                    <ButtonGroup className="mb-4">
+                    <ButtonGroup className={`mb-4 mt-2 shadow-sm ${lastThreeDays.length > 1 ? 'w-100' : '50'}`}>
                         {lastThreeDays.map((day, index) => {
                             const dayValue = day.toLocaleDateString("ru-RU");
                             return (
@@ -76,7 +81,7 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
                     </ButtonGroup>
 
                     {/* 3. Обернули Range в Form.Group для отступов и добавили обработчик */}
-                    <Form.Group className="mb-4 w-50">
+                    <Form.Group className="mb-4 w-50 mx-auto">
                         <Form.Label className="fw-bold text-dark d-flex justify-content-between align-items-center">
                             <span>Допустимое отклонение</span>
                             {/* Красиво показываем текущее выбранное значение */}
@@ -94,7 +99,7 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
                     </Form.Group>
 
                     {/* Вывод результата от React Query */}
-                    <div className="mt-2">
+                    <div className="mt-2 px-2 pb-2">
                         {isLoadingConsumption ? (
                             <div className="d-flex align-items-center gap-2 text-primary my-4">
                                 <Spinner animation="border" size="sm" />
