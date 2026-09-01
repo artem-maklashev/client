@@ -397,7 +397,7 @@ class ApiService {
                 difference 
             } 
         });
-        return response.data;
+        return response.data.map((item: any) => ProductAverageConsumption.fromJSON(item));
     } catch (error: any) {
         console.error(`Произошла ошибка при получении расхода материалов`, error);
         return []; // Не забудьте вернуть пустой массив при ошибке, чтобы интерфейс не упал

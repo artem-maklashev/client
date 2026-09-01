@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ButtonGroup, Card, ToggleButton, Spinner } from "react-bootstrap";
 import { useBoardConsumption } from "./service/useBoardConsumption";
+import { ConsumptionTreeView } from "./ConsumptionTreeView";
 
 interface ConsumptionDataProps {
     startDate: Date;
@@ -86,9 +87,7 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
                                 <span>Загрузка данных расхода...</span>
                             </div>
                         ) : (
-                            <p className="text-muted">
-                                Загружено записей о расходе: <strong className="text-dark">{productConsumptions.length}</strong>
-                            </p>
+                            <ConsumptionTreeView consumptions={productConsumptions} />
                         )}
                     </div>
                 </>

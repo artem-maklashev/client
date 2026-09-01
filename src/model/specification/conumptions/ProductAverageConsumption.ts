@@ -10,10 +10,10 @@ export class ProductAverageConsumption {
             this.averageConsumptionComparisons = averageConsumptions;
         }
 
-    fromJSON(json: any): ProductAverageConsumption {
+    static fromJSON(json: any): ProductAverageConsumption {
         return new ProductAverageConsumption(
             GypsumBoard.fromJSON(json.gypsumBoard),
-            json.averageConsumptions.map((averageConsumption: any) => 
+            json.averageConsumptionComparisons.map((averageConsumption: any) => 
                 AverageConsumptionComparison.fromJSON(averageConsumption))
         );
     }
