@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ButtonGroup, Card, ToggleButton, Spinner } from "react-bootstrap";
+import { ButtonGroup, Card, ToggleButton, Spinner, Form } from "react-bootstrap";
 import { useBoardConsumption } from "./service/useBoardConsumption";
 import { ConsumptionTreeView } from "./ConsumptionTreeView";
 
@@ -20,27 +20,29 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
     const [selectedDay, setSelectedDay] = useState<string>("");
     const [ids, setIds] = useState<number[]>([]);
     
-    // Раскомментировали ваш кастомный хук!
-    const { productConsumptions, isLoadingConsumption } = useBoardConsumption(ids, 5);
+    // 1. Добавляем состояние для ползунка. По умолчанию ставим 5 (как было в вашем хуке)
+    const [difference, setDifference] = useState<number>(5);
+    
+    // 2. Передаем состояние difference в хук вместо жестко заданного числа
+    const { productConsumptions, isLoadingConsumption } = useBoardConsumption(ids, difference);
 
-    // 1. Установка дня по умолчанию
+    // Установка дня по умолчанию
     useEffect(() => {
         if (lastThreeDays.length > 0) {
             setSelectedDay(lastThreeDays[0].toLocaleDateString("ru-RU"));
         }
     }, [lastThreeDays]);
 
-    // 2. Безопасное обновление ID на основе выбранного дня
+    // Безопасное обновление ID на основе выбранного дня
     useEffect(() => {
         if (selectedDay && productionDict[selectedDay]) {
-            // Безопасно проверяем длину и устанавливаем значения
             if (productionDict[selectedDay].length > 0) {
                 setIds(productionDict[selectedDay]);
             } else {
-                setIds([]); // Если пустой массив
+                setIds([]);
             }
         } else {
-            setIds([]); // Если ключа вообще нет в словаре
+            setIds([]);
         }
     }, [selectedDay, productionDict]);
 
@@ -73,16 +75,28 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
                         })}
                     </ButtonGroup>
 
-                    <div className="p-3 bg-light rounded-3 mb-3 d-inline-block">
-                        <span className="text-muted fw-medium me-2">Количество партий производства:</span>
-                        <strong className="text-dark fs-5">{ids.length}</strong>
-                        <p>ids: {ids.join(", ")}</p>
-                    </div>
+                    {/* 3. Обернули Range в Form.Group для отступов и добавили обработчик */}
+                    <Form.Group className="mb-4 w-50">
+                        <Form.Label className="fw-bold text-dark d-flex justify-content-between align-items-center">
+                            <span>Допустимое отклонение</span>
+                            {/* Красиво показываем текущее выбранное значение */}
+                            <span className="badge bg-primary rounded-pill fs-6">
+                                {difference}%
+                            </span>
+                        </Form.Label>
+                        <Form.Range 
+                            min={0} 
+                            max={50} 
+                            step={1} // Изменил step на 1 для более плавной настройки, но можно вернуть 5
+                            value={difference}
+                            onChange={(e) => setDifference(Number(e.target.value))}
+                        />
+                    </Form.Group>
 
                     {/* Вывод результата от React Query */}
                     <div className="mt-2">
                         {isLoadingConsumption ? (
-                            <div className="d-flex align-items-center gap-2 text-primary">
+                            <div className="d-flex align-items-center gap-2 text-primary my-4">
                                 <Spinner animation="border" size="sm" />
                                 <span>Загрузка данных расхода...</span>
                             </div>
