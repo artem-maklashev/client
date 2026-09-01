@@ -1,183 +1,217 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Col, Row, Spinner } from "react-bootstrap";
-import MyCard from "../../../service/library/MyCard";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import Plan from "../../../model/gypsumBoard/Plan";
-import BoardProduction from "../../../model/production/BoardProduction";
-import ApiService from "../../../service/ApiService";
-import { width } from "@mui/system";
+import React, { useMemo, useState } from "react";
+import { Col, Row, Spinner, Card, Table, Badge, Form, Button, Container } from "react-bootstrap";
+import KpiCard from "./KpiCard";
+import { useBoardProduction } from "./service/useBoardProduction";
+import { BsArrowCounterclockwise } from "react-icons/bs";
+import { ConsumptionData } from "./consumptionData";
 
 interface BoardCardProps { }
 
+const formatDateForInput = (date: Date): string => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+};
+
 const BoardMainPageCard: React.FC<BoardCardProps> = () => {
-    const [plan, setPlan] = useState<Plan[]>([]);
-    const [fact, setFact] = useState<BoardProduction[]>([]);
-    const [loadingPlan, setLoadingPlan] = useState(true);
-    const [loadingFact, setLoadingFact] = useState(true);
-
     const now = new Date();
-    const firstDay = useMemo(() => new Date(now.getFullYear(), now.getMonth(), 1), []);
-    const lastDay = useMemo(() => new Date(now.getFullYear(), now.getMonth() + 1, 0), []);
 
-    // Fetch Plan Data
-    useEffect(() => {
-        const fetchPlan = async () => {
-            setLoadingPlan(true);
-            try {
-                const response = await ApiService.fetchPlan(firstDay, lastDay);
-                setPlan(response);
-            } catch (error) {
-                console.error("Error fetching plan data:", error);
-            } finally {
-                setLoadingPlan(false);
-            }
-        };
+    // Даты вычисляем один раз, чтобы избежать зацикливания
+    // const firstDay = useMemo(() => {
+    //     const today = new Date();
+    //     return new Date(today.getFullYear(), today.getMonth(), 1);
+    // }, []);
 
-        fetchPlan();
-    }, [firstDay, lastDay]);
+    // const lastDay = useMemo(() => {
+    //     const today = new Date();
+    //     return new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    // }, []);
 
-    // Fetch Fact Data
-    useEffect(() => {
-        const fetchFact = async () => {
-            setLoadingFact(true);
-            try {
-                const response = await ApiService.fetchBoardProduction(firstDay, lastDay);
-                setFact(response);
-            } catch (error) {
-                console.error("Error fetching fact data:", error);
-            } finally {
-                setLoadingFact(false);
-            }
-        };
+    const [dateRange, setDateRange] = useState({
+        start: new Date(now.getFullYear(), now.getMonth(), 1),
+        end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    });
 
-        fetchFact();
-    }, [firstDay, lastDay]);
+    // Передаем вычисленные даты в кастомный хук
+    const {
+        isLoading,
+        planSum,
+        factSum,
+        deviation,
+        defectPercentResult,
+        todayPlan,
+        lastThreeDays,
+        productionDict,
+    } = useBoardProduction(dateRange.start, dateRange.end);
 
-    const getPlanDate = (date: Date) => {
-        return date.toLocaleDateString("ru-RU", {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
+    const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newStart = e.target.value ? new Date(e.target.value) : dateRange.start;
+        setDateRange(prev => ({ ...prev, start: newStart }));
+    };
+
+    const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newEnd = e.target.value ? new Date(e.target.value) : dateRange.end;
+        setDateRange(prev => ({ ...prev, end: newEnd }));
+    };
+
+    const handleResetDates = () => {
+        const today = new Date();
+        setDateRange({
+            start: new Date(today.getFullYear(), today.getMonth(), 1),
+            end: new Date(today.getFullYear(), today.getMonth() + 1, 0)
         });
     };
 
-    function getCurrentDate(): string {
-        const now = new Date();
-        const year = now.getUTCFullYear();
-        const month = (now.getUTCMonth() + 1).toString().padStart(2, "0");
-        const day = now.getUTCDate().toString().padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
-    }
-
-    const planSum = plan.reduce((sum, item) => sum + item.planValue, 0);
-    const factSum = fact.filter(f => f.category.id > 1 && f.category.id <= 4).reduce((sum, item) => sum + item.value, 0);
-    const todayPlan = plan.filter(item => getPlanDate(new Date(item.planDate)) === getPlanDate(now));
-    const toTodayPlan = plan
-        .filter((plan) => new Date(plan.planDate) < new Date(getCurrentDate()))
-        .reduce((acc, plan) => acc + plan.planValue, 0);
-    const deviation = factSum - toTodayPlan;
-
-
-    const sortedBoardProduction = fact.filter(
-        (board) => board.category.id < 5
-    );
-
-    const { total, value } = sortedBoardProduction.reduce(
-        (acc, board) => {
-            const isCategory1 = board.category.id === 1;
-            if (isCategory1) {
-                acc.total += board.value;
-            } else {
-                acc.value += board.value;
-            }
-            return acc;
-        },
-        { total: 0, value: 0 }
-    );
-
-    const defectPercentResult =
-        total === 0 ? 0 : ((total - value) / total) * 100;
-
-    const items = (
-        <Col className="mt-5 col-12">
-            {/* Основные показатели */}
-            <Row className="g-4 mb-4">
-                <Col md={6} lg={6}>
-                    <MyCard
-                        label={"План на текущий месяц"}
-                        value={loadingPlan ? <Spinner animation="border" size="sm" /> : `${planSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} м²`}                        
-                    />
-                </Col>
-                <Col md={6} lg={6}>
-                    <MyCard
-                        label="Изготовлено"
-                        value={loadingFact ? <Spinner animation="border" size="sm" /> : `${factSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} м²`}
-                    />
-                </Col>
-            </Row>
-            <Row className="g-4 mb-4">
-
-                <Col md={6} lg={6}>
-                    <MyCard
-                        label="Отклонение"
-                        value={
-                            loadingPlan || loadingFact
-                                ? <Spinner animation="border" size="sm" />
-                                : `${deviation < 0 ? 'отставание' : 'опережение на'} ${Math.abs(deviation).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} м²`
-                        }
-                        valueColor={deviation < 0 ? "#ff3333" : "#2E8B57"}
-                    />
-                </Col>
-                <Col md={6} lg={6}>
-                    <MyCard
-                        label="Процент брака"
-                        value={defectPercentResult ? defectPercentResult.toFixed(2) + " %" : <Spinner />}
-                        valueColor={(defectPercentResult) > 3 ? '#FF7F7F' : '#2E8B57'}
-                    />
-                </Col>
-            </Row>
-
-            {/* Подробная информация */}
-            <Row className="g-4">
-                <Col lg={12}>
-                    <MyCard
-                        label="Запланированное производство"
-                        value={
-                            loadingPlan ? <Spinner animation="border" size="sm" /> :
-                                <div className="table-responsive">
-                                    <DataTable
-                                        value={todayPlan}
-                                        tableStyle={{ fontSize: '12px', minWidth: '100%' }}
-                                        stripedRows
-                                        emptyMessage="Нет данных на сегодня"
-                                    >
-                                        <Column
-                                            header='Наименование ГСП'
-                                            body={(rowData: Plan) => `${rowData.gypsumBoard.tradeMark.name} ${rowData.gypsumBoard.boardType.name}-${rowData.gypsumBoard.edge.name} ${rowData.gypsumBoard.thickness.value}-${rowData.gypsumBoard.width.value}-${rowData.gypsumBoard.length.value}`}
-                                        />
-                                        <Column
-                                            header='Кол-во'
-                                            body={(rowData: Plan) => rowData.planValue}
-                                        />
-                                    </DataTable>
-                                </div>
-                        }
-                    />
-                </Col>
-            </Row>
-        </Col>
-    );
-
     return (
-        <MyCard
-            label="Производство ГСП"
-            labelFontSize="14px"
-            labelAlign="center"
-            labelPosition={{ top: "-5px", left: "50px" }}
-            value={items}
-        />
+        <Container className="d-flex flex-column gap-3">
+            <Row className='mt-3'>
+
+            <Col sm={12} md={6} lg={3}>
+
+                <Card
+                    className="border-0 shadow-sm rounded-4 overflow-hidden"
+                    style={{ backgroundColor: '#fffbf48f' }}
+                >
+                    <Card.Header
+                        className="border-bottom-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2"
+                        style={{ backgroundColor: '#6968688f' }}
+                    >
+                        <div className='d-flex align-items-center gap-3'>
+                            <h5 className="mb-0 fw-bold text-dark">Производство ГСП</h5>
+                            <Badge bg="primary" pill className="px-3 py-2 fw-normal">
+                                {now.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
+                            </Badge>
+                        </div>
+                        <div className="d-flex align-items-center gap-2">
+                            <Form.Control
+                                type="date"
+                                size="sm"
+                                value={formatDateForInput(dateRange.start)}
+                                onChange={handleStartDateChange}
+                                className="bg-white border-0 shadow-sm rounded-3 text-muted"
+                                style={{ minWidth: '130px' }}
+                            />
+                            <span className="text-muted fw-bold">-</span>
+                            <Form.Control
+                                type="date"
+                                size="sm"
+                                value={formatDateForInput(dateRange.end)}
+                                onChange={handleEndDateChange}
+                                className="bg-white border-0 shadow-sm rounded-3 text-muted"
+                                style={{ minWidth: '130px' }}
+                            />
+                            <Button
+                                variant="light"
+                                size="sm"
+                                onClick={handleResetDates}
+                                className="shadow-sm rounded-3 text-secondary d-flex align-items-center justify-content-center"
+                                style={{ width: '32px', height: '32px', padding: 0 }}
+                                title="Сбросить на текущий месяц"
+                            >
+                                <BsArrowCounterclockwise size={16} />                    </Button>
+                        </div>
+
+                    </Card.Header>
+                    <Card.Body className="p-3 p-md-4">
+
+                        <Row className="g-3 mb-4">
+                            <Col xs={6} lg={6}>
+                                <KpiCard
+                                    title="План на месяц"
+                                    value={isLoading ? <Spinner animation="border" size="sm" /> : <>{planSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}&nbsp;м²</>}
+                                />
+                            </Col>
+                            <Col xs={6} lg={6}>
+                                <KpiCard
+                                    title="Изготовлено"
+                                    value={isLoading ? <Spinner animation="border" size="sm" /> : <>{factSum.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}&nbsp;м²</>}
+                                />
+                            </Col>
+                        </Row>
+
+                        <Row className="g-3 mb-4">
+                            <Col xs={6} lg={6}>
+                                <KpiCard
+                                    title="Отклонение"
+                                    value={
+                                        isLoading ? <Spinner animation="border" size="sm" /> :
+                                            <>
+                                                <span style={{ fontSize: '0.8rem', display: 'block' }} className="fw-medium text-muted">
+                                                    {deviation < 0 ? 'Отставание:' : 'Опережение:'}
+                                                </span>
+                                                {Math.abs(deviation).toLocaleString('ru-RU', { maximumFractionDigits: 0 })}&nbsp;м²
+                                            </>
+                                    }
+                                    colorClass={deviation < 0 ? "text-danger" : "text-success"}
+                                />
+                            </Col>
+                            <Col xs={6} lg={6}>
+                                <KpiCard
+                                    title="Процент брака"
+                                    value={isLoading ? <Spinner animation="border" size="sm" /> : `${defectPercentResult.toFixed(2)} %`}
+                                    colorClass={defectPercentResult > 3 ? "text-danger" : "text-success"}
+                                />
+                            </Col>
+                        </Row>
+
+                        <Card className="border border-light-subtle shadow-none rounded-4">
+                            <Card.Header className="bg-transparent border-bottom pt-3 pb-3 px-4">
+                                <h6 className="mb-0 fw-semibold text-secondary">План на сегодня</h6>
+                            </Card.Header>
+                            <Card.Body className="p-0">
+                                {isLoading ? (
+                                    <div className="d-flex justify-content-center align-items-center p-5">
+                                        <Spinner animation="border" variant="primary" />
+                                    </div>
+                                ) : (
+                                    <div className="table-responsive">
+                                        <Table hover className="mb-0 align-middle">
+                                            <thead className="table-light text-muted" style={{ fontSize: '0.85rem' }}>
+                                                <tr>
+                                                    <th className="text-start px-4 py-3 border-0 rounded-top-left-4">Наименование ГСП</th>
+                                                    <th className="px-4 py-3 border-0 rounded-top-right-4 text-end">Кол-во (м²)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style={{ fontSize: '0.95rem' }}>
+                                                {todayPlan.length > 0 ? (
+                                                    todayPlan.map((item, idx) => (
+                                                        <tr key={idx}>
+                                                            <td className="px-4 py-3 border-bottom-0">
+                                                                <div className="text-start fw-medium text-dark">
+                                                                    {item.gypsumBoard.tradeMark.name}
+                                                                </div>
+                                                                <div className="text-start text-secondary" style={{ fontSize: '0.9em' }}>
+                                                                    {item.gypsumBoard.boardType.name}-{item.gypsumBoard.edge.name} {item.gypsumBoard.thickness.value}-{item.gypsumBoard.width.value}-{item.gypsumBoard.length.value}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-4 py-3 border-bottom-0 text-end fw-semibold text-nowrap">
+                                                                {item.planValue.toLocaleString('ru-RU')}
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan={2} className="text-center py-4 text-muted">
+                                                            На сегодня производственных планов нет
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                )}
+                            </Card.Body>
+                        </Card>
+
+                    </Card.Body>
+                </Card>
+            </Col>
+            <Col sm={12} md={6} lg={4}>
+                <ConsumptionData startDate={dateRange.start} endDate={dateRange.end} lastThreeDays={lastThreeDays} productionDict={productionDict} />
+            </Col>
+            </Row>
+        </Container>
     );
 };
 

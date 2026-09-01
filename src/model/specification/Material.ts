@@ -1,4 +1,8 @@
 class Material {
+    static fromJSON(material: any): Material {
+        return new Material(material.id, material.name);
+    }
+    
     id: number;
     name: string;
 

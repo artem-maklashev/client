@@ -10,20 +10,12 @@ interface MainPageProps { }
 const MainPage: React.FC<MainPageProps> = () => {    
 
 return (
-    <div style={{ backgroundColor: '#7fc7ff', minHeight: '100vh', width: '100%' }}>
-        <Container className="mt-5 mb-5" fluid style={{ backgroundColor: '#7fc7ff' }}>
-            <Row className="mt-5 mb-5 justify-content-center text-center">
-
-                <h2 className="mt-2 mb-2 text-center">
-                    Показатели за текущий месяц
-                </h2>                
-                {/* <Col className="mt-3 col-lg-2 col-sm-6">
-                    <MyCard value={<WeatherWidget />} />
-                </Col> */}
-
-                <Col className="mt-3 col-lg-3 col-sm-12 align-items-center">
+    <div style={{ backgroundColor: '#fff5e9', minHeight: '100vh', width: '100%' }}>
+        <Container className="mt-5 mb-5" fluid style={{ backgroundColor: '#fff5e9' }}>
+            <Row className="mt-5 mb-5 justify-content-center text-center">               
+                {/* <Col className="mt-3 col-lg-3 col-sm-12 align-items-center"> */}
                     <BoardMainPageCard />
-                </Col>
+                {/* </Col> */}
                 {/* <Col className="mt-3 col-lg-3 col-sm-12  align-items-center">
                     <MixMainPageCard />
                 </Col> */}

@@ -10,6 +10,7 @@ import MaterialConsumption from "../model/specification/MaterialConsumption";
 import { format, toZonedTime } from "date-fns-tz";
 import Thickness from "../model/gypsumBoard/Thickness";
 import { DelaysByTypeDTO } from "../model/DTO/gypsumboard/delays/DelaysByTypeDTO";
+import { ProductAverageConsumption } from "../model/specification/conumptions/ProductAverageConsumption";
 dayjs.extend(utc);
 
 
@@ -384,6 +385,24 @@ class ApiService {
             console.error(`Произошла ошибка при получении расхода материалов`, error);
         }
     }
+
+    static async getConsumptionsDifferenceByProduction(ids: number[], difference: number): Promise<ProductAverageConsumption[]> {
+    try {
+        if (!ids || ids.length === 0) {
+            return [];
+        }
+        const response = await api.get(`${process.env.REACT_APP_API_URL}/consumption/gypsum-board-consumption`, { 
+            params: { 
+                ids: ids.join(','), // Превращаем [4884, 4885] в строку "4884,4885"
+                difference 
+            } 
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error(`Произошла ошибка при получении расхода материалов`, error);
+        return []; // Не забудьте вернуть пустой массив при ошибке, чтобы интерфейс не упал
+    }
+}
 }
 
 export default ApiService;

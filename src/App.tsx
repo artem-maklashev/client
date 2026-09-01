@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import NavigationBar from "./components/navigation/NavigationBar";
@@ -135,8 +136,10 @@ function App() {
     if (validatingToken) {
         return null; // Пока происходит проверка токена, ничего не отображаем
     }
+    const queryClient = new QueryClient();
     return (
         // <Router>
+        <QueryClientProvider client={queryClient}>
         <div>
             {/* <Tree /> */}
             {/* <FlowerEight /> */}
@@ -164,6 +167,7 @@ function App() {
             </Routes>
             <Footer />
         </div>
+        </QueryClientProvider>
         // </Router>
     );
 }
