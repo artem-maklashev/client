@@ -20,8 +20,7 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
     const [selectedDay, setSelectedDay] = useState<string>("");
     const [ids, setIds] = useState<number[]>([]);
     
-    // 1. Добавляем состояние для ползунка. По умолчанию ставим 5 (как было в вашем хуке)
-    const [difference, setDifference] = useState<number>(5);
+    const [difference, setDifference] = useState<number>(10);
     
     // 2. Передаем состояние difference в хук вместо жестко заданного числа
     const { productConsumptions, isLoadingConsumption } = useBoardConsumption(ids, difference);

@@ -74,15 +74,17 @@ const BoardMainPageCard: React.FC<BoardCardProps> = () => {
                     style={{ backgroundColor: '#fffbf48f' }}
                 >
                     <Card.Header
-                        className="border-bottom-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2"
+                        className="border-bottom-0  pb-2 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2 fw-semibold text-dark"
                         style={{ backgroundColor: '#6968688f' }}
                     >
-                        <div className='d-flex align-items-center gap-3'>
-                            <h5 className="mb-0 fw-bold text-dark">Производство ГСП</h5>
-                            <Badge bg="primary" pill className="px-3 py-2 fw-normal">
+                        {/* <div className='d-flex align-items-center gap-3'> */}
+                            {/* <h5 className="mb-0 fw-bold text-dark"> */}
+                                Производство ГСП
+                                {/* </h5> */}
+                            {/* <Badge bg="primary" pill className="px-3 py-2 fw-normal">
                                 {now.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
-                            </Badge>
-                        </div>
+                            </Badge> */}
+                        {/* </div> */}
                         <div className="d-flex align-items-center gap-2">
                             <Form.Control
                                 type="date"

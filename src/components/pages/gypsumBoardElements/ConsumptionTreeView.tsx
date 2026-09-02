@@ -21,6 +21,10 @@ export const ConsumptionTreeView: React.FC<Props> = ({ consumptions }) => {
                             <span className="fw-semibold text-dark">
                                 {/* Предполагаем, что у GypsumBoard есть поле name или метод toString() */}
                                 {item.gypsumBoard.toString() || 'ГСП'}
+                                
+                            </span>
+                            <span className="fw-semibold text-dark">
+                                смена: {item.shift.name}
                             </span>
                             <Badge bg="light" text="secondary" pill className="border">
                                 компонентов: {item.averageConsumptionComparisons.length}

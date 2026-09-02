@@ -1,25 +1,45 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Сборка и продакшен
+/build
+/dist
+/dist-ssr
 
-# dependencies
+# Зависимости
 /node_modules
 /.pnp
 .pnp.js
 
-# testing
+# Логи
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Тестирование
 /coverage
 
-# production
-/build
+# Кэши линтеров и компиляторов
+.eslintcache
+*.tsbuildinfo
 
-# misc
-.DS_Store
+# Временные файлы Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Переменные окружения (важно не слить ключи и пароли в репозиторий)
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Системные файлы macOS и Windows
+.DS_Store
+Thumbs.db
 
-/build
+# Настройки редакторов кода (IDE)
+.idea/
+.vscode/
+*.swp
+*.swo
