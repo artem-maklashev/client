@@ -2,6 +2,7 @@ import { Col, Container, Navbar, Row } from "react-bootstrap";
 import React from "react";
 import WeatherString from "../WeatherRunningString";
 import WeatherWidget from "../pages/WeatherWidget";
+import {  WeatherTickerSDK } from "../pages/WeatherTicker";
 
 const Footer = () => {
     return (
@@ -14,7 +15,8 @@ const Footer = () => {
                                 className="d-flex justify-content-center align-items-center"
                                 style={{ height: "100%" }}
                             >
-                                <WeatherWidget />
+                                {/* <WeatherWidget /> */}
+                                <WeatherTickerSDK />
                             </div>
                         </Col>
                         <Col xs={12} sm={4} lg={4} className="text-sm-end text-center ps-0"> {/* Убираем лишние отступы */}
