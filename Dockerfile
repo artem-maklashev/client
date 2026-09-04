@@ -10,7 +10,7 @@ COPY package*.json ./
 
 # Устанавливаем зависимости
 # RUN npm install --legacy-peer-deps
-RUN npm ci --legacy-peer-deps
+RUN npm ci --include=dev --legacy-peer-deps
 # Копируем исходный код
 COPY . .
 
