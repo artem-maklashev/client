@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOCKS5 Proxy Cheat Sheet</title>
+    <style>
+        body {
+            background-color: #0f172a; /* Slate 900 */
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+        }
+        .card {
+            background: #1e293b; /* Slate 800 */
+            color: #f8fafc;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            width: 100%;
+            max-width: 650px;
+            border: 1px solid #334155;
+        }
+        h1 {
+            color: #38bdf8; /* Sky 400 */
+            font-size: 26px;
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+        .subtitle {
+            text-align: center;
+            color: #94a3b8; /* Slate 400 */
+            font-size: 15px;
+            margin-bottom: 35px;
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .section { margin-bottom: 30px; }
+        .section:last-child { margin-bottom: 0; }
+        h2 {
+            color: #f472b6; /* Pink 400 */
+            font-size: 18px;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+        .code-container { margin-bottom: 12px; }
+        .label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .code-block {
+            background: #09090b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+            font-size: 14px;
+            color: #a5b4fc; /* Indigo 300 */
+            margin: 0;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .highlight { color: #4ade80; /* Green 400 */ }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>SOCKS5 Proxy Cheat Sheet</h1>
+        <div class="subtitle">
+            Базовый адрес: <strong>socks5://127.0.0.1:1080</strong>
+        </div>
+
+        <div class="section">
+            <h2>🐳 Docker Desktop (GUI)</h2>
+            <div class="label">Settings → Resources → Proxies → Manual proxy configuration</div>
+            <pre class="code-block">Web Server: <span class="highlight">socks5://127.0.0.1:1080</span>
+Secure Web Server: <span class="highlight">socks5://127.0.0.1:1080</span>
+Bypass proxy: <span class="highlight">localhost,127.0.0.1</span></pre>
+        </div>
+
+        <div class="section">
+            <h2>📦 NPM (Node.js)</h2>
+            <div class="code-container">
+                <span class="label">Включить:</span>
+                <pre class="code-block">npm config set proxy socks5://127.0.0.1:1080
+npm config set https-proxy socks5://127.0.0.1:1080</pre>
+            </div>
+            <div class="code-container">
+                <span class="label">Отключить:</span>
+                <pre class="code-block">npm config delete proxy
+npm config delete https-proxy</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🖥️ Bash (Linux / Mac / Git Bash)</h2>
+            <div class="code-container">
+                <span class="label">Включить (до закрытия вкладки):</span>
+                <pre class="code-block">export http_proxy="socks5://127.0.0.1:1080"
+export https_proxy="socks5://127.0.0.1:1080"
+export all_proxy="socks5://127.0.0.1:1080"</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🪟 PowerShell (Windows)</h2>
+            <div class="code-container">
+                <span class="label">Включить (до закрытия вкладки):</span>
+                <pre class="code-block">$env:http_proxy="socks5://127.0.0.1:1080"
+$env:https_proxy="socks5://127.0.0.1:1080"
+$env:all_proxy="socks5://127.0.0.1:1080"</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🐙 Git</h2>
+            <div class="code-container">
+                <span class="label">Включить глобально:</span>
+                <pre class="code-block">git config --global http.proxy socks5://127.0.0.1:1080
+git config --global https.proxy socks5://127.0.0.1:1080</pre>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
