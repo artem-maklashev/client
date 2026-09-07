@@ -43,7 +43,11 @@ function NavigationBar({ tokenValid, onLogout }: NavigationBarProps) {
                                 <NavDropdown.Item as={Link} to="/boardReport" onClick={handleNavClose} >Добавить выпуск</NavDropdown.Item>
                                 <NavDropdown.Item as={Link} to="/findReport" onClick={handleNavClose} disabled={
                                     getUserRole() === 'ADMIN' ? false : true} >Найти выпуск</NavDropdown.Item >
+                                <NavDropdown.Divider></NavDropdown.Divider>
                                 <NavDropdown.Item as={Link} to="/consumptionReport" onClick={handleNavClose} >Справка по расходу материалов</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/consumption" onClick={handleNavClose}
+                                disabled={
+                                    getUserRole() === 'ADMIN' || getUserRole() === 'GB_ADMIN' ? false : true} >Спецификация</NavDropdown.Item>
                             </NavDropdown>
                             <NavDropdown.Divider></NavDropdown.Divider>
                             <NavDropdown.Item as={Link} to="/dashBoard" onClick={handleNavClose} disabled={

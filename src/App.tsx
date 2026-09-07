@@ -33,6 +33,7 @@ import PlaningPage from './components/pages/planingPage/PlaningPage';
 import useSnowEffect from './components/snowCanvas/useSnowEffect';
 import Flower from './components/pages/Flower';
 import FlowerEight from './components/pages/Flower';
+import { ConsumptionPage } from './components/pages/consumption/CpnsumptionPage';
 
 
 
@@ -160,6 +161,7 @@ function App() {
                 <Route path="/mixPlan" element={tokenValid ? <MixPlanPage /> : <Navigate to="/login" />} />
                 <Route path="/planingPage" element={tokenValid ? <PlaningPage /> : <Navigate to="/login" />} />
                 <Route path="/" element={tokenValid ? <MainPage /> : <Navigate to="/login" />} />
+                <Route path="/consumption" element={tokenValid ? <ConsumptionPage /> : <Navigate to="/login" />} />
                 {/*<Route path="/" element={<MainPage />} />*/}
                 <Route path="/register" element={<RegistrationPage />} />
                 <Route path="/login" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
