@@ -308,12 +308,13 @@ class ApiService {
         }
     }
 
-    static async fetchGypsumBoards() {
+    static async fetchGypsumBoards(): Promise<GypsumBoard[]> {
         try {
             const response = await api.get(`${this.baseUrl}/gypsumBoard`);
             return response.data.map(GypsumBoard.fromJSON);
         } catch (error: any) {
-            console.error(`Произошла ошибка при получении списка ГСП`);
+            console.error("Ошибка сети", error);
+            throw error;
         }
     }
 
