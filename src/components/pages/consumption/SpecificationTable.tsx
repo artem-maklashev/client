@@ -95,10 +95,7 @@ export const SpecificationTable: React.FC<SpecificationTableProps> = ({
                 <Row className="g-4">
                     {/* Первая колонка (на больших экранах занимает 6 из 12 колонок, на малых — всю ширину) */}
                     <Col xs={12} md={6}>
-                        <Card className="shadow-sm border-0 h-100">
-                            <Card.Header className="bg-white border-bottom-0 pt-3 pb-0">
-                                <h5 className="mb-0 text-muted">Спецификация (Часть 1)</h5>
-                            </Card.Header>
+                        <Card className="shadow-sm border-0 h-100">                            
                             <Card.Body style={{ maxHeight: '75vh', overflowY: 'auto' }}>
                                 <Table striped bordered hover responsive className="mb-0 mt-3 align-middle">
                                     <thead>
@@ -118,10 +115,7 @@ export const SpecificationTable: React.FC<SpecificationTableProps> = ({
 
                     {/* Вторая колонка + строка добавления в самом низу */}
                     <Col xs={12} md={6}>
-                        <Card className="shadow-sm border-0 h-100">
-                            <Card.Header className="bg-white border-bottom-0 pt-3 pb-0">
-                                <h5 className="mb-0 text-muted">Спецификация (Часть 2 и добавление)</h5>
-                            </Card.Header>
+                        <Card className="shadow-sm border-0 h-100">                            
                             <Card.Body style={{ maxHeight: '75vh', overflowY: 'auto' }}>
                                 <Table striped bordered hover responsive className="mb-0 mt-3 align-middle">
                                     <thead>
