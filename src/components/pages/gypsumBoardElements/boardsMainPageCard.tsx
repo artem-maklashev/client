@@ -209,7 +209,7 @@ const BoardMainPageCard: React.FC<BoardCardProps> = () => {
                     </Card.Body>
                 </Card>
             </Col>
-            <Col sm={12} md={6} lg={5}>
+            <Col sm={12} md={6} lg={9}>
                 <ConsumptionData startDate={dateRange.start} endDate={dateRange.end} lastThreeDays={lastThreeDays} productionDict={productionDict} />
             </Col>
             </Row>
