@@ -36,7 +36,7 @@ export const ConsumptionTreeView: React.FC<Props> = ({ consumptions }) => {
                             <thead className="text-muted" style={{ fontSize: '0.85rem' }}>
                                 <tr>
                                     <th className="px-4 py-2 border-0">Материал</th>
-                                    <th className="py-2 border-0">Норма (средний)</th>
+                                    <th className="py-2 border-0">Средний расход</th>
                                     <th className="py-2 border-0">Факт (текущий)</th>
                                     <th className="px-4 py-2 border-0 text-end">Отклонение</th>
                                 </tr>
