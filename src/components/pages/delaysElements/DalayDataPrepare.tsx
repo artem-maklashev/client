@@ -39,7 +39,18 @@ class DelayDataPrepare {
                     existingItem.delta += deltaTime;
                 } else {
                     // Если не найден, добавляем новый элемент
-                    unitData[delayType].push({ ...item, delta: deltaTime });
+                    const newItem = new Delays(
+                        item.id,
+                        item.delayDate,
+                        item.startTime,
+                        item.endTime,
+                        item.unitPart,
+                        item.shift,
+                        item.product,
+                        item.delayType
+                    );
+                    newItem.delta = deltaTime;
+                    unitData[delayType].push(newItem);
                 }
 
                 // Инициализация суммарного времени для данного типа простоя

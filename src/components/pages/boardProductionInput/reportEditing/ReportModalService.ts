@@ -78,7 +78,18 @@ export class ReportModalService {
    */
   applyProductToDelays(delays: Delays[], product: GypsumBoard): Delays[] {
     return delays.map((delay) =>
-      delay.product !== product ? { ...delay, product } : delay
+      delay.product !== product
+        ? new Delays(
+            delay.id,
+            delay.delayDate,
+            delay.startTime,
+            delay.endTime,
+            delay.unitPart,
+            delay.shift,
+            product,
+            delay.delayType
+          )
+        : delay
     );
   }
 
@@ -104,7 +115,17 @@ export class ReportModalService {
     console.log(JSON.stringify(delay));
 
     if (index === -1) {
-      const newDelay = { ...delay, id: this.generateDelayId(delays) };
+      const newId = this.generateDelayId(delays);
+      const newDelay = new Delays(
+        newId,
+        delay.delayDate,
+        delay.startTime,
+        delay.endTime,
+        delay.unitPart,
+        delay.shift,
+        delay.product,
+        delay.delayType
+      );
       return [...delays, newDelay];
     }
     const copy = [...delays];
