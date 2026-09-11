@@ -11,6 +11,7 @@ import { format, toZonedTime } from "date-fns-tz";
 import Thickness from "../model/gypsumBoard/Thickness";
 import { DelaysByTypeDTO } from "../model/DTO/gypsumboard/delays/DelaysByTypeDTO";
 import { ProductAverageConsumption } from "../model/specification/conumptions/ProductAverageConsumption";
+import { DelayPanelData } from "../model/DTO/gypsumboard/delays/DelayPanelData";
 dayjs.extend(utc);
 
 
@@ -240,6 +241,25 @@ class ApiService {
         } catch (error: any) {
             console.error(`Произошла ошибка при получени  простоев: ${error.message}`);
             
+        }
+    }
+
+    static async fetchDelaysPanelData(selectedStartDate: Date, selectedEndDate: Date): Promise<DelayPanelData[]> {
+        try {
+            
+            const params = new URLSearchParams({
+                startDate: this.formatDateToISO(selectedStartDate).split('T')[0],
+                endDate: this.formatDateToISO(selectedEndDate).split('T')[0]
+            });
+            
+            const response = await api.get(`${process.env.REACT_APP_API_URL}/delays/delays?${params}`);
+            
+            const rawData: any[] = response.data;
+            return rawData.map((item: any) => DelayPanelData.fromJSON(item));
+            
+        } catch (error: any) {
+            console.error(`Произошла ошибка при получени  простоев: ${error.message}`);
+            return [];
         }
     }
     

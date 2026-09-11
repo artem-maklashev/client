@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { ButtonGroup, Card, ToggleButton, Spinner, Form } from "react-bootstrap";
+import { ButtonGroup, Card, ToggleButton, Spinner, Form, Col, Row } from "react-bootstrap";
 import { useBoardConsumption } from "./service/useBoardConsumption";
 import { ConsumptionTreeView } from "./ConsumptionTreeView";
+import { useDelays } from "../boardProductionInput/delayComponents/useDelays";
+import { DelaysTreeView } from "../delaysElements/DelaysTreeView";
 
 interface ConsumptionDataProps {
     startDate: Date;
@@ -24,6 +26,7 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
     
     // 2. Передаем состояние difference в хук вместо жестко заданного числа
     const { productConsumptions, isLoadingConsumption } = useBoardConsumption(ids, difference);
+    const {delays, isLoadingDelays,errorDelays} = useDelays(new Date(selectedDay), new Date(selectedDay));
 
     // Установка дня по умолчанию
     useEffect(() => {
@@ -53,7 +56,7 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
                 style={{ backgroundColor: '#6968688f' }}
             >
                 
-                    Данные по расходу материалов, требующие внимания
+                    Данные по расходу и простоям
                
             </Card.Header>
             {lastThreeDays.length > 0 ? (
@@ -78,36 +81,57 @@ export const ConsumptionData: React.FC<ConsumptionDataProps> = ({
                             );
                         })}
                     </ButtonGroup>
+                    <Row>
 
-                    {/* 3. Обернули Range в Form.Group для отступов и добавили обработчик */}
-                    <Form.Group className="mb-4 w-50 mx-auto">
-                        <Form.Label className="fw-bold text-dark d-flex justify-content-between align-items-center">
-                            <span>Допустимое отклонение</span>
-                            {/* Красиво показываем текущее выбранное значение */}
-                            <span className="badge bg-primary rounded-pill fs-6">
-                                {difference}%
-                            </span>
-                        </Form.Label>
-                        <Form.Range 
-                            min={0} 
-                            max={50} 
-                            step={1} // Изменил step на 1 для более плавной настройки, но можно вернуть 5
-                            value={difference}
-                            onChange={(e) => setDifference(Number(e.target.value))}
-                        />
-                    </Form.Group>
+                    <Col className="col-6">
+                        {/* 3. Обернули Range в Form.Group для отступов и добавили обработчик */}
+                        <Form.Group className="mb-4 w-50 mx-auto">
+                            <Form.Label className="fw-bold text-dark d-flex justify-content-between align-items-center">
+                                <span>Допустимое отклонение</span>
+                                {/* Красиво показываем текущее выбранное значение */}
+                                <span className="badge bg-primary rounded-pill fs-6">
+                                    {difference}%
+                                </span>
+                            </Form.Label>
+                            <Form.Range
+                                min={0}
+                                max={50}
+                                step={1} // Изменил step на 1 для более плавной настройки, но можно вернуть 5
+                                value={difference}
+                                onChange={(e) => setDifference(Number(e.target.value))}
+                            />
+                        </Form.Group>
 
-                    {/* Вывод результата от React Query */}
-                    <div className="mt-2 px-2 pb-2">
-                        {isLoadingConsumption ? (
-                            <div className="d-flex align-items-center gap-2 text-primary my-4">
-                                <Spinner animation="border" size="sm" />
-                                <span>Загрузка данных расхода...</span>
-                            </div>
-                        ) : (
-                            <ConsumptionTreeView consumptions={productConsumptions} />
-                        )}
-                    </div>
+                        {/* Вывод результата от React Query */}
+                        <div className="mt-2 px-2 pb-2">
+                            {isLoadingConsumption ? (
+                                <div className="d-flex align-items-center gap-2 text-primary my-4">
+                                    <Spinner animation="border" size="sm" />
+                                    <span>Загрузка данных расхода...</span>
+                                </div>
+                            ) : (
+                                <ConsumptionTreeView consumptions={productConsumptions} />
+                            )}
+                        </div>
+                    </Col>
+                    <Col className="col-6">
+                        <div className="mt-2 px-2 pb-2">
+                            {isLoadingDelays ? (
+                                <div className="d-flex align-items-center gap-2 text-primary my-4">
+                                    <Spinner animation="border" size="sm" />
+                                    <span>Загрузка данных опростоях...</span>
+                                </div>
+                            ) : errorDelays ? (
+                                <div className="text-danger my-4">Не удалось загрузить данные о простоях.</div>
+                            ) : delays && delays.length > 0 ? (
+                                <DelaysTreeView delays={delays} />
+                            ) : (
+                                <div className="text-muted my-4">Данные о простоях отсутствуют.</div>
+                            )}
+
+                        </div>
+                    </Col>
+                    </Row>
                 </>
             ) : (
                 <p className="text-muted fst-italic">Нет данных для отображения за выбранный период.</p>
