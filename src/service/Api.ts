@@ -6,7 +6,7 @@ const baseURL = process.env.REACT_APP_API_URL; // Замените на ваш U
 // Функция для отправки запросов с токеном авторизации
 export const api = axios.create({
     baseURL,
-    timeout: 15000, // 15 сек — чтобы зависшие запросы не держали прелоадер бесконечно
+    timeout: 20000, // 20 сек — чтобы зависшие запросы не держали прелоадер бесконечно
     headers: {
         'Content-Type': 'application/json',
     },

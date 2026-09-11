@@ -12,6 +12,7 @@ import Thickness from "../model/gypsumBoard/Thickness";
 import { DelaysByTypeDTO } from "../model/DTO/gypsumboard/delays/DelaysByTypeDTO";
 import { ProductAverageConsumption } from "../model/specification/conumptions/ProductAverageConsumption";
 import { DelayPanelData } from "../model/DTO/gypsumboard/delays/DelayPanelData";
+import GypsumBoardInputData from "../model/inputData/GypsumBoardInputData";
 dayjs.extend(utc);
 
 
@@ -19,6 +20,24 @@ class ApiService {
     
     private static baseUrl = process.env.REACT_APP_API_URL;
     private static plusDays = Number(process.env.REACT_APP_PLUS_DAYS);
+
+    static async fetchGypsumBoardData(selectedStartDate: Date, selectedEndDate:Date): Promise<GypsumBoardInputData[]> {
+        try{
+        const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard`, {
+                    params: {
+                        startDate: selectedStartDate ? new Date(selectedStartDate).toISOString() : new Date().toISOString(),
+                        endDate: selectedEndDate ? new Date(selectedEndDate).toISOString() : new Date().toISOString()
+                    }
+                });
+    
+                return response.data;
+            } catch (error: any) {
+                console.error(`Произошла ошибка: ${error.message}`);
+                throw error;
+            }
+    
+    }
+
     
     static async fetchTodayPlan(): Promise<Plan[]> {
         try {
@@ -146,7 +165,10 @@ class ApiService {
     
     static formatDateToISO(date: Date) {
         const timeZone = 'Europe/Samara';
-        const zonedDate = toZonedTime(date, timeZone);
+        // Защита от Invalid Date: при некорректной дате date-fns-tz бросает
+        // ошибку "Invalid time zone specified: Europe/Samara"
+        const safeDate = date instanceof Date && !isNaN(date.getTime()) ? date : new Date();
+        const zonedDate = toZonedTime(safeDate, timeZone);
         return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", { timeZone });
     }
     

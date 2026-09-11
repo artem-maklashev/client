@@ -2,14 +2,15 @@
 import { useQuery } from '@tanstack/react-query';
 import ApiService from '../../../../service/ApiService';
 import { useMemo } from 'react';
+import Shift from '../../../../model/Shift';
+import { useGypsumBoardData } from './useGypsumBoardData';
 
 export const useBoardProduction = (startDate: Date, endDate: Date) => {
     // 1. Запрашиваем план
     const { data: plan = [], isLoading: isLoadingPlan } = useQuery({
-        // Уникальный ключ. Изменятся даты -> произойдет новый запрос
         queryKey: ['board-plan', startDate, endDate],
         queryFn: () => ApiService.fetchPlan(startDate, endDate),
-        staleTime: 5 * 60 * 1000, // Данные считаются свежими 5 минут (не будут перезапрашиваться лишний раз)
+        staleTime: 5 * 60 * 1000,
     });
 
     // 2. Запрашиваем факт
@@ -35,7 +36,7 @@ export const useBoardProduction = (startDate: Date, endDate: Date) => {
         return `${year}-${month}-${day}`;
     }
 
-    // 3. Вычисления (выполняются автоматически, когда приходят data)
+    // 3. Вычисления плана и факта
     const planSum = plan.reduce((sum, item) => sum + item.planValue, 0);
     const factSum = fact
         .filter(f => f.category.id > 1 && f.category.id <= 4)
@@ -48,67 +49,151 @@ export const useBoardProduction = (startDate: Date, endDate: Date) => {
 
     const deviation = factSum - toTodayPlan;
 
-    const sortedBoardProduction = fact.filter((board) => board.category.id < 5);
-    const { total, value } = sortedBoardProduction.reduce(
-        (acc, board) => {
-            if (board.category.id === 1) {
-                acc.total += board.value;
-            } else {
-                acc.value += board.value;
-            }
-            return acc;
-        },
-        { total: 0, value: 0 }
-    );
-
+    // 4. Последние три уникальных производственных дня
     const lastThreeDays: Date[] = Array.from(
         new Set(
-            fact.map((bp) => {
-                // Создаем дату и обнуляем время до 00:00:00, 
-                // чтобы даты одного дня с разным временем схлопнулись в одну
-                return new Date(bp.productionList.productionDate).setHours(0, 0, 0, 0);
-            })
+            fact.map((bp) => new Date(bp.productionList.productionDate).setHours(0, 0, 0, 0))
         )
     )
-        .sort((a, b) => b - a) // Сортируем по убыванию (от самых новых к старым)
-        .slice(0, 3)           // Оставляем только первые 3 элемента
-        .map((timestamp) => new Date(timestamp)); // Превращаем числа обратно в объекты Date
+        .sort((a, b) => b - a)
+        .slice(0, 3)
+        .map((timestamp) => new Date(timestamp));
 
-    const defectPercentResult = total === 0 ? 0 : ((total - value) / total) * 100;
+    // 5. Расчет брака (общий и по сменам)
+    const calculations = useMemo(() => {
+        // Категория 1 — валовый объем (Total), 2..4 — товарная продукция (Good)
+        const sortedBoardProduction = fact.filter((board) => board.category.id <= 4);
 
+        const { totalProduced, goodProduced } = sortedBoardProduction.reduce(
+            (acc, board) => {
+                if (board.category.id === 1) {
+                    acc.totalProduced += board.value;
+                } else {
+                    acc.goodProduced += board.value;
+                }
+                return acc;
+            },
+            { totalProduced: 0, goodProduced: 0 }
+        );
+
+        const defectProduced = Math.max(0, totalProduced - goodProduced);
+        const defectPercentResult = totalProduced > 0 
+            ? (defectProduced / totalProduced) * 100 
+            : 0;
+
+        // Группировка по смене (по shift.id во избежание дублей по ссылкам объектов)
+        interface ShiftAccumulator {
+            shift: Shift;
+            totalProduced: number;
+            goodProduced: number;
+        }
+
+        const shiftDataMap = fact
+            .filter((bp) => bp.category.id <= 4)
+            .reduce((acc, bp) => {
+                const shift = bp.productionList.shift;
+                const shiftId = shift.id;
+                const value = bp.value;
+
+                const current = acc.get(shiftId) ?? {
+                    shift,
+                    totalProduced: 0,
+                    goodProduced: 0,
+                };
+
+                if (bp.category.id === 1) {
+                    current.totalProduced += value;
+                } else {
+                    current.goodProduced += value;
+                }
+
+                acc.set(shiftId, current);
+                return acc;
+            }, new Map<number, ShiftAccumulator>());
+
+        const sortedDefectPercentByShift = new Map<Shift, number>(
+            [...shiftDataMap.values()]
+                .sort((a, b) => a.shift.id - b.shift.id)
+                .map(({ shift, totalProduced, goodProduced }) => {
+                    const shiftDefect = Math.max(0, totalProduced - goodProduced);
+                    const percent = totalProduced > 0 
+                        ? (shiftDefect / totalProduced) * 100 
+                        : 0;
+                    return [shift, percent];
+                })
+        );
+
+        return {
+            defectPercentResult,
+            sortedDefectPercentByShift,
+        };
+    }, [fact]);
+
+    // 6. Выпуск за последние доступные сутки (возвращает объект данных гипсокартона)
+    // Определяем дату последних доступных производственных суток до сегодняшнего дня
+    const latestProdDate = useMemo(() => {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        // Поиск максимальной даты до сегодняшнего дня
+        let latestTimestamp: number | null = null;
+        fact.forEach((bp) => {
+            const prodDate = new Date(bp.productionList.productionDate);
+            prodDate.setHours(0, 0, 0, 0);
+            const time = prodDate.getTime();
+
+            if (time < startOfToday.getTime()) {
+                if (latestTimestamp === null || time > latestTimestamp) {
+                    latestTimestamp = time;
+                }
+            }
+        });
+
+        return latestTimestamp === null ? null : new Date(latestTimestamp);
+    }, [fact]);
+
+    // Запасной вариант — вчерашняя дата (стабильная, чтобы не менять queryKey)
+    const fallbackYesterday = useMemo(() => {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }, []);
+
+    // Хук вызывается безусловно (соблюдение правил хуков), поэтому результат никогда не null
+    const targetDate = latestProdDate ?? fallbackYesterday;
+    const yesterdayProduction = useGypsumBoardData(targetDate, targetDate);
+
+    // 7. Словарь списков производства по датам
     const productionDict: Record<string, number[]> = useMemo(() => {
         return fact.reduce((acc, bp) => {
-            // 1. Получаем дату и превращаем её в удобную строку-ключ.
-            // Если вам нужно группировать строго по дням (без учета времени):
             const dateKey = new Date(bp.productionList.productionDate).toLocaleDateString("ru-RU");
-            // Результат будет в виде "01.09.2026"
-
-            // 2. Получаем ID (обратите внимание на регистр, обычно id пишется с маленькой буквы)
             const listId = bp.productionList.id;
 
-            // 3. Если такого ключа(даты) еще нет в словаре, создаем пустой массив
             if (!acc[dateKey]) {
                 acc[dateKey] = [];
             }
 
-            // 4. Добавляем ID в массив, только если его там еще нет (чтобы избежать дубликатов)
             if (!acc[dateKey].includes(listId)) {
                 acc[dateKey].push(listId);
             }
 
             return acc;
         }, {} as Record<string, number[]>);
-    }, [fact]); // useMemo будет пересчитывать только если fact изменится
+    }, [fact]);
+
 
 
     return {
-        isLoading: isLoadingPlan || isLoadingFact, // Общий статус загрузки
+        isLoading: isLoadingPlan || isLoadingFact,
         planSum,
         factSum,
         deviation,
-        defectPercentResult,
+        defectPercentResult: calculations.defectPercentResult,
+        sortedDefectPercentByShift: calculations.sortedDefectPercentByShift,
         todayPlan,
         lastThreeDays,
         productionDict,
+        yesterdayProduction,
     };
 };
