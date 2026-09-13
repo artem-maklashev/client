@@ -17,7 +17,7 @@ export class ProductAverageConsumption {
         return new ProductAverageConsumption(
             GypsumBoard.fromJSON(json.gypsumBoard),
             Shift.fromJSON(json.shift),
-            json.averageConsumptionComparisons.map((averageConsumption: any) => 
+            (json.averageConsumptionComparisons ?? []).map((averageConsumption: any) =>
                 AverageConsumptionComparison.fromJSON(averageConsumption))
         );
     }
