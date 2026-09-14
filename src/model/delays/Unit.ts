@@ -1,6 +1,9 @@
 import ProductionArea from "./ProductionArea";
 
 class Unit {
+    static fromJSON(unit: any): Unit {
+        return new Unit(unit.id, unit.name, ProductionArea.fromJSON(unit.productionArea));
+    }
     id: number;
     name: string;
     productionArea: ProductionArea;

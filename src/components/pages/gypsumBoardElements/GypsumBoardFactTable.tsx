@@ -79,13 +79,14 @@ const GypsumBoardFactTable: React.FC<GypsumBoardFactTableProps> = ({ data }) => 
 
     return (
         /* px-3 задает внутренние отступы справа и слева относительно родителя, overflow-hidden убирает скролл */
-        <div className="px-3 pb-2 w-100 overflow-hidden">
-            <table className="table table-hover align-middle mb-0 w-100" style={{ tableLayout: 'auto' }}>
+        <div className="table-responsive px-2 pb-2 w-100">
+            <table className="table table-hover align-middle mb-0 w-100" style={{ tableLayout: 'fixed' }}>
                 <thead className="table-light border-bottom border-light-subtle">
                     <tr>
+                        {/* 1. Задаем четкую пропорцию ширины вместо 1% */}
                         <th
-                            className="ps-2 py-3 text-start user-select-none border-0"
-                            style={{ cursor: 'pointer' }}
+                            className="ps-2 py-2 text-start user-select-none border-0"
+                            style={{ cursor: 'pointer', width: '62%' }}
                             onClick={() => handleSort('boardTitle')}
                         >
                             <span
@@ -97,12 +98,12 @@ const GypsumBoardFactTable: React.FC<GypsumBoardFactTableProps> = ({ data }) => 
                             </span>
                         </th>
                         <th
-                            className="pe-2 py-3 text-end user-select-none border-0 text-nowrap"
-                            style={{ cursor: 'pointer', width: '1%' }}
+                            className="pe-2 py-2 text-end user-select-none border-0"
+                            style={{ cursor: 'pointer', width: '38%' }}
                             onClick={() => handleSort('factValue')}
                         >
                             <span
-                                className="d-inline-flex align-items-center justify-content-end gap-1 text-secondary text-uppercase fw-semibold w-100"
+                                className="d-inline-flex align-items-center justify-content-end gap-1 text-secondary text-uppercase fw-semibold w-100 text-nowrap"
                                 style={{ fontSize: '0.72rem', letterSpacing: '0.04em' }}
                             >
                                 Факт, м²
@@ -119,33 +120,39 @@ const GypsumBoardFactTable: React.FC<GypsumBoardFactTableProps> = ({ data }) => 
 
                             return (
                                 <tr key={index}>
-                                    <td className="ps-2 py-3">
-                                        <div className="fw-semibold text-dark mb-1" style={{ fontSize: '0.92rem', lineHeight: 1.2 }}>
-                                            {brand}
-                                        </div>
+                                    <td className="ps-2 py-2">
+    {/* Верхняя строка */}
+    <div
+        className="fw-semibold text-dark mb-1 text-truncate"
+        style={{
+            fontSize: '0.88rem',
+            lineHeight: 1.2
+        }}
+        title={`${brand} ${type}`}
+    >
+        {brand} {type}
+    </div>
 
-                                        <div className="d-flex align-items-center gap-2 text-nowrap">
-                                            {type && (
-                                                <span
-                                                    className="badge bg-light text-secondary border border-light-subtle fw-medium px-2 py-1"
-                                                    style={{ fontSize: '0.75rem' }}
-                                                >
-                                                    {type}
-                                                </span>
-                                            )}
-                                            {dimensions && (
-                                                <span
-                                                    className="text-secondary fw-medium font-monospace"
-                                                    style={{ fontSize: '0.8rem', letterSpacing: '-0.02em' }}
-                                                >
-                                                    {dimensions.replace(/\s*×\s*/g, '×')}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </td>
+    {/* Нижняя строка */}
+    {dimensions && (
+        <span
+            className="text-secondary fw-medium font-monospace text-nowrap bg-body-tertiary px-1 py-0 rounded border border-light-subtle text-center"
+            style={{
+                display: 'inline-block',
+                fontSize: '0.72rem',
+                letterSpacing: '-0.02em',
+                minWidth: '135px',
+                lineHeight: 1.2
+            }}
+        >
+            {dimensions.replace(/\s*×\s*/g, '×')}
+        </span>
+    )}
+</td>
 
-                                    <td className="pe-2 py-3 text-end text-nowrap" style={{ width: '1%' }}>
-                                        <span className="fw-bold font-monospace text-dark" style={{ fontSize: '1.05rem' }}>
+                                    {/* white-space: nowrap гарантирует, что число никогда не разобьется на 3 строки */}
+                                    <td className="pe-2 py-2 text-end" style={{ whiteSpace: 'nowrap' }}>
+                                        <span className="fw-bold font-monospace text-dark" style={{ fontSize: '0.95rem' }}>
                                             {Number(item.factValue || 0).toLocaleString('ru-RU', {
                                                 minimumFractionDigits: Number(item.factValue) % 1 !== 0 ? 2 : 0,
                                                 maximumFractionDigits: 2,
@@ -157,7 +164,7 @@ const GypsumBoardFactTable: React.FC<GypsumBoardFactTableProps> = ({ data }) => 
                         })
                     ) : (
                         <tr>
-                            <td colSpan={2} className="text-center py-5 text-muted small">
+                            <td colSpan={2} className="text-center py-4 text-muted small">
                                 Нет данных по выпуску
                             </td>
                         </tr>
@@ -167,11 +174,11 @@ const GypsumBoardFactTable: React.FC<GypsumBoardFactTableProps> = ({ data }) => 
                 {sortedData.length > 0 && (
                     <tfoot className="border-top border-2 bg-light-subtle">
                         <tr>
-                            <td className="ps-2 py-3 text-start fw-bold text-dark" style={{ fontSize: '0.92rem' }}>
+                            <td className="ps-2 py-2 text-start fw-bold text-dark" style={{ fontSize: '0.88rem' }}>
                                 Итого
                             </td>
-                            <td className="pe-2 py-3 text-end text-nowrap" style={{ width: '1%' }}>
-                                <span className="fs-5 fw-bold text-primary font-monospace">
+                            <td className="pe-2 py-2 text-end" style={{ whiteSpace: 'nowrap' }}>
+                                <span className="fw-bold text-primary font-monospace" style={{ fontSize: '1rem' }}>
                                     {totalFact.toLocaleString('ru-RU', {
                                         minimumFractionDigits: totalFact % 1 !== 0 ? 2 : 0,
                                         maximumFractionDigits: 2,

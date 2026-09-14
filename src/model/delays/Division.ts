@@ -1,4 +1,7 @@
 class Division {
+    static fromJSON(division: any): Division {
+        return new Division(division.id, division.name);
+    }
     id:number;
     name: string;
 
