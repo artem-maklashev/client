@@ -59,6 +59,7 @@ export class ReportModalService {
     product: GypsumBoard | null
   ): ReportModalState {
     if (!product) {
+      console.warn("applyProduct: продукт не найден, состояние не изменено");
       return state;
     }
     const tableData = state.tableData.map((item) =>
@@ -75,22 +76,45 @@ export class ReportModalService {
 
   /**
    * Обновляет простои по продукту в случае смены продукта.
+   *
+   * ВАЖНО: простои, пришедшие с сервера, — это «сырые» JSON-объекты,
+   * у которых startTime/endTime/delayDate — строки, а не Date
+   * (см. productionLogData.ts: response.data без десериализации).
+   * Конструктор Delays вызывает endTime.getTime(), поэтому даты обязательно
+   * нужно приводить к Date до создания экземпляра, иначе выбрасывается
+   * TypeError и смена продукта «молча» не срабатывает (setState не вызывается).
    */
   applyProductToDelays(delays: Delays[], product: GypsumBoard): Delays[] {
-    return delays.map((delay) =>
-      delay.product !== product
-        ? new Delays(
-            delay.id,
-            delay.delayDate,
-            delay.startTime,
-            delay.endTime,
-            delay.unitPart,
-            delay.shift,
-            product,
-            delay.delayType
-          )
-        : delay
-    );
+    return delays.map((delay) => {
+      if (delay.product === product) {
+        return delay;
+      }
+
+      const startTime = new Date(delay.startTime);
+      const endTime = new Date(delay.endTime);
+
+      // Некорректные даты не должны ронять смену продукта —
+      // оставляем простой без изменений.
+      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+        console.warn(
+          "Простой пропущен при смене продукта (некорректные даты):",
+          delay
+        );
+        return delay;
+      }
+
+      const delayDate = new Date(delay.delayDate);
+      return new Delays(
+        delay.id,
+        isNaN(delayDate.getTime()) ? startTime : delayDate,
+        startTime,
+        endTime,
+        delay.unitPart,
+        delay.shift,
+        product,
+        delay.delayType
+      );
+    });
   }
 
   /**

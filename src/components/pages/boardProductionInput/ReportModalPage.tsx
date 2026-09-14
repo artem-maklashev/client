@@ -159,7 +159,9 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   const handleProductChange = (product: GypsumBoard | null) => {
-    setState(service.applyProduct(state, product));
+    // Функциональная форма setState: используем актуальный prev, а не
+    // замыкание, чтобы не потерять другие обновления состояния.
+    setState((prev) => (prev ? service.applyProduct(prev, product) : prev));
   };
 
   const handleStartDateChange = (value: any) => {
@@ -318,7 +320,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
                           onChange={(e) => {
                             const selectedProductId = parseInt(e.target.value);
                             const foundGypsumBoard = gypsumBoardList.find(
-                              (gypsumBoard) => gypsumBoard.id === selectedProductId
+                              // Number(...) страхует от строковых id в JSON-ответе:
+                              // строгое === между number и string всегда даёт false,
+                              // из-за чего find возвращал undefined и продукт не менялся.
+                              (gypsumBoard) => Number(gypsumBoard.id) === selectedProductId
                             );
                             handleProductChange(foundGypsumBoard || null);
                           }}
