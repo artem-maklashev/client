@@ -41,9 +41,9 @@ class DelayDataPrepare {
                     // Если не найден, добавляем новый элемент
                     const newItem = new Delays(
                         item.id,
-                        item.delayDate,
-                        item.startTime,
-                        item.endTime,
+                        new Date(item.delayDate),
+                        new Date(item.startTime),
+                        new Date(item.endTime),
                         item.unitPart,
                         item.shift,
                         item.product,

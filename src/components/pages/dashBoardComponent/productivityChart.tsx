@@ -80,7 +80,7 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
             const data: CombinedData[] = [];
 
             productionData.forEach((item) => {
-                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0]);
+                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(new Date(item.productionList.productionDate)).split('T')[0]);
                 const thickness = Number(item.product.thickness.value.replace(",", "."));
                 console.log('Толщина', thickness);
                 const normalizedValue = thickness * item.value / 12.5;
@@ -88,7 +88,7 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
                     existingData.value += normalizedValue;
                 } else {
                     data.push({
-                        date: ApiService.formatDateToISO(item.productionList.productionDate).split('T')[0],
+                        date: ApiService.formatDateToISO(new Date(item.productionList.productionDate)).split('T')[0],
                         value: normalizedValue,
                         time: 0,
                         productivity: 0,
@@ -96,12 +96,12 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ productions, dela
                 }
             });
             delaysData.forEach((item) => {
-                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(item.delayDate).split('T')[0]);
+                const existingData = data.find((d) => d.date === ApiService.formatDateToISO(new Date(item.delayDate)).split('T')[0]);
                 if (existingData) {
                     existingData.time += (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60);
                 } else {
                     data.push({
-                        date: ApiService.formatDateToISO(item.delayDate).split('T')[0],
+                        date: ApiService.formatDateToISO(new Date(item.delayDate)).split('T')[0],
                         value: 0,
                         time: (new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) / (1000 * 60) ,
                         productivity: 0,

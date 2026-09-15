@@ -96,7 +96,7 @@ const PlanFactChartByMonth: React.FC<PlanFactChartProps> = ({ planData, producti
         const productionValues = productionData
             .filter((prod: BoardProduction) => {
 
-                const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
+                const prodDate = ApiService.formatDateToISO(new Date(prod.productionList.productionDate));
                 // prodDate.setDate(prodDate.getDate() +1);//TODO типы возвращаемых дат не сходятся
                 const prodDateStr = prodDate.split('T')[0].substring(0, 7);
                 return prodDateStr === entry.planDate.substring(0, 7);
@@ -104,7 +104,7 @@ const PlanFactChartByMonth: React.FC<PlanFactChartProps> = ({ planData, producti
             .map((prod: BoardProduction) => prod.value);
         const totalValues = allProductionData
             .filter((prod) => {
-                const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
+                const prodDate = ApiService.formatDateToISO(new Date(prod.productionList.productionDate));
                 // const prodDate = new Date(prod.productionList.productionDate);
                 // prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
                 const prodDateStr = prodDate.split('T')[0].substring(0, 7);

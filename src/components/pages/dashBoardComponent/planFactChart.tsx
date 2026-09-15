@@ -4,9 +4,6 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
 import Plan from "../../../model/gypsumBoard/Plan";
 import BoardProduction from "../../../model/production/BoardProduction";
 import PlanFactModal from "./planFactModal";
-import Delays from "../../../model/delays/Delays";
-import { addDays } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import ApiService from "../../../service/ApiService";
 
 interface PlanFactChartProps {
@@ -51,14 +48,14 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
     const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         if (active && payload && payload.length) {
             // Убедитесь, что данные корректно обрабатываются
-            const { planDate, planValue, productionValue, defectPercent } = payload[0]?.payload || {};
+            const { planDate, planValue = 0, productionValue = 0, defectPercent = 0 } = payload[0]?.payload || {};
             return (
                 <div className="custom-tooltip" style={{ background: 'transparent ' }}>
                     <strong>
                         <p className="label">{`Дата: ${planDate}`}</p>
-                        <p className="label">{`План: ${planValue}`}</p>
-                        <p className="intro">{`Факт: ${productionValue.toFixed(0)}`}</p>
-                        <p className="desc">{`Отклонение: ${(productionValue - planValue).toFixed(0)}`}</p>
+                        <p className="label">{`План: ${Number(planValue).toFixed(0)}`}</p>
+                        <p className="intro">{`Факт: ${Number(productionValue).toFixed(0)}`}</p>
+                        <p className="desc">{`Отклонение: ${(Number(productionValue) - Number(planValue)).toFixed(0)}`}</p>
                         <p className="desc">{`Брак: ${defectPercent} %`}</p>
                     </strong>
                 </div>
@@ -69,8 +66,11 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
     };
 
     const combinedData: CombinedData[] = planData.reduce((acc: CombinedData[], plan: Plan) => {
-        // Преобразуем planDate в строку формата YYYY-MM-DD для сравнения
-        const planDateStr = new Date(plan.planDate).toISOString().split('T')[0];
+        // Преобразуем planDate в строку формата YYYY-MM-DD для сравнения.
+        // Важно: используем тот же формат, что и для дат производства (formatDateToISO),
+        // иначе toISOString() даёт дату в UTC и план «съезжает» на день назад
+        // относительно факта (таймзона сервера Europe/Samara, UTC+4).
+        const planDateStr = ApiService.formatDateToISO(new Date(plan.planDate)).split('T')[0];
 
         // Ищем в аккумуляторе запись с данной датой
         const existingEntry = acc.find(entry => entry.planDate === planDateStr);
@@ -97,7 +97,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
         const productionValues = productionData
             .filter((prod: BoardProduction) => {
 
-                const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
+                const prodDate = ApiService.formatDateToISO(new Date(prod.productionList.productionDate));
                 // prodDate.setDate(prodDate.getDate() +1);//TODO типы возвращаемых дат не сходятся
                 const prodDateStr = prodDate.split('T')[0];
                 return prodDateStr === entry.planDate;
@@ -105,7 +105,7 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
             .map((prod: BoardProduction) => prod.value);
         const totalValues = allProductionData
             .filter((prod) => {
-                const prodDate = ApiService.formatDateToISO(prod.productionList.productionDate);
+                const prodDate = ApiService.formatDateToISO(new Date(prod.productionList.productionDate));
                 // const prodDate = new Date(prod.productionList.productionDate);
                 // prodDate.setDate(prodDate.getDate() + 1);//TODO типы возвращаемых дат не сходятся
                 const prodDateStr = prodDate.split('T')[0];
@@ -145,11 +145,11 @@ const PlanFactChart: React.FC<PlanFactChartProps> = ({ planData, productionData,
             console.log('Дата:', data.planDate);
             console.log('Плановое значение:', data.planValue);
             const factData = allProductionData.filter((prod) =>
-                new Date(addDays(prod.productionList.productionDate, 1)).toISOString().split('T')[0] === data.planDate
+                ApiService.formatDateToISO(new Date(prod.productionList.productionDate)).split('T')[0] === data.planDate
                 && prod.category.id > 1
                 && prod.category.id < 4);
             const plan = planData.filter((plan) =>
-                new Date(plan.planDate).toISOString().split('T')[0] === data.planDate);
+                ApiService.formatDateToISO(new Date(plan.planDate)).split('T')[0] === data.planDate);
             setModalPlan(plan);
             setModalDate(data.planDate);
             setModalFact(factData);

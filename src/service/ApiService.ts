@@ -12,6 +12,7 @@ import Thickness from "../model/gypsumBoard/Thickness";
 import { DelaysByTypeDTO } from "../model/DTO/gypsumboard/delays/DelaysByTypeDTO";
 import { ProductAverageConsumption } from "../model/specification/conumptions/ProductAverageConsumption";
 import { DelayPanelData } from "../model/DTO/gypsumboard/delays/DelayPanelData";
+import Delays from "../model/delays/Delays";
 import GypsumBoardInputData from "../model/inputData/GypsumBoardInputData";
 dayjs.extend(utc);
 
@@ -163,11 +164,16 @@ class ApiService {
         }
     }
     
-    static formatDateToISO(date: Date) {
+    static formatDateToISO(date: Date | string) {
         const timeZone = 'Europe/Samara';
         // Защита от Invalid Date: при некорректной дате date-fns-tz бросает
-        // ошибку "Invalid time zone specified: Europe/Samara"
-        const safeDate = date instanceof Date && !isNaN(date.getTime()) ? date : new Date();
+        // ошибку "Invalid time zone specified: Europe/Samara".
+        // ВАЖНО: сервер возвращает даты в виде строк (например "2026-09-01T00:00:00"),
+        // поэтому строку необходимо предварительно распарсить в Date, иначе
+        // любая переданная строка будет заменена на "сейчас" и все точки на графиках
+        // схлопнутся в текущую дату.
+        const parsedDate = typeof date === 'string' ? new Date(date) : date;
+        const safeDate = parsedDate instanceof Date && !isNaN(parsedDate.getTime()) ? parsedDate : new Date();
         const zonedDate = toZonedTime(safeDate, timeZone);
         return format(zonedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", { timeZone });
     }
@@ -258,11 +264,14 @@ class ApiService {
             
             const response = await api.get(`${process.env.REACT_APP_API_URL}/allboard/delays?${params}`);
             
-            return response.data;
+            // Маппим сырой JSON ответа в модели Delays: даты (delayDate, startTime, endTime)
+            // с сервера приходят строками, а компоненты ожидают объекты Date
+            const rawData = Array.isArray(response.data) ? response.data : [];
+            return rawData.map((item: any) => Delays.fromJSON(item));
             
         } catch (error: any) {
             console.error(`Произошла ошибка при получени  простоев: ${error.message}`);
-            
+            return [];
         }
     }
 
