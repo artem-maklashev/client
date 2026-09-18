@@ -223,7 +223,7 @@ const PlanDataTable: React.FC<PlanTableProps> = ({ planList, productions }) => {
             <DataTable
                 value={formattedData}
                 scrollable
-                scrollHeight="790px"
+                scrollHeight="750px"
                 showGridlines
                 stripedRows={false} // Отключаем чередование строк, чтобы настроить вручную
                 tableStyle={{ fontSize: 11 }}

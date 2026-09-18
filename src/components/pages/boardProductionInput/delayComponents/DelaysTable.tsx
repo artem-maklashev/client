@@ -11,11 +11,7 @@ interface DelaysTableProps {
 }
 
 const DelaysTable: React.FC<DelaysTableProps> = ({ delays, handleEditDelay, handleRemoveDelay }) => {
-    const [localDelays, setLocalDelays] = useState<Delays[]>([]);
-
-    useEffect(() => {
-        setLocalDelays(delays);
-    }, [delays]);
+  
 
     // const handleClickDelete = (evt: React.MouseEvent<HTMLElement>, item: Delays) => {
     //     const updatedDelays = localDelays.filter((delay) => delay.id !== item.id);
@@ -37,8 +33,8 @@ const DelaysTable: React.FC<DelaysTableProps> = ({ delays, handleEditDelay, hand
                     </tr>
                 </thead>
                 <tbody>
-                    {localDelays.length > 0 ? (
-                        localDelays.map((entry) => {
+                    {delays && delays.length > 0 ? (
+                        delays.map((entry) => {
                             const durationMinutes = Math.round(
                                 (new Date(entry.endTime).getTime() - new Date(entry.startTime).getTime()) / (1000 * 60)
                             );

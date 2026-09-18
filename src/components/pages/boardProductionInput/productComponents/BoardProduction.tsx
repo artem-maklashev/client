@@ -24,6 +24,7 @@ const BoardProductionPage: React.FC = () => {
     }, [productionList]);
 
     const handleAddReport = () => {
+        setNewReport(null); 
         setShowReportModal(true);
     };
 
@@ -132,10 +133,12 @@ const BoardProductionPage: React.FC = () => {
                 </Col>
             </Row>
             <ReportModalPage
+                key={showReportModal ? 'modal-open' : 'modal-closed'} // Заставляет React пересоздать компонент с чистого листа
                 show={showReportModal}
                 reportData={newReport}
                 onHide={() => {
                     setShowReportModal(false);
+                    setNewReport(null); // Очищаем данные при закрытии
                     refreshProductionList();
                 }}
                 onSave={onSave}

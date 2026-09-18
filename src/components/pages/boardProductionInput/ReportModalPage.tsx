@@ -141,7 +141,10 @@ const ReportModalPage: React.FC<ReportModalPageProps> = ({
   };
 
   const handleRemoveDelay = (removingDelay: Delays) => {
-    setState(state.withDelays(service.removeDelay(state.delays, removingDelay)));
+    setState((prevState) => {
+      const updatedDelays =  service.removeDelay(prevState.delays, removingDelay);
+      return prevState.withDelays(updatedDelays);
+    })
   };
 
   const handleDefectUpdate = (updatedDefect: BoardDefectsLog) => {
