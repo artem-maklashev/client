@@ -15,26 +15,36 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     const [credentials, setCredentials] = useState<Credentials>({ email: '', password: '' });
     const [loginMessage, setLoginMessage] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = e.target;
         setCredentials((prevCredentials) => ({ ...prevCredentials, [name]: value }));
     };
 
-    const login = async (): Promise<void> => {
+    // Принимаем событие формы React.FormEvent
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+        e.preventDefault(); // ПРЕДОТВРАЩАЕТ ПЕРЕЗАГРУЗКУ СТРАНИЦЫ И (canceled)
+
+        setIsLoading(true);
+        setLoginMessage('');
+
         try {
-            const response = await api.post(`${process.env.REACT_APP_AUTH_URL}/authenticate`, credentials);
+            const authUrl = process.env.REACT_APP_AUTH_URL || '/auth';
+            const response = await api.post(`${authUrl}/authenticate`, credentials);
+            
             const { token } = response.data;
             setAuthToken(token);
             setLoginMessage('Login successful!');
-            // Вызовите onLoginSuccess после успешного входа
+            
             onLoginSuccess();
         } catch (error) {
             console.error('Login failed:', error);
             setLoginMessage('Invalid username or password. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
-
 
     return (
         <Container>
@@ -42,19 +52,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 <div className="login-page d-flex align-items-center justify-content-center vh-100">
                     <div className="text-center">
                         <h1>Login</h1>
-                        <form>
+                        {/* Обработчик вешается на onSubmit формы */}
+                        <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label htmlFor="email" className="form-label">
-                                    Email:
+                                <label htmlFor="username" className="form-label">
+                                    Username / Email:
                                 </label>
                                 <input
                                     type="text"
-                                    id="email"
+                                    id="username"
                                     name="email"
                                     value={credentials.email}
                                     onChange={handleInputChange}
                                     className="form-control"
                                     required
+                                    autoComplete="username"
                                 />
                             </div>
 
@@ -70,15 +82,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                                     onChange={handleInputChange}
                                     className="form-control"
                                     required
+                                    autoComplete="current-password"
                                 />
                             </div>
 
-                            <button type="button" onClick={login} className="btn btn-primary">
-                                Login
+                            {/* Кнопка отправляет форму штатным событием submit */}
+                            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                                {isLoading ? 'Logging in...' : 'Login'}
                             </button>
                         </form>
-                        <p>{loginMessage}</p>
-                        <p>
+                        {loginMessage && <p className="mt-3">{loginMessage}</p>}
+                        <p className="mt-2">
                             Don't have an account? <Link to="/register">Register here</Link>.
                         </p>
                     </div>
