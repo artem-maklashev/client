@@ -2,6 +2,7 @@ import React from 'react';
 import Marquee from 'react-fast-marquee';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { api } from '../../service/Api';
 
 // Тип ответа от Spring Boot
 interface DayForecastResponse {
