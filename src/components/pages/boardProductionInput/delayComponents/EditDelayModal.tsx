@@ -438,7 +438,7 @@ const EditDelayModal: React.FC<EditDelayModalProps> = ({
                     <Button
                         variant="primary"
                         onClick={handleSave}
-                        disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' ? false : true}
+                        disabled={getUserRole() === 'USER' || getUserRole() === 'ADMIN' || getUserRole()=== 'GB_ADMIN'? false : true}
                     >
                         Сохранить
                     </Button>
