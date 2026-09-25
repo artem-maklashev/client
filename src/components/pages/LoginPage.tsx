@@ -30,7 +30,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         setLoginMessage('');
 
         try {
-            const authUrl = process.env.REACT_APP_AUTH_URL || '/api/auth';
+            const authUrl = process.env.REACT_APP_AUTH_URL || '/auth';
             const response = await api.post(`${authUrl}/authenticate`, credentials);
             
             const { token } = response.data;
