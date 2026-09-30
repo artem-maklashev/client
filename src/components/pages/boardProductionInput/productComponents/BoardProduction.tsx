@@ -8,8 +8,9 @@ import GypsumBoard from "../../../../model/gypsumBoard/GypsumBoard";
 import BoardProduction from "../../../../model/production/BoardProduction";
 import Delays from "../../../../model/delays/Delays";
 import ReportModalPage from "../ReportModalPage";
-import { saveUpdatedReport } from "../SaveUpdatedReport";
+import { saveConsumptions, saveUpdatedReport } from "../SaveUpdatedReport";
 import Preloader from "../../commonElements/preloader";
+import MaterialConsumption from "../../../../model/specification/MaterialConsumption";
 
 const BoardProductionPage: React.FC = () => {
     const { productionList, fetchProductionData, isLoading: isFetching, error: fetchError } = useProductionLogData();
@@ -28,10 +29,19 @@ const BoardProductionPage: React.FC = () => {
         setShowReportModal(true);
     };
 
-    const onSave = async (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>) => {
+    const onSave = async (report: ReportData<GypsumBoard, GypsumBoardCategory, BoardProduction, Delays>, 
+        consumptions: MaterialConsumption[]) => {
         setIsSaving(true);
         try {
             const savedReport = await saveUpdatedReport(report);
+            if (savedReport && consumptions?.length > 0) {
+                consumptions.forEach(
+                    (consumption) =>
+                        (consumption.productionList = savedReport.productionList)
+                );
+
+                await saveConsumptions(consumptions);
+            }
             setShowReportModal(false);
 
             setReports(prevReports => {

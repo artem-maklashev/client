@@ -6,10 +6,20 @@ import Shift from '../../../../model/Shift';
 import { useGypsumBoardData } from './useGypsumBoardData';
 
 export const useBoardProduction = (startDate: Date, endDate: Date) => {
+    const nextDateAfteEnd = new Date(endDate);
+    nextDateAfteEnd.setDate(nextDateAfteEnd.getDate()+1);
+
     // 1. Запрашиваем план
     const { data: plan = [], isLoading: isLoadingPlan } = useQuery({
         queryKey: ['board-plan', startDate, endDate],
         queryFn: () => ApiService.fetchPlan(startDate, endDate),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    // 1.1. Запрашиваем план на сегодня
+    const { data: todayPlan = [], isLoading: isLoadingTodayPlan } = useQuery({        
+        queryKey: ['board-plan-today', endDate, nextDateAfteEnd],
+        queryFn: () => ApiService.fetchPlan(endDate, nextDateAfteEnd),
         staleTime: 5 * 60 * 1000,
     });
 
@@ -42,7 +52,7 @@ export const useBoardProduction = (startDate: Date, endDate: Date) => {
         .filter(f => f.category.id > 1 && f.category.id <= 4)
         .reduce((sum, item) => sum + item.value, 0);
 
-    const todayPlan = plan.filter(item => getPlanDate(new Date(item.planDate)) === getPlanDate(new Date()));
+    //const todayPlan = plan.filter(item => getPlanDate(new Date(item.planDate)) === getPlanDate(new Date()));
     const toTodayPlan = plan
         .filter((p) => new Date(p.planDate) < new Date(getCurrentDate()))
         .reduce((acc, p) => acc + p.planValue, 0);
