@@ -2,6 +2,7 @@ import React from 'react';
 import Marquee from 'react-fast-marquee';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { api } from '../../service/Api';
 
 // Тип ответа от Spring Boot
 interface DayForecastResponse {
@@ -37,7 +38,7 @@ const getWeatherMeta = (code: number): { desc: string; icon: string } => {
 // Запрос через axios к вашему Spring Boot бэкенду
 const fetchWeather = async (): Promise<DayForecast[]> => {
   // Укажите ваш базовый путь (или относительный, если настроен axios.defaults.baseURL / proxy)
-  const response = await axios.get<DayForecastResponse[]>(`${process.env.REACT_APP_API_URL}/weather`);
+  const response = await api.get<DayForecastResponse[]>(`${process.env.REACT_APP_API_URL}/weather`);
   
   return response.data.map((item) => {
     const meta = getWeatherMeta(item.weatherCode);
