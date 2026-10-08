@@ -1,206 +1,185 @@
-// useBoardProduction.ts
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ApiService from '../../../../service/ApiService';
-import { useMemo } from 'react';
 import Shift from '../../../../model/Shift';
 import { useGypsumBoardData } from './useGypsumBoardData';
 
-export const useBoardProduction = (startDate: Date, endDate: Date) => {
-    const nextDateAfteEnd = new Date(endDate);
-    nextDateAfteEnd.setDate(nextDateAfteEnd.getDate()+1);
+/* ==========================
+ * Date utils
+ * ========================== */
+const startOfDay = (date: Date): Date => {
+    const result = new Date(date);
+    result.setHours(0, 0, 0, 0);
+    return result;
+};
 
-    // 1. Запрашиваем план
+const getYesterday = (): Date => {
+    const date = startOfDay(new Date());
+    date.setDate(date.getDate() - 1);
+    return date;
+};
+
+const getNextDateAfterEnd = (endDate: Date): Date => {
+    const today = startOfDay(new Date());
+    const normalizedEndDate = startOfDay(endDate);
+    const result = new Date(
+        Math.min(normalizedEndDate.getTime(), today.getTime())
+    );
+    result.setDate(result.getDate() + 1);
+    return result;
+};
+
+const STALE_TIME = 5 * 60 * 1000;
+
+/* ==========================
+ * Hook
+ * ========================== */
+export const useBoardProduction = (startDate: Date, endDate: Date) => {
+    const today = startOfDay(new Date());
+    const nextDateAfterEnd = useMemo(() => getNextDateAfterEnd(today), [today]);
+    
+    // Используем timestamp для стабильной мемоизации (примитив не ломает зависимости)
+    const todayTime = startOfDay(new Date()).getTime();
+
+    /* ==========================
+     * Queries
+     * ========================== */
     const { data: plan = [], isLoading: isLoadingPlan } = useQuery({
         queryKey: ['board-plan', startDate, endDate],
         queryFn: () => ApiService.fetchPlan(startDate, endDate),
-        staleTime: 5 * 60 * 1000,
+        staleTime: STALE_TIME,
     });
 
-    // 1.1. Запрашиваем план на сегодня
-    const { data: todayPlan = [], isLoading: isLoadingTodayPlan } = useQuery({        
-        queryKey: ['board-plan-today', endDate, nextDateAfteEnd],
-        queryFn: () => ApiService.fetchPlan(endDate, nextDateAfteEnd),
-        staleTime: 5 * 60 * 1000,
+    const { data: todayPlan = [], isLoading: isLoadingTodayPlan } = useQuery({
+        queryKey: ['board-plan-today', today, nextDateAfterEnd],
+        queryFn: () => ApiService.fetchPlan(today, nextDateAfterEnd),
+        staleTime: STALE_TIME,
     });
 
-    // 2. Запрашиваем факт
     const { data: fact = [], isLoading: isLoadingFact } = useQuery({
         queryKey: ['board-fact', startDate, endDate],
         queryFn: () => ApiService.fetchBoardProduction(startDate, endDate),
-        staleTime: 5 * 60 * 1000,
+        staleTime: STALE_TIME,
     });
 
-    const getPlanDate = (date: Date) => {
-        return date.toLocaleDateString("ru-RU", {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-    };
-
-    function getCurrentDate(): string {
-        const today = new Date();
-        const year = today.getUTCFullYear();
-        const month = (today.getUTCMonth() + 1).toString().padStart(2, "0");
-        const day = today.getUTCDate().toString().padStart(2, "0");
-        return `${year}-${month}-${day}`;
-    }
-
-    // 3. Вычисления плана и факта
-    const planSum = plan.reduce((sum, item) => sum + item.planValue, 0);
-    const factSum = fact
-        .filter(f => f.category.id > 1 && f.category.id <= 4)
-        .reduce((sum, item) => sum + item.value, 0);
-
-    //const todayPlan = plan.filter(item => getPlanDate(new Date(item.planDate)) === getPlanDate(new Date()));
-    const toTodayPlan = plan
-        .filter((p) => new Date(p.planDate) < new Date(getCurrentDate()))
-        .reduce((acc, p) => acc + p.planValue, 0);
-
-    const deviation = factSum - toTodayPlan;
-
-    // 4. Последние три уникальных производственных дня
-    const lastThreeDays: Date[] = Array.from(
-        new Set(
-            fact.map((bp) => new Date(bp.productionList.productionDate).setHours(0, 0, 0, 0))
-        )
-    )
-        .sort((a, b) => b - a)
-        .slice(0, 3)
-        .map((timestamp) => new Date(timestamp));
-
-    // 5. Расчет брака (общий и по сменам)
-    const calculations = useMemo(() => {
-        // Категория 1 — валовый объем (Total), 2..4 — товарная продукция (Good)
-        const sortedBoardProduction = fact.filter((board) => board.category.id <= 4);
-
-        const { totalProduced, goodProduced } = sortedBoardProduction.reduce(
-            (acc, board) => {
-                if (board.category.id === 1) {
-                    acc.totalProduced += board.value;
-                } else {
-                    acc.goodProduced += board.value;
+    /* ==========================
+     * Plan / Fact summary
+     * ========================== */
+    // Оптимизация: считаем обе суммы плана за один проход (O(n) вместо O(n) + O(n))
+    const { planSum, toTodayPlan } = useMemo(() => {
+        return plan.reduce(
+            (acc, item) => {
+                acc.planSum += item.planValue;
+                if (new Date(item.planDate).getTime() < todayTime) {
+                    acc.toTodayPlan += item.planValue;
                 }
                 return acc;
             },
-            { totalProduced: 0, goodProduced: 0 }
+            { planSum: 0, toTodayPlan: 0 }
         );
+    }, [plan, todayTime]);
 
-        const defectProduced = Math.max(0, totalProduced - goodProduced);
-        const defectPercentResult = totalProduced > 0 
-            ? (defectProduced / totalProduced) * 100 
-            : 0;
+    const factSum = useMemo(() => {
+        return fact
+            .filter(item => item.category.id > 1 && item.category.id <= 4)
+            .reduce((sum, item) => sum + item.value, 0);
+    }, [fact]);
 
-        // Группировка по смене (по shift.id во избежание дублей по ссылкам объектов)
-        interface ShiftAccumulator {
-            shift: Shift;
-            totalProduced: number;
-            goodProduced: number;
-        }
+    const deviation = factSum - toTodayPlan;
 
-        const shiftDataMap = fact
-            .filter((bp) => bp.category.id <= 4)
-            .reduce((acc, bp) => {
-                const shift = bp.productionList.shift;
-                const shiftId = shift.id;
-                const value = bp.value;
-
-                const current = acc.get(shiftId) ?? {
-                    shift,
-                    totalProduced: 0,
-                    goodProduced: 0,
-                };
-
-                if (bp.category.id === 1) {
-                    current.totalProduced += value;
-                } else {
-                    current.goodProduced += value;
-                }
-
-                acc.set(shiftId, current);
-                return acc;
-            }, new Map<number, ShiftAccumulator>());
-
-        const sortedDefectPercentByShift = new Map<Shift, number>(
-            [...shiftDataMap.values()]
-                .sort((a, b) => a.shift.id - b.shift.id)
-                .map(({ shift, totalProduced, goodProduced }) => {
-                    const shiftDefect = Math.max(0, totalProduced - goodProduced);
-                    const percent = totalProduced > 0 
-                        ? (shiftDefect / totalProduced) * 100 
-                        : 0;
-                    return [shift, percent];
-                })
+    /* ==========================
+     * Last production days
+     * ========================== */
+    const lastThreeDays = useMemo(() => {
+        const uniqueTimes = new Set(
+            fact.map(bp => startOfDay(new Date(bp.productionList.productionDate)).getTime())
         );
+        return [...uniqueTimes]
+            .sort((a, b) => b - a)
+            .slice(0, 3)
+            .map(time => new Date(time));
+    }, [fact]);
+
+    /* ==========================
+     * Defect calculations
+     * ========================== */
+    const { defectPercentResult, sortedDefectPercentByShift } = useMemo(() => {
+        let totalProduced = 0;
+        let goodProduced = 0;
+        
+        const shiftMap = new Map<number, { shift: Shift; total: number; good: number }>();
+
+        fact.forEach(bp => {
+            const { category, value, productionList: { shift } } = bp;
+            if (category.id > 4) return;
+
+            const isTotal = category.id === 1;
+
+            // Глобальный подсчет
+            if (isTotal) totalProduced += value;
+            else goodProduced += value;
+
+            // Подсчет по сменам
+            const current = shiftMap.get(shift.id) ?? { shift, total: 0, good: 0 };
+            if (isTotal) current.total += value;
+            else current.good += value;
+            
+            shiftMap.set(shift.id, current);
+        });
+
+        const calcPercent = (total: number, good: number) => 
+            total > 0 ? (Math.max(0, total - good) / total) * 100 : 0;
 
         return {
-            defectPercentResult,
-            sortedDefectPercentByShift,
+            defectPercentResult: calcPercent(totalProduced, goodProduced),
+            sortedDefectPercentByShift: new Map<Shift, number>(
+                [...shiftMap.values()]
+                    .sort((a, b) => a.shift.id - b.shift.id)
+                    .map(({ shift, total, good }) => [shift, calcPercent(total, good)])
+            ),
         };
     }, [fact]);
 
-    // 6. Выпуск за последние доступные сутки (возвращает объект данных гипсокартона)
-    // Определяем дату последних доступных производственных суток до сегодняшнего дня
+    /* ==========================
+     * Latest completed day
+     * ========================== */
     const latestProdDate = useMemo(() => {
-        const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0);
+        const pastDates = fact
+            .map(bp => startOfDay(new Date(bp.productionList.productionDate)).getTime())
+            .filter(time => time < todayTime);
 
-        // Поиск максимальной даты до сегодняшнего дня
-        let latestTimestamp: number | null = null;
-        fact.forEach((bp) => {
-            const prodDate = new Date(bp.productionList.productionDate);
-            prodDate.setHours(0, 0, 0, 0);
-            const time = prodDate.getTime();
+        return pastDates.length > 0 ? new Date(Math.max(...pastDates)) : null;
+    }, [fact, todayTime]);
 
-            if (time < startOfToday.getTime()) {
-                if (latestTimestamp === null || time > latestTimestamp) {
-                    latestTimestamp = time;
-                }
-            }
-        });
-
-        return latestTimestamp === null ? null : new Date(latestTimestamp);
-    }, [fact]);
-
-    // Запасной вариант — вчерашняя дата (стабильная, чтобы не менять queryKey)
-    const fallbackYesterday = useMemo(() => {
-        const d = new Date();
-        d.setDate(d.getDate() - 1);
-        d.setHours(0, 0, 0, 0);
-        return d;
-    }, []);
-
-    // Хук вызывается безусловно (соблюдение правил хуков), поэтому результат никогда не null
-    const targetDate = latestProdDate ?? fallbackYesterday;
+    const targetDate = latestProdDate ?? getYesterday();
+    
+    // Предполагается, что useGypsumBoardData умеет корректно обрабатывать изменения targetDate
     const yesterdayProduction = useGypsumBoardData(targetDate, targetDate);
 
-    // 7. Словарь списков производства по датам
-    const productionDict: Record<string, number[]> = useMemo(() => {
-        return fact.reduce((acc, bp) => {
-            const dateKey = new Date(bp.productionList.productionDate).toLocaleDateString("ru-RU");
+    /* ==========================
+     * Production dictionary
+     * ========================== */
+    const productionDict = useMemo(() => {
+        const dict: Record<string, number[]> = {};
+        
+        fact.forEach(bp => {
+            const dateKey = new Date(bp.productionList.productionDate).toLocaleDateString('ru-RU');
             const listId = bp.productionList.id;
 
-            if (!acc[dateKey]) {
-                acc[dateKey] = [];
-            }
-
-            if (!acc[dateKey].includes(listId)) {
-                acc[dateKey].push(listId);
-            }
-
-            return acc;
-        }, {} as Record<string, number[]>);
+            if (!dict[dateKey]) dict[dateKey] = [];
+            if (!dict[dateKey].includes(listId)) dict[dateKey].push(listId);
+        });
+        
+        return dict;
     }, [fact]);
 
-
-
     return {
-        isLoading: isLoadingPlan || isLoadingFact,
+        isLoading: isLoadingPlan || isLoadingTodayPlan || isLoadingFact,
         planSum,
         factSum,
         deviation,
-        defectPercentResult: calculations.defectPercentResult,
-        sortedDefectPercentByShift: calculations.sortedDefectPercentByShift,
+        defectPercentResult,
+        sortedDefectPercentByShift,
         todayPlan,
         lastThreeDays,
         productionDict,
